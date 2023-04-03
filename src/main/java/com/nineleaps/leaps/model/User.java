@@ -21,12 +21,15 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
     private @NotBlank String email;
+    @Column(name = "phone_number")
+    private @NotBlank String phoneNumber;
     private @NotBlank String password;
 
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName, String lastName, String email, String phoneNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.password = password;
     }
 }

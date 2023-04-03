@@ -49,7 +49,7 @@ public class UserService implements UserServiceInterface {
             e.printStackTrace();
             logger.error("Hashing password failed: {}", e.getMessage());
         }
-        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), encryptedPassword);
+        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(),encryptedPassword);
 
         User createdUser;
         try {

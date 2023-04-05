@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.service;
 
-import com.nineleaps.leaps.model.Category;
+import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

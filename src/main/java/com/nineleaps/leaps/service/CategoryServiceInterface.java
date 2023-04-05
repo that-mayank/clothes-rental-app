@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.service;
 
-import com.nineleaps.leaps.model.Category;
+import com.nineleaps.leaps.model.categories.Category;
 
 import java.util.List;
 import java.util.Optional;

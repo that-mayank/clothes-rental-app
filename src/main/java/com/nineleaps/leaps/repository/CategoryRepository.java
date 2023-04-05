@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.repository;
 
-import com.nineleaps.leaps.model.Category;
+import com.nineleaps.leaps.model.categories.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

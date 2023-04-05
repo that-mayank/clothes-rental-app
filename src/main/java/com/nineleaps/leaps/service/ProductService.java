@@ -1,14 +1,15 @@
 package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.model.Category;
 import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService implements ProductServiceInterface {
@@ -19,8 +20,8 @@ public class ProductService implements ProductServiceInterface {
         this.productRepository = productRepository;
     }
 
-    public static Product getProductFromDto(ProductDto productDto, Category category) {
-        return new Product(productDto, category);
+    public static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories) {
+        return new Product(productDto, subCategories);
     }
 
     public static ProductDto getDtoFromProduct(Product product) {
@@ -28,8 +29,8 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public void addProduct(ProductDto productDto, Category category) {
-        Product product = getProductFromDto(productDto, category);
+    public void addProduct(ProductDto productDto, List<SubCategory> subCategories) {
+        Product product = getProductFromDto(productDto, subCategories);
         productRepository.save(product);
     }
 
@@ -44,11 +45,22 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public void updateProduct(Long productId, ProductDto productDto, Category category) {
-        Product product = getProductFromDto(productDto, category);
+    public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories) {
+        Product product = getProductFromDto(productDto, subCategories);
         if (product != null) {
             product.setId(productId);
             productRepository.save(product);
         }
     }
+
+    @Override
+    public Optional<Product> readProduct(Long productId) {
+        return productRepository.findById(productId);
+    }
+
+    @Override
+    public List<Product> listProductsById(Long subcategoryId) {
+        return productRepository.findBySubCategoriesId(subcategoryId);
+    }
 }
+

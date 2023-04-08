@@ -30,6 +30,7 @@ public class SubCategory {
     private String imageURL;
     private String description;
     @ManyToMany(mappedBy = "subCategories")
+    @JsonIgnore
     private List<Product> products;
 
     public SubCategory(SubCategoryDto subCategoryDto, Category category) {

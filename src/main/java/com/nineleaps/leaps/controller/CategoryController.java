@@ -54,5 +54,4 @@ public class CategoryController {
         //Return this if category does not exist
         return new ResponseEntity<ApiResponse>(new ApiResponse(false, "category does not exist"), HttpStatus.NOT_FOUND);
     }
-
 }

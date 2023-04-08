@@ -2,6 +2,7 @@ package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class ProductService implements ProductServiceInterface {
         this.productRepository = productRepository;
     }
 
-    public static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories) {
-        return new Product(productDto, subCategories);
+    public static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
+        return new Product(productDto, subCategories, categories);
     }
 
     public static ProductDto getDtoFromProduct(Product product) {
@@ -29,8 +30,8 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public void addProduct(ProductDto productDto, List<SubCategory> subCategories) {
-        Product product = getProductFromDto(productDto, subCategories);
+    public void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
+        Product product = getProductFromDto(productDto, subCategories, categories);
         productRepository.save(product);
     }
 
@@ -45,8 +46,8 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories) {
-        Product product = getProductFromDto(productDto, subCategories);
+    public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
+        Product product = getProductFromDto(productDto, subCategories, categories);
         if (product != null) {
             product.setId(productId);
             productRepository.save(product);
@@ -61,6 +62,17 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public List<Product> listProductsById(Long subcategoryId) {
         return productRepository.findBySubCategoriesId(subcategoryId);
+    }
+
+    @Override
+    public List<ProductDto> listProductsByCategoryId(Long categoryId) {
+        List<Product> products = productRepository.findByCategoriesId(categoryId);
+        List<ProductDto> productDtos = new ArrayList<>();
+        for (Product product : products) {
+            ProductDto productDto = getDtoFromProduct(product);
+            productDtos.add(productDto);
+        }
+        return productDtos;
     }
 }
 

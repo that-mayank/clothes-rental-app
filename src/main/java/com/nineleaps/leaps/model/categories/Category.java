@@ -1,12 +1,15 @@
 package com.nineleaps.leaps.model.categories;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.dto.category.CategoryDto;
+import com.nineleaps.leaps.model.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
@@ -22,6 +25,9 @@ public class Category {
     private @NotBlank String description;
     @Column(name = "image_url")
     private @NotBlank String imageUrl;
+    @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
+    private List<Product> products;
 
     public Category(CategoryDto categoryDto) {
         this.id = categoryDto.getId();

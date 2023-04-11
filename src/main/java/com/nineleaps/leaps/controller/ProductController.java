@@ -6,6 +6,7 @@ import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.service.*;
+import com.nineleaps.leaps.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +97,7 @@ public class ProductController {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    //list by categoty id
+    //list by category id
     @PutMapping("/listbycategoryId/{categoryId}")
     public ResponseEntity<List<ProductDto>> listByCategoryId(@PathVariable("categoryId") Long categoryId) {
         //check if category id is valid
@@ -107,5 +108,17 @@ public class ProductController {
         // fetch the products accordingly
         List<ProductDto> body = productService.listProductsByCategoryId(categoryId);
         return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    //list by product id
+    @PutMapping("/listByProductId/{productId}")
+    public ResponseEntity<ProductDto> listByProductId(@PathVariable("productId") Long productId) {
+        //check if product id is valid
+        ProductDto product = productService.listProductByid(productId);
+        if (!Helper.notNull(product)) {
+            return new ResponseEntity<>(new ProductDto(), HttpStatus.NOT_FOUND);
+        }
+        //fetch the product details
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 }

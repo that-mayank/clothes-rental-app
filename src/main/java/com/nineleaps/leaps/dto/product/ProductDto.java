@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,12 +30,12 @@ public class ProductDto {
         this.setDescription(product.getDescription());
         this.setPrice(product.getPrice());
 
-//        this.setSubcategoryIds(product.getSubCategories().stream().map(SubCategory::getId).collect(Collectors.toList()));
-        List<Long> subCategoryIds = new ArrayList<>();
-        for (SubCategory subCategory : product.getSubCategories()) {
-            subCategoryIds.add(subCategory.getId());
-        }
-        this.setSubcategoryIds(subCategoryIds);
+        this.setSubcategoryIds(product.getSubCategories().stream().map(SubCategory::getId).collect(Collectors.toList()));
+//        List<Long> subCategoryIds = new ArrayList<>();
+//        for (SubCategory subCategory : product.getSubCategories()) {
+//            subCategoryIds.add(subCategory.getId());
+//        }
+//        this.setSubcategoryIds(subCategoryIds);
 
         this.setCategoryIds(product.getCategories().stream().map(Category::getId).collect(Collectors.toList()));
     }

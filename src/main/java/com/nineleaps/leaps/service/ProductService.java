@@ -74,5 +74,11 @@ public class ProductService implements ProductServiceInterface {
         }
         return productDtos;
     }
+
+    @Override
+    public ProductDto listProductByid(Long productId) {
+        Product product = productRepository.findById(productId).get();
+        return getDtoFromProduct(product);
+    }
 }
 

@@ -20,4 +20,6 @@ public interface ProductServiceInterface {
     public List<Product> listProductsById(Long subcategoryId);
 
     public List<ProductDto> listProductsByCategoryId(Long categoryId);
+
+    public ProductDto listProductByid(Long productId);
 }

@@ -9,7 +9,6 @@ import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.service.ProductService;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,4 +67,15 @@ public class WishlistController {
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
 
+    //Remove items from wishlist
+    @DeleteMapping("/remove/{token}")
+    public ResponseEntity<ApiResponse> removeFromWishlist(@PathVariable("token") String token, @RequestBody Product product) {
+        //verify token
+        authenticationService.authenticate(token);
+        //get user using token
+        Long userId = authenticationService.getUser(token).getId();
+        //remove the required item from wishlist
+        wishlistService.removeFromWishlist(userId, product);
+        return new ResponseEntity<>(new ApiResponse(true, "Product removed successfully"), HttpStatus.OK);
+    }
 }

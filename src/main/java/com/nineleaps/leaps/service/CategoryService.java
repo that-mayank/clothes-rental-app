@@ -1,10 +1,12 @@
 package com.nineleaps.leaps.service;
 
+import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +49,19 @@ public class CategoryService implements CategoryServiceInterface {
     @Override
     public Optional<Category> readCategory(Long id) {
         return categoryRepository.findById(id);
+    }
+
+    @Override
+    public List<Category> getCategoriesFromIds(List<Long> categoryIds) throws CategoryNotExistException {
+        List<Category> categories = new ArrayList<>();
+        for (Long categoryId : categoryIds) {
+            Optional<Category> optionalCategory = readCategory(categoryId);
+            if (!optionalCategory.isPresent()) {
+                throw new CategoryNotExistException("Category is invalid: " + categoryId);
+            }
+            categories.add(optionalCategory.get());
+        }
+        return categories;
     }
 }
 

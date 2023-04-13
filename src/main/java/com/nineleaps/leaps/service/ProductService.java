@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
+import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
@@ -21,12 +22,13 @@ public class ProductService implements ProductServiceInterface {
         this.productRepository = productRepository;
     }
 
-    public static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
-        return new Product(productDto, subCategories, categories);
-    }
-
     public static ProductDto getDtoFromProduct(Product product) {
         return new ProductDto(product);
+    }
+
+
+    private static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
+        return new Product(productDto, subCategories, categories);
     }
 
     @Override
@@ -76,9 +78,21 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public ProductDto listProductByid(Long productId) {
-        Product product = productRepository.findById(productId).get();
-        return getDtoFromProduct(product);
+    public ProductDto listProductByid(Long productId) throws ProductNotExistException {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (!optionalProduct.isPresent()) {
+            throw new ProductNotExistException("Product is invalid: " + productId);
+        }
+        return getDtoFromProduct(optionalProduct.get());
+    }
+
+    @Override
+    public Product getProductById(Long productId) throws ProductNotExistException {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotExistException("Product is invalid: " + productId);
+        }
+        return optionalProduct.get();
     }
 }
 

@@ -1,10 +1,10 @@
 package com.nineleaps.leaps.config;
 
 public class MessageStrings {
-    public static final String USER_NOT_PERMITTED = "user is not permitted to perform this operation";
-    public static final String AUTH_TOKEN_NOT_PRESENT = "authentication token not present";
-    public static final String AUTH_TOKEN_NOT_VALID = "authentication token not valid";
-    public static final String USER_CREATED = "user created successfully";
+    public static final String USER_NOT_PERMITTED = "User is not permitted to perform this operation";
+    public static final String AUTH_TOKEN_NOT_PRESENT = "Authentication Token Not Present";
+    public static final String AUTH_TOKEN_NOT_VALID = "Authentication Token Not Valid";
+    public static final String USER_CREATED = "User Created Successfully";
     public static final String ID_NOT_PRESENT = "primary key is required for updating";
-    public static final String WRONG_PASSWORD = "please check the credentials";
+    public static final String WRONG_PASSWORD = "Please Check The Credentials";
 }

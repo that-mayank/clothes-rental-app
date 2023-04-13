@@ -31,22 +31,8 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductDto productDto) {
-        List<Category> categories = new ArrayList<>();
-        for (Long categoryId : productDto.getCategoryIds()) {
-            Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
-            if (!optionalCategory.isPresent()) {
-                return new ResponseEntity<>(new ApiResponse(false, "Category is invalid"), HttpStatus.NOT_FOUND);
-            }
-            categories.add(optionalCategory.get());
-        }
-        List<SubCategory> subCategories = new ArrayList<>();
-        for (Long subcategoryId : productDto.getSubcategoryIds()) {
-            Optional<SubCategory> optionalSubCategory = subCategoryService.readSubCategory(subcategoryId);
-            if (!optionalSubCategory.isPresent()) {
-                return new ResponseEntity<>(new ApiResponse(false, "Subcategory is invalid"), HttpStatus.CONFLICT);
-            }
-            subCategories.add(optionalSubCategory.get());
-        }
+        List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
+        List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
         productService.addProduct(productDto, subCategories, categories);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been added"), HttpStatus.CREATED);
     }
@@ -63,23 +49,8 @@ public class ProductController {
         if (!optionalProduct.isPresent()) {
             return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
         }
-        List<Category> categories = new ArrayList<>();
-        for (Long categoryId : productDto.getCategoryIds()) {
-            Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
-            if (!optionalCategory.isPresent()) {
-                return new ResponseEntity<>(new ApiResponse(false, "Category is invalid"), HttpStatus.NOT_FOUND);
-            }
-            categories.add(optionalCategory.get());
-        }
-        List<SubCategory> subCategories = new ArrayList<>();
-        for (Long subcategoryId : productDto.getSubcategoryIds()) {
-            Optional<SubCategory> optionalSubCategory = subCategoryService.readSubCategory(subcategoryId);
-            if (!optionalSubCategory.isPresent()) {
-                return new ResponseEntity<>(new ApiResponse(false, "Subcategory is invalid"), HttpStatus.CONFLICT);
-            }
-            subCategories.add(optionalSubCategory.get());
-        }
-
+        List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
+        List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
         productService.updateProduct(productId, productDto, subCategories, categories);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been updated"), HttpStatus.OK);
     }

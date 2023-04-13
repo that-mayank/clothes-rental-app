@@ -12,8 +12,29 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleUpdateFailException(CustomException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(value = AuthenticationFailException.class)
     public final ResponseEntity<String> handleUpdateFailException(AuthenticationFailException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = CategoryNotExistException.class)
+    public final ResponseEntity<String> handleUpdateFailException(CategoryNotExistException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = ProductNotExistException.class)
+    public final ResponseEntity<String> handleUpdateFailException(ProductNotExistException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = CartItemNotExistException.class)
+    public final ResponseEntity<String> handleUpdateFailException(CartItemNotExistException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = CartItemAlreadyExistException.class)
+    public final ResponseEntity<String> handleUpdateFailException(CartItemAlreadyExistException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

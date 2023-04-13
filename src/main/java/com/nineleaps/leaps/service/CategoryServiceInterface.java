@@ -11,4 +11,5 @@ public interface CategoryServiceInterface {
     public void updateCategory(Long id, Category updateCategory);
     public Category readCategory(String categoryName);
     public Optional<Category> readCategory(Long id);
+    public List<Category> getCategoriesFromIds(List<Long> categoryIds);
 }

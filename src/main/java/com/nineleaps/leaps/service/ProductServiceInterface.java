@@ -22,4 +22,6 @@ public interface ProductServiceInterface {
     public List<ProductDto> listProductsByCategoryId(Long categoryId);
 
     public ProductDto listProductByid(Long productId);
+
+    public Product getProductById(Long productId);
 }

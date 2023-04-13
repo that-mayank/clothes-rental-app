@@ -20,4 +20,6 @@ public interface SubCategoryServiceInterface {
     public List<SubCategory> listSubCategory(Long categoryId);
 
     public void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category);
+
+    public List<SubCategory> getSubCategoriesFromIds(List<Long> subcategoryIds);
 }

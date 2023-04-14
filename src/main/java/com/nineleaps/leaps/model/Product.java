@@ -42,12 +42,16 @@ public class Product {
     private @NotNull String imageURL;
     private @NotNull double price;
     private @NotNull String description;
+    private @NotNull int quantity;
+    private @NotNull String size;
 
     public Product(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
         this.name = productDto.getName();
         this.imageURL = productDto.getImageURL();
         this.price = productDto.getPrice();
         this.description = productDto.getDescription();
+        this.quantity = productDto.getQuantity();
+        this.size = productDto.getSize();
         this.subCategories = subCategories;
         this.categories = categories;
     }

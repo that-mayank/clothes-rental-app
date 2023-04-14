@@ -20,6 +20,8 @@ public class ProductDto {
     private @NotNull String imageURL;
     private @NotNull double price;
     private @NotNull String description;
+    private @NotNull int quantity;
+    private @NotNull String size;
     private @NotNull List<Long> subcategoryIds;
     private @NotNull List<Long> categoryIds;
 
@@ -29,13 +31,10 @@ public class ProductDto {
         this.setImageURL(product.getImageURL());
         this.setDescription(product.getDescription());
         this.setPrice(product.getPrice());
+        this.setQuantity(product.getQuantity());
+        this.setSize(product.getSize());
 
         this.setSubcategoryIds(product.getSubCategories().stream().map(SubCategory::getId).collect(Collectors.toList()));
-//        List<Long> subCategoryIds = new ArrayList<>();
-//        for (SubCategory subCategory : product.getSubCategories()) {
-//            subCategoryIds.add(subCategory.getId());
-//        }
-//        this.setSubcategoryIds(subCategoryIds);
 
         this.setCategoryIds(product.getCategories().stream().map(Category::getId).collect(Collectors.toList()));
     }

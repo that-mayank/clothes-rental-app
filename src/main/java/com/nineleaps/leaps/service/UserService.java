@@ -6,6 +6,7 @@ import com.nineleaps.leaps.dto.user.LoginDto;
 import com.nineleaps.leaps.dto.user.LoginResponseDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.enums.ResponseStatus;
+import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.model.AuthenticationToken;
@@ -49,7 +50,7 @@ public class UserService implements UserServiceInterface {
             e.printStackTrace();
             logger.error("Hashing password failed: {}", e.getMessage());
         }
-        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(),encryptedPassword);
+        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
 
         User createdUser;
         try {
@@ -101,5 +102,20 @@ public class UserService implements UserServiceInterface {
             sb.append(String.format("%02x", b));
         }
         return sb.toString().toUpperCase();
+    }
+
+    @Override
+    public void saveProfile(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    public User getGuest() {
+        User user = userRepository.findByRole(Role.guest);
+        if (!Helper.notNull(user)) {
+            return null; //create a guest user call that function
+        } else {
+            return user;
+        }
     }
 }

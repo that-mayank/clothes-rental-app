@@ -37,4 +37,9 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleUpdateFailException(CartItemAlreadyExistException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = UserNotExistException.class)
+    public final ResponseEntity<String> handleUpdateFailException(UserNotExistException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

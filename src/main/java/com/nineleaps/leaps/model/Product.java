@@ -35,6 +35,14 @@ public class Product {
     @JsonIgnore
     List<Category> categories = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<Wishlist> wishlists;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<Cart> carts;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,5 +63,4 @@ public class Product {
         this.subCategories = subCategories;
         this.categories = categories;
     }
-
 }

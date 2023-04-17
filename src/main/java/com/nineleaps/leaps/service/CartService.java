@@ -78,4 +78,9 @@ public class CartService implements CartServiceInterface {
         }
         cartRepository.deleteById(cartItem.getId());
     }
+
+    @Override
+    public void deleteUserCartItems(User user) {
+        cartRepository.deleteByUser(user);
+    }
 }

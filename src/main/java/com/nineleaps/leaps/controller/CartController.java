@@ -19,7 +19,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/v1/cart")
 public class CartController {
     private final CartServiceInterface cartService;
     private final AuthenticationServiceInterface authenticationService;

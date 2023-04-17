@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.exceptions.CustomException;
+import com.nineleaps.leaps.exceptions.ProductExistInWishlist;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.repository.WishlistRepository;
@@ -20,7 +21,14 @@ public class WishlistService implements WishlistServiceInterface {
     }
 
     @Override
-    public void createWishlist(Wishlist wishlist) {
+    public void createWishlist(Wishlist wishlist) throws ProductExistInWishlist {
+        //check if the product is already present in the wishlist
+        List<Wishlist> body = readWishlist(wishlist.getUser().getId());
+        for (Wishlist itrWishlist : body) {
+            if (wishlist.getProduct().getId().equals(itrWishlist.getProduct().getId())) {
+                throw new ProductExistInWishlist("Product already exists in wishlist");
+            }
+        }
         wishlistRepository.save(wishlist);
     }
 
@@ -32,7 +40,7 @@ public class WishlistService implements WishlistServiceInterface {
     @Override
     public void removeFromWishlist(Long userId, Product product) throws CustomException {
         Wishlist wishlist = wishlistRepository.findByUserIdAndProductId(userId, product.getId());
-        if(!Helper.notNull(wishlist)) {
+        if (!Helper.notNull(wishlist)) {
             throw new CustomException("Item not found");
         }
         wishlistRepository.deleteById(wishlist.getId());

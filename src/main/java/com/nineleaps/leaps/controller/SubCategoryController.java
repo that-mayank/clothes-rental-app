@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/subcategory")
+@RequestMapping("/api/v1/subcategory")
 public class SubCategoryController {
     private final CategoryServiceInterface categoryService;
     private final SubCategoryServiceInterface subCategoryService;

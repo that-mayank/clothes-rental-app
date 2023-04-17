@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/wishlist")
+@RequestMapping("/api/v1/wishlist")
 public class WishlistController {
     private final WishlistServiceInterface wishlistService;
     private final AuthenticationServiceInterface authenticationService;
@@ -34,6 +34,7 @@ public class WishlistController {
 
     //Add product to Wishlist
     //change Product to ProductDto
+    //product id and user id required for wishlist
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addWishlist(@RequestBody Product product, @RequestParam("token") String token) {
         //check if token is valid

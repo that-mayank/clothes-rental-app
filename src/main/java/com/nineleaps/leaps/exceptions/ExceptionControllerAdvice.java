@@ -42,4 +42,9 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleUpdateFailException(UserNotExistException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = OrderNotFoundException.class)
+    public final ResponseEntity<String> handleUpdateFailException(OrderNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface SubCategoryServiceInterface {
     public void createSubCategory(SubCategoryDto subCategoryDto, Category category);
 
-    public SubCategory readSubCategory(String subcategoryName);
+    public SubCategory readSubCategory(String subcategoryName, Category category);
 
     public Optional<SubCategory> readSubCategory(Long subcategoryId);
 

@@ -36,8 +36,8 @@ public class SubCategoryController {
             return new ResponseEntity<>(new ApiResponse(false, "Parent Category is invalid"), HttpStatus.NOT_FOUND);
         }
         Category category = optionalCategory.get();
-        //check if subcategory already exists by name
-        if (Helper.notNull(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName()))) {
+        //check if subcategory already exists by name in the same category
+        if (Helper.notNull(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category))) {
             return new ResponseEntity<>(new ApiResponse(false, "Sub Category already exists"), HttpStatus.CONFLICT);
         }
         subCategoryService.createSubCategory(subCategoryDto, category);

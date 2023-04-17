@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
+import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
@@ -29,7 +30,7 @@ public class AddressController {
 
     //add
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid Address address, @RequestParam("token") String token) {
+    public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid Address address, @RequestParam("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);
         //find user
@@ -42,7 +43,7 @@ public class AddressController {
 
     //update
     @PutMapping("/update/{addressId}")
-    public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid Address address, @RequestParam("token") String token) {
+    public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid Address address, @RequestParam("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);
         //find user
@@ -64,7 +65,7 @@ public class AddressController {
 
     //listByUserId
     @GetMapping("/{token}")
-    public ResponseEntity<List<Address>> listAddress(@PathVariable("token") String token) {
+    public ResponseEntity<List<Address>> listAddress(@PathVariable("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);
         //find user
@@ -76,7 +77,7 @@ public class AddressController {
 
     //delete
     @DeleteMapping("/delete/{addressId}")
-    public ResponseEntity<ApiResponse> deleteAddress(@PathVariable("addressId") Long addressId, @RequestParam("token") String token) {
+    public ResponseEntity<ApiResponse> deleteAddress(@PathVariable("addressId") Long addressId, @RequestParam("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);
         //find user

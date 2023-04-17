@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.checkout.CheckoutItemDto;
+import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService implements OrderServiceInterface {
@@ -80,7 +82,7 @@ public class OrderService implements OrderServiceInterface {
         newOrder.setUser(user);
         orderRepository.save(newOrder);
 
-        for(CartItemDto cartItemDto: cartItemDtos) {
+        for (CartItemDto cartItemDto : cartItemDtos) {
             //create cartItem and save each
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(cartItemDto.getQuantity());
@@ -94,6 +96,33 @@ public class OrderService implements OrderServiceInterface {
         //delete cart items after placing order
         cartService.deleteUserCartItems(user);
     }
+
+    @Override
+    public List<Order> listOrders(User user) {
+//        return orderRepository.findByUser(user);
+        return orderRepository.findByUserOrderByCreateDateDesc(user);
+    }
+
+    @Override
+    public Order getOrder(Long orderId) throws OrderNotFoundException {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            return optionalOrder.get();
+        }
+        throw new OrderNotFoundException("Order not found");
+    }
+
+    @Override
+    public Order getOrder(Long orderId, User user) throws OrderNotFoundException {
+        List<Order> orders = listOrders(user);
+        for (Order order : orders) {
+            if (orderId.equals(order.getId())) {
+                return order;
+            }
+        }
+        throw new OrderNotFoundException("Order not found");
+    }
+
 
     //build each product in stripe checkout page
     private SessionCreateParams.LineItem createSessionLineItem(CheckoutItemDto checkoutItemDto) {

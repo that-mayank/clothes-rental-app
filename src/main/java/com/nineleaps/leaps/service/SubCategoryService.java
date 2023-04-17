@@ -32,8 +32,14 @@ public class SubCategoryService implements SubCategoryServiceInterface {
     }
 
     @Override
-    public SubCategory readSubCategory(String subcategoryName) {
-        return categoryRepository.findBySubcategoryName(subcategoryName);
+    public SubCategory readSubCategory(String subcategoryName, Category category) {
+        List<SubCategory> subCategories = listSubCategory(category.getId());
+        for (SubCategory subCategory : subCategories) {
+            if (subcategoryName.equals(subCategory.getSubcategoryName())) {
+                return subCategory;
+            }
+        }
+        return null;
     }
 
     private SubCategory getSubCategoryFromDto(SubCategoryDto subCategoryDto, Category category) {

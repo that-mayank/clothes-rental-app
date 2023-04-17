@@ -4,6 +4,7 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.LoginDto;
 import com.nineleaps.leaps.dto.user.LoginResponseDto;
+import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
@@ -61,4 +62,20 @@ public class UserController {
         }
         return new ResponseEntity<>(new ApiResponse(true, "Role switch to: " + user.getRole()), HttpStatus.OK);
     }
+
+    //update profile
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse> updateProfile(@RequestParam("token") String token, @RequestBody ProfileUpdateDto profileUpdateDto) throws AuthenticationFailException {
+        //authenticate token
+        authenticationService.authenticate(token);
+        //retrieve user
+        User oldUser = authenticationService.getUser(token);
+        if (!Helper.notNull(oldUser)) {
+            return new ResponseEntity<>(new ApiResponse(false, "User not found"), HttpStatus.NOT_FOUND);
+        }
+        //update the user
+        userService.updateProfile(oldUser, profileUpdateDto);
+        return new ResponseEntity<>(new ApiResponse(true, "Profile updated successfully"), HttpStatus.OK);
+    }
+    //update password method to be declared
 }

@@ -52,7 +52,7 @@ public class SubCategoryController {
 
     //list sub category by category id
     //use put mapping
-    @PutMapping("/listbyid/{categoryId}")
+    @GetMapping("/listbyid/{categoryId}")
     public ResponseEntity<List<SubCategory>> listSubCategoriesByCategoriesId(@PathVariable("categoryId") Long categoryId) {
         //check if the category id is valid
         Optional<Category> optionalCategory = categoryService.readCategory(categoryId);

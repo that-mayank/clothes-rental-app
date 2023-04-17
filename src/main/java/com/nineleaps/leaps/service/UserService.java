@@ -4,6 +4,7 @@ import com.nineleaps.leaps.config.MessageStrings;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.LoginDto;
 import com.nineleaps.leaps.dto.user.LoginResponseDto;
+import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
@@ -117,5 +118,11 @@ public class UserService implements UserServiceInterface {
         } else {
             return user;
         }
+    }
+
+    @Override
+    public void updateProfile(User oldUser, ProfileUpdateDto profileUpdateDto) {
+        User user = new User(profileUpdateDto, oldUser);
+        userRepository.save(user);
     }
 }

@@ -56,7 +56,7 @@ public class ProductController {
     }
 
     //list by subcategory id
-    @PutMapping("/listbyid/{subcategoryId}")
+    @GetMapping("/listbyid/{subcategoryId}")
     public ResponseEntity<List<Product>> listById(@PathVariable("subcategoryId") Long subcategoryId) {
         //check if subcategory is valid
         Optional<SubCategory> optionalSubCategory = subCategoryService.readSubCategory(subcategoryId);
@@ -69,7 +69,7 @@ public class ProductController {
     }
 
     //list by category id
-    @PutMapping("/listbycategoryId/{categoryId}")
+    @GetMapping("/listbycategoryId/{categoryId}")
     public ResponseEntity<List<ProductDto>> listByCategoryId(@PathVariable("categoryId") Long categoryId) {
         //check if category id is valid
         Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
@@ -82,7 +82,7 @@ public class ProductController {
     }
 
     //list by product id
-    @PutMapping("/listByProductId/{productId}")
+    @GetMapping("/listByProductId/{productId}")
     public ResponseEntity<ProductDto> listByProductId(@PathVariable("productId") Long productId) {
         //check if product id is valid
         ProductDto product = productService.listProductByid(productId);

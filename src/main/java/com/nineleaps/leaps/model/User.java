@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.model;
 
+import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.orders.Order;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Address> addresses;
 
     public User(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {
@@ -46,5 +47,15 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.role = role;
+    }
+
+    public User(ProfileUpdateDto profileUpdateDto, User oldUser) {
+        this.id = oldUser.getId();
+        this.firstName = profileUpdateDto.getFirstName();
+        this.lastName = profileUpdateDto.getLastName();
+        this.email = profileUpdateDto.getEmail();
+        this.phoneNumber = profileUpdateDto.getPhoneNumber();
+        this.password = oldUser.getPassword();
+        this.role = oldUser.getRole();
     }
 }

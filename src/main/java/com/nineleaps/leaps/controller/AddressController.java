@@ -93,7 +93,7 @@ public class AddressController {
             return new ResponseEntity<>(new ApiResponse(false, "Address do not belong to the current user"), HttpStatus.FORBIDDEN);
         }
         //delete address
-        addressService.deleteAddress(addressId);
+        addressService.deleteAddress(addressId, user);
         return new ResponseEntity<>(new ApiResponse(true, "Address deleted successfully"), HttpStatus.OK);
     }
 }

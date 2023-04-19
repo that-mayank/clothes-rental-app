@@ -28,6 +28,8 @@ public class Address {
     private String state;
     private String postalCode;
     private String country;
+    @Column(name = "default_address", nullable = false)
+    private boolean defaultAddress;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
@@ -41,6 +43,7 @@ public class Address {
         this.state = address.getState();
         this.postalCode = address.getPostalCode();
         this.country = address.getCountry();
+        this.defaultAddress = address.isDefaultAddress();
         this.user = user;
     }
 }

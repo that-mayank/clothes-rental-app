@@ -17,5 +17,5 @@ public interface AddressServiceInterface {
 
     public void updateAddress(Address address, Long addressId, User user);
 
-    public void deleteAddress(Long addressId);
+    public void deleteAddress(Long addressId, User user);
 }

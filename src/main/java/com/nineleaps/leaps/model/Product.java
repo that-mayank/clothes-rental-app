@@ -43,6 +43,10 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Cart> carts;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<RentalDate> rentalDates;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -47,6 +47,11 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<RentalDate> rentalDates;
 
+    @JsonIgnore
+    @ManyToOne()
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -57,7 +62,7 @@ public class Product {
     private @NotNull int quantity;
     private @NotNull String size;
 
-    public Product(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories) {
+    public Product(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
         this.name = productDto.getName();
         this.imageURL = productDto.getImageURL();
         this.price = productDto.getPrice();
@@ -66,5 +71,6 @@ public class Product {
         this.size = productDto.getSize();
         this.subCategories = subCategories;
         this.categories = categories;
+        this.user = user;
     }
 }

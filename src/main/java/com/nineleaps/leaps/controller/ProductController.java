@@ -2,7 +2,9 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.product.ProductDto;
+import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.service.*;
@@ -21,19 +23,30 @@ public class ProductController {
     private final ProductServiceInterface productService;
     private final SubCategoryServiceInterface subCategoryService;
     private final CategoryServiceInterface categoryService;
+    private final AuthenticationServiceInterface authenticationService;
 
     @Autowired
-    public ProductController(ProductServiceInterface productService, SubCategoryServiceInterface subCategoryService, CategoryServiceInterface categoryService) {
+    public ProductController(ProductServiceInterface productService, SubCategoryServiceInterface subCategoryService, CategoryServiceInterface categoryService, AuthenticationServiceInterface authenticationService) {
         this.productService = productService;
         this.subCategoryService = subCategoryService;
         this.categoryService = categoryService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductDto productDto) {
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductDto productDto, @RequestParam("token") String token) throws AuthenticationFailException {
+        //authenticate the token
+        authenticationService.authenticate(token);
+        //retrieve user for token
+        User user = authenticationService.getUser(token);
+        //check quantity and price should not be zero
+        if (productDto.getQuantity() == 0 || productDto.getPrice() == 0) {
+            return new ResponseEntity<>(new ApiResponse(false, "Quantity and Price cannot be zero"), HttpStatus.BAD_REQUEST);
+        }
+        //Add the product
         List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
         List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
-        productService.addProduct(productDto, subCategories, categories);
+        productService.addProduct(productDto, subCategories, categories, user);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been added"), HttpStatus.CREATED);
     }
 
@@ -43,15 +56,42 @@ public class ProductController {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
+    //list product by owner id i.e. user id
+    @GetMapping("/listownerproducts") // Api for My Rentals
+    public ResponseEntity<List<ProductDto>> listOwnerProducts(@RequestParam("token") String token) throws AuthenticationFailException{
+        authenticationService.authenticate(token);
+        User user = authenticationService.getUser(token);
+        List<ProductDto> body = productService.listOwnerProducts(user);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    @GetMapping("/listInDesc") //List products in descending order for recently added functionality in owner flow
+    public ResponseEntity<List<ProductDto>> listProductsDesc(@RequestParam("token") String token) throws AuthenticationFailException {
+        authenticationService.authenticate(token);
+        User user = authenticationService.getUser(token);
+        List<ProductDto> body = productService.listProductsDesc(user);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
     @PutMapping("/update/{productId}")
-    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody @Valid ProductDto productDto) {
+    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody @Valid ProductDto productDto, @RequestParam("token") String token) throws AuthenticationFailException {
+        //authenticate the token
+        authenticationService.authenticate(token);
+        //get user
+        User user = authenticationService.getUser(token);
+        //check quantity and price should not be zero
+        if (productDto.getQuantity() == 0 || productDto.getPrice() == 0) {
+            return new ResponseEntity<>(new ApiResponse(false, "Quantity and Price cannot be zero"), HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Product> optionalProduct = productService.readProduct(productId);
         if (!optionalProduct.isPresent()) {
             return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
         }
         List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
         List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
-        productService.updateProduct(productId, productDto, subCategories, categories);
+        //check if the product is associated with that user or not
+        productService.updateProduct(productId, productDto, subCategories, categories, user);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been updated"), HttpStatus.OK);
     }
 

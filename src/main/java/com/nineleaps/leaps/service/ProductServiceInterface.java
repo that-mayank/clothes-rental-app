@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ProductServiceInterface {
     public void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 
-    public List<ProductDto> listProducts();
+    public List<ProductDto> listProducts(int pageNumber, int pageSize);
 
     public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 

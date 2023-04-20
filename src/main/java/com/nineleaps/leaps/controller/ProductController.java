@@ -50,15 +50,15 @@ public class ProductController {
         return new ResponseEntity<>(new ApiResponse(true, "Product has been added"), HttpStatus.CREATED);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<ProductDto>> listProducts() {
-        List<ProductDto> body = productService.listProducts();
+    @GetMapping("/list") //implementing Pagination
+    public ResponseEntity<List<ProductDto>> listProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
+        List<ProductDto> body = productService.listProducts(pageNumber, pageSize);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     //list product by owner id i.e. user id
     @GetMapping("/listownerproducts") // Api for My Rentals
-    public ResponseEntity<List<ProductDto>> listOwnerProducts(@RequestParam("token") String token) throws AuthenticationFailException{
+    public ResponseEntity<List<ProductDto>> listOwnerProducts(@RequestParam("token") String token) throws AuthenticationFailException {
         authenticationService.authenticate(token);
         User user = authenticationService.getUser(token);
         List<ProductDto> body = productService.listOwnerProducts(user);

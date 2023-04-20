@@ -10,6 +10,9 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +44,12 @@ public class ProductService implements ProductServiceInterface {
         productRepository.save(product);
     }
 
-    public List<ProductDto> listProducts() {
-        List<Product> products = productRepository.findAll();
+    public List<ProductDto> listProducts(int pageNumber, int pageSize) {
+        //Pagination start
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Product> allProducts = productRepository.findAll(pageable);
+        List<Product> products = allProducts.getContent();
+        //Pagination end
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
             ProductDto productDto = getDtoFromProduct(product);

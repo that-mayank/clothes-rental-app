@@ -77,8 +77,24 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public List<Product> listProductsById(Long subcategoryId) {
-        return productRepository.findBySubCategoriesId(subcategoryId);
+    public List<ProductDto> listProductsById(Long subcategoryId) {
+        if (subcategoryId == 27) {
+            return getProductsByPriceRange(0, 2000);
+        } else if (subcategoryId == 28) {
+            return getProductsByPriceRange(2000, 5000);
+        } else if (subcategoryId == 29) {
+            return getProductsByPriceRange(5000, 10000);
+        } else if (subcategoryId == 30) {
+            return getProductsByPriceRange(10000, Long.MAX_VALUE);
+        } else {
+            List<Product> products = productRepository.findBySubCategoriesId(subcategoryId);
+            List<ProductDto> productDtos = new ArrayList<>();
+            for (Product product : products) {
+                ProductDto productDto = getDtoFromProduct(product);
+                productDtos.add(productDto);
+            }
+            return productDtos;
+        }
     }
 
     @Override
@@ -126,6 +142,17 @@ public class ProductService implements ProductServiceInterface {
         List<Product> products = productRepository.findAllByUser(user);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
+            ProductDto productDto = getDtoFromProduct(product);
+            productDtos.add(productDto);
+        }
+        return productDtos;
+    }
+
+    @Override
+    public List<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice) {
+        List<Product> body = productRepository.findProductByPriceRange(minPrice, maxPrice);
+        List<ProductDto> productDtos = new ArrayList<>();
+        for (Product product : body) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }

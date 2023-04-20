@@ -18,7 +18,7 @@ public interface ProductServiceInterface {
 
     public Optional<Product> readProduct(Long productId);
 
-    public List<Product> listProductsById(Long subcategoryId);
+    public List<ProductDto> listProductsById(Long subcategoryId);
 
     public List<ProductDto> listProductsByCategoryId(Long categoryId);
 
@@ -29,4 +29,6 @@ public interface ProductServiceInterface {
     public List<ProductDto> listProductsDesc(User user);
 
     public List<ProductDto> listOwnerProducts(User user);
+
+    public List<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice);
 }

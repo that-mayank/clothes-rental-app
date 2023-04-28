@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -32,12 +33,18 @@ public class OrderItem {
     @OneToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
+    @Column(name = "rental_start_date")
+    private @NotNull LocalDateTime rentalStartDate;
+    @Column(name = "rental_end_date")
+    private @NotNull LocalDateTime rentalEndDate;
 
-    public OrderItem(@NotNull int quantity,@NotNull double price, Order order,@NotNull Product product) {
+    public OrderItem(@NotNull int quantity, @NotNull double price, Order order, @NotNull Product product, @NotNull LocalDateTime rentalStartDate, @NotNull LocalDateTime rentalEndDate) {
         this.quantity = quantity;
         this.price = price;
         this.order = order;
         this.product = product;
         this.createdDate = new Date();
+        this.rentalStartDate = rentalStartDate;
+        this.rentalEndDate = rentalEndDate;
     }
 }

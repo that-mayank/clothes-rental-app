@@ -1,15 +1,13 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
-import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
+import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

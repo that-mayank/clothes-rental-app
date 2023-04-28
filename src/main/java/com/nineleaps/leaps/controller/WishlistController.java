@@ -6,9 +6,10 @@ import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.service.AuthenticationServiceInterface;
-import com.nineleaps.leaps.service.ProductService;
+import com.nineleaps.leaps.service.implementation.ProductService;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/wishlist")
+@RequiredArgsConstructor
 public class WishlistController {
     private final WishlistServiceInterface wishlistService;
     private final AuthenticationServiceInterface authenticationService;
     private final ProductServiceInterface productService;
 
-    @Autowired
-    public WishlistController(WishlistServiceInterface wishlistService, AuthenticationServiceInterface authenticationService, ProductServiceInterface productService) {
-        this.wishlistService = wishlistService;
-        this.authenticationService = authenticationService;
-        this.productService = productService;
-    }
 
     //Add product to Wishlist
     //change Product to ProductDto

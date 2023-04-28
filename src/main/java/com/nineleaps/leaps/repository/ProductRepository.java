@@ -23,4 +23,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("select product from Product product where product.price between :minPrice and :maxPrice")
     List<Product> findProductByPriceRange(@Param("minPrice") double minPrice, @Param("maxPrice") double maxPrice);
+
+//    Product findByUserIdAAndId(Long userId, Long productId);
+
+    @Query("select product from Product product where product.name like %:query% or product.size like %:query% or product.description like %:query%")
+    List<Product> searchProducts(String query);
 }

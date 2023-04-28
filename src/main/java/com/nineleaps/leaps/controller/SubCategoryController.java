@@ -7,7 +7,7 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +19,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/subcategory")
+@RequiredArgsConstructor
 public class SubCategoryController {
     private final CategoryServiceInterface categoryService;
     private final SubCategoryServiceInterface subCategoryService;
 
-    @Autowired
-    public SubCategoryController(CategoryServiceInterface categoryService, SubCategoryServiceInterface subCategoryService) {
-        this.categoryService = categoryService;
-        this.subCategoryService = subCategoryService;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createSubCategory(@Valid @RequestBody SubCategoryDto subCategoryDto) {

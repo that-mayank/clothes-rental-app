@@ -1,8 +1,9 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.AddressRepository;
+import com.nineleaps.leaps.service.AddressServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,4 +88,5 @@ public class AddressService implements AddressServiceInterface {
         }
         addressRepository.deleteById(addressId);
     }
+
 }

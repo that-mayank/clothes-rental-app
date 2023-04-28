@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
@@ -9,8 +9,9 @@ import com.nineleaps.leaps.model.Cart;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.CartRepository;
+import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,13 +19,9 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CartService implements CartServiceInterface {
     private final CartRepository cartRepository;
-
-    @Autowired
-    public CartService(CartRepository cartRepository) {
-        this.cartRepository = cartRepository;
-    }
 
     private static CartItemDto getDtoFromCart(Cart cart) {
         return new CartItemDto(cart);
@@ -36,7 +33,8 @@ public class CartService implements CartServiceInterface {
         if (Helper.notNull(cartItem)) {
             throw new CartItemAlreadyExistException("Product is already in the Cart: " + product.getId());
         }
-        Cart cart = new Cart(product, user, addToCartDto.getQuantity());
+
+        Cart cart = new Cart(product, user, addToCartDto.getQuantity(), addToCartDto.getRentalStartDate(), addToCartDto.getRentalEndDate());
         cartRepository.save(cart);
     }
 
@@ -61,12 +59,17 @@ public class CartService implements CartServiceInterface {
         if (!Helper.notNull(cartItem)) {
             throw new CartItemNotExistException("Cart Item is invalid: " + addToCartDto.getProductId());
         }
+        //if quantity is zero delete cart item
         if (addToCartDto.getQuantity() == 0) {
+            //delete cart item
             deleteCartItem(addToCartDto.getProductId(), user);
             return;
         }
+        //update cart item
         cartItem.setQuantity(addToCartDto.getQuantity());
         cartItem.setCreateDate(new Date());
+        cartItem.setRentalStartDate(addToCartDto.getRentalStartDate());
+        cartItem.setRentalEndDate(addToCartDto.getRentalEndDate());
         cartRepository.save(cartItem);
     }
 
@@ -76,6 +79,7 @@ public class CartService implements CartServiceInterface {
         if (!Helper.notNull(cartItem)) {
             throw new CartItemNotExistException("Cart Item is invalid: " + productId);
         }
+        //delete cart item
         cartRepository.deleteById(cartItem.getId());
     }
 

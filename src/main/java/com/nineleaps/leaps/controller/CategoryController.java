@@ -2,31 +2,23 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.CategoryDto;
-import com.nineleaps.leaps.dto.category.SubCategoryDto;
 import com.nineleaps.leaps.model.categories.Category;
-import com.nineleaps.leaps.service.CategoryService;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
-import com.nineleaps.leaps.service.SubCategoryService;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/category")
+@RequiredArgsConstructor
 public class CategoryController {
     //Linking Service layer using constructor injection
     private final CategoryServiceInterface categoryService;
-
-    @Autowired
-    public CategoryController(CategoryServiceInterface categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody CategoryDto categoryDto) {

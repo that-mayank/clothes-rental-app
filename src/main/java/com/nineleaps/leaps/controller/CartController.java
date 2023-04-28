@@ -10,7 +10,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +20,11 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/cart")
+@RequiredArgsConstructor
 public class CartController {
     private final CartServiceInterface cartService;
     private final AuthenticationServiceInterface authenticationService;
     private final ProductServiceInterface productService;
-
-    @Autowired
-    public CartController(CartServiceInterface cartService, AuthenticationServiceInterface authenticationService, ProductServiceInterface productService) {
-        this.cartService = cartService;
-        this.authenticationService = authenticationService;
-        this.productService = productService;
-    }
 
     //Add to cart
     @PostMapping("/add") //change the code accordingly so that duplicate items cannot be added *Done*

@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.config.MessageStrings;
 import com.nineleaps.leaps.dto.ResponseDto;
@@ -13,6 +13,7 @@ import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.model.AuthenticationToken;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
+import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

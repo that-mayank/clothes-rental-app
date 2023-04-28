@@ -1,10 +1,11 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.config.MessageStrings;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.AuthenticationToken;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.TokenRepository;
+import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

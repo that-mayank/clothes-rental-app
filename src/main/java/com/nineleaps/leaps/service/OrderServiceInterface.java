@@ -15,7 +15,5 @@ public interface OrderServiceInterface {
 
     public List<Order> listOrders(User user);
 
-    public Order getOrder(Long orderId);
-
     public Order getOrder(Long orderId, User user);
 }

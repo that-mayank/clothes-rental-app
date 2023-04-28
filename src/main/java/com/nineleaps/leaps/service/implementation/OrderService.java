@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
@@ -9,6 +9,8 @@ import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.repository.OrderRepository;
+import com.nineleaps.leaps.service.CartServiceInterface;
+import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -17,12 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 public class OrderService implements OrderServiceInterface {
     private final CartServiceInterface cartService;
     private final OrderRepository orderRepository;
@@ -84,13 +87,7 @@ public class OrderService implements OrderServiceInterface {
 
         for (CartItemDto cartItemDto : cartItemDtos) {
             //create cartItem and save each
-            OrderItem orderItem = new OrderItem();
-            orderItem.setQuantity(cartItemDto.getQuantity());
-            orderItem.setPrice(cartItemDto.getProduct().getPrice());
-            orderItem.setCreatedDate(new Date());
-            orderItem.setProduct(cartItemDto.getProduct());
-            orderItem.setOrder(newOrder);
-            //add to orderItem table
+            OrderItem orderItem = new OrderItem(cartItemDto.getQuantity(), cartItemDto.getProduct().getPrice(), newOrder, cartItemDto.getProduct(), cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
             orderItemRepository.save(orderItem);
         }
         //delete cart items after placing order
@@ -99,17 +96,7 @@ public class OrderService implements OrderServiceInterface {
 
     @Override
     public List<Order> listOrders(User user) {
-//        return orderRepository.findByUser(user);
         return orderRepository.findByUserOrderByCreateDateDesc(user);
-    }
-
-    @Override
-    public Order getOrder(Long orderId) throws OrderNotFoundException {
-        Optional<Order> optionalOrder = orderRepository.findById(orderId);
-        if (optionalOrder.isPresent()) {
-            return optionalOrder.get();
-        }
-        throw new OrderNotFoundException("Order not found");
     }
 
     @Override

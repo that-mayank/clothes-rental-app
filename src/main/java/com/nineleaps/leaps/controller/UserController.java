@@ -15,22 +15,18 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@RequiredArgsConstructor
 public class UserController {
     private final UserServiceInterface userService;
     private final AuthenticationServiceInterface authenticationService;
 
-    @Autowired
-    public UserController(UserServiceInterface userService, AuthenticationServiceInterface authenticationService) {
-        this.userService = userService;
-        this.authenticationService = authenticationService;
-    }
 
     @PostMapping("/signup")
     public ResponseDto signup(@RequestBody SignupDto signupDto) throws CustomException {

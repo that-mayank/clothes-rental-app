@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -27,11 +28,15 @@ public class Cart {
     @JsonIgnore
     private User user;
     private int quantity;
+    private LocalDateTime rentalStartDate;
+    private LocalDateTime rentalEndDate;
 
-    public Cart(Product product, User user, int quantity) {
+    public Cart(Product product, User user, int quantity, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate) {
         this.createDate = new Date();
         this.product = product;
         this.user = user;
         this.quantity = quantity;
+        this.rentalStartDate = rentalStartDate;
+        this.rentalEndDate = rentalEndDate;
     }
 }

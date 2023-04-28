@@ -16,12 +16,15 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ProductDto {
     private Long id;
+    private @NotNull String brand;
     private @NotNull String name;
     private @NotNull String imageURL;
     private @NotNull double price;
     private @NotNull String description;
     private @NotNull int quantity;
     private @NotNull String size;
+    private @NotNull String color;
+    private @NotNull String material;
     private @NotNull List<Long> subcategoryIds;
     private @NotNull List<Long> categoryIds;
 
@@ -33,9 +36,10 @@ public class ProductDto {
         this.setPrice(product.getPrice());
         this.setQuantity(product.getQuantity());
         this.setSize(product.getSize());
-
+        this.setBrand(product.getBrand());
+        this.setColor(product.getColor());
+        this.setMaterial(product.getMaterial());
         this.setSubcategoryIds(product.getSubCategories().stream().map(SubCategory::getId).collect(Collectors.toList()));
-
         this.setCategoryIds(product.getCategories().stream().map(Category::getId).collect(Collectors.toList()));
     }
 }

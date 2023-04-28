@@ -1,10 +1,11 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.ProductExistInWishlist;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.repository.WishlistRepository;
+import com.nineleaps.leaps.service.WishlistServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -10,6 +10,7 @@ import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/order")
+@RequiredArgsConstructor
 public class OrderController {
     private final AuthenticationServiceInterface authenticationService;
     private final OrderServiceInterface orderService;
-
-    public OrderController(AuthenticationServiceInterface authenticationService, OrderServiceInterface orderService) {
-        this.authenticationService = authenticationService;
-        this.orderService = orderService;
-    }
 
     //stripe create session api
     @PostMapping("/create-checkout-session")
@@ -51,7 +48,7 @@ public class OrderController {
 
     //get all orders
     @GetMapping("/list")
-    public ResponseEntity<List<Order>> getAllOrders(@RequestParam("token") String token, @RequestParam("sessionId") String sessionId) throws AuthenticationFailException {
+    public ResponseEntity<List<Order>> getAllOrders(@RequestParam("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);
         //retrieve user
@@ -62,7 +59,7 @@ public class OrderController {
     }
 
     //get orderitems for an order
-    @GetMapping("/{orderId}")
+    @GetMapping("/getOrderById/{orderId}")
     public ResponseEntity<Object> getOrderById(@PathVariable("orderId") Long orderId, @RequestParam("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);
@@ -70,7 +67,6 @@ public class OrderController {
         User user = authenticationService.getUser(token);
         //check if the order belong to current user
         Order order = orderService.getOrder(orderId, user);
-//        Order order = orderService.getOrder(orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
 
     }

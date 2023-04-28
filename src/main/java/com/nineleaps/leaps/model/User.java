@@ -40,9 +40,6 @@ public class User implements Serializable {
     private List<Address> addresses;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<RentalDate> rentalDates;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> products;
 
     public User(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {

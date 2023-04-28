@@ -7,7 +7,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
 import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +18,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/address")
+@RequiredArgsConstructor
 public class AddressController {
+
     private final AddressServiceInterface addressService;
     private final AuthenticationServiceInterface authenticationService;
-
-    @Autowired
-    public AddressController(AddressServiceInterface addressService, AuthenticationServiceInterface authenticationService) {
-        this.addressService = addressService;
-        this.authenticationService = authenticationService;
-    }
 
     //add
     @PostMapping("/add")
@@ -38,7 +34,6 @@ public class AddressController {
         //Add address
         addressService.addAddress(address, user);
         return new ResponseEntity<>(new ApiResponse(true, "Address added successfully"), HttpStatus.CREATED);
-
     }
 
     //update
@@ -64,7 +59,7 @@ public class AddressController {
     }
 
     //listByUserId
-    @GetMapping("/{token}")
+    @GetMapping("/list/{token}")
     public ResponseEntity<List<Address>> listAddress(@PathVariable("token") String token) throws AuthenticationFailException {
         //authenticate token
         authenticationService.authenticate(token);

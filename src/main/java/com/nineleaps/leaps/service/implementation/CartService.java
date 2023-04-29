@@ -14,6 +14,7 @@ import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +49,15 @@ public class CartService implements CartServiceInterface {
         }
         double totalCost = 0;
         for (CartItemDto cartItemDto : cartItems) {
-            totalCost += (cartItemDto.getProduct().getPrice() * cartItemDto.getQuantity());
+            long numberOfHours = 0;
+            if (Helper.notNull(cartItemDto.getRentalStartDate()) & Helper.notNull(cartItemDto.getRentalEndDate())) {
+                numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
+                if (numberOfHours == 0) {
+                    numberOfHours = 1;
+                } // if hours is 0, the atleast one hour price will be deduced
+            }
+            double perHourRent = cartItemDto.getProduct().getPrice() / 24;
+            totalCost += (perHourRent * cartItemDto.getQuantity() * numberOfHours);
         }
         return new CartDto(cartItems, totalCost);
     }

@@ -3,14 +3,16 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
+import com.nineleaps.leaps.model.products.ProductUrl;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.repository.ProductUrlRepository;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +24,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService implements ProductServiceInterface {
     private final ProductRepository productRepository;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductUrlRepository productUrlRepository;
 
     public static ProductDto getDtoFromProduct(Product product) {
         return new ProductDto(product);
@@ -43,6 +42,8 @@ public class ProductService implements ProductServiceInterface {
     public void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
         Product product = getProductFromDto(productDto, subCategories, categories, user);
         productRepository.save(product);
+        //setting image url
+        setImageUrl(product, productDto);
     }
 
     public List<ProductDto> listProducts(int pageNumber, int pageSize) {
@@ -68,7 +69,8 @@ public class ProductService implements ProductServiceInterface {
         Product product = getProductFromDto(productDto, subCategories, categories, user);
         if (Helper.notNull(product)) {
             product.setId(productId);
-            productRepository.save(product);
+            //setting image url
+            setImageUrl(product, productDto);
         }
     }
 
@@ -169,6 +171,19 @@ public class ProductService implements ProductServiceInterface {
             productDtos.add(productDto);
         }
         return productDtos;
+    }
+
+    private void setImageUrl(Product product, ProductDto productDto) {
+        //setting image url
+        List<ProductUrl> productUrls = new ArrayList<>();
+        for (String imageurl : productDto.getImageURL()) {
+            ProductUrl productUrl = new ProductUrl();
+            productUrl.setProduct(product);
+            productUrl.setUrl(imageurl);
+            productUrls.add(productUrl);
+        }
+        product.setImageURL(productUrls);
+        productRepository.save(product);
     }
 
 }

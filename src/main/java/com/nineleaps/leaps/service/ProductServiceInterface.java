@@ -1,7 +1,7 @@
 package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;

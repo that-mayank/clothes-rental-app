@@ -6,7 +6,7 @@ import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.exceptions.CartItemAlreadyExistException;
 import com.nineleaps.leaps.exceptions.CartItemNotExistException;
 import com.nineleaps.leaps.model.Cart;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.CartRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;

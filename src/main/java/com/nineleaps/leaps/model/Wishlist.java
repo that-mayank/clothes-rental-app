@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.model;
 
-import lombok.AllArgsConstructor;
+import com.nineleaps.leaps.model.products.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -2,7 +2,7 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.ProductExistInWishlist;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.repository.WishlistRepository;
 import com.nineleaps.leaps.service.WishlistServiceInterface;

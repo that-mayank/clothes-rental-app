@@ -5,7 +5,7 @@ import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AuthenticationServiceInterface;
 import com.nineleaps.leaps.service.CartServiceInterface;

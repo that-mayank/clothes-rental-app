@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.service;
 
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.Wishlist;
 
 import java.util.List;

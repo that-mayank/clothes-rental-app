@@ -2,7 +2,7 @@ package com.nineleaps.leaps.model.categories;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.products.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

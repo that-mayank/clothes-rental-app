@@ -52,4 +52,9 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleUpdateFailException(ProductExistInWishlist exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = ProfileImageNotExistException.class)
+    public final ResponseEntity<String> handleUpdateFailException(ProfileImageNotExistException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

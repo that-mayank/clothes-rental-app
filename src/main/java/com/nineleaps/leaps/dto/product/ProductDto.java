@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
-import com.nineleaps.leaps.model.products.ProductUrl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -18,10 +18,16 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class ProductDto {
+
+//    //after adding @Component the ngrokUrl is not accessible from application.properties
+    @JsonIgnore
+    @Value("${ngrok_url}")
+    private String ngrokUrl;
+
     private Long id;
     private @NotNull String brand;
     private @NotNull String name;
-    private @NotNull List<String> imageURL;
+    private @NotNull List<String> imageUrl;
     private @NotNull double price;
     private @NotNull String description;
     private @NotNull int quantity;
@@ -33,12 +39,11 @@ public class ProductDto {
     private @NotNull LocalDateTime listingStartDate;
     private @NotNull LocalDateTime listingEndDate;
     private @NotNull double securityDeposit;
-    //change single imageURL to List<imageURL> //this change need to be reflected in production backend
 
     public ProductDto(Product product) {
         this.setId(product.getId());
         this.setName(product.getName());
-        this.setImageURL(product.getImageURL().stream().map(ProductUrl::getUrl).collect(Collectors.toList()));
+        this.setImageUrl(product.getImageURL().stream().map(productUrl -> getNgrokUrl() + productUrl.getUrl()).collect(Collectors.toList()));
         this.setDescription(product.getDescription());
         this.setPrice(product.getPrice());
         this.setQuantity(product.getQuantity());

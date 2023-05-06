@@ -6,7 +6,6 @@ import com.nineleaps.leaps.model.products.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.service.AuthenticationServiceInterface;
-import com.nineleaps.leaps.service.implementation.ProductService;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -30,24 +29,33 @@ public class WishlistController {
     //Add product to Wishlist
     //change Product to ProductDto
     //product id and user id required for wishlist
+    //instead of product use product id
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addWishlist(@RequestBody Product product, @RequestParam("token") String token) {
+    public ResponseEntity<ApiResponse> addWishlist(@RequestParam Long productId, @RequestParam("token") String token) {
         //check if token is valid
         authenticationService.authenticate(token);
         //get the user
         User user = authenticationService.getUser(token);
         //check if product is valid
-        Optional<Product> optionalProduct = productService.readProduct(product.getId());
+        Optional<Product> optionalProduct = productService.readProduct(productId);
         if (!optionalProduct.isPresent()) {
             return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
         }
+        //Creating wishlist object
+        Wishlist wishlist = new Wishlist(optionalProduct.get(), user);
+        //Check if the product is already there in wishlist
+        List<Wishlist> wishlists = wishlistService.readWishlist(user.getId());
+        for (Wishlist itr : wishlists) {
+            if (itr.equals(wishlist)) {
+                return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
+            }
+        }
         //add to wishlist
-        Wishlist wishlist = new Wishlist(product, user);
         wishlistService.createWishlist(wishlist);
         return new ResponseEntity<>(new ApiResponse(true, "Add to wishlist"), HttpStatus.CREATED);
     }
 
-    //Get all items of Wishlist
+    //Get all items of Wishlist for particular user
     @GetMapping("/{token}")
     public ResponseEntity<List<ProductDto>> getWishlist(@PathVariable("token") String token) {
         //check if token is valid
@@ -58,20 +66,25 @@ public class WishlistController {
         List<Wishlist> body = wishlistService.readWishlist(userId);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Wishlist wishlist : body) {
-            productDtos.add(ProductService.getDtoFromProduct(wishlist.getProduct()));
+            productDtos.add(productService.getDtoFromProduct(wishlist.getProduct()));
         }
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
 
     //Remove items from wishlist
     @DeleteMapping("/remove/{token}")
-    public ResponseEntity<ApiResponse> removeFromWishlist(@PathVariable("token") String token, @RequestBody Product product) {
+    public ResponseEntity<ApiResponse> removeFromWishlist(@PathVariable("token") String token, @RequestParam Long productId) {
         //verify token
         authenticationService.authenticate(token);
         //get user using token
         Long userId = authenticationService.getUser(token).getId();
+        //check if product is valid or not
+        Optional<Product> optionalProduct = productService.readProduct(productId);
+        if (optionalProduct.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
+        }
         //remove the required item from wishlist
-        wishlistService.removeFromWishlist(userId, product);
+        wishlistService.removeFromWishlist(userId, optionalProduct.get());
         return new ResponseEntity<>(new ApiResponse(true, "Product removed successfully"), HttpStatus.OK);
     }
 }

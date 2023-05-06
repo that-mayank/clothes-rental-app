@@ -37,8 +37,10 @@ public class OrderItem {
     private @NotNull LocalDateTime rentalStartDate;
     @Column(name = "rental_end_date")
     private @NotNull LocalDateTime rentalEndDate;
+    @Column(name = "image_url")
+    private @NotNull String imageUrl;
 
-    public OrderItem(@NotNull int quantity, @NotNull double price, Order order, @NotNull Product product, @NotNull LocalDateTime rentalStartDate, @NotNull LocalDateTime rentalEndDate) {
+    public OrderItem(@NotNull int quantity, @NotNull double price, Order order, @NotNull Product product, @NotNull LocalDateTime rentalStartDate, @NotNull LocalDateTime rentalEndDate, @NotNull String imageUrl) {
         this.quantity = quantity;
         this.price = price;
         this.order = order;
@@ -46,5 +48,6 @@ public class OrderItem {
         this.createdDate = new Date();
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
+        this.imageUrl = imageUrl;
     }
 }

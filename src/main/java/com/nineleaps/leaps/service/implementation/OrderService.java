@@ -87,7 +87,7 @@ public class OrderService implements OrderServiceInterface {
 
         for (CartItemDto cartItemDto : cartItemDtos) {
             //create cartItem and save each
-            OrderItem orderItem = new OrderItem(cartItemDto.getQuantity(), cartItemDto.getProduct().getPrice(), newOrder, cartItemDto.getProduct(), cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
+            OrderItem orderItem = new OrderItem(cartItemDto.getQuantity(), cartItemDto.getProduct().getPrice(), newOrder, cartItemDto.getProduct(), cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate(), cartItemDto.getImageUrl());
             orderItemRepository.save(orderItem);
         }
         //delete cart items after placing order

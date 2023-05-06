@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ProductServiceInterface {
     void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 
-    List<ProductDto> listProducts(int pageNumber, int pageSize);
+    List<ProductDto> listProducts(int pageNumber, int pageSize, User user);
 
     void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 
@@ -33,4 +33,8 @@ public interface ProductServiceInterface {
     List<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice);
 
     List<ProductDto> searchProducts(String query);
+
+    ProductDto getDtoFromProduct(Product product);
+
+    List<ProductDto> filterProducts(String size, String brand, Long subcategoryId, double minPrice, double maxPrice);
 }

@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "users")
 @DiscriminatorValue(value = "guest")
 @Getter
 @Setter

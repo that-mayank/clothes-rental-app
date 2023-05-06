@@ -40,7 +40,7 @@ public class UserController {
 
     @PostMapping("/switch")
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, @RequestParam(required = false) String token) throws AuthenticationFailException, UserNotExistException {
-        User user = null;
+        User user;
         if (profile == Role.guest) {
             user = userService.getGuest();
             if (!Helper.notNull(user)) {
@@ -74,4 +74,39 @@ public class UserController {
         return new ResponseEntity<>(new ApiResponse(true, "Profile updated successfully"), HttpStatus.OK);
     }
     //update password method to be declared
+
+    //profile picture update api
+    @PostMapping("/updateProfilePicture")
+    public ResponseEntity<ApiResponse> profileImage(@RequestParam("token") String token, @RequestParam("profileImageUrl") String profileImageUrl) throws AuthenticationFailException {
+        authenticationService.authenticate(token);
+        //check if user is valid or not
+        User user = authenticationService.getUser(token);
+        if (!Helper.notNull(user)) {
+            return new ResponseEntity<>(new ApiResponse(false, "User is invalid"), HttpStatus.NOT_FOUND);
+        }
+        //check if image url is not null
+        if (!Helper.notNull(profileImageUrl)) {
+            return new ResponseEntity<>(new ApiResponse(false, "Profile image url is empty."), HttpStatus.BAD_REQUEST);
+        }
+        userService.updateProfileImage(profileImageUrl, user);
+        return new ResponseEntity<>(new ApiResponse(true, "Profile picture has been updated."), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/getUser")
+    public ResponseEntity<User> getUser(@RequestParam("token") String token) throws AuthenticationFailException {
+        authenticationService.authenticate(token);
+        User user = authenticationService.getUser(token);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteProfilePicture")
+    public ResponseEntity<ApiResponse> deleteProfileImage(@RequestParam("token") String token) throws AuthenticationFailException {
+        authenticationService.authenticate(token);
+        User user = authenticationService.getUser(token);
+        if (!Helper.notNull(user)) {
+            return new ResponseEntity<>(new ApiResponse(false, "User is invalid!"), HttpStatus.NOT_FOUND);
+        }
+        userService.deleteProfileImage(user);
+        return new ResponseEntity<>(new ApiResponse(true, "Profile picture deleted successfully."), HttpStatus.OK);
+    }
 }

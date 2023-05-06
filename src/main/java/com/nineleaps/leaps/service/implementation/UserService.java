@@ -10,14 +10,16 @@ import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.CustomException;
+import com.nineleaps.leaps.exceptions.ProfileImageNotExistException;
 import com.nineleaps.leaps.model.AuthenticationToken;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -26,16 +28,14 @@ import java.security.NoSuchAlgorithmException;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
-    public UserService(UserRepository userRepository, AuthenticationService authenticationService) {
-        this.userRepository = userRepository;
-        this.authenticationService = authenticationService;
-    }
+    @Value("${ngrok_url}")
+    private String ngrokUrl;
 
     @Override
     public ResponseDto signUp(SignupDto signupDto) throws CustomException {
@@ -124,6 +124,28 @@ public class UserService implements UserServiceInterface {
     @Override
     public void updateProfile(User oldUser, ProfileUpdateDto profileUpdateDto) {
         User user = new User(profileUpdateDto, oldUser);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateProfileImage(String profileImageUrl, User user) {
+        //if url does not contain ngrok url, directly save it
+        String imageUrl = profileImageUrl;
+        //remove ngrok link
+        if (profileImageUrl.contains(ngrokUrl)) {
+            imageUrl = profileImageUrl.substring(ngrokUrl.length());
+        }
+        user.setProfileImageUrl(imageUrl);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteProfileImage(User user) throws ProfileImageNotExistException {
+        //check if Profile is picture is present in user or not
+        if (!Helper.notNull(user.getProfileImageUrl())) {
+            throw new ProfileImageNotExistException("Profile image does not exist");
+        }
+        user.setProfileImageUrl(null);
         userRepository.save(user);
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @RestController
@@ -45,8 +46,12 @@ public class ProductController {
     }
 
     @GetMapping("/list") //implementing Pagination **DONE
-    public ResponseEntity<List<ProductDto>> listProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
-        List<ProductDto> body = productService.listProducts(pageNumber, pageSize);
+    public ResponseEntity<List<ProductDto>> listProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize, @RequestParam("token") String token) throws AuthenticationFailException {
+        //check if token is valid
+        authenticationService.authenticate(token);
+        //Retrieving the user
+        User user = authenticationService.getUser(token);
+        List<ProductDto> body = productService.listProducts(pageNumber, pageSize, user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
@@ -117,13 +122,9 @@ public class ProductController {
 
     //list by product id
     @GetMapping("/listByProductId/{productId}")
-    public ResponseEntity<ProductDto> listByProductId(@PathVariable("productId") Long productId) {
+    public ResponseEntity<ProductDto> listByProductId(@RequestParam("productId") Long productId) {
         //check if product id is valid
         ProductDto product = productService.listProductByid(productId);
-        if (!Helper.notNull(product)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        //fetch the product details
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
@@ -138,6 +139,15 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam("query") String query) {
         List<ProductDto> body = productService.searchProducts(query);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    @GetMapping("/filterProducts")
+    public ResponseEntity<List<ProductDto>> filterProducts(@RequestParam("size") String size, @RequestParam("brand") String brand, @RequestParam("subcategoryId") Long subcategoryId, @RequestParam("minPrice") double minPrice, @RequestParam("maxPrice") double maxPrice) {
+        List<ProductDto> body = productService.filterProducts(size, brand, subcategoryId, minPrice, maxPrice);
+        if (body.isEmpty()) { // isEmpty is used to check if the list is empty or not
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }

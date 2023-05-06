@@ -2,6 +2,7 @@ package com.nineleaps.leaps.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.model.products.Product;
+import com.nineleaps.leaps.model.products.ProductUrl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "cart")
@@ -31,6 +34,7 @@ public class Cart {
     private int quantity;
     private LocalDateTime rentalStartDate;
     private LocalDateTime rentalEndDate;
+    private String imageUrl;
 
     public Cart(Product product, User user, int quantity, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate) {
         this.createDate = new Date();
@@ -39,5 +43,6 @@ public class Cart {
         this.quantity = quantity;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
+        this.imageUrl = product.getImageURL().get(0).getUrl();
     }
 }

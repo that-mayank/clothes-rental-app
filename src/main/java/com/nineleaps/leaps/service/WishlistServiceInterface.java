@@ -10,6 +10,5 @@ public interface WishlistServiceInterface {
 
     List<Wishlist> readWishlist(Long userId);
 
-
     public void removeFromWishlist(Long userId, Product product);
 }

@@ -293,6 +293,26 @@ public class OrderServiceImpl implements OrderServiceInterface {
         return result;
     }
 
+    @Override
+    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(User user, LocalDateTime startDate, LocalDateTime endDate) {
+        Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
+        for (Order order : orderRepository.findAll()) {
+            for (OrderItem orderItem : order.getOrderItems()) {
+                if (orderItem.getProduct().getUser().equals(user) && orderItem.getRentalStartDate().isAfter(startDate) && orderItem.getRentalEndDate().isBefore(endDate)) {
+                    LocalDateTime rentalStartDate = orderItem.getRentalStartDate();
+                    YearMonth month = YearMonth.from(rentalStartDate);
+                    // Retrieve the list of order items for the current month
+                    List<OrderReceivedDto> monthOrderItems = orderedItemsByMonth.getOrDefault(month, new ArrayList<>());
+                    // Add the current order item to the list
+                    monthOrderItems.add(new OrderReceivedDto(orderItem));
+                    // Update the map with the updated list of order items
+                    orderedItemsByMonth.put(month, monthOrderItems);
+                }
+            }
+        }
+        return orderedItemsByMonth;
+    }
+
 
     @Override
     public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user) {

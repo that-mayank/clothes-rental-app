@@ -11,6 +11,7 @@ import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
 
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
@@ -44,4 +45,6 @@ public interface OrderServiceInterface {
     Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(User user);
 
     Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(User user);
+
+    Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(User user, LocalDateTime startDate, LocalDateTime endDate);
 }

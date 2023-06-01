@@ -22,6 +22,7 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private @NotNull String name;
     @Column(name = "quantity")
     private @NotNull int quantity;
     @Column(name = "price")
@@ -39,5 +40,6 @@ public class OrderItem {
     private @NotNull LocalDateTime rentalEndDate;
     private String imageUrl;
     private String status;
+    private @NotNull double securityDeposit;
 
 }

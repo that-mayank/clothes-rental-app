@@ -4,12 +4,15 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.common.ApiResponse;
+import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
+import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
+import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
@@ -39,7 +42,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @AllArgsConstructor
 @Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
 public class OrderController {
-
     private final OrderServiceInterface orderService;
     private final Helper helper;
 
@@ -60,13 +62,13 @@ public class OrderController {
     //get all orders
     @ApiOperation(value = "List all the orders for a particular user")
     @GetMapping("/list")
-    public ResponseEntity<List<Order>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
         //authenticate token
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
         //get orders
-        List<Order> orders = orderService.listOrders(user);
+        List<OrderDto> orders = orderService.listOrders(user);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
@@ -86,35 +88,44 @@ public class OrderController {
 
     //Dummy  apis for transit, delivered, pickup and return
     @PostMapping("/orderInTransit")
-    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
-        //check if order belong to current user
-        Order order = orderService.getOrder(orderId, user);
-//        orderService.orderInTransit(order, "IN TRANSIT");
+        //check if order item belong to current user
+        OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
+        if (!Helper.notNull(orderItem)) {
+            return new ResponseEntity<>(new ApiResponse(false, "OrderItem does not belong to current user"), HttpStatus.FORBIDDEN);
+        }
+        orderService.orderStatus(orderItem, "IN TRANSIT");
         return new ResponseEntity<>(new ApiResponse(true, "Order is in transit"), HttpStatus.OK);
     }
 
     @PostMapping("/orderDelivered")
-    public ResponseEntity<ApiResponse> orderDelivered(@RequestParam("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> orderDelivered(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
         //check if order belong to current user
-        Order order = orderService.getOrder(orderId, user);
-//        orderService.orderInTransit(order, "DELIVERED");
+        OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
+        if (!Helper.notNull(orderItem)) {
+            return new ResponseEntity<>(new ApiResponse(false, "OrderItem does not belong to current user"), HttpStatus.FORBIDDEN);
+        }
+        orderService.orderStatus(orderItem, "DELIVERED");
         return new ResponseEntity<>(new ApiResponse(true, "Order delivered"), HttpStatus.OK);
     }
 
     @PostMapping("/orderPickup")
-    public ResponseEntity<ApiResponse> orderPickup(@RequestParam("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> orderPickup(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
         //check if order belong to current user
-        Order order = orderService.getOrder(orderId, user);
-//        orderService.orderInTransit(order, "ORDER PICKED UP");
+        OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
+        if (!Helper.notNull(orderItem)) {
+            return new ResponseEntity<>(new ApiResponse(false, "OrderItem does not belong to current user"), HttpStatus.FORBIDDEN);
+        }
+        orderService.orderStatus(orderItem, "PICKED UP");
         return new ResponseEntity<>(new ApiResponse(true, "Order is picked up"), HttpStatus.OK);
     }
 
@@ -153,11 +164,11 @@ public class OrderController {
     }
 
     @GetMapping("/dashboardOrderItems")
-    public ResponseEntity<Map<YearMonth, List<OrderItem>>> getOrderItemsDashboard(HttpServletRequest request) {
+    public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboard(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
-        Map<YearMonth, List<OrderItem>> body = orderService.getOrderedItemsByMonth(user);
+        Map<YearMonth, List<OrderReceivedDto>> body = orderService.getOrderedItemsByMonth(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
@@ -167,6 +178,15 @@ public class OrderController {
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
         Map<YearMonth, Map<String, OrderItemsData>> body = orderService.getOrderItemsBySubCategories(user);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    @GetMapping("/dashboardCategoriesAnalytics")
+    public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsByCategories(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring("Bearer ".length());
+        User user = helper.getUser(token);
+        Map<YearMonth, Map<String, OrderItemsData>> body = orderService.getOrderItemsByCategories(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 

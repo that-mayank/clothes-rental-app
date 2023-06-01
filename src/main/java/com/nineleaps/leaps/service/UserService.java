@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
+import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
@@ -89,6 +90,11 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     public User getUser(String email) {
         log.info("getting user{} from the database", email);
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserDto getUser(User user) {
+        return new UserDto(user);
     }
 
     @Override

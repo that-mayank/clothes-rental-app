@@ -22,9 +22,10 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE products SET deleted = true where id=?")
 @FilterDef(name = "deletedProductFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedProductFilter", condition = "deleted = :isDeleted")
+@FilterDef(name = "disabledProductFilter", parameters = @ParamDef(name = "isDisabled", type = "boolean"))
+@Filter(name = "disabledProductFilter", condition = "disabled = :isDisabled")
 public class Product {
 
 
@@ -65,6 +66,12 @@ public class Product {
     private String color;
     private String material;
     private @NotNull int quantity;
+    @Column(name = "available_quantities")
+    private int availableQuantities;
+    @Column(name = "disabled_quantities")
+    private int disabledQuantities;
+    @Column(name = "rented_quantities")
+    private int rentedQuantities;
     private @NotNull String size;
     private @NotNull boolean deleted = Boolean.FALSE;
     private @NotNull boolean disabled = Boolean.FALSE;
@@ -78,7 +85,10 @@ public class Product {
         this.name = productDto.getName();
         this.price = productDto.getPrice();
         this.description = productDto.getDescription();
-        this.quantity = productDto.getQuantity();
+        this.quantity = productDto.getTotalQuantity();
+        this.availableQuantities = productDto.getTotalQuantity();
+        this.disabledQuantities = 0;
+        this.rentedQuantities = 0;
         this.size = productDto.getSize();
         this.brand = productDto.getBrand();
         this.color = productDto.getColor();

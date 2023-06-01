@@ -73,6 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/api/v1/user/switch","/api/v1/user/update","api/v1/user/getCurrentUsername","api/v1/user/getUser").hasAnyAuthority("owner","borrower");
 
         http.authorizeRequests().antMatchers("/api/v1/wishlist/add","/api/v1/wishlist/addtowishlist","/api/v1/wishlist/findallwishlist","/api/v1/wishlist/remove","/api/v1/wishlist/removebyid").hasAnyAuthority("owner","borrower");
+        http.authorizeRequests().antMatchers("/api/v1/file/uploadProfileImage").hasAnyAuthority("owner","borrower");
 
 
         http.addFilter(customAuthenticationFilter);

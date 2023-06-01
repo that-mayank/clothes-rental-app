@@ -62,10 +62,10 @@ public class StorageService implements StorageServiceInterface {
 
 
     // upload file to s3 cloud AWS storage
-    public String uploadFile(MultipartFile file){
+    public String uploadFile(MultipartFile file) {
         File fileObj = convertMultiPartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName,fileObj ));
+        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
         fileObj.delete();
         String URL = ServletUriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
         return URL;
@@ -111,9 +111,89 @@ public class StorageService implements StorageServiceInterface {
             inputStream.close();
             outputStream.flush();
         } catch (IOException e) {
-            log.error("Error viewing file", e);
+//            log.error("Error viewing file", e);
+            e.printStackTrace();
         }
     }
+//    public void viewFile(String fileName, HttpServletResponse response) {
+//        S3Object s3Object = s3Client.getObject(bucketName, fileName);
+//        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+//        // Set the response headers
+//        String contentType = determineContentType(fileName);
+//        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
+//        try (OutputStream outputStream = response.getOutputStream()) {
+//            byte[] buffer = new byte[1024];
+//            int bytesRead;
+//            while ((bytesRead = inputStream.read(buffer)) != -1) {
+//                outputStream.write(buffer, 0, bytesRead);
+//            }
+//        } catch (IOException e) {
+//            log.error("Error viewing file", e);
+//        } finally {
+//            try {
+//                inputStream.close();
+//            } catch (IOException e) {
+//                log.error("Error closing S3ObjectInputStream", e);
+//            }
+//        }
+//    }
+//    public void viewFile(String fileName, HttpServletResponse response) {
+//        S3Object s3Object = s3Client.getObject(bucketName, fileName);
+//        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+//
+//        // Set the response headers
+//        String contentType = determineContentType(fileName);
+//        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
+//        response.setHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
+//
+//        try (OutputStream outputStream = response.getOutputStream()) {
+//            byte[] buffer = new byte[1024];
+//            int bytesRead;
+//            while ((bytesRead = inputStream.read(buffer)) != -1) {
+//                outputStream.write(buffer, 0, bytesRead);
+//                outputStream.flush(); // Flush the output stream after each chunk
+//            }
+//        } catch (IOException e) {
+//            log.error("Error viewing file", e);
+//        } finally {
+//            try {
+//                inputStream.close();
+//            } catch (IOException e) {
+//                log.error("Error closing S3ObjectInputStream", e);
+//            }
+//        }
+//    }
+//
+//
+//
+
+//    public void viewFile(String fileName, HttpServletResponse response) {
+//        S3Object s3Object = s3Client.getObject(bucketName, fileName);
+//        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+//
+//        // Set the response headers
+//        String contentType = determineContentType(fileName);
+//        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
+//        response.setHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
+//
+//        try (OutputStream outputStream = response.getOutputStream()) {
+//            byte[] buffer = new byte[1024];
+//            int bytesRead;
+//            while ((bytesRead = inputStream.read(buffer)) != -1) {
+//                outputStream.write(buffer, 0, bytesRead);
+//            }
+//            outputStream.flush(); // Flush the output stream after all chunks are written
+//        } catch (IOException e) {
+//            log.error("Error viewing file", e);
+//        } finally {
+//            try {
+//                inputStream.close();
+//            } catch (IOException e) {
+//                log.error("Error closing S3ObjectInputStream", e);
+//            }
+//        }
+//    }
+
 
 }
 

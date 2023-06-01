@@ -7,17 +7,12 @@ import com.nineleaps.leaps.model.ProductUrl;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
-import com.nineleaps.leaps.repository.CategoryRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
-import com.nineleaps.leaps.repository.SubCategoryRepository;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -30,10 +25,7 @@ import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
 @RequiredArgsConstructor
 public class ProductService implements ProductServiceInterface {
     private final ProductRepository productRepository;
-    private final SubCategoryServiceInterface subCategoryService;
     private final EntityManager entityManager;
-    private final SubCategoryRepository subCategoryRepository;
-    private final CategoryRepository categoryRepository;
 
 
     public static ProductDto getDtoFromProduct(Product product) {
@@ -53,31 +45,64 @@ public class ProductService implements ProductServiceInterface {
         setImageUrl(product, productDto);
     }
 
+//    @Override
+//    public List<ProductDto> listProducts(int pageNumber, int pageSize, User user) {
+//        Session session = entityManager.unwrap(Session.class);
+//        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+//        deletedProductFilter.setParameter("isDeleted", false);
+//        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+//        disabledProductFilter.setParameter("isDisabled", false);
+//        List<Product> allProducts = productRepository.findAll();
+//
+//        session.disableFilter("deletedProductFilter");
+//        session.disableFilter("disableProductFilter");
+//        List<Product> results = new ArrayList<>();
+//        for (Product product : allProducts) {
+//            if (!product.getUser().equals(user)) {
+//                results.add(product);
+//            }
+//        }
+//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+//
+//        int startIndex = pageable.getPageNumber() * pageable.getPageSize();
+//        int endIndex = Math.min(startIndex + pageable.getPageSize(), results.size());
+//
+//
+//        List<ProductDto> productDtos = new ArrayList<>();
+//        for (int i = startIndex; i < endIndex; i++) {
+//            Product product = results.get(i);
+//            ProductDto productDto = getDtoFromProduct(product);
+//            productDtos.add(productDto);
+//        }
+//        return productDtos;
+//    }
+
     @Override
     public List<ProductDto> listProducts(int pageNumber, int pageSize, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        disabledProductFilter.setParameter("isDisabled", false);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Product> allProducts = productRepository.findAll(pageable);
-        List<Product> products = allProducts.getContent();
-        session.disableFilter("deletedProductFilter");
-        List<Product> results = new ArrayList<>();
-        for (Product product : products) {
-            if (!product.getUser().equals(user)) {
-                results.add(product);
-            }
-        }
+        Page<Product> page = productRepository.findAllByUserNot(pageable, user);
         List<ProductDto> productDtos = new ArrayList<>();
-        for (Product product : results) {
+        for (Product product : page.getContent()) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
+        session.disableFilter("deletedProductFilter");
+        session.disableFilter("disableProductFilter");
         return productDtos;
     }
 
     @Override
     public List<String> listSuggestions(String searchInput, User user) {
+        Session session = entityManager.unwrap(Session.class);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        disabledProductFilter.setParameter("isDisabled", false);
         List<Product> allProducts = productRepository.findAll();
         List<Product> results = new ArrayList<>();
         for (Product product : allProducts) {
@@ -100,6 +125,8 @@ public class ProductService implements ProductServiceInterface {
                 searchSuggestions.add(suggestion);
             }
         }
+        session.disableFilter("disabledProductFilter");
+        session.disableFilter("deletedProductFilter");
         return new ArrayList<>(searchSuggestions);
     }
 
@@ -125,20 +152,21 @@ public class ProductService implements ProductServiceInterface {
 
     @Override
     public List<ProductDto> listProductsById(Long subcategoryId, User user) {
-        if (subcategoryId == 28) {
+        Session session = entityManager.unwrap(Session.class);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        disabledProductFilter.setParameter("isDisabled", false);
+        if (subcategoryId == 19) {
             return getProductsByPriceRange(0, 2000);
-        } else if (subcategoryId == 29) {
+        } else if (subcategoryId == 20) {
             return getProductsByPriceRange(2001, 5000);
-        } else if (subcategoryId == 30) {
+        } else if (subcategoryId == 21) {
             return getProductsByPriceRange(5001, 10000);
-        } else if (subcategoryId == 31) {
+        } else if (subcategoryId == 22) {
             return getProductsByPriceRange(10000, Long.MAX_VALUE);
         } else {
-            Session session = entityManager.unwrap(Session.class);
-            Filter filter = session.enableFilter("deletedProductFilter");
-            filter.setParameter("isDeleted", false);
             List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
-            session.disableFilter("deletedProductFilter");
             List<ProductDto> productDtos = new ArrayList<>();
             for (Product product : body) {
                 if (!product.getUser().equals(user)) {
@@ -146,6 +174,8 @@ public class ProductService implements ProductServiceInterface {
                     productDtos.add(productDto);
                 }
             }
+            session.disableFilter("disabledProductFilter");
+            session.disableFilter("deletedProductFilter");
             return productDtos;
         }
     }
@@ -153,10 +183,11 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public List<ProductDto> listProductsByCategoryId(Long categoryId, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        disabledProductFilter.setParameter("isDisabled", false);
         List<Product> products = productRepository.findByCategoriesId(categoryId);
-        session.disableFilter("deletedProductFilter");
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
             if (!product.getUser().equals(user)) {
@@ -164,6 +195,8 @@ public class ProductService implements ProductServiceInterface {
                 productDtos.add(productDto);
             }
         }
+        session.disableFilter("disabledProductFilter");
+        session.disableFilter("deletedProductFilter");
         return productDtos;
     }
 
@@ -188,79 +221,86 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public List<ProductDto> listProductsDesc(User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
         List<Product> products = productRepository.findAllByUser(user, Sort.by(Sort.Direction.DESC, "id"));
-        session.disableFilter("deletedProductFilter");
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
+        session.disableFilter("deletedProductFilter");
         return productDtos;
     }
 
     @Override
     public List<ProductDto> listOwnerProducts(User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
         List<Product> products = productRepository.findAllByUser(user);
         List<ProductDto> productDtos = new ArrayList<>();
-        session.disableFilter("deletedProductFilter");
 
         for (Product product : products) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
+        session.disableFilter("deletedProductFilter");
         return productDtos;
     }
 
     @Override
     public List<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        disabledProductFilter.setParameter("isDisabled", false);
         List<Product> body = productRepository.findProductByPriceRange(minPrice, maxPrice);
-        session.disableFilter("deletedProductFilter");
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : body) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
+        session.disableFilter("disabledProductFilter");
+        session.disableFilter("deletedProductFilter");
         return productDtos;
     }
 
-//    @Override
-//    public List<ProductDto> searchProducts(String query, User user) {
-//        Session session = entityManager.unwrap(Session.class);
-//        Filter filter = session.enableFilter("deletedProductFilter");
-//        filter.setParameter("isDeleted", false);
-//        String stringArray[] = query.split(" ");
-//        List<String> stringList = Arrays.asList(stringArray);
-//
-//        List<ProductDto> productDtos = new ArrayList<>();
-//
-//        for (String keyword : stringList) {
-//            List<Product> products = productRepository.searchProducts(keyword);
-//            for (Product product : products) {
-//                if (!product.getUser().equals(user)) {
-//                    ProductDto productDto = getDtoFromProduct(product);
-//                    productDtos.add(productDto);
-//                }
-//            }
-//        }
-//        session.disableFilter("deletedProductFilter");
-//        return productDtos;
-//    }
+    @Override
+    public List<ProductDto> searchProducts(String query, User user) {
+        Session session = entityManager.unwrap(Session.class);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        disabledProductFilter.setParameter("isDisabled", false);
+        String stringArray[] = query.split(" ");
+        String[] stringList = stringArray;
+
+        List<ProductDto> productDtos = new ArrayList<>();
+
+        for (String keyword : stringList) {
+            List<Product> products = productRepository.searchProducts(keyword);
+            for (Product product : products) {
+                if (!product.getUser().equals(user)) {
+                    ProductDto productDto = getDtoFromProduct(product);
+                    productDtos.add(productDto);
+                }
+            }
+        }
+        session.disableFilter("disabledProductFilter");
+        session.disableFilter("deletedProductFilter");
+        return productDtos;
+    }
 
     @Override
     public List<ProductDto> filterProducts(String size, Long subcategoryId, double minPrice, double maxPrice) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
+        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
+        deletedProductFilter.setParameter("isDeleted", false);
+        disabledProductFilter.setParameter("isDisabled", false);
         List<Product> productList = productRepository.findBySubCategoriesId(subcategoryId);
-        session.disableFilter("deletedProductFilter");
 
         List<Product> result = new ArrayList<>();
         //price is filtered
@@ -275,6 +315,8 @@ public class ProductService implements ProductServiceInterface {
             ProductDto productDto = getDtoFromProduct(product);
             resultDtos.add(productDto);
         }
+        session.disableFilter("disabledProductFilter");
+        session.disableFilter("deletedProductFilter");
         return resultDtos;
     }
 
@@ -284,7 +326,8 @@ public class ProductService implements ProductServiceInterface {
         if (!Helper.notNull(product)) {
             throw new ProductNotExistException("Product does not belong to current user.");
         }
-        productRepository.deleteById(productId);
+        product.setDeleted(true);
+        productRepository.save(product);
     }
 
     @Override
@@ -294,8 +337,22 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public void disableProduct(Product product) {
-        product.setDisabled(true);
+    public void disableProduct(Product product, int quantity) {
+        product.setDisabledQuantities(product.getDisabledQuantities() + quantity);
+        product.setAvailableQuantities(product.getAvailableQuantities() - quantity);
+        if (product.getAvailableQuantities() == 0) {
+            product.setDisabled(true);
+        }
+        productRepository.save(product);
+    }
+
+    @Override
+    public void enableProduct(Product product, int quantity) {
+        product.setDisabledQuantities(product.getDisabledQuantities() - quantity);
+        product.setAvailableQuantities(product.getAvailableQuantities() + quantity);
+        if (product.isDisabled()) {
+            product.setDisabled(false);
+        }
         productRepository.save(product);
     }
 
@@ -322,258 +379,5 @@ public class ProductService implements ProductServiceInterface {
         return imageurl;
     }
 
-    @Override
-    public List<ProductDto> searchProducts(String query, User user) {
-        List<String> brands = new ArrayList<>(), names = new ArrayList<>(), colors = new ArrayList<>(), materials = new ArrayList<>();
-        Map<String, Set<String>> spliterators = boyerMooreAlgorithm(query.toLowerCase());
-        System.out.println(spliterators);
-        for (Map.Entry<String, Set<String>> entry : spliterators.entrySet()) {
-            if (entry.getKey().equals("brand")) {
-                for (String brand : entry.getValue()) {
-                    brands.add(brand);
-                }
-            } else if (entry.getKey().equals("name")) {
-                for (String name : entry.getValue()) {
-                    names.add(name);
-                }
-            } else if (entry.getKey().equals("color")) {
-                for (String color : entry.getValue()) {
-                    colors.add(color);
-                }
-            } else if (entry.getKey().equals("material")) {
-                for (String material : entry.getValue()) {
-                    materials.add(material);
-                }
-            }
-        }
-        List<Product> products = new ArrayList<>();
-        Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
-//        for (String brandQuery : brands) {
-//            for (String nameQuery : names) {
-//                for (String colorQuery : colors) {
-//                    for (String materialQuery : materials) {
-//                        System.out.println("brandQuery" + " = " + brandQuery + " " + "nameQuery" + " = " + nameQuery + " " + " colorQuery " + " = " + colorQuery + " " + "materialQuery" + " = " + materialQuery);
-//                        products.addAll(productRepository.searchProducts(brandQuery, nameQuery, colorQuery, materialQuery));
-//                    }
-//                }
-//            }
-//        }
-        if (brands.isEmpty()) {
-            if (colors.isEmpty()) {
-                if (materials.isEmpty()) {
-                    // Only names are available
-                    for (String nameQuery : names) {
-                        products.addAll(productRepository.searchProducts(null, nameQuery, null, null));
-                    }
-                } else {
-                    // Only names and materials are available
-                    for (String nameQuery : names) {
-                        for (String materialQuery : materials) {
-                            products.addAll(productRepository.searchProducts(null, nameQuery, null, materialQuery));
-                        }
-                    }
-                }
-            } else if (materials.isEmpty()) {
-                // Only names and colors are available
-                for (String nameQuery : names) {
-                    for (String colorQuery : colors) {
-                        products.addAll(productRepository.searchProducts(null, nameQuery, colorQuery, null));
-                    }
-                }
-            } else {
-                // Names, colors, and materials are available
-                for (String nameQuery : names) {
-                    for (String colorQuery : colors) {
-                        for (String materialQuery : materials) {
-                            products.addAll(productRepository.searchProducts(null, nameQuery, colorQuery, materialQuery));
-                        }
-                    }
-                }
-            }
-        } else if (colors.isEmpty()) {
-            if (materials.isEmpty()) {
-                // Only brands are available
-                for (String brandQuery : brands) {
-                    products.addAll(productRepository.searchProducts(brandQuery, null, null, null));
-                }
-            } else {
-                // Brands and materials are available
-                for (String brandQuery : brands) {
-                    for (String materialQuery : materials) {
-                        products.addAll(productRepository.searchProducts(brandQuery, null, null, materialQuery));
-                    }
-                }
-            }
-        } else if (materials.isEmpty()) {
-            // Brands and colors are available
-            for (String brandQuery : brands) {
-                for (String colorQuery : colors) {
-                    products.addAll(productRepository.searchProducts(brandQuery, null, colorQuery, null));
-                }
-            }
-        } else {
-            // All arrays are available
-            for (String brandQuery : brands) {
-                for (String nameQuery : names) {
-                    for (String colorQuery : colors) {
-                        for (String materialQuery : materials) {
-                            products.addAll(productRepository.searchProducts(brandQuery, nameQuery, colorQuery, materialQuery));
-                        }
-                    }
-                }
-            }
-        }
-        session.disableFilter("deletedProductFilter");
-        List<ProductDto> productDtos = new ArrayList<>();
-        for (Product product : products) {
-            ProductDto productDto = getDtoFromProduct(product);
-            productDtos.add(productDto);
-        }
-        return productDtos;
-    }
-
-    //
-    // Implementation of Boyer Moore Algorithm
-    private Map<String, Set<String>> boyerMooreAlgorithm(String query) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedProductFilter");
-        filter.setParameter("isDeleted", false);
-        Map<String, List<String>> keyValues = new HashMap<>();
-        List<String> subcategory = new ArrayList<>();
-        List<String> category = new ArrayList<>();
-        List<String> name = new ArrayList<>();
-        List<String> color = new ArrayList<>();
-        List<String> brand = new ArrayList<>();
-        List<String> material = new ArrayList<>();
-        //add subcategories from here
-        for (SubCategory subCategory : subCategoryRepository.findAll()) {
-            subcategory.add(subCategory.getSubcategoryName().toLowerCase());
-        }
-
-        for (Category categoryItr : categoryRepository.findAll()) {
-            category.add(categoryItr.getCategoryName().toLowerCase());
-        }
-        keyValues.put("category", category);
-        keyValues.put("subcategory", subcategory);
-        //add product name, color, brand, and material
-        for (Product product : productRepository.findAll()) {
-            name.add(product.getName().toLowerCase());
-            color.add(product.getColor().toLowerCase());
-            brand.add(product.getBrand().toLowerCase());
-            material.add(product.getMaterial().toLowerCase());
-        }
-        keyValues.put("name", name);
-        keyValues.put("color", color);
-        keyValues.put("brand", brand);
-        keyValues.put("material", material);
-        session.disableFilter("deletedProductFilter");
-
-        System.out.println("name " + name);
-        System.out.println("---------------------------------------------------");
-        System.out.println("color " + color);
-        System.out.println("---------------------------------------------------");
-        System.out.println("brand " + brand);
-        System.out.println("---------------------------------------------------");
-        System.out.println("material " + material);
-        System.out.println("---------------------------------------------------");
-        //send values to boyerMooreMainMethod
-        return searchWords(query.trim(), keyValues);
-    }
-
-    private int[] createBadCharacterTable(char[] pattern) {
-        int tableSize = 256;
-        int[] table = new int[tableSize];
-        for (int i = 0; i < tableSize; i++) {
-            table[i] = pattern.length;
-        }
-        for (int i = 0; i < pattern.length - 1; i++) {
-            table[pattern[i]] = pattern.length - 1 - i;
-        }
-        return table;
-    }
-
-    private int[] createGoodSuffixTable(char[] pattern) {
-        int patternLength = pattern.length;
-        int[] table = new int[patternLength];
-        int lastPrefixPosition = patternLength;
-        for (int i = patternLength - 1; i >= 0; i--) {
-            if (isPrefix(pattern, i + 1)) {
-                lastPrefixPosition = i + 1;
-            }
-            table[patternLength - 1 - i] = lastPrefixPosition - i + patternLength - 1;
-        }
-        for (int i = 0; i < patternLength - 1; i++) {
-            int suffixLength = suffixLength(pattern, i);
-            table[suffixLength] = patternLength - 1 - i + suffixLength;
-        }
-        return table;
-    }
-
-    private boolean isPrefix(char[] pattern, int position) {
-        int patternLength = pattern.length;
-        for (int i = position, j = 0; i < patternLength; i++, j++) {
-            if (pattern[i] != pattern[j]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private int suffixLength(char[] pattern, int position) {
-        int patternLength = pattern.length;
-        int length = 0;
-        for (int i = position, j = patternLength - 1; i >= 0 && pattern[i] == pattern[j]; i--, j--) {
-            length += 1;
-        }
-        return length;
-    }
-
-    public List<String> findMatchingBrandNames(String input, List<String> brandNames) {
-        List<String> matchingBrandNames = new ArrayList<>();
-        String[] words = input.split("\\s+"); // Split input into individual words
-        for (String brandName : brandNames) {
-            for (String word : words) {
-                if (brandName.toLowerCase().contains(word.toLowerCase())) {
-                    matchingBrandNames.add(brandName);
-                }
-            }
-        }
-        return matchingBrandNames;
-    }
-
-    public Map<String, Set<String>> searchWords(String text, Map<String, List<String>> keyValues) {
-        String[] words = text.split("\\s+"); // Split input text into individual words
-        Map<String, Set<String>> foundWords = new HashMap<>();
-        // Search for matching brand names separately
-        List<String> brandNames = keyValues.get("brand");
-        List<String> matchingBrandNamesList = findMatchingBrandNames(text, brandNames);
-        Set<String> matchingBrandNames = new HashSet<>(matchingBrandNamesList);
-        if (!matchingBrandNames.isEmpty()) {
-            foundWords.put("brand", matchingBrandNames);
-        }
-        // Search for matching words in other categories
-        for (Map.Entry<String, List<String>> entry : keyValues.entrySet()) {
-            String key = entry.getKey();
-            if (key.equals("brand")) {
-                continue; // Skip the "brandname" category
-            }
-            List<String> wordList = entry.getValue();
-            Set<String> matchingWords = new HashSet<>();
-            for (String word : words) {
-                for (String listWord : wordList) {
-                    if (listWord.toLowerCase().contains(word.toLowerCase())) {
-                        matchingWords.add(listWord);
-                        break; // Break out of the inner loop once a match is found
-                    }
-                }
-            }
-            if (!matchingWords.isEmpty()) {
-                foundWords.put(key, matchingWords);
-            }
-        }
-        return foundWords;
-    }
 }
 

@@ -4,6 +4,7 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
+import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.CustomException;
@@ -33,7 +34,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Api(tags = "User Api", description = "Contains api for user onboarding")
 public class UserController {
     private final UserServiceInterface userServiceInterface;
-    private final SecurityUtility securityUtility;
     private final Switchprofile switchprofile;
     private final Helper helper;
 
@@ -95,13 +95,14 @@ public class UserController {
     }
 
     // to get the current user
-    @ApiOperation(value = "Api to get all users")
+    @ApiOperation(value = "Api to get current user")
     @GetMapping("/getUser")
-    public ResponseEntity<User> getUser(HttpServletRequest request) {
+    public ResponseEntity<UserDto> getUser(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        UserDto userDto = userServiceInterface.getUser(user);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Api to update and add user profile picture")

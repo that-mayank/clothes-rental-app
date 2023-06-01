@@ -41,7 +41,7 @@ public class ProductController {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
-        if (productDto.getQuantity() <= 0) {
+        if (productDto.getTotalQuantity() <= 0) {
             return new ResponseEntity<>(new ApiResponse(false, "Quantity cannot be zero"), HttpStatus.BAD_REQUEST);
         }
         if (productDto.getPrice() <= 0) {
@@ -195,7 +195,7 @@ public class ProductController {
     }
 
     @GetMapping("/disableProduct")
-    public ResponseEntity<ApiResponse> disableProducts(@RequestParam("product") Long productId, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> disableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
@@ -203,7 +203,20 @@ public class ProductController {
         if (!Helper.notNull(product)) {
             return new ResponseEntity<>(new ApiResponse(false, "The product does not belong to current user"), HttpStatus.FORBIDDEN);
         }
-        productService.disableProduct(product);
+        productService.disableProduct(product, quantity);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been disabled"), HttpStatus.OK);
+    }
+
+    @GetMapping("/enableProduct")
+    public ResponseEntity<ApiResponse> enableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring("Bearer ".length());
+        User user = helper.getUser(token);
+        Product product = productService.getProduct(productId, user.getId());
+        if (!Helper.notNull(product)) {
+            return new ResponseEntity<>(new ApiResponse(false, "The product does not belong to current user"), HttpStatus.FORBIDDEN);
+        }
+        productService.enableProduct(product, quantity);
+        return new ResponseEntity<>(new ApiResponse(true, "Product has been enabled"), HttpStatus.OK);
     }
 }

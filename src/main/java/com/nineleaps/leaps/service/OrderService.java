@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
@@ -11,6 +12,7 @@ import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -49,15 +51,16 @@ public class OrderService implements OrderServiceInterface {
 
         //create order and save it
         Order newOrder = new Order();
-        newOrder.setCreateDate(new Date());
+        newOrder.setCreateDate(LocalDateTime.now());
         newOrder.setTotalPrice(cartDto.getTotalCost());
         newOrder.setSessionId(sessionId);
         newOrder.setUser(user);
         orderRepository.save(newOrder);
-
+        List<OrderItem> orderItemList = new ArrayList<>();
         for (CartItemDto cartItemDto : cartItemDtos) {
             //create cartItem and save each
             OrderItem orderItem = new OrderItem();
+            orderItem.setName(cartItemDto.getProduct().getName());
             orderItem.setQuantity(cartItemDto.getQuantity());
             orderItem.setPrice(cartItemDto.getProduct().getPrice());
             orderItem.setCreatedDate(LocalDateTime.now());
@@ -65,39 +68,62 @@ public class OrderService implements OrderServiceInterface {
             orderItem.setOrder(newOrder);
             orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
             orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
-            orderItem.setImageUrl(cartItemDto.getImageUrl());
+            orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
             orderItem.setStatus("Order placed");
             //add to orderItem table
             orderItemRepository.save(orderItem);
+            orderItemList.add(orderItem);
             //Reduce quantity from product after placing order
             Product product = orderItem.getProduct();
-            product.setQuantity(product.getQuantity() - cartItemDto.getQuantity());
+            product.setRentedQuantities(product.getRentedQuantities() + cartItemDto.getQuantity());
+            product.setAvailableQuantities(product.getAvailableQuantities() - cartItemDto.getQuantity());
+//            product.setQuantity(product.getQuantity() - cartItemDto.getQuantity());
             productRepository.save(product);
-
         }
+        newOrder.setOrderItems(orderItemList);
+        orderRepository.save(newOrder);
         //delete cart items after placing order
         cartService.deleteUserCartItems(user);
         // function to send email
         String email = user.getEmail();
         String subject = "Order placed";
-        String message = "Dear " + user.getFirstName() + "Your Order has been successfully placed." + "The order details are as follows: /n" + user.getOrders();
+        String message = "Dear " + user.getFirstName() + " " + user.getLastName() + "," + "\n" + "Your Order has been successfully placed. \n" + "Here are the details of your order: \n";
+        Order latestOrder = newOrder;
+        message += "Order ID: " + latestOrder.getId() + "\n";
+        List<OrderItem> orderItems = latestOrder.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            String productName = orderItem.getName();
+            int quantity = orderItem.getQuantity();
+            message += "Product: " + productName + "\n";
+            message += "Quantity: " + quantity + "\n";
+            message += "Price: " + orderItem.getPrice() * orderItem.getQuantity() * ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate()) + "\n";
+        }
+        message += "Total Price of order : " + latestOrder.getTotalPrice() + "\n\n";
+//        } else {
+//            // Handle the case where no orders are found
+//            message += "No recent orders found.\n";
+//        }
         emailService.sendEmail(subject, message, email);
     }
 
     @Override
-    public List<Order> listOrders(User user) {
-        return orderRepository.findByUserOrderByCreateDateDesc(user);
+    public List<OrderDto> listOrders(User user) {
+        List<Order> orders = orderRepository.findByUserOrderByCreateDateDesc(user);
+        List<OrderDto> orderDtos = new ArrayList<>();
+        for (Order order : orders) {
+            OrderDto orderDto = new OrderDto(order);
+            orderDtos.add(orderDto);
+        }
+        return orderDtos;
     }
 
     @Override
     public Order getOrder(Long orderId, User user) throws OrderNotFoundException {
-        List<Order> orders = listOrders(user);
-        for (Order order : orders) {
-            if (orderId.equals(order.getId())) {
-                return order;
-            }
+        Optional<Order> optionalOrder = orderRepository.findByIdAndUserId(orderId, user.getId());
+        if (optionalOrder.isEmpty()) {
+            throw new OrderNotFoundException("Order not found");
         }
-        throw new OrderNotFoundException("Order not found");
+        return optionalOrder.get();
     }
 
     @Override
@@ -106,10 +132,13 @@ public class OrderService implements OrderServiceInterface {
         orderItemRepository.save(orderItem);
         if (status.equals("ORDER RETURNED")) {
             Product product = orderItem.getProduct();
-            product.setQuantity(product.getQuantity() + orderItem.getQuantity());
+            product.setAvailableQuantities(product.getAvailableQuantities() + orderItem.getQuantity());
+            product.setRentedQuantities(product.getRentedQuantities() - orderItem.getQuantity());
+//            product.setQuantity(product.getQuantity() + orderItem.getQuantity());
             productRepository.save(product);
         }
     }
+
 
     @Override
     public Map<String, Object> dashboard(User user) {
@@ -127,6 +156,57 @@ public class OrderService implements OrderServiceInterface {
         result.put("totalNumberOfItems", totalNumberOfItems);
         result.put("totalEarnings", totalEarnings);
         return result;
+    }
+
+    public void sendDelayChargeEmail(OrderItem orderItem, double securityDeposit) {
+        String email = orderItem.getOrder().getUser().getEmail();
+        String subject = "\"Reminder: Your rental period is ended.";
+        String message = "Dear " + orderItem.getOrder().getUser().getFirstName() + ",\n\n" +
+                "We regret to inform you that your rental period has exceeded the expected return date. " +
+                "As a result, a delay charge has been deducted from your security deposit.\n\n" +
+                "Rental Details:\n" +
+                "Order ID: " + orderItem.getId() + "\n" +
+                "Item Name: " + orderItem.getProduct().getName() + "\n" +
+                "Rental Start Date: " + orderItem.getRentalStartDate() + "\n" +
+                "Rental End Date: " + orderItem.getRentalEndDate() + "\n" +
+                "Security Deposit: " + securityDeposit + "\n" +
+                "Delay Charge: " + calculateDelayCharge(orderItem.getRentalEndDate(), securityDeposit) + "\n" +
+                "Remaining Deposit: " + calculateRemainingDeposit(securityDeposit, orderItem.getRentalEndDate(), orderItem) + "\n\n" +
+                "Please contact us if you have any questions or concerns.\n" +
+                "Thank you for your understanding.";
+        emailService.sendEmail(subject, message, email);
+    }
+
+    private double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
+        if (delayDays > 0) {
+            double delayCharge = (securityDeposit * 10.0 / 100) * delayDays;
+            return delayCharge;
+        } else {
+            return 0.0;
+        }
+    }
+
+    private double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
+        if (delayDays > 0) {
+            double delayCharge = (securityDeposit * 10.0 / 100) * delayDays;
+            double remainingAmount = securityDeposit - delayCharge;
+            if (remainingAmount >= 0) {
+                orderItem.setSecurityDeposit(remainingAmount);
+                orderItemRepository.save(orderItem);
+            } else {
+                double additionalPayment = Math.abs(remainingAmount); // Calculate the additional payment
+                orderItem.setSecurityDeposit(0);
+                orderItemRepository.save(orderItem);
+                System.out.println("Additional payment required: $" + additionalPayment);
+            }
+            return remainingAmount;
+        } else {
+            return securityDeposit;
+        }
     }
 
     @Override
@@ -194,8 +274,8 @@ public class OrderService implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, List<OrderItem>> getOrderedItemsByMonth(User user) {
-        Map<YearMonth, List<OrderItem>> orderedItemsByMonth = new HashMap<>();
+    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user) {
+        Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
 
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -204,10 +284,10 @@ public class OrderService implements OrderServiceInterface {
                     YearMonth month = YearMonth.from(rentalStartDate);
 
                     // Retrieve the list of order items for the current month
-                    List<OrderItem> monthOrderItems = orderedItemsByMonth.getOrDefault(month, new ArrayList<>());
+                    List<OrderReceivedDto> monthOrderItems = orderedItemsByMonth.getOrDefault(month, new ArrayList<>());
 
                     // Add the current order item to the list
-                    monthOrderItems.add(orderItem);
+                    monthOrderItems.add(new OrderReceivedDto(orderItem));
 
                     // Update the map with the updated list of order items
                     orderedItemsByMonth.put(month, monthOrderItems);
@@ -260,6 +340,50 @@ public class OrderService implements OrderServiceInterface {
         }
         return orderItemsSubcategoryWise;
     }
+
+    @Override
+    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(User user) {
+        Map<YearMonth, Map<String, OrderItemsData>> orderItemsCategoryWise = new HashMap<>();
+        for (Order order : orderRepository.findAll()) {
+            for (OrderItem orderItem : order.getOrderItems()) {
+                if (orderItem.getProduct().getUser().equals(user)) {
+                    List<Category> categories = orderItem.getProduct().getCategories();
+                    YearMonth month = YearMonth.from(orderItem.getRentalStartDate());
+
+                    // Retrieve the map of subcategories for the current month
+                    Map<String, OrderItemsData> orderItemsByCategoryPerMonth = orderItemsCategoryWise.getOrDefault(month, new HashMap<>());
+
+                    for (Category category : categories) {
+                        // Retrieve the order items data for the current subcategory and month
+                        OrderItemsData orderItemsData = orderItemsByCategoryPerMonth.getOrDefault(category.getCategoryName(), new OrderItemsData());
+                        // Increment the total number of orders for the current subcategory
+                        orderItemsData.incrementTotalOrders(orderItem.getQuantity());
+                        // Retrieve the list of order items for the current subcategory and month
+                        List<OrderReceivedDto> orderItemsByCategory = orderItemsData.getOrderItems();
+                        // If the list doesn't exist, create a new one
+                        if (orderItemsByCategory == null) {
+                            orderItemsByCategory = new ArrayList<>();
+                        }
+                        // Add the current order item to the list
+                        OrderReceivedDto orderReceivedDto = new OrderReceivedDto(orderItem);
+                        orderItemsByCategory.add(orderReceivedDto);
+                        // Update the order items data with the updated list of order items
+                        orderItemsData.setOrderItems(orderItemsByCategory);
+                        // Update the map with the updated order items data for the current subcategory and month
+                        orderItemsByCategoryPerMonth.put(category.getCategoryName(), orderItemsData);
+
+                        // Update the map with the updated map of subcategories per month
+                        orderItemsCategoryWise.put(month, orderItemsByCategoryPerMonth);
+                    }
+
+
+                }
+            }
+        }
+        return orderItemsCategoryWise;
+
+    }
+
 
     @Override
     public List<ProductDto> getRentedOutProducts(User user) {
@@ -354,7 +478,9 @@ public class OrderService implements OrderServiceInterface {
     public OrderItem getOrderItem(Long orderItemId, User user) {
         Optional<OrderItem> optionalOrderItem = orderItemRepository.findById(orderItemId);
         if (optionalOrderItem.isPresent()) {
-            return optionalOrderItem.get();
+            if (optionalOrderItem.get().getOrder().getUser().equals(user)) {
+                return optionalOrderItem.get();
+            }
         }
         return null;
     }

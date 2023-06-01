@@ -30,6 +30,7 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,16 @@ public class OrderController {
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);
         Map<YearMonth, Map<String, Object>> body = orderService.onClickDasboard(user);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Gives details about how many orders the owner has got")
+    @GetMapping("/onClickDashboardYearlyWiseData")
+    public ResponseEntity<Map<Year, Map<YearMonth, Map<String, Object>>>> onClickDashboardYearWiseData(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring("Bearer ".length());
+        User user = helper.getUser(token);
+        Map<Year, Map<YearMonth, Map<String, Object>>> body = orderService.onClickDashboardYearWiseData(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 public class Helper {
+
     private final UserRepository userRepository;
     public static boolean notNull(Object obj) {
         return obj != null;

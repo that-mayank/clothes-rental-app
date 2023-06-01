@@ -6,15 +6,12 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.CategoryDto;
 
 import com.nineleaps.leaps.model.categories.Category;
-import com.nineleaps.leaps.service.CategoryService;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
 
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Transactional

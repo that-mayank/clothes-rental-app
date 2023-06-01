@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 @Service
-public class EmailService {
+public class EmailServiceImpl {
 
     @Autowired
     CartRepository cartRepository;

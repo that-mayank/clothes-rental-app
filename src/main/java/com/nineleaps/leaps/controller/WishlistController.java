@@ -1,20 +1,17 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
-import com.nineleaps.leaps.config.Filter.CustomAuthorizationFilter;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
-import com.nineleaps.leaps.service.ProductService;
+import com.nineleaps.leaps.service.implementation.ProductServiceImpl;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,7 +73,7 @@ public class WishlistController {
         List<Wishlist> body = wishlistService.readWishlist(userId);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Wishlist wishlist : body) {
-            productDtos.add(ProductService.getDtoFromProduct(wishlist.getProduct()));
+            productDtos.add(ProductServiceImpl.getDtoFromProduct(wishlist.getProduct()));
         }
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }

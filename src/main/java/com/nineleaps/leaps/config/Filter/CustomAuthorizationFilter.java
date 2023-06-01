@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
-import com.nineleaps.leaps.service.UserService;
+import com.nineleaps.leaps.service.implementation.UserServiceImpl;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,13 +24,13 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
     public static String token_header;
     private final CustomAuthenticationFilter customAuthenticationFilter;
-    public CustomAuthorizationFilter(UserService userService, RefreshTokenRepository refreshTokenRepository, SecurityUtility securityUtility, CustomAuthenticationFilter customAuthenticationFilter) {
-        this.userService = userService;
+    public CustomAuthorizationFilter(UserServiceImpl userServiceImpl, RefreshTokenRepository refreshTokenRepository, SecurityUtility securityUtility, CustomAuthenticationFilter customAuthenticationFilter) {
+        this.userServiceImpl = userServiceImpl;
         this.refreshTokenRepository = refreshTokenRepository;
         this.securityUtility = securityUtility;
         this.customAuthenticationFilter = customAuthenticationFilter;

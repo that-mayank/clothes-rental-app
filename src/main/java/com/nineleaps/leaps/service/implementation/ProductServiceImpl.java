@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
@@ -8,6 +8,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
@@ -23,7 +24,7 @@ import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService implements ProductServiceInterface {
+public class ProductServiceImpl implements ProductServiceInterface {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
 

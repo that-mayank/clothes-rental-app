@@ -1,11 +1,12 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.nineleaps.leaps.config.Filter.CustomAuthenticationFilter;
 import com.nineleaps.leaps.dto.otp.SmsPojo;
 import com.nineleaps.leaps.dto.otp.StoreOTP;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.service.SmsServiceInterface;
+import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
@@ -25,7 +26,7 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class SmsService implements SmsServiceInterface {
+public class SmsServiceImpl implements SmsServiceInterface {
     @Value("${twilio.account_sid}")
     private String ACCOUNT_SID;
     @Value("${twilio.token}")

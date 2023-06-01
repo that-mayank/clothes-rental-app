@@ -3,8 +3,8 @@ package com.nineleaps.leaps.config.Security;
 import com.nineleaps.leaps.config.Filter.CustomAuthenticationFilter;
 import com.nineleaps.leaps.config.Filter.CustomAuthorizationFilter;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
-import com.nineleaps.leaps.service.RefreshTokenService;
-import com.nineleaps.leaps.service.UserService;
+import com.nineleaps.leaps.service.implementation.RefreshTokenServiceImpl;
+import com.nineleaps.leaps.service.implementation.UserServiceImpl;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,10 +24,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenServiceImpl refreshTokenServiceImpl;
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(userService, refreshTokenRepository, securityUtility, customAuthenticationFilter), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(userServiceImpl, refreshTokenRepository, securityUtility, customAuthenticationFilter), UsernamePasswordAuthenticationFilter.class);
     }
     @Bean
     @Override

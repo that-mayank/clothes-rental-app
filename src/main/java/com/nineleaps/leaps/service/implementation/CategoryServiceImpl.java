@@ -1,8 +1,9 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
+import com.nineleaps.leaps.service.CategoryServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoryService implements CategoryServiceInterface {
+public class CategoryServiceImpl implements CategoryServiceInterface {
     //Linking Repository using constructor injection
     private final CategoryRepository categoryRepository;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 

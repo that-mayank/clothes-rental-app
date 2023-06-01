@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
@@ -12,9 +12,10 @@ import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.CartRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.service.CartServiceInterface;
+import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CartService implements CartServiceInterface {
+public class CartServiceImpl implements CartServiceInterface {
     private final CartRepository cartRepository;
     private final ProductServiceInterface productService;
     private final ProductRepository productRepository;

@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -19,28 +19,31 @@ import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.repository.OrderRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.service.CartServiceInterface;
+import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 
-import static com.nineleaps.leaps.service.ProductService.getDtoFromProduct;
+import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 
 
 @Service
 @Transactional
 @AllArgsConstructor
-public class OrderService implements OrderServiceInterface {
+public class OrderServiceImpl implements OrderServiceInterface {
     private final CartServiceInterface cartService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final EmailService emailService;
+    private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
 
     @Override
@@ -103,7 +106,7 @@ public class OrderService implements OrderServiceInterface {
 //            // Handle the case where no orders are found
 //            message += "No recent orders found.\n";
 //        }
-        emailService.sendEmail(subject, message, email);
+        emailServiceImpl.sendEmail(subject, message, email);
     }
 
     @Override
@@ -174,15 +177,14 @@ public class OrderService implements OrderServiceInterface {
                 "Remaining Deposit: " + calculateRemainingDeposit(securityDeposit, orderItem.getRentalEndDate(), orderItem) + "\n\n" +
                 "Please contact us if you have any questions or concerns.\n" +
                 "Thank you for your understanding.";
-        emailService.sendEmail(subject, message, email);
+        emailServiceImpl.sendEmail(subject, message, email);
     }
 
     private double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
         if (delayDays > 0) {
-            double delayCharge = (securityDeposit * 10.0 / 100) * delayDays;
-            return delayCharge;
+            return (securityDeposit * 10.0 / 100) * delayDays;
         } else {
             return 0.0;
         }
@@ -244,34 +246,53 @@ public class OrderService implements OrderServiceInterface {
         return result;
     }
 
+    @Override
+    public Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(User user) {
+        Map<Year, Map<YearMonth, Double>> totalEarningsByYearMonth = new HashMap<>();
+        Map<Year, Map<YearMonth, Integer>> totalItemsByYearMonth = new HashMap<>();
 
-    public void getRentalPeriods() {
-        List<OrderItem> orderItems = orderItemRepository.findAll();
-        List<Long> rentalPeriods = new ArrayList<>();
-        for (OrderItem orderItem : orderItems) {
-            //System.out.println(cartItem);
-            LocalDate rentalStartDate = orderItem.getRentalStartDate().toLocalDate();
-            LocalDate rentalEndDate = orderItem.getRentalEndDate().toLocalDate();
-            long daysBetween = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate);
+        for (Order order : orderRepository.findAll()) {
+            for (OrderItem orderItem : order.getOrderItems()) {
+                if (orderItem.getProduct().getUser().equals(user)) {
+                    int quantity = orderItem.getQuantity();
+                    double price = orderItem.getPrice();
+                    LocalDateTime rentalStartDate = orderItem.getRentalStartDate();
+                    LocalDateTime rentalEndDate = orderItem.getRentalEndDate();
 
-            //rentalPeriods.add(daysBetween);
-            if (daysBetween == 2 || daysBetween == 3 || daysBetween == 1) {
-                String email = orderItem.getOrder().getUser().getEmail();
-                System.out.println(email);
-                String subject = "Reminder: Your rental period is ending soon";
-                String message = "Dear " + orderItem.getOrder().getUser().getFirstName() + ",\n" +
-                        "This is a reminder that your rental period for the following item will end in " + daysBetween +
-                        " days:\n" +
-                        //"- " + orderItem.getOrder().getId() + "\n" +
-                        "Please return the item before the end of the rental period to avoid any late fees.\n\n" +
-                        "Thank you for choosing our rental service.\n\n" +
-                        "Best regards,\n" +
-                        "The Rental Service Team";
-                emailService.sendEmail(subject, message, email);
+                    long rentalDurationInDays = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate);
+                    double earnings = price * quantity * rentalDurationInDays;
+
+                    Year year = Year.from(rentalStartDate);
+                    YearMonth month = YearMonth.from(rentalStartDate);
+
+                    totalEarningsByYearMonth.computeIfAbsent(year, k -> new HashMap<>())
+                            .merge(month, earnings, Double::sum);
+
+                    totalItemsByYearMonth.computeIfAbsent(year, k -> new HashMap<>())
+                            .merge(month, quantity, Integer::sum);
+                }
+            }
+        }
+
+        Map<Year, Map<YearMonth, Map<String, Object>>> result = new HashMap<>();
+        for (Year year : totalEarningsByYearMonth.keySet()) {
+            Map<YearMonth, Double> earningsByMonth = totalEarningsByYearMonth.get(year);
+            Map<YearMonth, Integer> itemsByMonth = totalItemsByYearMonth.get(year);
+
+            Map<YearMonth, Map<String, Object>> yearData = new HashMap<>();
+            for (YearMonth month : earningsByMonth.keySet()) {
+                Map<String, Object> monthData = new HashMap<>();
+                monthData.put("totalNumberOfItems", itemsByMonth.get(month));
+                monthData.put("totalEarnings", earningsByMonth.get(month));
+                yearData.put(month, monthData);
             }
 
+            result.put(year, yearData);
         }
+
+        return result;
     }
+
 
     @Override
     public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user) {
@@ -384,7 +405,6 @@ public class OrderService implements OrderServiceInterface {
 
     }
 
-
     @Override
     public List<ProductDto> getRentedOutProducts(User user) {
         List<Product> products = new ArrayList<>();
@@ -405,8 +425,7 @@ public class OrderService implements OrderServiceInterface {
 
     @Override
     public Document getPdf(User user) throws DocumentException {
-        Document document = new Document();
-        return document;
+        return new Document();
     }
 
     @Override
@@ -489,5 +508,32 @@ public class OrderService implements OrderServiceInterface {
         cell.setPadding(6);
     }
 
+    public void getRentalPeriods() {
+        List<OrderItem> orderItems = orderItemRepository.findAll();
+        List<Long> rentalPeriods = new ArrayList<>();
+        for (OrderItem orderItem : orderItems) {
+            //System.out.println(cartItem);
+            LocalDate rentalStartDate = orderItem.getRentalStartDate().toLocalDate();
+            LocalDate rentalEndDate = orderItem.getRentalEndDate().toLocalDate();
+            long daysBetween = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate);
+
+            //rentalPeriods.add(daysBetween);
+            if (daysBetween == 2 || daysBetween == 3 || daysBetween == 1) {
+                String email = orderItem.getOrder().getUser().getEmail();
+                System.out.println(email);
+                String subject = "Reminder: Your rental period is ending soon";
+                String message = "Dear " + orderItem.getOrder().getUser().getFirstName() + ",\n" +
+                        "This is a reminder that your rental period for the following item will end in " + daysBetween +
+                        " days:\n" +
+                        //"- " + orderItem.getOrder().getId() + "\n" +
+                        "Please return the item before the end of the rental period to avoid any late fees.\n\n" +
+                        "Thank you for choosing our rental service.\n\n" +
+                        "Best regards,\n" +
+                        "The Rental Service Team";
+                emailServiceImpl.sendEmail(subject, message, email);
+            }
+
+        }
+    }
 
 }

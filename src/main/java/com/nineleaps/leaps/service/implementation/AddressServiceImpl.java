@@ -1,10 +1,10 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.AddressRepository;
+import com.nineleaps.leaps.service.AddressServiceInterface;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class AddressService implements AddressServiceInterface {
+public class AddressServiceImpl implements AddressServiceInterface {
     private final AddressRepository addressRepository;
 
     @Override

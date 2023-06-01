@@ -24,6 +24,6 @@ public class LeapsProductionApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static String ngrok_url ="https://773b-106-51-70-135.ngrok-free.app" ;
+    public static String ngrok_url ="" ;
 
 }

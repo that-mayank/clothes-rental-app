@@ -3,11 +3,10 @@ package com.nineleaps.leaps.config;
 
 import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.repository.OrderItemRepository;
-import com.nineleaps.leaps.service.OrderService;
+import com.nineleaps.leaps.service.implementation.OrderServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
 public class SchedulerConfig {
 
 
-    private final OrderService reminderService;
+    private final OrderServiceImpl reminderService;
     private final OrderItemRepository orderItemRepository;
 
     //@Scheduled(cron = "0 0 12 * * ?") // Runs every day at 12 PM 0 0 12 * * ? */10 * * * * *

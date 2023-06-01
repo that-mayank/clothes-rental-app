@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.service;
+package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
@@ -9,6 +9,7 @@ import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
+import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class UserService implements UserServiceInterface, UserDetailsService {
+public class UserServiceImpl implements UserServiceInterface, UserDetailsService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;

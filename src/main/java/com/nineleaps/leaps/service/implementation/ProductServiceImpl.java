@@ -2,6 +2,7 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
+import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.ProductUrl;
 import com.nineleaps.leaps.model.User;
@@ -45,38 +46,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
         //setting image url
         setImageUrl(product, productDto);
     }
-
-//    @Override
-//    public List<ProductDto> listProducts(int pageNumber, int pageSize, User user) {
-//        Session session = entityManager.unwrap(Session.class);
-//        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-//        deletedProductFilter.setParameter("isDeleted", false);
-//        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-//        disabledProductFilter.setParameter("isDisabled", false);
-//        List<Product> allProducts = productRepository.findAll();
-//
-//        session.disableFilter("deletedProductFilter");
-//        session.disableFilter("disableProductFilter");
-//        List<Product> results = new ArrayList<>();
-//        for (Product product : allProducts) {
-//            if (!product.getUser().equals(user)) {
-//                results.add(product);
-//            }
-//        }
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-//
-//        int startIndex = pageable.getPageNumber() * pageable.getPageSize();
-//        int endIndex = Math.min(startIndex + pageable.getPageSize(), results.size());
-//
-//
-//        List<ProductDto> productDtos = new ArrayList<>();
-//        for (int i = startIndex; i < endIndex; i++) {
-//            Product product = results.get(i);
-//            ProductDto productDto = getDtoFromProduct(product);
-//            productDtos.add(productDto);
-//        }
-//        return productDtos;
-//    }
 
     @Override
     public List<ProductDto> listProducts(int pageNumber, int pageSize, User user) {
@@ -275,7 +244,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
         deletedProductFilter.setParameter("isDeleted", false);
         disabledProductFilter.setParameter("isDisabled", false);
-        String stringArray[] = query.split(" ");
+        String[] stringArray = query.split(" ");
         String[] stringList = stringArray;
 
         List<ProductDto> productDtos = new ArrayList<>();
@@ -339,6 +308,9 @@ public class ProductServiceImpl implements ProductServiceInterface {
 
     @Override
     public void disableProduct(Product product, int quantity) {
+        if (quantity > product.getAvailableQuantities()) {
+            throw new QuantityOutOfBoundException("User cannot disable more quantities than available quantities");
+        }
         product.setDisabledQuantities(product.getDisabledQuantities() + quantity);
         product.setAvailableQuantities(product.getAvailableQuantities() - quantity);
         if (product.getAvailableQuantities() == 0) {
@@ -349,6 +321,9 @@ public class ProductServiceImpl implements ProductServiceInterface {
 
     @Override
     public void enableProduct(Product product, int quantity) {
+        if (quantity > product.getDisabledQuantities()) {
+            throw new QuantityOutOfBoundException("User cannot enable more quantities than disabled quantities");
+        }
         product.setDisabledQuantities(product.getDisabledQuantities() - quantity);
         product.setAvailableQuantities(product.getAvailableQuantities() + quantity);
         if (product.isDisabled()) {

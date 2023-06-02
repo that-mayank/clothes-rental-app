@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONObject;
 
 @RestController
 @RequestMapping("/api/v1/file")
@@ -40,21 +41,21 @@ public class StorageController {
         return urlResponse;
     }
     @ApiOperation(value = "Upload profile image to amazon s3")
+
+
     @PostMapping("/uploadProfileImage")
-    public UrlResponse uploadProfileFile(@RequestParam(value = "file") MultipartFile[] files) throws IOException {
-        UrlResponse urlResponse = new UrlResponse();
-        List<String> urls = new ArrayList<>();
-        try{
-            for(MultipartFile file:files){
-                String url = storageServiceInterface.uploadFile(file);
-                urls.add(url);
-            }
-            urlResponse.setUrls(urls);
-        }catch (Exception e){
+    public ResponseEntity<String> uploadProfileFile(@RequestParam("file") MultipartFile file) {
+        try {
+            String url = storageServiceInterface.uploadFile(file);
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("url", url);
+            return ResponseEntity.ok(jsonResponse.toString());
+        } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return urlResponse;
     }
+
 
 
     // to download the image of the product from s3

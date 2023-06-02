@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 
 @Service
@@ -119,8 +119,8 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
 //if url does not contain ngrok url, directly save it
         String imageUrl = profileImageUrl;
 //remove ngrok link
-        if (profileImageUrl.contains(ngrok_url)) {
-            imageUrl = profileImageUrl.substring(ngrok_url.length());
+        if (profileImageUrl.contains(NGROK)) {
+            imageUrl = profileImageUrl.substring(NGROK.length());
         }
         user.setProfileImageUrl(imageUrl);
         userRepository.save(user);

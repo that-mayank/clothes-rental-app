@@ -1,7 +1,5 @@
 package com.nineleaps.leaps.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.Address;
@@ -9,11 +7,9 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 
-import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,10 +36,10 @@ public class AddressController {
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid Address address, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //Add address
-        addressService.addAddress(address, user);
+        addressService.saveAddress(address, user);
         return new ResponseEntity<>(new ApiResponse(true, "Address added successfully"), HttpStatus.CREATED);
 
     }
@@ -53,7 +49,7 @@ public class AddressController {
     @PutMapping("/update/{addressId}")
     public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid Address address, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
 
         //check if addressId is valid or not
@@ -73,11 +69,11 @@ public class AddressController {
 
     //listByUserId
     @ApiOperation(value = "List all addresses for particular user")
-    @GetMapping("/listaddress")
+    @GetMapping("/listAddress")
     public ResponseEntity<List<Address>> listAddress(HttpServletRequest request) throws AuthenticationFailException {
 
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
 
         List<Address> body = addressService.listAddress(user);
@@ -91,7 +87,7 @@ public class AddressController {
 
         //authenticate token
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //check if addressId is valid or not
         Optional<Address> optionalAddress = addressService.readAddress(addressId);

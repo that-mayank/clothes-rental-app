@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Service
 @RequiredArgsConstructor
@@ -373,8 +373,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     private String ngrokLinkRemove(String imageurl) {
-        if (imageurl.contains(ngrok_url)) {
-            int size = ngrok_url.length();
+        if (imageurl.contains(NGROK)) {
+            int size = NGROK.length();
             return imageurl.substring(size);
         }
         return imageurl;

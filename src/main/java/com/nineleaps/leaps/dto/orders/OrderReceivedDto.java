@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
 @Setter
@@ -31,7 +31,7 @@ public class OrderReceivedDto {
         this.rentalEndDate = orderItem.getRentalEndDate();
         this.rentalCost = Math.round(orderItem.getPrice() * orderItem.getQuantity() * (ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate())));
         int i = orderItem.getImageUrl().indexOf("/api");
-        this.imageUrl = ngrok_url + orderItem.getImageUrl().substring(i);
+        this.imageUrl = NGROK + orderItem.getImageUrl().substring(i);
         this.productId = orderItem.getProduct().getId();
         this.borrowerId = orderItem.getOrder().getUser().getId();
         this.borrowerName = orderItem.getOrder().getUser().getFirstName() + " " + orderItem.getOrder().getUser().getLastName();

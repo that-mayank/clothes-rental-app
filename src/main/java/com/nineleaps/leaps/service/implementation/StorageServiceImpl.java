@@ -19,14 +19,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 
 @Service
 @Slf4j
 public class StorageServiceImpl implements StorageServiceInterface {
 
-    private String baseUrl = ngrok_url;
+    private String baseUrl = NGROK;
 
     @Value("${application.bucket.name}")
     private String bucketName;

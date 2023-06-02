@@ -5,7 +5,7 @@ import com.nineleaps.leaps.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class UserDto {
         if (user.getProfileImageUrl() == null) {
             this.profileImageUrl = user.getProfileImageUrl();
         } else {
-            this.profileImageUrl = ngrok_url + user.getProfileImageUrl();
+            this.profileImageUrl = NGROK + user.getProfileImageUrl();
         }
     }
 }

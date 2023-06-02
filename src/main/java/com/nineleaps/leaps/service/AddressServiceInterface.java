@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AddressServiceInterface {
-    void addAddress(Address address, User user);
+    void saveAddress(Address address, User user);
 
     List<Address> listAddress(User user);
 

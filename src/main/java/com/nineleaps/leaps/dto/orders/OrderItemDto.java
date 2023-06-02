@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
 @Setter
@@ -32,7 +32,7 @@ public class OrderItemDto {
         this.createdDate = orderItem.getCreatedDate();
         this.rentalStartDate = orderItem.getRentalStartDate();
         this.rentalEndDate = orderItem.getRentalEndDate();
-        this.imageUrl = ngrok_url + orderItem.getImageUrl();
+        this.imageUrl = NGROK + orderItem.getImageUrl();
         this.status = orderItem.getStatus();
         this.totalPrice = orderItem.getPrice() * orderItem.getQuantity();
     }

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
 @Setter
@@ -41,7 +41,7 @@ public class ProductDto {
     public ProductDto(Product product) {
         this.setId(product.getId());
         this.setName(product.getName());
-        this.setImageUrl(product.getImageURL().stream().map(productUrl -> ngrok_url + productUrl.getUrl()).collect(Collectors.toList()));
+        this.setImageUrl(product.getImageURL().stream().map(productUrl -> NGROK + productUrl.getUrl()).collect(Collectors.toList()));
         this.setDescription(product.getDescription());
         this.setPrice(product.getPrice());
         this.setTotalQuantity(product.getQuantity());

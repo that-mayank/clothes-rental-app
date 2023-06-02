@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import static com.nineleaps.leaps.LeapsProductionApplication.ngrok_url;
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class CartItemDto {
         this.setProduct(cart.getProduct());
         this.setRentalStartDate(cart.getRentalStartDate());
         this.setRentalEndDate(cart.getRentalEndDate());
-        this.setImageUrl(ngrok_url + cart.getImageUrl());
+        this.setImageUrl(NGROK + cart.getImageUrl());
     }
 
     @Override

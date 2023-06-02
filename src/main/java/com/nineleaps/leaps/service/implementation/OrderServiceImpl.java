@@ -22,9 +22,16 @@ import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -80,7 +87,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             Product product = orderItem.getProduct();
             product.setRentedQuantities(product.getRentedQuantities() + cartItemDto.getQuantity());
             product.setAvailableQuantities(product.getAvailableQuantities() - cartItemDto.getQuantity());
-//            product.setQuantity(product.getQuantity() - cartItemDto.getQuantity());
             productRepository.save(product);
         }
         newOrder.setOrderItems(orderItemList);
@@ -102,10 +108,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             message += "Price: " + orderItem.getPrice() * orderItem.getQuantity() * ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate()) + "\n";
         }
         message += "Total Price of order : " + latestOrder.getTotalPrice() + "\n\n";
-//        } else {
-//            // Handle the case where no orders are found
-//            message += "No recent orders found.\n";
-//        }
         emailServiceImpl.sendEmail(subject, message, email);
     }
 
@@ -137,7 +139,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             Product product = orderItem.getProduct();
             product.setAvailableQuantities(product.getAvailableQuantities() + orderItem.getQuantity());
             product.setRentedQuantities(product.getRentedQuantities() - orderItem.getQuantity());
-//            product.setQuantity(product.getQuantity() + orderItem.getQuantity());
             productRepository.save(product);
         }
     }
@@ -200,10 +201,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 orderItem.setSecurityDeposit(remainingAmount);
                 orderItemRepository.save(orderItem);
             } else {
-                double additionalPayment = Math.abs(remainingAmount); // Calculate the additional payment
                 orderItem.setSecurityDeposit(0);
                 orderItemRepository.save(orderItem);
-                System.out.println("Additional payment required: $" + additionalPayment);
             }
             return remainingAmount;
         } else {
@@ -444,12 +443,12 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
 
     @Override
-    public Document getPdf(User user) throws DocumentException {
+    public Document getPdf(User user) {
         return new Document();
     }
 
     @Override
-    public void addContent(Document document, User user) throws DocumentException {
+    public void addContent(Document document, User user) throws DocumentException, IOException {
 
         // Add header
         Font headingFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 30, BaseColor.BLACK);
@@ -511,15 +510,52 @@ public class OrderServiceImpl implements OrderServiceInterface {
             table.addCell(numberOfItems);
         }
         document.add(table);
+
+        //add bar chart to pdf for all months of the year
+
+        // Add bar chart
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        // Add data to the dataset
+        for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
+            YearMonth month = entry.getKey();
+            Map<String, Object> monthData = entry.getValue();
+            String monthString = month.getMonth().toString().substring(0, 3);
+            double earnings = Double.parseDouble(monthData.get("totalEarnings").toString());
+            int numberOfItems = Integer.parseInt(monthData.get("totalNumberOfItems").toString());
+
+            dataset.addValue(earnings, "Total Earnings", monthString);
+            dataset.addValue(numberOfItems, "Number of Items Sold", monthString);
+        }
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Monthly Performance", // Chart title
+                "Month", // X-axis label
+                "Value", // Y-axis label
+                dataset, // Dataset
+                PlotOrientation.VERTICAL, // Plot orientation
+                true, // Show legend
+                true, // Show tooltips
+                false // Show URLs
+        );
+
+        // Set the width and height of the chart
+        int chartWidth = 500;
+        int chartHeight = 300;
+
+        // Convert the chart to an image and add it to the PDF
+        ByteArrayOutputStream chartImageStream = new ByteArrayOutputStream();
+        ChartUtilities.writeChartAsPNG(chartImageStream, chart, chartWidth, chartHeight);
+        Image chartImage = Image.getInstance(chartImageStream.toByteArray());
+        document.add(chartImage);
+
     }
 
     @Override
     public OrderItem getOrderItem(Long orderItemId, User user) {
         Optional<OrderItem> optionalOrderItem = orderItemRepository.findById(orderItemId);
-        if (optionalOrderItem.isPresent()) {
-            if (optionalOrderItem.get().getOrder().getUser().equals(user)) {
-                return optionalOrderItem.get();
-            }
+        if (optionalOrderItem.isPresent() && optionalOrderItem.get().getOrder().getUser().equals(user)) {
+            return optionalOrderItem.get();
         }
         return null;
     }
@@ -530,17 +566,13 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
     public void getRentalPeriods() {
         List<OrderItem> orderItems = orderItemRepository.findAll();
-        List<Long> rentalPeriods = new ArrayList<>();
         for (OrderItem orderItem : orderItems) {
-            //System.out.println(cartItem);
             LocalDate rentalStartDate = orderItem.getRentalStartDate().toLocalDate();
             LocalDate rentalEndDate = orderItem.getRentalEndDate().toLocalDate();
             long daysBetween = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate);
 
-            //rentalPeriods.add(daysBetween);
             if (daysBetween == 2 || daysBetween == 3 || daysBetween == 1) {
                 String email = orderItem.getOrder().getUser().getEmail();
-                System.out.println(email);
                 String subject = "Reminder: Your rental period is ending soon";
                 String message = "Dear " + orderItem.getOrder().getUser().getFirstName() + ",\n" +
                         "This is a reminder that your rental period for the following item will end in " + daysBetween +

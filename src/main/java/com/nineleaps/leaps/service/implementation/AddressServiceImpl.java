@@ -16,7 +16,7 @@ public class AddressServiceImpl implements AddressServiceInterface {
     private final AddressRepository addressRepository;
 
     @Override
-    public void addAddress(Address address, User user) {
+    public void saveAddress(Address address, User user) {
         if (address.isDefaultAddress()) {
             List<Address> addresses = addressRepository.findAllByUser(user);
             for (Address addressItr : addresses) {

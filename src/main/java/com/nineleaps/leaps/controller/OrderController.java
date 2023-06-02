@@ -31,6 +31,7 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
@@ -214,7 +215,7 @@ public class OrderController {
 
 
     @GetMapping("/exportPdf")
-    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws FileNotFoundException, DocumentException {
+    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring("Bearer ".length());
         User user = helper.getUser(token);

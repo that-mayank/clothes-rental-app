@@ -10,20 +10,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 @EnableScheduling
-public class LeapsProductionApplication {
-
-
-
+public class LeapsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LeapsProductionApplication.class, args);
-        System.out.println("Application is running......");
+        SpringApplication.run(LeapsApplication.class, args);
     }
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    public static String ngrok_url ="" ;
-
+    public static final String NGROK ="" ;
 }

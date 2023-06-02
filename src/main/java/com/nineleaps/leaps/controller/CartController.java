@@ -11,13 +11,10 @@ import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
-import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +44,7 @@ public class CartController {
     public ResponseEntity<ApiResponse> addToCart(@RequestBody AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
         //authenticate token is valid or not
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //get product
         Product product = productService.getProductById(addToCartDto.getProductId());
@@ -61,7 +58,7 @@ public class CartController {
     @GetMapping("/list")
     public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         CartDto cartDto = cartService.listCartItems(user);
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
@@ -72,7 +69,7 @@ public class CartController {
     @PutMapping("/update") //productId
     public ResponseEntity<ApiResponse> updateCartItem(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         cartService.updateCartItem(addToCartDto, user);
         return new ResponseEntity<>(new ApiResponse(true, "Cart item has been updated"), HttpStatus.OK);
@@ -83,7 +80,7 @@ public class CartController {
     @DeleteMapping("/delete/{productId}") //productId
     public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         cartService.deleteCartItem(productId, user);
         return new ResponseEntity<>(new ApiResponse(true, "Item has been removed from cart successfully"), HttpStatus.OK);
@@ -93,7 +90,7 @@ public class CartController {
     @PutMapping("/updateQuantity")
     public ResponseEntity<ApiResponse> updateQuantity(@RequestBody @Valid UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         cartService.updateProductQuantity(updateProductQuantityDto, user);
         return new ResponseEntity<>(new ApiResponse(true, "Product quantity has been updated successfully"), HttpStatus.OK);

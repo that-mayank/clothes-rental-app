@@ -11,6 +11,7 @@ import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
@@ -36,7 +37,7 @@ public interface OrderServiceInterface {
 
     Document getPdf(User user) throws FileNotFoundException, DocumentException;
 
-    void addContent(Document document, User user) throws DocumentException;
+    void addContent(Document document, User user) throws DocumentException, IOException;
 
     OrderItem getOrderItem(Long orderItemId, User user);
 

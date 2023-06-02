@@ -23,9 +23,9 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInfo() {
-        Contact contact = new Contact("Mayank", "https://github.com/thatmayank", "thatmayank@gmail.com");
+        Contact contact = new Contact("Batch 4 Team 3", "https://github.com/that-mayank", "mayank.01@nineleaps.com");
         return new ApiInfoBuilder()
-                .title("Leapsv2 API")
+                .title("Leaps API")
                 .description("Clothes Rental Application")
                 .version("1.0.0")
                 .license("Apache 2.0")

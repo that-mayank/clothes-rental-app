@@ -2,12 +2,9 @@ package com.nineleaps.leaps.controller;
 
 
 import com.nineleaps.leaps.common.ApiResponse;
-
 import com.nineleaps.leaps.dto.category.CategoryDto;
-
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
-
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,23 +27,22 @@ public class CategoryController {
     private final CategoryServiceInterface categoryService;
 
 
-
     @ApiOperation(value = "Add new category")
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
         if (Helper.notNull(categoryService.readCategory(categoryDto.getCategoryName()))) {
-            return new ResponseEntity<ApiResponse>(new ApiResponse(false, "Category already exists"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApiResponse(false, "Category already exists"), HttpStatus.CONFLICT);
         }
         Category category = new Category(categoryDto);
         categoryService.createCategory(category);
-        return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Created a new Category"), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(true, "Created a new Category"), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "List categories")
     @GetMapping("/list")
     public ResponseEntity<List<Category>> listCategory() {
         List<Category> body = categoryService.listCategory();
-        return new ResponseEntity<List<Category>>(body, HttpStatus.OK);
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @ApiOperation(value = "update category")
@@ -55,9 +51,9 @@ public class CategoryController {
         //Check to see if category exists
         if ((categoryService.readCategory(id)).isPresent()) {
             categoryService.updateCategory(id, updateCategory);
-            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "category has been updated"), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse(true, "category has been updated"), HttpStatus.OK);
         }
         //Return this if category does not exist
-        return new ResponseEntity<ApiResponse>(new ApiResponse(false, "category does not exist"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ApiResponse(false, "category does not exist"), HttpStatus.NOT_FOUND);
     }
 }

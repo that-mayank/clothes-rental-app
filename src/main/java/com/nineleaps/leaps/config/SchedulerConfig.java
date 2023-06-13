@@ -22,8 +22,8 @@ public class SchedulerConfig {
 
     //@Scheduled(cron = "0 0 12 * * ?") // Runs every day at 12 PM 0 0 12 * * ? */10 * * * * *
     public void sendReminderEmails() {
-       reminderService.getRentalPeriods();
-       System.out.println("email sent");
+        reminderService.getRentalPeriods();
+        System.out.println("email sent");
 
     }
 

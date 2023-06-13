@@ -17,27 +17,12 @@ import javax.persistence.Table;
 public class RefreshToken {
     @Id
     private String email;
-    @Column(name="refresh_tokens")
-    private String refresh_Token;
 
-    public String getEmail() {
-        return email;
-    }
+    @Column(name = "refresh_token")
+    private String token;
 
-    public void setEmail(String email) {
+    public RefreshToken(String email, String token) {
         this.email = email;
-    }
-
-    public String getRefresh_Token() {
-        return refresh_Token;
-    }
-
-    public void setRefresh_Token(String refresh_Token) {
-        this.refresh_Token = refresh_Token;
-    }
-
-    public RefreshToken(String email, String refresh_Token) {
-        this.email = email;
-        this.refresh_Token = refresh_Token;
+        this.token = token;
     }
 }

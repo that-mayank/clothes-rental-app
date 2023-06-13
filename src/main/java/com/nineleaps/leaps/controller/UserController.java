@@ -13,8 +13,7 @@ import com.nineleaps.leaps.model.Guest;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import com.nineleaps.leaps.utils.SecurityUtility;
-import com.nineleaps.leaps.utils.Switchprofile;
+import com.nineleaps.leaps.utils.SwitchProfile;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Api(tags = "User Api", description = "Contains api for user onboarding")
 public class UserController {
     private final UserServiceInterface userServiceInterface;
-    private final Switchprofile switchprofile;
+    private final SwitchProfile switchprofile;
     private final Helper helper;
 
 
@@ -55,8 +54,8 @@ public class UserController {
     @ApiOperation(value = "To switch between owner and borrower")
     @PostMapping("/switch")
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException {
-        User user = null;
-        if (profile == Role.guest) {
+        User user;
+        if (profile == Role.GUEST) {
             user = userServiceInterface.getGuest();
             if (!Helper.notNull(user)) {
                 user = new Guest();
@@ -64,14 +63,14 @@ public class UserController {
             }
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            String token = authorizationHeader.substring("Bearer ".length());
+            String token = authorizationHeader.substring(7);
             user = helper.getUser(token);
             if (!Helper.notNull(user)) {
                 throw new UserNotExistException("User is invalid");
             }
             user.setRole(profile);
             userServiceInterface.saveProfile(user);
-            switchprofile.generateTokenForSwitchProfile(response, profile,request);
+            switchprofile.generateTokenForSwitchProfile(response, profile, request);
         }
         return new ResponseEntity<>(new ApiResponse(true, "Role switch to: " + user.getRole()), HttpStatus.OK);
     }
@@ -83,7 +82,7 @@ public class UserController {
 
 
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User oldUser = helper.getUser(token);
 
         if (!Helper.notNull(oldUser)) {
@@ -99,7 +98,7 @@ public class UserController {
     @GetMapping("/getUser")
     public ResponseEntity<UserDto> getUser(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         UserDto userDto = userServiceInterface.getUser(user);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
@@ -110,7 +109,7 @@ public class UserController {
     public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
         //check if user is valid or not
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         if (!Helper.notNull(user)) {
             return new ResponseEntity<>(new ApiResponse(false, "User is invalid"), HttpStatus.NOT_FOUND);

@@ -2,7 +2,6 @@ package com.nineleaps.leaps.repository;
 
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
-import org.hibernate.sql.Select;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,10 +33,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByUser(User user, Sort id);
 
     Page<Product> findAllByUserNot(Pageable pageable, User user);
-
-//    @Query("SELECT product FROM Product product WHERE (:brandQuery IS NULL OR product.brand LIKE %:brandQuery%) AND (:nameQuery IS NULL OR product.name LIKE %:nameQuery%) AND (:colorQuery IS NULL OR product.color LIKE %:colorQuery%) AND (:materialQuery IS NULL OR product.material LIKE %:materialQuery%)")
-//    List<Product> searchProducts(@Param("brandQuery") String brandQuery, @Param("nameQuery") String nameQuery, @Param("colorQuery") String colorQuery, @Param("materialQuery") String materialQuery);
-//
-
-
 }

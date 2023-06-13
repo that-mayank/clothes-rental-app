@@ -9,7 +9,6 @@ import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +59,6 @@ public class SubCategoryController {
             List<SubCategory> body = subCategoryService.listSubCategory(categoryId);
             return new ResponseEntity<>(body, HttpStatus.OK);
         }
-//        return new ResponseEntity<>(new ApiResponse(false, "Category is invalid"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NOT_FOUND);
     }
 

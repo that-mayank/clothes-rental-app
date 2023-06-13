@@ -1,9 +1,9 @@
 package com.nineleaps.leaps.config.Filter;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nineleaps.leaps.model.RefreshToken;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
@@ -17,6 +17,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,20 +27,25 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.stream.Collectors;
-@Slf4j @Getter @Setter
+
+@Slf4j
+@Getter
+@Setter
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private UserServiceInterface userServiceInterface;
-    public  String access_token;
-    public  String refresh_token;
+    public String access_token;
+    public String refresh_token;
     private final SecurityUtility securityUtility;
     private final RefreshTokenRepository refreshTokenRepository;
     public static String token_from_login;
+
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager, SecurityUtility securityUtility, RefreshTokenRepository refreshTokenRepository) {
         this.authenticationManager = authenticationManager;
         this.securityUtility = securityUtility;
         this.refreshTokenRepository = refreshTokenRepository;
     }
+
     //Authenticates the user using login credentials - email and password
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -56,6 +62,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         return authenticationManager.authenticate(authenticationToken);
     }
+
     //generates access and refresh token
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
@@ -82,13 +89,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
         String email = user.getUsername();
 //        System.out.println(access_token);
-        if(securityUtility.saveTokens(refresh_token,email)){
+        if (securityUtility.saveTokens(refresh_token, email)) {
             response.getWriter().write("refreshTokens added sucessfully !");
-        }else{
+        } else {
             response.getWriter().write("token not added");
         }
         response.setHeader("access_token", access_token);
-        response.setHeader("refresh_token",refresh_token);
+        response.setHeader("refresh_token", refresh_token);
         response.getWriter().write("authentication successful");
     }
 }

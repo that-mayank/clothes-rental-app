@@ -5,16 +5,16 @@ import com.nineleaps.leaps.service.StorageServiceInterface;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONObject;
 
 @RestController
 @RequestMapping("/api/v1/file")
@@ -26,20 +26,21 @@ public class StorageController {
     // used to upload images of the product to s3
     @ApiOperation(value = "Upload image to amazon s3")
     @PostMapping("/upload")
-    public UrlResponse uploadFile(@RequestParam(value = "file") MultipartFile[] files) throws IOException {
+    public UrlResponse uploadFile(@RequestParam(value = "file") MultipartFile[] files) {
         UrlResponse urlResponse = new UrlResponse();
         List<String> urls = new ArrayList<>();
-        try{
-            for(MultipartFile file:files){
+        try {
+            for (MultipartFile file : files) {
                 String url = storageServiceInterface.uploadFile(file);
                 urls.add(url);
             }
             urlResponse.setUrls(urls);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return urlResponse;
     }
+
     @ApiOperation(value = "Upload profile image to amazon s3")
 
 
@@ -55,7 +56,6 @@ public class StorageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
 
     // to download the image of the product from s3

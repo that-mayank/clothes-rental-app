@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public interface SmsServiceInterface {
-    public void send(SmsPojo sms);
-    public void recieve (MultiValueMap<String,String> smscallback);
-    public void generateToken(HttpServletResponse response, HttpServletRequest request);
+    void send(SmsPojo sms);
 
-    public User user();
+    void recieve(MultiValueMap<String, String> smscallback);
+
+    void generateToken(HttpServletResponse response, HttpServletRequest request);
+
+    User user();
 
 }

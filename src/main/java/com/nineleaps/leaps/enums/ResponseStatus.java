@@ -1,6 +1,9 @@
 package com.nineleaps.leaps.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ResponseStatus {
-    success,
-    error
+    SUCCESS,
+    ERROR
 }

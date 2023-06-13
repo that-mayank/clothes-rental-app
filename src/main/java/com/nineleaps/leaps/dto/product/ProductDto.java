@@ -1,13 +1,11 @@
 package com.nineleaps.leaps.dto.product;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
             throw new CustomException("Email already associated with other user");
         }
         //add for phone number
-        if(Helper.notNull(userRepository.findByPhoneNumber(signupDto.getPhoneNumber()))) {
+        if (Helper.notNull(userRepository.findByPhoneNumber(signupDto.getPhoneNumber()))) {
             throw new CustomException("Phone number already associated with other user");
         }
         //encrypting the password
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
         try {
             userRepository.save(user);
-            return new ResponseDto(ResponseStatus.success.toString(), USER_CREATED);
+            return new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
         } catch (Exception e) {
             //handle signup error
             throw new CustomException(e.getMessage());
@@ -78,13 +78,6 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     @Override
     public void saveProfile(User user) {
         userRepository.save(user);
-    }
-
-    @Override
-    public User getUserById(Long userId) {
-        log.info("getting user{} from the database", userId);
-        return userRepository.findById(userId).get();
-
     }
 
     @Override
@@ -100,7 +93,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
 
     @Override
     public User getGuest() {
-        User user = userRepository.findByRole(Role.guest);
+        User user = userRepository.findByRole(Role.GUEST);
         if (!Helper.notNull(user)) {
             return null; //create a guest user call that function
         } else {

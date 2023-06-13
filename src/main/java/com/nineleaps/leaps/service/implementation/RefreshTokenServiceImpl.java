@@ -14,19 +14,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenServiceInterface {
     }
 
     @Override
-    public String getrefreshToken(String email) {
-         RefreshToken refresh_token = refreshTokenRepository.findByEmail(email);
-        System.out.println(refresh_token.getRefresh_Token());
-         return refresh_token.getRefresh_Token();
+    public String getRefreshToken(String email) {
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email);
+        return refreshToken.getToken();
     }
-
-    @Override
-    public void getallrefreshtokens() {
-        RefreshToken[] refreshTokens = refreshTokenRepository.findAll().toArray(new RefreshToken[0]);
-        System.out.println(refreshTokens);
-    }
-
-    ;
-
 
 }

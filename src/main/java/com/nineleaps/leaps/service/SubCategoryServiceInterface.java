@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubCategoryServiceInterface {
-    public void createSubCategory(SubCategoryDto subCategoryDto, Category category);
+    void createSubCategory(SubCategoryDto subCategoryDto, Category category);
 
-    public SubCategory readSubCategory(String subcategoryName, Category category);
+    SubCategory readSubCategory(String subcategoryName, Category category);
 
-    public Optional<SubCategory> readSubCategory(Long subcategoryId);
+    Optional<SubCategory> readSubCategory(Long subcategoryId);
 
-    public List<SubCategory> listSubCategory();
+    List<SubCategory> listSubCategory();
 
-    public List<SubCategory> listSubCategory(Long categoryId);
+    List<SubCategory> listSubCategory(Long categoryId);
 
-    public void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category);
+    void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category);
 
-    public List<SubCategory> getSubCategoriesFromIds(List<Long> subcategoryIds);
+    List<SubCategory> getSubCategoriesFromIds(List<Long> subcategoryIds);
 }

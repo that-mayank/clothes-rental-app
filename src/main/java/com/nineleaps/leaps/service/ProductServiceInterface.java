@@ -10,23 +10,24 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductServiceInterface {
-    public void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
+    void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 
-    public List<ProductDto> listProducts(int pageNumber, int pageSize, User user);
+    List<ProductDto> listProducts(int pageNumber, int pageSize, User user);
 
     List<String> listSuggestions(String searchInput, User user);
 
-    public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
+    void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 
-    public Optional<Product> readProduct(Long productId);
+    Optional<Product> readProduct(Long productId);
 
-    public List<ProductDto> listProductsById(Long subcategoryId, User user);
+    List<ProductDto> listProductsById(Long subcategoryId, User user);
 
-    public List<ProductDto> listProductsByCategoryId(Long categoryId, User user);
+    List<ProductDto> listProductsByCategoryId(Long categoryId, User user);
 
-    public ProductDto listProductByid(Long productId);
+    ProductDto listProductByid(Long productId);
 
-    public Product getProductById(Long productId);
+    Product getProductById(Long productId);
+
     List<ProductDto> listProductsDesc(User user);
 
     List<ProductDto> listOwnerProducts(User user);

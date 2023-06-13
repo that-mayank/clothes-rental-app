@@ -5,9 +5,9 @@ import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
-import com.nineleaps.leaps.service.implementation.ProductServiceImpl;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
+import com.nineleaps.leaps.service.implementation.ProductServiceImpl;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
@@ -40,7 +40,7 @@ public class WishlistController {
     public ResponseEntity<ApiResponse> addWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
         //check if token is valid
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //check if product is valid
         Optional<Product> optionalProduct = productService.readProduct(productId);
@@ -49,7 +49,7 @@ public class WishlistController {
         }
         //check the same product cannot be added to wishlist
         for (Wishlist wishlist : wishlistService.readWishlist(user.getId())) {
-            if (wishlist.getProduct().getId() == productId) {
+            if (wishlist.getProduct().getId().equals(productId)) {
                 return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
             }
         }
@@ -65,7 +65,7 @@ public class WishlistController {
     public ResponseEntity<List<ProductDto>> getWishlist(HttpServletRequest request) {
         //check if token is valid
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //get user using token
         Long userId = user.getId();
@@ -83,7 +83,7 @@ public class WishlistController {
     public ResponseEntity<ApiResponse> removeFromWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
         //verify token
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //get user using token
         Long userId = user.getId();

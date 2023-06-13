@@ -5,9 +5,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 
 public interface StorageServiceInterface {
-    public String uploadFile(MultipartFile file);
-    public byte[] downloadFile(String fileName);
-    public String deleteFile(String fileName);
-    public void viewFile(String fileName, HttpServletResponse response);
+    String uploadFile(MultipartFile file);
+
+    byte[] downloadFile(String fileName);
+
+    String deleteFile(String fileName);
+
+    void viewFile(String fileName, HttpServletResponse response);
 
 }

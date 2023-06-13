@@ -16,7 +16,7 @@ public class EmailServiceImpl {
     CartRepository cartRepository;
 
     //@Scheduled(cron = "0/15 * * * * ?")
-    public boolean sendEmail(String subject, String message , String to) {
+    public boolean sendEmail(String subject, String message, String to) {
 
         if (to == null) {
             // Handle the null value here, such as throwing an exception or returning false
@@ -86,7 +86,7 @@ public class EmailServiceImpl {
         return f;
     }
 
-    }
+}
 
 
 

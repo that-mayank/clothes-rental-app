@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
-
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
@@ -67,9 +70,12 @@ public class StorageServiceImpl implements StorageServiceInterface {
         File fileObj = convertMultiPartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-        fileObj.delete();
-        String URL = ServletUriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
-        return URL;
+        try {
+            Files.delete(fileObj.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return UriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
     }
 
     // download the image from s3
@@ -78,12 +84,12 @@ public class StorageServiceImpl implements StorageServiceInterface {
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
 
         try {
-            byte[] content = IOUtils.toByteArray(inputStream);
-            return content;
+            return IOUtils.toByteArray(inputStream);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return new byte[0];
     }
 
     //delete the file from s3
@@ -95,14 +101,15 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
     //view the file from s3
     public void viewFile(String fileName, HttpServletResponse response) {
-        S3Object s3Object = s3Client.getObject(bucketName, fileName);
-        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-
-        // Set the response headers
-        String contentType = determineContentType(fileName);
-        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-
         try {
+            S3Object s3Object = s3Client.getObject(bucketName, fileName);
+            S3ObjectInputStream inputStream = s3Object.getObjectContent();
+
+            // Set the response headers
+            String contentType = determineContentType(fileName);
+            response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
+
+
             OutputStream outputStream = response.getOutputStream();
             byte[] buffer = new byte[1024];
             int bytesRead;
@@ -112,89 +119,8 @@ public class StorageServiceImpl implements StorageServiceInterface {
             inputStream.close();
             outputStream.flush();
         } catch (IOException e) {
-//            log.error("Error viewing file", e);
-            e.printStackTrace();
+            log.error("Amazon S3 error");
         }
     }
-//    public void viewFile(String fileName, HttpServletResponse response) {
-//        S3Object s3Object = s3Client.getObject(bucketName, fileName);
-//        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-//        // Set the response headers
-//        String contentType = determineContentType(fileName);
-//        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-//        try (OutputStream outputStream = response.getOutputStream()) {
-//            byte[] buffer = new byte[1024];
-//            int bytesRead;
-//            while ((bytesRead = inputStream.read(buffer)) != -1) {
-//                outputStream.write(buffer, 0, bytesRead);
-//            }
-//        } catch (IOException e) {
-//            log.error("Error viewing file", e);
-//        } finally {
-//            try {
-//                inputStream.close();
-//            } catch (IOException e) {
-//                log.error("Error closing S3ObjectInputStream", e);
-//            }
-//        }
-//    }
-//    public void viewFile(String fileName, HttpServletResponse response) {
-//        S3Object s3Object = s3Client.getObject(bucketName, fileName);
-//        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-//
-//        // Set the response headers
-//        String contentType = determineContentType(fileName);
-//        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-//        response.setHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
-//
-//        try (OutputStream outputStream = response.getOutputStream()) {
-//            byte[] buffer = new byte[1024];
-//            int bytesRead;
-//            while ((bytesRead = inputStream.read(buffer)) != -1) {
-//                outputStream.write(buffer, 0, bytesRead);
-//                outputStream.flush(); // Flush the output stream after each chunk
-//            }
-//        } catch (IOException e) {
-//            log.error("Error viewing file", e);
-//        } finally {
-//            try {
-//                inputStream.close();
-//            } catch (IOException e) {
-//                log.error("Error closing S3ObjectInputStream", e);
-//            }
-//        }
-//    }
-//
-//
-//
-
-//    public void viewFile(String fileName, HttpServletResponse response) {
-//        S3Object s3Object = s3Client.getObject(bucketName, fileName);
-//        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-//
-//        // Set the response headers
-//        String contentType = determineContentType(fileName);
-//        response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-//        response.setHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
-//
-//        try (OutputStream outputStream = response.getOutputStream()) {
-//            byte[] buffer = new byte[1024];
-//            int bytesRead;
-//            while ((bytesRead = inputStream.read(buffer)) != -1) {
-//                outputStream.write(buffer, 0, bytesRead);
-//            }
-//            outputStream.flush(); // Flush the output stream after all chunks are written
-//        } catch (IOException e) {
-//            log.error("Error viewing file", e);
-//        } finally {
-//            try {
-//                inputStream.close();
-//            } catch (IOException e) {
-//                log.error("Error closing S3ObjectInputStream", e);
-//            }
-//        }
-//    }
-
-
 }
 

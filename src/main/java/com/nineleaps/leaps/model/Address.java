@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.enums.AddressType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,4 +47,16 @@ public class Address {
         this.defaultAddress = address.isDefaultAddress();
     }
 
+    public Address(AddressDto addressDto, User user) {
+        this.id = addressDto.getId();
+        this.addressType = addressDto.getAddressType();
+        this.addressLine1 = addressDto.getAddressLine1();
+        this.addressLine2 = addressDto.getAddressLine2();
+        this.city = addressDto.getCity();
+        this.state = addressDto.getState();
+        this.postalCode = addressDto.getPostalCode();
+        this.country = addressDto.getCountry();
+        this.user = user;
+        this.defaultAddress = addressDto.isDefaultAddress();
+    }
 }

@@ -19,11 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderServiceInterface {
-    public void placeOrder(User user, String sessionId);
+    void placeOrder(User user, String sessionId);
 
-    public List<OrderDto> listOrders(User user);
+    List<OrderDto> listOrders(User user);
 
-    public Order getOrder(Long orderId, User user);
+    Order getOrder(Long orderId, User user);
 
     Map<String, Object> dashboard(User user);
 

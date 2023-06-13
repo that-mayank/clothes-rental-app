@@ -14,7 +14,10 @@ import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -22,6 +25,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
+import static com.nineleaps.leaps.config.MessageStrings.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,10 +54,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public List<ProductDto> listProducts(int pageNumber, int pageSize, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        disabledProductFilter.setParameter(DISABLED, false);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Product> page = productRepository.findAllByUserNot(pageable, user);
         List<ProductDto> productDtos = new ArrayList<>();
@@ -61,7 +65,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         session.disableFilter("disableProductFilter");
         return productDtos;
     }
@@ -69,10 +73,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public List<String> listSuggestions(String searchInput, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        disabledProductFilter.setParameter(DISABLED, false);
         List<Product> allProducts = productRepository.findAll();
         List<Product> results = new ArrayList<>();
         for (Product product : allProducts) {
@@ -95,8 +99,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 searchSuggestions.add(suggestion);
             }
         }
-        session.disableFilter("disabledProductFilter");
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return new ArrayList<>(searchSuggestions);
     }
 
@@ -123,10 +127,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public List<ProductDto> listProductsById(Long subcategoryId, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        disabledProductFilter.setParameter(DISABLED, false);
         if (subcategoryId == 19) {
             return getProductsByPriceRange(0, 2000);
         } else if (subcategoryId == 20) {
@@ -144,8 +148,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
                     productDtos.add(productDto);
                 }
             }
-            session.disableFilter("disabledProductFilter");
-            session.disableFilter("deletedProductFilter");
+            session.disableFilter(DISABLED_PRODUCT_FILTER);
+            session.disableFilter(DELETED_PRODUCT_FILTER);
             return productDtos;
         }
     }
@@ -153,10 +157,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public List<ProductDto> listProductsByCategoryId(Long categoryId, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        disabledProductFilter.setParameter(DISABLED, false);
         List<Product> products = productRepository.findByCategoriesId(categoryId);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
@@ -165,8 +169,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 productDtos.add(productDto);
             }
         }
-        session.disableFilter("disabledProductFilter");
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return productDtos;
     }
 
@@ -191,23 +195,23 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public List<ProductDto> listProductsDesc(User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
         List<Product> products = productRepository.findAllByUser(user, Sort.by(Sort.Direction.DESC, "id"));
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return productDtos;
     }
 
     @Override
     public List<ProductDto> listOwnerProducts(User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
         List<Product> products = productRepository.findAllByUser(user);
         List<ProductDto> productDtos = new ArrayList<>();
 
@@ -215,35 +219,35 @@ public class ProductServiceImpl implements ProductServiceInterface {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return productDtos;
     }
 
     @Override
     public List<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        disabledProductFilter.setParameter(DISABLED, false);
         List<Product> body = productRepository.findProductByPriceRange(minPrice, maxPrice);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : body) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
-        session.disableFilter("disabledProductFilter");
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return productDtos;
     }
 
     @Override
     public List<ProductDto> searchProducts(String query, User user) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        disabledProductFilter.setParameter(DISABLED, false);
         String[] stringArray = query.split(" ");
         String[] stringList = stringArray;
 
@@ -258,18 +262,18 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 }
             }
         }
-        session.disableFilter("disabledProductFilter");
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return productDtos;
     }
 
     @Override
     public List<ProductDto> filterProducts(String size, Long subcategoryId, double minPrice, double maxPrice) {
         Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter("deletedProductFilter");
-        Filter disabledProductFilter = session.enableFilter("disabledProductFilter");
-        deletedProductFilter.setParameter("isDeleted", false);
-        disabledProductFilter.setParameter("isDisabled", false);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        disabledProductFilter.setParameter(DISABLED, false);
         List<Product> productList = productRepository.findBySubCategoriesId(subcategoryId);
 
         List<Product> result = new ArrayList<>();
@@ -285,8 +289,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
             ProductDto productDto = getDtoFromProduct(product);
             resultDtos.add(productDto);
         }
-        session.disableFilter("disabledProductFilter");
-        session.disableFilter("deletedProductFilter");
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        session.disableFilter(DELETED_PRODUCT_FILTER);
         return resultDtos;
     }
 

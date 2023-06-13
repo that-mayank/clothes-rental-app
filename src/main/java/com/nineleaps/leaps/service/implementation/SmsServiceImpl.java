@@ -46,33 +46,35 @@ public class SmsServiceImpl implements SmsServiceInterface {
         this.phoneNumber = phoneNumber;
     }
 
-    //method to send otp to phonenumber
-    public void send(SmsPojo sms){
-        Twilio.init(ACCOUNT_SID,AUTH_TOKEN);
+    //method to send otp to phone number
+    public void send(SmsPojo sms) {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
         int min = 100000;
         int max = 999999;
-        int number  = (int)(Math.random()*(max-min +1)+min);
+        int number = (int) (Math.random() * (max - min + 1) + min);
 
-        String msg = "Your OTP - "+number+"please verify this otp";
+        String msg = "Your OTP - " + number + "please verify this otp";
 
-        Message message = Message.creator(new PhoneNumber("+91"+sms.getPhoneNo()),new PhoneNumber(FROM_NUMBER),msg).create();
+        Message message = Message.creator(new PhoneNumber("+91" + sms.getPhoneNo()), new PhoneNumber(FROM_NUMBER), msg).create();
         StoreOTP.setOtp(number);
         phoneNumber = sms.setStorePhoneNo(sms.getPhoneNo());
 
     }
-    public void recieve (MultiValueMap<String,String> smscallback){
+
+    public void recieve(MultiValueMap<String, String> smscallback) {
 
     }
 
 
     //get user details via phonenumber
-    public  User user(){
-        return userServiceInterface.getUserViaPhoneNumber(getPhoneNumber());}
+    public User user() {
+        return userServiceInterface.getUserViaPhoneNumber(getPhoneNumber());
+    }
 
 
     //generate token while logging through phonenumber
-    public  void generateToken(HttpServletResponse response, HttpServletRequest request){
+    public void generateToken(HttpServletResponse response, HttpServletRequest request) {
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         String role = user().getRole().toString();
         String[] roles = new String[]{role};
@@ -87,7 +89,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
         String access_token = JWT.create()
                 .withSubject(email)
                 .withExpiresAt(accessTokenExpirationDate)
-                .withClaim ( "roles", Arrays.asList(roles))
+                .withClaim("roles", Arrays.asList(roles))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         String refresh_token = JWT.create()
@@ -96,9 +98,9 @@ public class SmsServiceImpl implements SmsServiceInterface {
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
 
-        response.setHeader("access_token",access_token);
-        response.setHeader("refresh_token",refresh_token);
-        securityUtility.saveTokens(refresh_token,email);
+        response.setHeader("access_token", access_token);
+        response.setHeader("refresh_token", refresh_token);
+        securityUtility.saveTokens(refresh_token, email);
 
     }
 

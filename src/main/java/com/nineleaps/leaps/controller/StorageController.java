@@ -36,7 +36,7 @@ public class StorageController {
             }
             urlResponse.setUrls(urls);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Network Error in fetching Amazon S3");
         }
         return urlResponse;
     }

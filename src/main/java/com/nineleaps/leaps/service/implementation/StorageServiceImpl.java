@@ -119,7 +119,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
             inputStream.close();
             outputStream.flush();
         } catch (IOException e) {
-            log.error("Amazon S3 error");
+            log.error("Amazon S3 Network Error");
         }
     }
 }

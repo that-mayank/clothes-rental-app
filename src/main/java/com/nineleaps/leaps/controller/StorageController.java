@@ -5,6 +5,7 @@ import com.nineleaps.leaps.service.StorageServiceInterface;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/file")
+@Slf4j
 @AllArgsConstructor
-@Api(tags = "Storage Api", description = "Contains api for uploading multiple images, downloading images, view images and delete images")
+@Api(tags = "Storage Api", value = "Contains api for uploading multiple images, downloading images, view images and delete images")
 public class StorageController {
     private final StorageServiceInterface storageServiceInterface;
 
@@ -36,7 +38,7 @@ public class StorageController {
             }
             urlResponse.setUrls(urls);
         } catch (Exception e) {
-            System.out.println("Network Error in fetching Amazon S3");
+            log.error("Network Error in fetching Amazon S3");
         }
         return urlResponse;
     }

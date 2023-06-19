@@ -13,4 +13,7 @@ public class MessageStrings {
     public static final String DISABLED_PRODUCT_FILTER = "disabledProductFilter";
     public static final String DISABLED = "isDisabled";
     public static final String DELETED = "isDeleted";
+    private MessageStrings() {
+        // Private constructor to prevent instantiation
+    }
 }

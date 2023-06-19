@@ -5,6 +5,7 @@ import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.service.implementation.OrderServiceImpl;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Configuration
 @EnableScheduling
 @AllArgsConstructor
+@Slf4j
 public class SchedulerConfig {
 
 
@@ -23,7 +25,8 @@ public class SchedulerConfig {
     //@Scheduled(cron = "0 0 12 * * ?") // Runs every day at 12 PM 0 0 12 * * ? */10 * * * * *
     public void sendReminderEmails() {
         reminderService.getRentalPeriods();
-        System.out.println("email sent");
+        log.trace("email sent");
+
 
     }
 
@@ -32,13 +35,12 @@ public class SchedulerConfig {
         LocalDateTime currentDateTime = LocalDateTime.now();
         // Query the database to retrieve rental records that have ended
         List<OrderItem> expiredOrderItems = orderItemRepository.findByRentalEndDateLessThanEqual(currentDateTime);
-        System.out.println(expiredOrderItems);
         // Iterate through the expired order items
         for (OrderItem orderItem : expiredOrderItems) {
-            if (orderItem.getStatus() == "DELIVERED") {
+            if (orderItem.getStatus().equals("DELIVERED")) {
                 double securityDeposit = orderItem.getSecurityDeposit();
                 reminderService.sendDelayChargeEmail(orderItem, securityDeposit);
-                System.out.println("email sent");
+                log.trace("email sent");
             }
         }
     }

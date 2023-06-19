@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.config.Filter;
+package com.nineleaps.leaps.config.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

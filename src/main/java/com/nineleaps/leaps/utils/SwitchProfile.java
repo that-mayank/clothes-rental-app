@@ -33,11 +33,11 @@ public class SwitchProfile {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
-        String access_token = JWT.create()
+        String accessToken = JWT.create()
                 .withSubject(user.getEmail())
                 .withExpiresAt(accessTokenExpirationDate)
                 .withClaim("roles", Arrays.asList(roles))
                 .sign(algorithm);
-        response.setHeader("access_token", access_token);
+        response.setHeader("access_token", accessToken);
     }
 }

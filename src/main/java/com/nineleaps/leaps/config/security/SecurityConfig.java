@@ -1,7 +1,7 @@
-package com.nineleaps.leaps.config.Security;
+package com.nineleaps.leaps.config.security;
 
-import com.nineleaps.leaps.config.Filter.CustomAuthenticationFilter;
-import com.nineleaps.leaps.config.Filter.CustomAuthorizationFilter;
+import com.nineleaps.leaps.config.filter.CustomAuthenticationFilter;
+import com.nineleaps.leaps.config.filter.CustomAuthorizationFilter;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.implementation.RefreshTokenServiceImpl;
 import com.nineleaps.leaps.service.implementation.UserServiceImpl;
@@ -17,7 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -46,7 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
 
-//        http.authorizeRequests().anyRequest().permitAll();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/login/**","/api/v1/phoneNo","/api/v1/otp","/api/v1/user/signup").permitAll();

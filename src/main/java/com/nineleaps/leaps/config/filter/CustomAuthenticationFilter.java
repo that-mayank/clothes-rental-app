@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nineleaps.leaps.exceptions.RuntimeCustomException;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
@@ -34,11 +35,8 @@ import java.util.stream.Collectors;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private UserServiceInterface userServiceInterface;
-    public String access_token;
-    public String refresh_token;
     private final SecurityUtility securityUtility;
     private final RefreshTokenRepository refreshTokenRepository;
-    public static String token_from_login;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager, SecurityUtility securityUtility, RefreshTokenRepository refreshTokenRepository) {
         this.authenticationManager = authenticationManager;
@@ -54,7 +52,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         try {
             jsonNode = objectMapper.readTree(request.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCustomException("Error occurred while reading JSON data from the request.");
+
         }
         // Extract the username and password from the JSON data
         String email = jsonNode.get("email").asText();
@@ -72,30 +71,30 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time 24hrs or one day
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
-        access_token = JWT.create()
+        String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(accessTokenExpirationDate)
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
-        token_from_login = access_token;
+
         // Update refresh token expiration time dynamically
         LocalDateTime refreshTokenExpirationTime = now.plusMinutes(43200); // Update to desired expiration time 30 days
         Date refreshTokenExpirationDate = Date.from(refreshTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
-        refresh_token = JWT.create()
+        String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(refreshTokenExpirationDate)
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         String email = user.getUsername();
-//        System.out.println(access_token);
-        if (securityUtility.saveTokens(refresh_token, email)) {
+
+        if (securityUtility.saveTokens(refreshToken, email)) {
             response.getWriter().write("refreshTokens added sucessfully !");
         } else {
             response.getWriter().write("token not added");
         }
-        response.setHeader("access_token", access_token);
-        response.setHeader("refresh_token", refresh_token);
+        response.setHeader("access_token", accessToken);
+        response.setHeader("refresh_token", refreshToken);
         response.getWriter().write("authentication successful");
     }
 }

@@ -5,8 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nineleaps.leaps.repository.RefreshTokenRepository;
-import com.nineleaps.leaps.service.implementation.UserServiceImpl;
+
+
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,17 +31,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-    private final UserServiceImpl userServiceImpl;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
-    public static String token_header;
-    private final CustomAuthenticationFilter customAuthenticationFilter;
+    public CustomAuthorizationFilter( SecurityUtility securityUtility) {
 
-    public CustomAuthorizationFilter(UserServiceImpl userServiceImpl, RefreshTokenRepository refreshTokenRepository, SecurityUtility securityUtility, CustomAuthenticationFilter customAuthenticationFilter) {
-        this.userServiceImpl = userServiceImpl;
-        this.refreshTokenRepository = refreshTokenRepository;
+
         this.securityUtility = securityUtility;
-        this.customAuthenticationFilter = customAuthenticationFilter;
+
     }
 
     // method for authorizing api requests to respective person
@@ -54,15 +49,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
-                    if (token.equals(customAuthenticationFilter.getRefresh_token())) {
-                        response.getWriter().write("refresh token found - updating access token");
-                        DecodedJWT decodedAccessToken = JWT.decode(token);
-                        String email = decodedAccessToken.getSubject();
-//                        System.out.println(email);
-                        String access_token = securityUtility.updateAccessToken(email, request);
-                        response.setHeader("access_token", access_token);
-                        response.getWriter().write("access_token updated in header");
-                    } else {
                         if (!securityUtility.isAccessTokenExpired(token)) {
                             Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
                             JWTVerifier verifier = JWT.require(algorithm).build();
@@ -70,24 +56,21 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                             String email = decodedJWT.getSubject();
                             String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                            stream(roles).forEach(role -> {
-                                authorities.add(new SimpleGrantedAuthority(role));
-                            });
+                            stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+
                             UsernamePasswordAuthenticationToken authenticationToken =
                                     new UsernamePasswordAuthenticationToken(email, null, authorities);
                             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                            token_header = token;
+
                             filterChain.doFilter(request, response);
                         } else {
                             DecodedJWT decodedAccessToken = JWT.decode(token);
                             String email = decodedAccessToken.getSubject();
-                            String access_token = securityUtility.updateAccessToken(email, request);
-                            response.setHeader("access_token", access_token);
+                            String accessToken = securityUtility.updateAccessToken(email, request);
+                            response.setHeader("access_token", accessToken);
                         }
-                    }
                 } catch (Exception exception) {
-//                    log.error("error logging in:{}",exception.getMessage());
-//                    response.setHeader("error",exception.getMessage());
+//
                     exception.printStackTrace();
                     response.setStatus(FORBIDDEN.value());
                     Map<String, String> error = new HashMap<>();

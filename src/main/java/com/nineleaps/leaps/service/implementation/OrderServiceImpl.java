@@ -40,6 +40,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.*;
 
+import static com.nineleaps.leaps.config.MessageStrings.*;
 import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 
 
@@ -53,11 +54,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
 
-    public class MessageConstants {
-        public static final String DEAR_PREFIX = "Dear ";
-        public static final String TOTAL_NUMBER= "totalNumberOfItems";
-        public static final String TOTAL_INCOME = "totalEarnings";
-    }
     @Override
     public void placeOrder(User user, String sessionId) {
         //retrieve the cart items for the user
@@ -101,7 +97,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         String email = user.getEmail();
         String subject = "Order placed";
         StringBuilder messageBuilder = new StringBuilder();
-        messageBuilder.append(MessageConstants.DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
+        messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
         messageBuilder.append("Here are the details of your order:\n");
         Order latestOrder = newOrder;
@@ -119,6 +115,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         String message = messageBuilder.toString();
         emailServiceImpl.sendEmail(subject, message, email);
     }
+
     @Override
     public List<OrderDto> listOrders(User user) {
         List<Order> orders = orderRepository.findByUserOrderByCreateDateDesc(user);
@@ -129,6 +126,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
         return orderDtos;
     }
+
     @Override
     public Order getOrder(Long orderId, User user) throws OrderNotFoundException {
         Optional<Order> optionalOrder = orderRepository.findByIdAndUserId(orderId, user.getId());
@@ -137,6 +135,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
         return optionalOrder.get();
     }
+
     @Override
     public void orderStatus(OrderItem orderItem, String status) {
         orderItem.setStatus(status);
@@ -148,6 +147,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             productRepository.save(product);
         }
     }
+
     @Override
     public Map<String, Object> dashboard(User user) {
         double totalEarnings = 0;
@@ -161,14 +161,15 @@ public class OrderServiceImpl implements OrderServiceInterface {
             }
         }
         Map<String, Object> result = new HashMap<>();
-        result.put(MessageConstants.TOTAL_NUMBER, totalNumberOfItems);
-        result.put(MessageConstants.TOTAL_INCOME, totalEarnings);
+        result.put(TOTAL_NUMBER, totalNumberOfItems);
+        result.put(TOTAL_INCOME, totalEarnings);
         return result;
     }
+
     public void sendDelayChargeEmail(OrderItem orderItem, double securityDeposit) {
         String email = orderItem.getOrder().getUser().getEmail();
         String subject = "\"Reminder: Your rental period is ended.";
-        String message = MessageConstants.DEAR_PREFIX + orderItem.getOrder().getUser().getFirstName() + ",\n\n" +
+        String message = DEAR_PREFIX + orderItem.getOrder().getUser().getFirstName() + ",\n\n" +
                 "We regret to inform you that your rental period has exceeded the expected return date. " +
                 "As a result, a delay charge has been deducted from your security deposit.\n\n" +
                 "Rental Details:\n" +
@@ -183,6 +184,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 "Thank you for your understanding.";
         emailServiceImpl.sendEmail(subject, message, email);
     }
+
     private double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
@@ -192,6 +194,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             return 0.0;
         }
     }
+
     private double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
@@ -210,6 +213,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             return securityDeposit;
         }
     }
+
     @Override
     public Map<YearMonth, Map<String, Object>> onClickDasboard(User user) {
         Map<YearMonth, Double> totalEarningsByMonth = new HashMap<>();
@@ -236,8 +240,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
         Map<YearMonth, Map<String, Object>> result = new HashMap<>();
         for (YearMonth month : totalEarningsByMonth.keySet()) {
             Map<String, Object> monthData = new HashMap<>();
-            monthData.put(MessageConstants.TOTAL_NUMBER, totalItemsByMonth.get(month));
-            monthData.put(MessageConstants.TOTAL_INCOME, totalEarningsByMonth.get(month));
+            monthData.put(TOTAL_NUMBER, totalItemsByMonth.get(month));
+            monthData.put(TOTAL_INCOME, totalEarningsByMonth.get(month));
             result.put(month, monthData);
         }
         return result;
@@ -278,8 +282,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
             Map<YearMonth, Map<String, Object>> yearData = new HashMap<>();
             for (YearMonth month : earningsByMonth.keySet()) {
                 Map<String, Object> monthData = new HashMap<>();
-                monthData.put(MessageConstants.TOTAL_NUMBER, itemsByMonth.get(month));
-                monthData.put(MessageConstants.TOTAL_INCOME, earningsByMonth.get(month));
+                monthData.put(TOTAL_NUMBER, itemsByMonth.get(month));
+                monthData.put(TOTAL_INCOME, earningsByMonth.get(month));
                 yearData.put(month, monthData);
             }
             result.put(year, yearData);
@@ -474,8 +478,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
             YearMonth month = entry.getKey();
             Map<String, Object> monthData = entry.getValue();
             String monthString = month.toString();
-            String earnings = monthData.get(MessageConstants.TOTAL_INCOME).toString();
-            String numberOfItems = monthData.get(MessageConstants.TOTAL_NUMBER).toString();
+            String earnings = monthData.get(TOTAL_INCOME).toString();
+            String numberOfItems = monthData.get(TOTAL_NUMBER).toString();
             table.addCell(monthString);
             table.addCell(earnings);
             table.addCell(numberOfItems);
@@ -490,8 +494,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
             YearMonth month = entry.getKey();
             Map<String, Object> monthData = entry.getValue();
             String monthString = month.getMonth().toString().substring(0, 3);
-            double earnings = Double.parseDouble(monthData.get(MessageConstants.TOTAL_INCOME).toString());
-            int numberOfItems = Integer.parseInt(monthData.get(MessageConstants.TOTAL_NUMBER).toString());
+            double earnings = Double.parseDouble(monthData.get(TOTAL_INCOME).toString());
+            int numberOfItems = Integer.parseInt(monthData.get(TOTAL_NUMBER).toString());
 
             dataset.addValue(earnings, "Total Earnings", monthString);
             dataset.addValue(numberOfItems, "Number of Items Sold", monthString);
@@ -542,7 +546,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             if (daysBetween == 2 || daysBetween == 3 || daysBetween == 1) {
                 String email = orderItem.getOrder().getUser().getEmail();
                 String subject = "Reminder: Your rental period is ending soon";
-                String message = MessageConstants.DEAR_PREFIX + orderItem.getOrder().getUser().getFirstName() + ",\n" +
+                String message = DEAR_PREFIX + orderItem.getOrder().getUser().getFirstName() + ",\n" +
                         "This is a reminder that your rental period for the following item will end in " + daysBetween +
                         " days:\n" +
                         //"- " + orderItem.getOrder().getId() + "\n" +

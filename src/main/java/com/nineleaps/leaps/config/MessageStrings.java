@@ -13,6 +13,10 @@ public class MessageStrings {
     public static final String DISABLED_PRODUCT_FILTER = "disabledProductFilter";
     public static final String DISABLED = "isDisabled";
     public static final String DELETED = "isDeleted";
+    public static final String DEAR_PREFIX = "Dear ";
+    public static final String TOTAL_NUMBER = "totalNumberOfItems";
+    public static final String TOTAL_INCOME = "totalEarnings";
+
     private MessageStrings() {
         // Private constructor to prevent instantiation
     }

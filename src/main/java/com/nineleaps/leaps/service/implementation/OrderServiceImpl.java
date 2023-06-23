@@ -238,10 +238,11 @@ public class OrderServiceImpl implements OrderServiceInterface {
             }
         }
         Map<YearMonth, Map<String, Object>> result = new HashMap<>();
-        for (YearMonth month : totalEarningsByMonth.keySet()) {
+        for (Map.Entry<YearMonth, Double> monthEntry : totalEarningsByMonth.entrySet()) {
+            YearMonth month = monthEntry.getKey();
             Map<String, Object> monthData = new HashMap<>();
             monthData.put(TOTAL_NUMBER, totalItemsByMonth.get(month));
-            monthData.put(TOTAL_INCOME, totalEarningsByMonth.get(month));
+            monthData.put(TOTAL_INCOME, monthEntry.getValue());
             result.put(month, monthData);
         }
         return result;
@@ -276,14 +277,16 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
 
         Map<Year, Map<YearMonth, Map<String, Object>>> result = new HashMap<>();
-        for (Year year : totalEarningsByYearMonth.keySet()) {
-            Map<YearMonth, Double> earningsByMonth = totalEarningsByYearMonth.get(year);
+        for (Map.Entry<Year, Map<YearMonth, Double>> yearEntry : totalEarningsByYearMonth.entrySet()) {
+            Year year = yearEntry.getKey();
+            Map<YearMonth, Double> earningsByMonth = yearEntry.getValue();
             Map<YearMonth, Integer> itemsByMonth = totalItemsByYearMonth.get(year);
             Map<YearMonth, Map<String, Object>> yearData = new HashMap<>();
-            for (YearMonth month : earningsByMonth.keySet()) {
+            for (Map.Entry<YearMonth, Double> monthEntry : earningsByMonth.entrySet()) {
+                YearMonth month = monthEntry.getKey();
                 Map<String, Object> monthData = new HashMap<>();
                 monthData.put(TOTAL_NUMBER, itemsByMonth.get(month));
-                monthData.put(TOTAL_INCOME, earningsByMonth.get(month));
+                monthData.put(TOTAL_INCOME, monthEntry.getValue());
                 yearData.put(month, monthData);
             }
             result.put(year, yearData);

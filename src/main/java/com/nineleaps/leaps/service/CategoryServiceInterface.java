@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.service;
 
+import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.model.categories.Category;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface CategoryServiceInterface {
 
     List<Category> listCategory();
 
-    void updateCategory(Long id, Category updateCategory);
+    void updateCategory(Long id, CategoryDto updateCategory);
 
     Category readCategory(String categoryName);
 

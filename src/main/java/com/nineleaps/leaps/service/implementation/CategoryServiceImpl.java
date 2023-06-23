@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
@@ -32,7 +33,7 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
     }
 
     @Override
-    public void updateCategory(Long id, Category updateCategory) {
+    public void updateCategory(Long id, CategoryDto updateCategory) {
         Category category = categoryRepository.findById(id).get();
         if (category != null) {
             category.setCategoryName(updateCategory.getCategoryName());

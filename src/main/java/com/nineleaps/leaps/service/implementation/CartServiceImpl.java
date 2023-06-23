@@ -11,9 +11,7 @@ import com.nineleaps.leaps.model.Cart;
 import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.CartRepository;
-import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
-import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -67,7 +65,7 @@ public class CartServiceImpl implements CartServiceInterface {
         }
         double tax = 0.18 * totalCost;
         double finalPrice = totalCost + tax;
-        return new CartDto(cartItems, totalCost, tax, finalPrice);
+        return new CartDto(cartItems, totalCost, Math.round(tax), Math.round(finalPrice));
     }
 
     @Override

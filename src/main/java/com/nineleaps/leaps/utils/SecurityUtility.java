@@ -28,9 +28,9 @@ public class SecurityUtility {
         return expirationDate.before(new Date());
     }
 
-    public boolean saveTokens(String refresh_token, String email) {
+    public boolean saveTokens(String rtoken, String email) {
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(refresh_token);
+        refreshToken.setToken(rtoken);
         refreshToken.setEmail(email);
         refreshTokenRepository.save(refreshToken);
         return true;

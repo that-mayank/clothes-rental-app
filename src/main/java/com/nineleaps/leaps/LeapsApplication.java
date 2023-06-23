@@ -21,5 +21,5 @@ public class LeapsApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static final String NGROK = "https://1c71-106-51-70-135.ngrok-free.app";
+    public static final String NGROK = "https://a744-106-51-70-135.ngrok-free.app";
 }

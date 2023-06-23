@@ -56,7 +56,7 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
 
     @Override
     public List<SubCategory> listSubCategory(Long categoryId) {
-        return categoryRepository.findByCategory_Id(categoryId);
+        return categoryRepository.findByCategoryId(categoryId);
     }
 
     @Override

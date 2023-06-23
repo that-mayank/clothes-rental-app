@@ -26,7 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/v1/wishlist")
 @AllArgsConstructor
-@Api(tags = "Wishlist Api", description = "Contains api for adding and removing products to/from wishlist")
+@Api(tags = "Wishlist Api", value = "Contains api for adding and removing products to/from wishlist")
 public class WishlistController {
     private final WishlistServiceInterface wishlistService;
     private final ProductServiceInterface productService;

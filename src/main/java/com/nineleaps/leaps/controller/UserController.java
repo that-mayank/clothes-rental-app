@@ -30,7 +30,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/v1/user")
 @AllArgsConstructor
-@Api(tags = "User Api", description = "Contains api for user onboarding")
+@Api(tags = "User Api", value = "Contains api for user onboarding")
 public class UserController {
     private final UserServiceInterface userServiceInterface;
     private final SwitchProfile switchprofile;

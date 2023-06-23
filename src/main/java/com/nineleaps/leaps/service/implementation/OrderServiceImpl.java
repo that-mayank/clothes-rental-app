@@ -246,6 +246,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             result.put(month, monthData);
         }
         return result;
+
     }
 
     @Override
@@ -291,6 +292,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             }
             result.put(year, yearData);
         }
+
         return result;
     }
 

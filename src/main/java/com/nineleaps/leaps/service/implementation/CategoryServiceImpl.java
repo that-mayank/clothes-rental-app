@@ -34,13 +34,17 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
 
     @Override
     public void updateCategory(Long id, CategoryDto updateCategory) {
-        Category category = categoryRepository.findById(id).get();
-        if (category != null) {
-            category.setCategoryName(updateCategory.getCategoryName());
-            category.setDescription(updateCategory.getDescription());
-            category.setImageUrl(updateCategory.getImageUrl());
+        Category category;
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()) {
+            category = optionalCategory.get();
+            if (category != null) {
+                category.setCategoryName(updateCategory.getCategoryName());
+                category.setDescription(updateCategory.getDescription());
+                category.setImageUrl(updateCategory.getImageUrl());
+                categoryRepository.save(category);
+            }
         }
-        categoryRepository.save(category);
     }
 
     @Override

@@ -15,7 +15,6 @@ import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Transactional
 @RequestMapping("/api/v1/cart")
 @AllArgsConstructor
-@Api(tags = "Cart Api", description = "Contains api for adding products, updating products, list products and delete products in the cart")
+@Api(tags = "Cart Api", value = "Contains api for adding products, updating products, list products and delete products in the cart")
 public class CartController {
     private final CartServiceInterface cartService;
     private final ProductServiceInterface productService;

@@ -1,8 +1,11 @@
 package com.nineleaps.leaps.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum Role {
-    admin,
-    owner,
-    borrower,
-    guest
+    ADMIN,
+    OWNER,
+    BORROWER,
+    GUEST
 }

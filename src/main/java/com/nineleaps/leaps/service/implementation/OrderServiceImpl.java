@@ -3,11 +3,11 @@ package com.nineleaps.leaps.service.implementation;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.nineleaps.leaps.dto.cart.CartDto;
+import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
-import com.nineleaps.leaps.dto.cart.CartDto;
-import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.Product;
@@ -37,8 +37,8 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 
@@ -53,12 +53,16 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
 
+    public class MessageConstants {
+        public static final String DEAR_PREFIX = "Dear ";
+        public static final String TOTAL_NUMBER= "totalNumberOfItems";
+        public static final String TOTAL_INCOME = "totalEarnings";
+    }
     @Override
     public void placeOrder(User user, String sessionId) {
         //retrieve the cart items for the user
         CartDto cartDto = cartService.listCartItems(user);
         List<CartItemDto> cartItemDtos = cartDto.getCartItems();
-
         //create order and save it
         Order newOrder = new Order();
         newOrder.setCreateDate(LocalDateTime.now());
@@ -96,21 +100,25 @@ public class OrderServiceImpl implements OrderServiceInterface {
         // function to send email
         String email = user.getEmail();
         String subject = "Order placed";
-        String message = "Dear " + user.getFirstName() + " " + user.getLastName() + "," + "\n" + "Your Order has been successfully placed. \n" + "Here are the details of your order: \n";
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append(MessageConstants.DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
+        messageBuilder.append("Your Order has been successfully placed.\n");
+        messageBuilder.append("Here are the details of your order:\n");
         Order latestOrder = newOrder;
-        message += "Order ID: " + latestOrder.getId() + "\n";
+        messageBuilder.append("Order ID: ").append(latestOrder.getId()).append("\n");
         List<OrderItem> orderItems = latestOrder.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             String productName = orderItem.getName();
             int quantity = orderItem.getQuantity();
-            message += "Product: " + productName + "\n";
-            message += "Quantity: " + quantity + "\n";
-            message += "Price: " + orderItem.getPrice() * orderItem.getQuantity() * ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate()) + "\n";
+            double price = orderItem.getPrice() * orderItem.getQuantity() * (int) ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
+            messageBuilder.append("Product: ").append(productName).append("\n");
+            messageBuilder.append("Quantity: ").append(quantity).append("\n");
+            messageBuilder.append("Price: ").append(price).append("\n");
         }
-        message += "Total Price of order : " + latestOrder.getTotalPrice() + "\n\n";
+        messageBuilder.append("Total Price of order: ").append(latestOrder.getTotalPrice()).append("\n\n");
+        String message = messageBuilder.toString();
         emailServiceImpl.sendEmail(subject, message, email);
     }
-
     @Override
     public List<OrderDto> listOrders(User user) {
         List<Order> orders = orderRepository.findByUserOrderByCreateDateDesc(user);
@@ -121,7 +129,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
         return orderDtos;
     }
-
     @Override
     public Order getOrder(Long orderId, User user) throws OrderNotFoundException {
         Optional<Order> optionalOrder = orderRepository.findByIdAndUserId(orderId, user.getId());
@@ -130,7 +137,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
         return optionalOrder.get();
     }
-
     @Override
     public void orderStatus(OrderItem orderItem, String status) {
         orderItem.setStatus(status);
@@ -142,8 +148,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             productRepository.save(product);
         }
     }
-
-
     @Override
     public Map<String, Object> dashboard(User user) {
         double totalEarnings = 0;
@@ -157,15 +161,14 @@ public class OrderServiceImpl implements OrderServiceInterface {
             }
         }
         Map<String, Object> result = new HashMap<>();
-        result.put("totalNumberOfItems", totalNumberOfItems);
-        result.put("totalEarnings", totalEarnings);
+        result.put(MessageConstants.TOTAL_NUMBER, totalNumberOfItems);
+        result.put(MessageConstants.TOTAL_INCOME, totalEarnings);
         return result;
     }
-
     public void sendDelayChargeEmail(OrderItem orderItem, double securityDeposit) {
         String email = orderItem.getOrder().getUser().getEmail();
         String subject = "\"Reminder: Your rental period is ended.";
-        String message = "Dear " + orderItem.getOrder().getUser().getFirstName() + ",\n\n" +
+        String message = MessageConstants.DEAR_PREFIX + orderItem.getOrder().getUser().getFirstName() + ",\n\n" +
                 "We regret to inform you that your rental period has exceeded the expected return date. " +
                 "As a result, a delay charge has been deducted from your security deposit.\n\n" +
                 "Rental Details:\n" +
@@ -180,7 +183,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 "Thank you for your understanding.";
         emailServiceImpl.sendEmail(subject, message, email);
     }
-
     private double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
@@ -190,7 +192,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             return 0.0;
         }
     }
-
     private double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
@@ -209,7 +210,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             return securityDeposit;
         }
     }
-
     @Override
     public Map<YearMonth, Map<String, Object>> onClickDasboard(User user) {
         Map<YearMonth, Double> totalEarningsByMonth = new HashMap<>();
@@ -233,15 +233,13 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 }
             }
         }
-
         Map<YearMonth, Map<String, Object>> result = new HashMap<>();
         for (YearMonth month : totalEarningsByMonth.keySet()) {
             Map<String, Object> monthData = new HashMap<>();
-            monthData.put("totalNumberOfItems", totalItemsByMonth.get(month));
-            monthData.put("totalEarnings", totalEarningsByMonth.get(month));
+            monthData.put(MessageConstants.TOTAL_NUMBER, totalItemsByMonth.get(month));
+            monthData.put(MessageConstants.TOTAL_INCOME, totalEarningsByMonth.get(month));
             result.put(month, monthData);
         }
-
         return result;
     }
 
@@ -277,18 +275,15 @@ public class OrderServiceImpl implements OrderServiceInterface {
         for (Year year : totalEarningsByYearMonth.keySet()) {
             Map<YearMonth, Double> earningsByMonth = totalEarningsByYearMonth.get(year);
             Map<YearMonth, Integer> itemsByMonth = totalItemsByYearMonth.get(year);
-
             Map<YearMonth, Map<String, Object>> yearData = new HashMap<>();
             for (YearMonth month : earningsByMonth.keySet()) {
                 Map<String, Object> monthData = new HashMap<>();
-                monthData.put("totalNumberOfItems", itemsByMonth.get(month));
-                monthData.put("totalEarnings", earningsByMonth.get(month));
+                monthData.put(MessageConstants.TOTAL_NUMBER, itemsByMonth.get(month));
+                monthData.put(MessageConstants.TOTAL_INCOME, earningsByMonth.get(month));
                 yearData.put(month, monthData);
             }
-
             result.put(year, yearData);
         }
-
         return result;
     }
 
@@ -312,7 +307,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         return orderedItemsByMonth;
     }
 
-
     @Override
     public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user) {
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
@@ -322,22 +316,17 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 if (orderItem.getProduct().getUser().equals(user)) {
                     LocalDateTime rentalStartDate = orderItem.getRentalStartDate();
                     YearMonth month = YearMonth.from(rentalStartDate);
-
                     // Retrieve the list of order items for the current month
                     List<OrderReceivedDto> monthOrderItems = orderedItemsByMonth.getOrDefault(month, new ArrayList<>());
-
                     // Add the current order item to the list
                     monthOrderItems.add(new OrderReceivedDto(orderItem));
-
                     // Update the map with the updated list of order items
                     orderedItemsByMonth.put(month, monthOrderItems);
                 }
             }
         }
-
         return orderedItemsByMonth;
     }
-
 
     @Override
     public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user) {
@@ -347,10 +336,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 if (orderItem.getProduct().getUser().equals(user)) {
                     List<SubCategory> subcategories = orderItem.getProduct().getSubCategories();
                     YearMonth month = YearMonth.from(orderItem.getRentalStartDate());
-
                     // Retrieve the map of subcategories for the current month
                     Map<String, OrderItemsData> orderItemsBySubcategoryPerMonth = orderItemsSubcategoryWise.getOrDefault(month, new HashMap<>());
-
                     for (SubCategory subcategory : subcategories) {
                         // Retrieve the order items data for the current subcategory and month
                         OrderItemsData orderItemsData = orderItemsBySubcategoryPerMonth.getOrDefault(subcategory.getSubcategoryName(), new OrderItemsData());
@@ -373,8 +360,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
                         // Update the map with the updated map of subcategories per month
                         orderItemsSubcategoryWise.put(month, orderItemsBySubcategoryPerMonth);
                     }
-
-
                 }
             }
         }
@@ -389,10 +374,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 if (orderItem.getProduct().getUser().equals(user)) {
                     List<Category> categories = orderItem.getProduct().getCategories();
                     YearMonth month = YearMonth.from(orderItem.getRentalStartDate());
-
                     // Retrieve the map of subcategories for the current month
                     Map<String, OrderItemsData> orderItemsByCategoryPerMonth = orderItemsCategoryWise.getOrDefault(month, new HashMap<>());
-
                     for (Category category : categories) {
                         // Retrieve the order items data for the current subcategory and month
                         OrderItemsData orderItemsData = orderItemsByCategoryPerMonth.getOrDefault(category.getCategoryName(), new OrderItemsData());
@@ -411,12 +394,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
                         orderItemsData.setOrderItems(orderItemsByCategory);
                         // Update the map with the updated order items data for the current subcategory and month
                         orderItemsByCategoryPerMonth.put(category.getCategoryName(), orderItemsData);
-
                         // Update the map with the updated map of subcategories per month
                         orderItemsCategoryWise.put(month, orderItemsByCategoryPerMonth);
                     }
-
-
                 }
             }
         }
@@ -468,19 +448,14 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
         // Add empty line
         document.add(new Paragraph(" "));
-
         // Get the dashboard data
         Map<YearMonth, Map<String, Object>> dashboardData = onClickDasboard(user);
-
         // Determine the number of columns based on the data
         int numColumns = dashboardData.isEmpty() ? 0 : dashboardData.values().iterator().next().size();
-
         // Create table
         PdfPTable table = new PdfPTable(numColumns + 1); // setting columns
-
         // Set cell alignment
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-
         // Add table headers
         Font tableHeaderFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, BaseColor.BLACK);
         PdfPCell cell1 = new PdfPCell(new Phrase("Month", tableHeaderFont));
@@ -498,31 +473,25 @@ public class OrderServiceImpl implements OrderServiceInterface {
         for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
             YearMonth month = entry.getKey();
             Map<String, Object> monthData = entry.getValue();
-
-
             String monthString = month.toString();
-            String earnings = monthData.get("totalEarnings").toString();
-            String numberOfItems = monthData.get("totalNumberOfItems").toString();
-
-
+            String earnings = monthData.get(MessageConstants.TOTAL_INCOME).toString();
+            String numberOfItems = monthData.get(MessageConstants.TOTAL_NUMBER).toString();
             table.addCell(monthString);
             table.addCell(earnings);
             table.addCell(numberOfItems);
         }
         document.add(table);
-
         //add bar chart to pdf for all months of the year
 
         // Add bar chart
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
         // Add data to the dataset
         for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
             YearMonth month = entry.getKey();
             Map<String, Object> monthData = entry.getValue();
             String monthString = month.getMonth().toString().substring(0, 3);
-            double earnings = Double.parseDouble(monthData.get("totalEarnings").toString());
-            int numberOfItems = Integer.parseInt(monthData.get("totalNumberOfItems").toString());
+            double earnings = Double.parseDouble(monthData.get(MessageConstants.TOTAL_INCOME).toString());
+            int numberOfItems = Integer.parseInt(monthData.get(MessageConstants.TOTAL_NUMBER).toString());
 
             dataset.addValue(earnings, "Total Earnings", monthString);
             dataset.addValue(numberOfItems, "Number of Items Sold", monthString);
@@ -542,7 +511,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         // Set the width and height of the chart
         int chartWidth = 500;
         int chartHeight = 300;
-
         // Convert the chart to an image and add it to the PDF
         ByteArrayOutputStream chartImageStream = new ByteArrayOutputStream();
         ChartUtilities.writeChartAsPNG(chartImageStream, chart, chartWidth, chartHeight);
@@ -574,7 +542,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             if (daysBetween == 2 || daysBetween == 3 || daysBetween == 1) {
                 String email = orderItem.getOrder().getUser().getEmail();
                 String subject = "Reminder: Your rental period is ending soon";
-                String message = "Dear " + orderItem.getOrder().getUser().getFirstName() + ",\n" +
+                String message = MessageConstants.DEAR_PREFIX + orderItem.getOrder().getUser().getFirstName() + ",\n" +
                         "This is a reminder that your rental period for the following item will end in " + daysBetween +
                         " days:\n" +
                         //"- " + orderItem.getOrder().getId() + "\n" +
@@ -584,8 +552,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
                         "The Rental Service Team";
                 emailServiceImpl.sendEmail(subject, message, email);
             }
-
         }
     }
-
 }

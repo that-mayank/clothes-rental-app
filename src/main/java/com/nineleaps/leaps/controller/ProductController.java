@@ -7,27 +7,29 @@ import com.nineleaps.leaps.model.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
-import com.nineleaps.leaps.service.*;
+import com.nineleaps.leaps.service.CategoryServiceInterface;
+import com.nineleaps.leaps.service.ProductServiceInterface;
+import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping("/api/v1/product")
 @AllArgsConstructor
-@Api(tags = "Products Api", description = "Contains api for adding products, listing products, updating products and soft deleting products")
+@Api(tags = "Products Api", value = "Contains api for adding products, listing products, updating products and soft deleting products")
 public class ProductController {
     private final ProductServiceInterface productService;
     private final SubCategoryServiceInterface subCategoryService;
@@ -39,7 +41,7 @@ public class ProductController {
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductDto productDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         if (productDto.getTotalQuantity() <= 0) {
             return new ResponseEntity<>(new ApiResponse(false, "Quantity cannot be zero"), HttpStatus.BAD_REQUEST);
@@ -57,7 +59,7 @@ public class ProductController {
     @GetMapping("/list")
     public ResponseEntity<List<ProductDto>> listProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         List<ProductDto> body = productService.listProducts(pageNumber, pageSize, user);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -67,7 +69,7 @@ public class ProductController {
     @PutMapping("/update/{productId}")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody @Valid ProductDto productDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         Optional<Product> optionalProduct = productService.readProduct(productId);
         if (!optionalProduct.isPresent()) {
@@ -89,7 +91,7 @@ public class ProductController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NOT_FOUND);
         }
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //fetch the products accordingly
         List<ProductDto> body = productService.listProductsById(subcategoryId, user);
@@ -106,7 +108,7 @@ public class ProductController {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NOT_FOUND);
         }
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         // fetch the products accordingly
         List<ProductDto> body = productService.listProductsByCategoryId(categoryId, user);
@@ -134,7 +136,7 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam("query") String query, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         List<ProductDto> body = productService.searchProducts(query, user);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -144,7 +146,7 @@ public class ProductController {
     @GetMapping("/listInDesc") //List products in descending order for recently added functionality in owner flow
     public ResponseEntity<List<ProductDto>> listProductsDesc(HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         List<ProductDto> body = productService.listProductsDesc(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -154,7 +156,7 @@ public class ProductController {
     @GetMapping("/listOwnerProducts") // Api for My Rentals
     public ResponseEntity<List<ProductDto>> listOwnerProducts(HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         List<ProductDto> body = productService.listOwnerProducts(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -171,7 +173,7 @@ public class ProductController {
     @DeleteMapping("/deleteProduct/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("productId") Long productId, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         if (!Helper.notNull(user)) {
             return new ResponseEntity<>(new ApiResponse(false, "User is invalid!"), HttpStatus.NOT_FOUND);
@@ -188,7 +190,7 @@ public class ProductController {
     @GetMapping("/suggestions")
     public ResponseEntity<List<String>> listSuggestions(@RequestParam("query") String query, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         List<String> suggestions = productService.listSuggestions(query, user);
         return new ResponseEntity<>(suggestions, HttpStatus.OK);
@@ -197,7 +199,7 @@ public class ProductController {
     @GetMapping("/disableProduct")
     public ResponseEntity<ApiResponse> disableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         Product product = productService.getProduct(productId, user.getId());
         if (!Helper.notNull(product)) {
@@ -210,7 +212,7 @@ public class ProductController {
     @GetMapping("/enableProduct")
     public ResponseEntity<ApiResponse> enableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         Product product = productService.getProduct(productId, user.getId());
         if (!Helper.notNull(product)) {

@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.AddressRepository;
@@ -16,14 +17,14 @@ public class AddressServiceImpl implements AddressServiceInterface {
     private final AddressRepository addressRepository;
 
     @Override
-    public void saveAddress(Address address, User user) {
-        if (address.isDefaultAddress()) {
+    public void saveAddress(AddressDto addressDto, User user) {
+        if (addressDto.isDefaultAddress()) {
             List<Address> addresses = addressRepository.findAllByUser(user);
             for (Address addressItr : addresses) {
                 addressItr.setDefaultAddress(false);
             }
         }
-        Address newAddress = new Address(address, user);
+        Address newAddress = new Address(addressDto, user);
         addressRepository.save(newAddress);
     }
 
@@ -50,9 +51,9 @@ public class AddressServiceImpl implements AddressServiceInterface {
     }
 
     @Override
-    public void updateAddress(Address address, Long addressId, User user) {
-        address.setId(addressId);
-        address.setUser(user);
+    public void updateAddress(AddressDto addressDto, Long addressId, User user) {
+        addressDto.setId(addressId);
+        Address address = new Address(addressDto, user);
         addressRepository.save(address);
     }
 

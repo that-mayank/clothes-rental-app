@@ -1,12 +1,12 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
+import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Transactional
 @RequestMapping("/api/v1/address")
 @AllArgsConstructor
-@Api(tags = "Address Api", description = "Contains api for add, update, list and delete address")
+@Api(tags = "Address Api", value = "Contains api for add, update, list and delete address")
 public class AddressController {
     private final AddressServiceInterface addressService;
     private final Helper helper;
@@ -34,12 +34,12 @@ public class AddressController {
     //add
     @ApiOperation(value = "Add new address to particular user")
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid Address address, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         //Add address
-        addressService.saveAddress(address, user);
+        addressService.saveAddress(addressDto, user);
         return new ResponseEntity<>(new ApiResponse(true, "Address added successfully"), HttpStatus.CREATED);
 
     }
@@ -47,7 +47,7 @@ public class AddressController {
     //update
     @ApiOperation(value = "update address for particular user")
     @PutMapping("/update/{addressId}")
-    public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid Address address, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
@@ -63,7 +63,7 @@ public class AddressController {
             return new ResponseEntity<>(new ApiResponse(false, "Address does not belong to current user"), HttpStatus.FORBIDDEN);
         }
         //update address
-        addressService.updateAddress(address, addressId, user);
+        addressService.updateAddress(addressDto, addressId, user);
         return new ResponseEntity<>(new ApiResponse(true, "Address updated successfully"), HttpStatus.OK);
     }
 

@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
 @DiscriminatorValue(value = "guest")
@@ -14,6 +13,6 @@ import javax.persistence.Table;
 @Setter
 public class Guest extends User {
     public Guest() {
-        this.setRole(Role.guest);
+        this.setRole(Role.GUEST);
     }
 }

@@ -9,7 +9,6 @@ import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/subcategory")
 @AllArgsConstructor
-@Api(tags = "Subcategory Api", description = "Contains api for adding subcategory, updating subcategory, and list subcategories")
+@Api(tags = "Subcategory Api", value = "Contains api for adding subcategory, updating subcategory, and list subcategories")
 public class SubCategoryController {
     private final CategoryServiceInterface categoryService;
     private final SubCategoryServiceInterface subCategoryService;
@@ -60,7 +59,6 @@ public class SubCategoryController {
             List<SubCategory> body = subCategoryService.listSubCategory(categoryId);
             return new ResponseEntity<>(body, HttpStatus.OK);
         }
-//        return new ResponseEntity<>(new ApiResponse(false, "Category is invalid"), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NOT_FOUND);
     }
 

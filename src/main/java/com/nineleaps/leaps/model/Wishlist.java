@@ -1,10 +1,8 @@
 package com.nineleaps.leaps.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.Date;

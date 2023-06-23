@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.repository.CartRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,37 +11,26 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 @Service
+@Slf4j
 public class EmailServiceImpl {
 
     @Autowired
     CartRepository cartRepository;
 
-    //@Scheduled(cron = "0/15 * * * * ?")
-    public boolean sendEmail(String subject, String message , String to) {
+    public boolean sendEmail(String subject, String message, String to) {
 
         if (to == null) {
             // Handle the null value here, such as throwing an exception or returning false
             return false;
         }
-        // Variable for gmail
         String host = "smtp.gmail.com";
 
-        String from = "prathiksha";
-
         boolean f = false;
-        // get the system properties
         Properties properties = System.getProperties();
-        //System.out.println("PROPERTIES " + properties);
-
-        // setting important information to properties object
-
-        // host set
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "465");
         properties.put("mail.smtp.ssl.enable", "true");
         properties.put("mail.smtp.auth", "true");
-        //properties.put("mail.smtp.ssl.debug","true");
-        //properties.put("mail.smtp.starttls.enable", "true");
 
         // Step 1: to get the session object..
         Session session = Session.getInstance(properties, new Authenticator() {
@@ -58,24 +48,15 @@ public class EmailServiceImpl {
 
         try {
 
-            // from email
             m.setFrom();
-
-            // adding recipient to message
             m.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-            // adding subject to message
             m.setSubject(subject);
-
-            // adding text to message
             m.setText(message);
 
-            // send
 
             // Step 3 : send the message using Transport class
             Transport.send(m);
-
-            System.out.println("Sent success...................");
+            log.trace("sent success");
 
             f = true;
 
@@ -86,7 +67,7 @@ public class EmailServiceImpl {
         return f;
     }
 
-    }
+}
 
 
 

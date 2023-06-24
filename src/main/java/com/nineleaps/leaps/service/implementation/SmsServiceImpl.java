@@ -14,6 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -42,7 +48,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
         otpMap.put(phoneNumber, otp);
     }
     @Override
-    public void verifyOtp(String phoneNumber, Integer otp, HttpServletResponse response, HttpServletRequest request) throws OtpValidationException {
+    public void verifyOtp(String phoneNumber, Integer otp, HttpServletResponse response, HttpServletRequest request) throws OtpValidationException, IOException {
         if (!otpMap.containsKey(phoneNumber)) {
             throw new OtpValidationException("OTP not generated for phone number");
         } else if (Objects.equals(otpMap.get(phoneNumber), otp)) {
@@ -55,8 +61,11 @@ public class SmsServiceImpl implements SmsServiceInterface {
     public User user(String phoneNumber) {
         return userServiceInterface.getUserViaPhoneNumber(phoneNumber);
     }
-    public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) {
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+    public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
+        String secretFilePath = "Desktop/codeLatest/secret/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+        String secret = readSecretFromFile(absolutePath);
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String role = user(phoneNumber).getRole().toString();
         String[] roles = new String[]{role};
         String email = user(phoneNumber).getEmail();
@@ -79,6 +88,13 @@ public class SmsServiceImpl implements SmsServiceInterface {
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
         securityUtility.saveTokens(refreshToken, email);
+    }
+
+    private String readSecretFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+            return reader.readLine();
+        }
     }
 }
 

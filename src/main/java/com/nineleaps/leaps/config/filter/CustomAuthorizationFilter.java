@@ -5,8 +5,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +16,12 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,7 +35,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final SecurityUtility securityUtility;
-    public CustomAuthorizationFilter( SecurityUtility securityUtility) {
+
+    public CustomAuthorizationFilter(SecurityUtility securityUtility) {
 
 
         this.securityUtility = securityUtility;
@@ -49,26 +53,29 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
-                        if (!securityUtility.isAccessTokenExpired(token)) {
-                            Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                            JWTVerifier verifier = JWT.require(algorithm).build();
-                            DecodedJWT decodedJWT = verifier.verify(token);
-                            String email = decodedJWT.getSubject();
-                            String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-                            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                            stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+                    if (!securityUtility.isAccessTokenExpired(token)) {
+                        String secretFilePath = "Desktop/codeLatest/secret/secret.txt";
+                        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+                        String secret = readSecretFromFile(absolutePath);
+                        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+                        JWTVerifier verifier = JWT.require(algorithm).build();
+                        DecodedJWT decodedJWT = verifier.verify(token);
+                        String email = decodedJWT.getSubject();
+                        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+                        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                        stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
 
-                            UsernamePasswordAuthenticationToken authenticationToken =
-                                    new UsernamePasswordAuthenticationToken(email, null, authorities);
-                            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                        UsernamePasswordAuthenticationToken authenticationToken =
+                                new UsernamePasswordAuthenticationToken(email, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-                            filterChain.doFilter(request, response);
-                        } else {
-                            DecodedJWT decodedAccessToken = JWT.decode(token);
-                            String email = decodedAccessToken.getSubject();
-                            String accessToken = securityUtility.updateAccessToken(email, request);
-                            response.setHeader("access_token", accessToken);
-                        }
+                        filterChain.doFilter(request, response);
+                    } else {
+                        DecodedJWT decodedAccessToken = JWT.decode(token);
+                        String email = decodedAccessToken.getSubject();
+                        String accessToken = securityUtility.updateAccessToken(email, request);
+                        response.setHeader("access_token", accessToken);
+                    }
                 } catch (Exception exception) {
 //
                     exception.printStackTrace();
@@ -81,6 +88,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             } else {
                 filterChain.doFilter(request, response);
             }
+        }
+    }
+
+    private String readSecretFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+            return reader.readLine();
         }
     }
 }

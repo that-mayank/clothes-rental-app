@@ -23,7 +23,12 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -34,9 +39,9 @@ import java.util.stream.Collectors;
 @Setter
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private UserServiceInterface userServiceInterface;
     private final SecurityUtility securityUtility;
     private final RefreshTokenRepository refreshTokenRepository;
+    private UserServiceInterface userServiceInterface;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager, SecurityUtility securityUtility, RefreshTokenRepository refreshTokenRepository) {
         this.authenticationManager = authenticationManager;
@@ -66,7 +71,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        String secretFilePath = "Desktop/codeLatest/secret/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+        String secret = readSecretFromFile(absolutePath);
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         // Update access token expiration time dynamically
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time 24hrs or one day
@@ -89,12 +97,19 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String email = user.getUsername();
 
         if (securityUtility.saveTokens(refreshToken, email)) {
-            response.getWriter().write("refreshTokens added sucessfully !");
+            response.getWriter().write("RefreshTokens added successfully!");
         } else {
-            response.getWriter().write("token not added");
+            response.getWriter().write("Token not added");
         }
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
         response.getWriter().write("authentication successful");
+    }
+
+    private String readSecretFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+            return reader.readLine();
+        }
     }
 }

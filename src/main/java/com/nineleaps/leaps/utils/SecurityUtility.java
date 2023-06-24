@@ -11,6 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -36,10 +42,13 @@ public class SecurityUtility {
         return true;
     }
 
-    public String updateAccessToken(String email2, HttpServletRequest request) {
+    public String updateAccessToken(String email2, HttpServletRequest request) throws IOException {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        String secretFilePath = "Desktop/codeLatest/secret/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+        String secret = readSecretFromFile(absolutePath);
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         DecodedJWT decodedRefreshToken = JWT.decode(token);
         String email = decodedRefreshToken.getSubject();
         User user = userServiceInterface.getUser(email);
@@ -55,6 +64,13 @@ public class SecurityUtility {
                 .withClaim("roles", Arrays.asList(roles))
                 .sign(algorithm);
 
+    }
+
+    private String readSecretFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+            return reader.readLine();
+        }
     }
 }
 

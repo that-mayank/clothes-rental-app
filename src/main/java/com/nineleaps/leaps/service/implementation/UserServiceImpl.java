@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
             //if email already registered throw custom exception
             throw new CustomException("Email already associated with other user");
         }
-        //add for phone number
+        //add exception for registered phone number
         if (Helper.notNull(userRepository.findByPhoneNumber(signupDto.getPhoneNumber()))) {
             throw new CustomException("Phone number already associated with other user");
         }

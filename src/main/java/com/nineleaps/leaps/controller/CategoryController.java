@@ -21,7 +21,7 @@ import java.util.List;
 @Transactional
 @RequestMapping("/api/v1/category")
 @AllArgsConstructor
-@Api(tags = "Category Api", value = "Contains api for adding category, updating category, and list categories")
+@Api(tags = "Category Api", description = "Contains api for adding category, updating category, and list categories")
 public class CategoryController {
     //Linking Service layer using constructor injection
     private final CategoryServiceInterface categoryService;

@@ -26,7 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Transactional
 @RequestMapping("/api/v1/address")
 @AllArgsConstructor
-@Api(tags = "Address Api", value = "Contains api for add, update, list and delete address")
+@Api(tags = "Address Api", description = "Contains api for add, update, list and delete address")
 public class AddressController {
     private final AddressServiceInterface addressService;
     private final Helper helper;

@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/file")
 @Slf4j
 @AllArgsConstructor
-@Api(tags = "Storage Api", value = "Contains api for uploading multiple images, downloading images, view images and delete images")
+@Api(tags = "Storage Api", description = "Contains api for uploading multiple images, downloading images, view images and delete images")
 public class StorageController {
     private final StorageServiceInterface storageServiceInterface;
 

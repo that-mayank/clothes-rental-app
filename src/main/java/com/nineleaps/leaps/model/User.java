@@ -57,5 +57,6 @@ public class User { //implements Serializable
         this.phoneNumber = profileUpdateDto.getPhoneNumber();
         this.password = oldUser.getPassword();
         this.role = oldUser.getRole();
+        this.profileImageUrl = oldUser.getProfileImageUrl();
     }
 }

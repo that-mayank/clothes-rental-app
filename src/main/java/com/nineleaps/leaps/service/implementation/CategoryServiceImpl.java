@@ -5,22 +5,21 @@ import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+@Transactional
 public class CategoryServiceImpl implements CategoryServiceInterface {
     //Linking Repository using constructor injection
     private final CategoryRepository categoryRepository;
-
-    @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     public void createCategory(Category category) {
@@ -36,6 +35,9 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
     public void updateCategory(Long id, CategoryDto updateCategory) {
         Category category;
         Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isEmpty()) {
+            throw new IllegalArgumentException("Category not found with ID: " + id);
+        }
         if (optionalCategory.isPresent()) {
             category = optionalCategory.get();
             if (category != null) {

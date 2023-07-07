@@ -20,9 +20,4 @@ public class RefreshToken {
 
     @Column(name = "refresh_token")
     private String token;
-
-    public RefreshToken(String email, String token) {
-        this.email = email;
-        this.token = token;
-    }
 }

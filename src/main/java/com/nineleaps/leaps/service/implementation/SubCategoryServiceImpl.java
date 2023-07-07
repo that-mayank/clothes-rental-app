@@ -7,21 +7,19 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+@Transactional
 public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
     private final SubCategoryRepository categoryRepository;
-
-    @Autowired
-    public SubCategoryServiceImpl(SubCategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     public void createSubCategory(SubCategoryDto subCategoryDto, Category category) {

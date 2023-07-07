@@ -7,6 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface SmsServiceInterface {
-    public void send(String phoneNumber);
+    void send(String phoneNumber);
     void verifyOtp(String phoneNumber, Integer otp, HttpServletResponse response, HttpServletRequest request) throws OtpValidationException, IOException;
 }

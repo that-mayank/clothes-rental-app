@@ -59,4 +59,9 @@ public class Address {
         this.user = user;
         this.defaultAddress = addressDto.isDefaultAddress();
     }
+
+    public Address(Long addressId, User user) {
+        this.id = addressId;
+        this.user = user;
+    }
 }

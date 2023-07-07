@@ -48,8 +48,8 @@ import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getD
 @Transactional
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderServiceInterface {
-    private final CartServiceInterface cartService;
     private final OrderRepository orderRepository;
+    private final CartServiceInterface cartService;
     private final OrderItemRepository orderItemRepository;
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         newOrder.setTotalPrice(cartDto.getTotalCost());
         newOrder.setSessionId(sessionId);
         newOrder.setUser(user);
-        orderRepository.save(newOrder);
+//        orderRepository.save(newOrder);
         List<OrderItem> orderItemList = new ArrayList<>();
         for (CartItemDto cartItemDto : cartItemDtos) {
             //create cartItem and save each
@@ -93,6 +93,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
         orderRepository.save(newOrder);
         //delete cart items after placing order
         cartService.deleteUserCartItems(user);
+
+
         // function to send email
         String email = user.getEmail();
         String subject = "Order placed";
@@ -106,7 +108,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
         for (OrderItem orderItem : orderItems) {
             String productName = orderItem.getName();
             int quantity = orderItem.getQuantity();
-            double price = orderItem.getPrice() * orderItem.getQuantity() * (int) ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
+            long rentalPeriod = ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
+            double price = orderItem.getPrice() * orderItem.getQuantity() * rentalPeriod;
+//            double price = orderItem.getPrice() * orderItem.getQuantity() * (int) ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
             messageBuilder.append("Product: ").append(productName).append("\n");
             messageBuilder.append("Quantity: ").append(quantity).append("\n");
             messageBuilder.append("Price: ").append(price).append("\n");
@@ -143,7 +147,12 @@ public class OrderServiceImpl implements OrderServiceInterface {
         if (status.equals("ORDER RETURNED")) {
             Product product = orderItem.getProduct();
             product.setAvailableQuantities(product.getAvailableQuantities() + orderItem.getQuantity());
-            product.setRentedQuantities(product.getRentedQuantities() - orderItem.getQuantity());
+            if(product.getRentedQuantities() - orderItem.getQuantity() >= 0) {
+                product.setRentedQuantities(product.getRentedQuantities() - orderItem.getQuantity());
+            }
+            else {
+                product.setRentedQuantities(0);
+            }
             productRepository.save(product);
         }
     }
@@ -185,7 +194,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         emailServiceImpl.sendEmail(subject, message, email);
     }
 
-    private double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
+    double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
         if (delayDays > 0) {
@@ -195,7 +204,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
     }
 
-    private double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
+    double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
         if (delayDays > 0) {
@@ -246,6 +255,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             result.put(month, monthData);
         }
         return result;
+
     }
 
     @Override
@@ -291,6 +301,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             }
             result.put(year, yearData);
         }
+
         return result;
     }
 
@@ -299,7 +310,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
-                if (orderItem.getProduct().getUser().equals(user) && orderItem.getRentalStartDate().isAfter(startDate) && orderItem.getRentalEndDate().isBefore(endDate)) {
+                if (orderItem.getProduct().getUser().equals(user) && orderItem.getRentalStartDate().isAfter(startDate) && orderItem.getRentalStartDate().isBefore(endDate)) {
                     LocalDateTime rentalStartDate = orderItem.getRentalStartDate();
                     YearMonth month = YearMonth.from(rentalStartDate);
                     // Retrieve the list of order items for the current month

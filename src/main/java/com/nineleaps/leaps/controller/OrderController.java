@@ -43,7 +43,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Transactional
 @RequestMapping("/api/v1/order")
 @AllArgsConstructor
-@Api(tags = "Order Api", value = "Contains api for adding order, listing order, get particular order details and dashboard api")
+@Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
 public class OrderController {
     private final OrderServiceInterface orderService;
     private final Helper helper;
@@ -240,11 +240,11 @@ public class OrderController {
         InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
 
         // Set the Content-Disposition header to force download the PDF
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "report.pdf");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "report.pdf");
 
-        return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
+            return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
     }
 
     @GetMapping("/dashboardDateSelector")

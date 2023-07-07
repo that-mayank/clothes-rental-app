@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @SpringBootApplication
 @EnableScheduling
 public class LeapsApplication {
@@ -21,5 +20,5 @@ public class LeapsApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static final String NGROK = "https://e17f-180-151-121-146.ngrok-free.app";
+    public static final String NGROK = "https://e651-106-51-70-135.ngrok-free.app";
 }

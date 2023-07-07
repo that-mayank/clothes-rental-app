@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Api(tags = "Notifications Api", value = "Contains api for sending sms")
+@Api(tags = "Notifications Api", description = "Contains api for sending sms")
 public class SMSController {
 
     private final SmsServiceInterface smsServiceInterface;

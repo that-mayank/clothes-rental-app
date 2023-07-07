@@ -29,7 +29,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/v1/product")
 @AllArgsConstructor
-@Api(tags = "Products Api", value = "Contains api for adding products, listing products, updating products and soft deleting products")
+@Api(tags = "Products Api", description = "Contains api for adding products, listing products, updating products and soft deleting products")
 public class ProductController {
     private final ProductServiceInterface productService;
     private final SubCategoryServiceInterface subCategoryService;
@@ -184,16 +184,6 @@ public class ProductController {
         }
         productService.deleteProduct(optionalProduct.get().getId(), user.getId());
         return new ResponseEntity<>(new ApiResponse(true, "Product has been deleted successfully."), HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "search suggestions")
-    @GetMapping("/suggestions")
-    public ResponseEntity<List<String>> listSuggestions(@RequestParam("query") String query, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        List<String> suggestions = productService.listSuggestions(query, user);
-        return new ResponseEntity<>(suggestions, HttpStatus.OK);
     }
 
     @GetMapping("/disableProduct")

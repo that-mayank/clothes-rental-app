@@ -11,7 +11,7 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.data.domain.Page;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -28,11 +29,11 @@ import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.*;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Transactional
 public class ProductServiceImpl implements ProductServiceInterface {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
-
 
     public static ProductDto getDtoFromProduct(Product product) {
         return new ProductDto(product);
@@ -66,44 +67,9 @@ public class ProductServiceImpl implements ProductServiceInterface {
             productDtos.add(productDto);
         }
         session.disableFilter(DELETED_PRODUCT_FILTER);
-        session.disableFilter("disableProductFilter");
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
         return productDtos;
     }
-
-    @Override
-    public List<String> listSuggestions(String searchInput, User user) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        disabledProductFilter.setParameter(DISABLED, false);
-        List<Product> allProducts = productRepository.findAll();
-        List<Product> results = new ArrayList<>();
-        for (Product product : allProducts) {
-            if (!product.getUser().equals(user)) {
-                results.add(product);
-            }
-        }
-        Set<String> searchSuggestions = new HashSet<>();
-        for (Product product : results) {
-            String productName = product.getName();
-            String productBrand = product.getBrand();
-            String productCategoryName = null;
-            List<Category> productCategories = product.getCategories();
-            for (Category category : productCategories) {
-                productCategoryName = category.getCategoryName();
-            }
-            String suggestion = productName + " in " + productBrand + " for " + productCategoryName;
-            String regex = "\\b" + Pattern.quote(searchInput) + "\\b"; // Exact word match
-            if (suggestion.toLowerCase().matches("(?i).*" + regex + ".*")) {
-                searchSuggestions.add(suggestion);
-            }
-        }
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
-        session.disableFilter(DELETED_PRODUCT_FILTER);
-        return new ArrayList<>(searchSuggestions);
-    }
-
 
     @Override
     public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
@@ -307,7 +273,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public Product getProduct(Long productId, Long userId) {
         return productRepository.findByUserIdAndId(userId, productId);
-
     }
 
     @Override

@@ -78,7 +78,7 @@ public class Product {
     @JsonIgnore
     @Column(name = "image_url")
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductUrl> imageURL;
+    private List<ProductUrl> imageURL = new ArrayList<>();
 
     public Product(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
         this.name = productDto.getName();

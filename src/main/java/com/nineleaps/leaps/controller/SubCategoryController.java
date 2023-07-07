@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/subcategory")
 @AllArgsConstructor
-@Api(tags = "Subcategory Api", value = "Contains api for adding subcategory, updating subcategory, and list subcategories")
+@Api(tags = "Subcategory Api", description = "Contains api for adding subcategory, updating subcategory, and list subcategories")
 public class SubCategoryController {
     private final CategoryServiceInterface categoryService;
     private final SubCategoryServiceInterface subCategoryService;

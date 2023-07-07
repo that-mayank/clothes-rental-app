@@ -8,11 +8,13 @@ import com.nineleaps.leaps.service.AddressServiceInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AddressServiceImpl implements AddressServiceInterface {
     private final AddressRepository addressRepository;
 

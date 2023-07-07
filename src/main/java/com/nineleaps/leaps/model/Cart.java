@@ -40,7 +40,14 @@ public class Cart {
         this.quantity = quantity;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
-        ProductUrl productUrl = imageUrl.get(0);
-        this.imageUrl = productUrl.getUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            ProductUrl productUrl = imageUrl.get(0);
+            this.imageUrl = productUrl.getUrl();
+        } else {
+            this.imageUrl = null; // or set a default value if needed
+        }
+//        ProductUrl productUrl = imageUrl.get(0);
+//
+//        this.imageUrl = productUrl.getUrl();
     }
 }

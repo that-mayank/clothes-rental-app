@@ -186,16 +186,6 @@ public class ProductController {
         return new ResponseEntity<>(new ApiResponse(true, "Product has been deleted successfully."), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "search suggestions")
-    @GetMapping("/suggestions")
-    public ResponseEntity<List<String>> listSuggestions(@RequestParam("query") String query, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        List<String> suggestions = productService.listSuggestions(query, user);
-        return new ResponseEntity<>(suggestions, HttpStatus.OK);
-    }
-
     @GetMapping("/disableProduct")
     public ResponseEntity<ApiResponse> disableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);

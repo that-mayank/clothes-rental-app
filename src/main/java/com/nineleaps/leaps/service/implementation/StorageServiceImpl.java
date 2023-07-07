@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.nineleaps.leaps.service.StorageServiceInterface;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,15 +29,14 @@ import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
+@Transactional
 public class StorageServiceImpl implements StorageServiceInterface {
 
-    private String baseUrl = NGROK;
-
+    private final String baseUrl = NGROK;
     @Value("${application.bucket.name}")
     private String bucketName;
-
-    @Autowired
-    private AmazonS3 s3Client;
+    private final AmazonS3 s3Client;
 
     // private method to determine Content type
     private String determineContentType(String fileName) {

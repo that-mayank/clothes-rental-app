@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,6 +27,7 @@ import java.time.ZoneId;
 import java.util.*;
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SmsServiceImpl implements SmsServiceInterface {
     @Value("${twilio.account_sid}")
     private String accountSid;
@@ -62,7 +64,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
         return userServiceInterface.getUserViaPhoneNumber(phoneNumber);
     }
     public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
-        String secretFilePath = "Desktop/codeLatest/secret/secret.txt";
+        String secretFilePath = "Desktop/leaps/secret/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
@@ -96,6 +98,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
             return reader.readLine();
         }
     }
+
 }
 
 

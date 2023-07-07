@@ -13,9 +13,11 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.CartRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,7 +26,8 @@ import java.util.List;
 import static com.nineleaps.leaps.config.MessageStrings.CART_ITEM_INVALID;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Transactional
 public class CartServiceImpl implements CartServiceInterface {
     private final CartRepository cartRepository;
 

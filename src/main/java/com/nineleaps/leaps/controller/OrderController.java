@@ -240,11 +240,11 @@ public class OrderController {
         InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
 
         // Set the Content-Disposition header to force download the PDF
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "report.pdf");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "report.pdf");
 
-        return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
+            return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
     }
 
     @GetMapping("/dashboardDateSelector")

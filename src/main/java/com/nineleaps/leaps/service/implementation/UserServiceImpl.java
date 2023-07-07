@@ -11,6 +11,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +31,7 @@ import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserServiceInterface, UserDetailsService {
     private final UserRepository userRepository;

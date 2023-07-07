@@ -54,4 +54,5 @@ public class ProductDto {
         this.setMaterial(product.getMaterial());
         this.setDisabled(product.isDisabled());
     }
+
 }

@@ -54,7 +54,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
                     if (!securityUtility.isAccessTokenExpired(token)) {
-                        String secretFilePath = "Desktop/codeLatest/secret/secret.txt";
+                        String secretFilePath = "Desktop/leaps/secret/secret.txt";
                         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
                         String secret = readSecretFromFile(absolutePath);
                         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

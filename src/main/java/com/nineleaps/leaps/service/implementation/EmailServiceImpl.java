@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.repository.CartRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,15 +9,14 @@ import org.springframework.stereotype.Service;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 import java.util.Properties;
 
 @Service
 @Slf4j
+@AllArgsConstructor
+@Transactional
 public class EmailServiceImpl {
-
-    @Autowired
-    CartRepository cartRepository;
-
     public boolean sendEmail(String subject, String message, String to) {
 
         if (to == null) {

@@ -5,20 +5,19 @@ import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.repository.WishlistRepository;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
+@Transactional
 public class WishlistServiceImpl implements WishlistServiceInterface {
     private final WishlistRepository wishlistRepository;
-
-    @Autowired
-    public WishlistServiceImpl(WishlistRepository wishlistRepository) {
-        this.wishlistRepository = wishlistRepository;
-    }
 
     @Override
     public void createWishlist(Wishlist wishlist) {

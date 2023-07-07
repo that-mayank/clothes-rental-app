@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User { //implements Serializable
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,9 @@ public class User { //implements Serializable
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Address> addresses;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Product> products;
+
     public User(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -47,6 +51,7 @@ public class User { //implements Serializable
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.role = role;
+        this.products = new ArrayList<>();
     }
 
     public User(ProfileUpdateDto profileUpdateDto, User oldUser) {

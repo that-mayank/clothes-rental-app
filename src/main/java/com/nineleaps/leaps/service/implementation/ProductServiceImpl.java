@@ -11,7 +11,7 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.data.domain.Page;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -28,11 +29,11 @@ import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.*;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Transactional
 public class ProductServiceImpl implements ProductServiceInterface {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
-
 
     public static ProductDto getDtoFromProduct(Product product) {
         return new ProductDto(product);

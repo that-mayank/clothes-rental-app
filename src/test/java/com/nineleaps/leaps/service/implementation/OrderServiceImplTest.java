@@ -1,5 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.orders.OrderDto;
@@ -25,12 +27,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -724,23 +728,135 @@ class OrderServiceImplTest {
                 .collect(Collectors.toList());
     }
 
-    @Test
-    void getRentedOutProducts() {
-    }
+//    @Test
+//    void getRentedOutProducts() {
+//        // Prepare test data
+//        User user = new User();
+//
+//        Product product1 = new Product();
+//        product1.setUser(user);
+//        product1.setId(1L);
+//        product1.setName("Product 1");
+//
+//        Product product2 = new Product();
+//        product2.setUser(user);
+//        product2.setId(2L);
+//        product2.setName("Product 2");
+//
+//        Product product3 = new Product(); // Product not rented by the user
+//
+//        Order order = new Order();
+//        order.setUser(user);
+//
+//        OrderItem orderItem1 = new OrderItem();
+//        orderItem1.setOrder(order);
+//        orderItem1.setProduct(product1);
+//
+//        OrderItem orderItem2 = new OrderItem();
+//        orderItem2.setOrder(order);
+//        orderItem2.setProduct(product2);
+//
+//        List<Product> products = List.of(product1, product2, product3);
+//        List<OrderItem> orderItems = List.of(orderItem1, orderItem2);
+//        List<Order> orders = List.of(order);
+//
+//        // Mock the repository methods
+//        when(orderRepository.findAll()).thenReturn(orders);
+//        when(orderItemRepository.findAll()).thenReturn(orderItems);
+//        when(productRepository.findAll()).thenReturn(products);
+//
+//        // Invoke the method
+//        List<ProductDto> result = orderService.getRentedOutProducts(user);
+//
+//        // Assert the result
+//        List<ProductDto> expected = List.of(getDtoFromProduct(product1), getDtoFromProduct(product2));
+//        assertEquals(expected, result);
+//
+//        // Verify the repository method invocations
+//        verify(orderRepository).findAll();
+//        verify(orderItemRepository).findAll();
+//        verify(productRepository).findAll();
+//    }
+
 
     @Test
     void getPdf() {
+        // Prepare test data
+        User user = new User();
+
+        // Invoke the method
+        Document result = orderService.getPdf(user);
+
+        // Assert the result
+        assertNotNull(result);
     }
 
-    @Test
-    void addContent() {
-    }
+//    @Test
+//    void addContent() throws DocumentException, IOException {
+//        // Prepare test data
+//        User user = new User();
+//        Document document = new Document();
+//
+//        // Invoke the method
+//        orderService.addContent(document, user);
+//
+//        // No assertion is needed as the method modifies the document
+//    }
 
     @Test
     void getOrderItem() {
+        // Prepare test data
+        User user = new User();
+        Long orderItemId = 1L;
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(new Order());
+        orderItem.getOrder().setUser(user);
+
+        // Mock the repository method
+        when(orderItemRepository.findById(orderItemId)).thenReturn(Optional.of(orderItem));
+
+        // Invoke the method
+        OrderItem result = orderService.getOrderItem(orderItemId, user);
+
+        // Assert the result
+        assertEquals(orderItem, result);
+
+        // Verify the repository method invocation
+        verify(orderItemRepository).findById(orderItemId);
     }
 
-    @Test
-    void getRentalPeriods() {
-    }
+//    @Test
+//    void getRentalPeriods() {
+//        // Prepare test data
+//        User user = new User();
+//        Order order = new Order();
+//        order.setUser(user);
+//
+//        OrderItem orderItem1 = new OrderItem();
+//        orderItem1.setRentalStartDate(LocalDateTime.now().minusDays(3));
+//        orderItem1.setRentalEndDate(LocalDateTime.now().plusDays(3));
+//        orderItem1.setOrder(order);
+//
+//        OrderItem orderItem2 = new OrderItem();
+//        orderItem2.setRentalStartDate(LocalDateTime.now().minusDays(2));
+//        orderItem2.setRentalEndDate(LocalDateTime.now().plusDays(2));
+//        orderItem2.setOrder(order);
+//
+//        OrderItem orderItem3 = new OrderItem();
+//        orderItem3.setRentalStartDate(LocalDateTime.now().minusDays(1));
+//        orderItem3.setRentalEndDate(LocalDateTime.now().plusDays(1));
+//        orderItem3.setOrder(order);
+//
+//        List<OrderItem> orderItems = List.of(orderItem1, orderItem2, orderItem3);
+//        order.setOrderItems(orderItems);
+//
+//        // Mock the repository method
+//        when(orderItemRepository.findAll()).thenReturn(orderItems);
+//
+//        // Invoke the method
+//        orderService.getRentalPeriods();
+//
+//        // Verify the email service method invocation
+//        verify(emailService, times(3)).sendEmail(anyString(), anyString(), anyString());
+//    }
 }

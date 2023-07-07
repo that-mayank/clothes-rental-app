@@ -14,8 +14,6 @@ public interface ProductServiceInterface {
 
     List<ProductDto> listProducts(int pageNumber, int pageSize, User user);
 
-    List<String> listSuggestions(String searchInput, User user);
-
     void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user);
 
     Optional<Product> readProduct(Long productId);

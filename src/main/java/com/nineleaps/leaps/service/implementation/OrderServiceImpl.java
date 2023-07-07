@@ -48,8 +48,8 @@ import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getD
 @Transactional
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderServiceInterface {
-    private final CartServiceInterface cartService;
     private final OrderRepository orderRepository;
+    private final CartServiceInterface cartService;
     private final OrderItemRepository orderItemRepository;
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
@@ -194,7 +194,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         emailServiceImpl.sendEmail(subject, message, email);
     }
 
-    private double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
+    double calculateDelayCharge(LocalDateTime rentalEndDate, double securityDeposit) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
         if (delayDays > 0) {
@@ -204,7 +204,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
     }
 
-    private double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
+    double calculateRemainingDeposit(double securityDeposit, LocalDateTime rentalEndDate, OrderItem orderItem) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long delayDays = ChronoUnit.DAYS.between(rentalEndDate, currentDateTime);
         if (delayDays > 0) {
@@ -310,7 +310,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
-                if (orderItem.getProduct().getUser().equals(user) && orderItem.getRentalStartDate().isAfter(startDate) && orderItem.getRentalEndDate().isBefore(endDate)) {
+                if (orderItem.getProduct().getUser().equals(user) && orderItem.getRentalStartDate().isAfter(startDate) && orderItem.getRentalStartDate().isBefore(endDate)) {
                     LocalDateTime rentalStartDate = orderItem.getRentalStartDate();
                     YearMonth month = YearMonth.from(rentalStartDate);
                     // Retrieve the list of order items for the current month

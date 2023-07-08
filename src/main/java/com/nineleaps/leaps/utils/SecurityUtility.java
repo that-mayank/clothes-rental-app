@@ -51,7 +51,7 @@ public class SecurityUtility {
     public String updateAccessToken(String email2, HttpServletRequest request) throws IOException {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
-        String secretFilePath = "/Desktop"+"/Backend Leaps"+"/secret"+"/secret.txt";
+        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

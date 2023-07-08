@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.io.PrintWriter;
 import java.util.regex.Pattern;
+
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -96,7 +98,7 @@ class CustomAuthenticationFilterTest {
         when(response.getWriter()).thenReturn(writer);
 
         // Stub the getRequestURL() method
-        when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/api/v1/login"));
+        when(request.getRequestURL()).thenReturn(new StringBuffer(NGROK));
 
         // Mock the successful saving of tokens
         when(securityUtility.saveTokens(anyString(), anyString())).thenReturn(true);
@@ -146,10 +148,10 @@ class CustomAuthenticationFilterTest {
         String secret = "meinhuchotadon";
         new BufferedReader(new StringReader(secret));
         when(request.getServletContext()).thenReturn(mock(ServletContext.class));
-        when(request.getServletContext().getRealPath(any())).thenReturn("/home/nineleaps/Desktop/Backend Leaps/secret/secret.txt");
+        when(request.getServletContext().getRealPath(any())).thenReturn("/home/nineleaps/Desktop/leaps/secret/secret.txt");
 
         // Act
-        String result = customAuthenticationFilter.readSecretFromFile("/home/nineleaps/Desktop/Backend Leaps/secret/secret.txt");
+        String result = customAuthenticationFilter.readSecretFromFile("/home/nineleaps/Desktop/leaps/secret/secret.txt");
 
         // Assert
         assertEquals(secret, result);

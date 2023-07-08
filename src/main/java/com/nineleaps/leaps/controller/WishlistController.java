@@ -30,9 +30,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class WishlistController {
     private final WishlistServiceInterface wishlistService;
     private final ProductServiceInterface productService;
-    private final SecurityUtility securityUtility;
     private final Helper helper;
-
 
     //Add product to Wishlist
     //change Product to ProductDto

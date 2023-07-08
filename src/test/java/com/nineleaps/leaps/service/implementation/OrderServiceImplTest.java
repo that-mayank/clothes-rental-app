@@ -34,6 +34,7 @@ import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
@@ -397,7 +398,7 @@ class OrderServiceImplTest {
         product1.setUser(user);
         OrderItem orderItem1 = new OrderItem();
         orderItem1.setProduct(product1);
-        orderItem1.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/1685304299973_image.png");
+        orderItem1.setImageUrl("NGROK/api/v1/file/view/1685304299973_image.png");
         orderItem1.setRentalStartDate(LocalDateTime.of(2023, 1, 15, 0, 0));
         orderItem1.setRentalEndDate(LocalDateTime.of(2023, 1, 31, 0, 0));
         orderItem1.setOrder(order);
@@ -405,13 +406,13 @@ class OrderServiceImplTest {
         Product product2 = new Product();
         product2.setUser(user);
         orderItem2.setProduct(product2);
-        orderItem2.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/1685304299973_image.png");
+        orderItem2.setImageUrl(NGROK+"/api/v1/file/view/test_image.png");
         orderItem2.setRentalStartDate(LocalDateTime.of(2023, 1, 15, 0, 0));
         orderItem2.setRentalEndDate(LocalDateTime.of(2023, 1, 31, 0, 0));
         orderItem2.setOrder(order);
         OrderItem orderItem3 = new OrderItem();
         Product product3 = new Product();
-        orderItem3.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/1685304299973_image.png");
+        orderItem3.setImageUrl(NGROK+"/api/v1/file/view/test_image.png");
         product3.setUser(user);
         orderItem3.setProduct(product3);
         orderItem3.setRentalStartDate(LocalDateTime.of(2023, 1, 25, 0, 0));
@@ -456,7 +457,7 @@ class OrderServiceImplTest {
         orderItem1.setProduct(product1);
         orderItem1.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem1.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem1.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png");
+        orderItem1.setImageUrl(NGROK+"/api/v1/file/view/test1_image.png");
 
         OrderItem orderItem2 = new OrderItem();
         orderItem2.setName("test2");
@@ -465,7 +466,7 @@ class OrderServiceImplTest {
         orderItem2.setProduct(product2);
         orderItem2.setRentalStartDate(LocalDateTime.of(2023, 2, 1, 0, 0));
         orderItem2.setRentalEndDate(LocalDateTime.of(2023, 2, 28, 0, 0));
-        orderItem2.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png");
+        orderItem2.setImageUrl(NGROK+"/api/v1/file/view/test2_image.png");
 
         OrderItem orderItem3 = new OrderItem();
         orderItem3.setName("test3");
@@ -474,7 +475,7 @@ class OrderServiceImplTest {
         orderItem3.setProduct(product3);
         orderItem3.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem3.setRentalEndDate(LocalDateTime.of(2023, 1, 31, 0, 0));
-        orderItem3.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png");
+        orderItem3.setImageUrl(NGROK+"/api/v1/file/view/test3_image.png");
 
         Order order1 = new Order();
         order1.setOrderItems(List.of(orderItem1));
@@ -501,9 +502,9 @@ class OrderServiceImplTest {
 
         // Assert imageUrl of each OrderItem
         List<String> expectedImageUrls = Arrays.asList(
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png",
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png",
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png"
+                NGROK+"/api/v1/file/view/test1_image.png",
+                NGROK+"/api/v1/file/view/test3_image.png",
+                NGROK+"/api/v1/file/view/test2_image.png"
         );
         List<String> actualImageUrls = result.values().stream()
                 .flatMap(List::stream)
@@ -528,7 +529,7 @@ class OrderServiceImplTest {
         orderItem1.setProduct(product1);
         orderItem1.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem1.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem1.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png");
+        orderItem1.setImageUrl(NGROK+"/api/v1/file/view/test1_image.png");
 
 
         OrderItem orderItem2 = new OrderItem();
@@ -541,7 +542,7 @@ class OrderServiceImplTest {
         orderItem2.setProduct(product2);
         orderItem2.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem2.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem2.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png");
+        orderItem2.setImageUrl(NGROK+"/api/v1/file/view/test2_image.png");
 
         OrderItem orderItem3 = new OrderItem();
         orderItem3.setName("test3");
@@ -553,7 +554,7 @@ class OrderServiceImplTest {
         orderItem3.setProduct(product3);
         orderItem3.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem3.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem3.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png");
+        orderItem3.setImageUrl(NGROK+"/api/v1/file/view/test3_image.png");
 
         Order order1 = new Order();
         order1.setOrderItems(List.of(orderItem1));
@@ -598,18 +599,18 @@ class OrderServiceImplTest {
         // Verify the image URLs
         List<OrderReceivedDto> januarySubcategory1OrderItems = subcategory1Data.getOrderItems();
         assertEquals(2, januarySubcategory1OrderItems.size());
-        assertEquals("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png", januarySubcategory1OrderItems.get(0).getImageUrl());
-        assertEquals("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png", januarySubcategory1OrderItems.get(1).getImageUrl());
+        assertEquals(NGROK+"/api/v1/file/view/test1_image.png", januarySubcategory1OrderItems.get(0).getImageUrl());
+        assertEquals(NGROK+"/api/v1/file/view/test3_image.png", januarySubcategory1OrderItems.get(1).getImageUrl());
 
         List<OrderReceivedDto> februarySubcategory2OrderItems = subcategory2Data.getOrderItems();
         assertEquals(1, februarySubcategory2OrderItems.size());
-        assertEquals("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png", februarySubcategory2OrderItems.get(0).getImageUrl());
+        assertEquals(NGROK+"/api/v1/file/view/test2_image.png", februarySubcategory2OrderItems.get(0).getImageUrl());
 
         // Assert imageUrl of each OrderItem
         List<String> expectedImageUrls = Arrays.asList(
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png",
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png",
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png"
+                NGROK+"/api/v1/file/view/test2_image.png",
+                NGROK+"/api/v1/file/view/test1_image.png",
+                NGROK+"/api/v1/file/view/test3_image.png"
         );
         List<String> actualImageUrls = result.values().stream()
                 .flatMap(subcategoryData -> subcategoryData.values().stream())
@@ -636,7 +637,7 @@ class OrderServiceImplTest {
         orderItem1.setProduct(product1);
         orderItem1.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem1.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem1.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png");
+        orderItem1.setImageUrl(NGROK+"/api/v1/file/view/test1_image.png");
 
 
         OrderItem orderItem2 = new OrderItem();
@@ -649,7 +650,7 @@ class OrderServiceImplTest {
         orderItem2.setProduct(product2);
         orderItem2.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem2.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem2.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png");
+        orderItem2.setImageUrl(NGROK+"/api/v1/file/view/test2_image.png");
 
         OrderItem orderItem3 = new OrderItem();
         orderItem3.setName("test3");
@@ -661,7 +662,7 @@ class OrderServiceImplTest {
         orderItem3.setProduct(product3);
         orderItem3.setRentalStartDate(LocalDateTime.of(2023, 1, 1, 0, 0));
         orderItem3.setRentalEndDate(LocalDateTime.of(2023, 1, 28, 0, 0));
-        orderItem3.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png");
+        orderItem3.setImageUrl(NGROK+"/api/v1/file/view/test3_image.png");
 
         Order order1 = new Order();
         order1.setOrderItems(List.of(orderItem1));
@@ -704,22 +705,22 @@ class OrderServiceImplTest {
         // Verify the image URLs
         List<OrderReceivedDto> januaryCategory1OrderItems = category1Data.getOrderItems();
         assertEquals(2, januaryCategory1OrderItems.size());
-        assertEquals("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png", januaryCategory1OrderItems.get(0).getImageUrl());
-        assertEquals("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png", januaryCategory1OrderItems.get(1).getImageUrl());
+        assertEquals(NGROK+"/api/v1/file/view/test1_image.png", januaryCategory1OrderItems.get(0).getImageUrl());
+        assertEquals(NGROK+"/api/v1/file/view/test3_image.png", januaryCategory1OrderItems.get(1).getImageUrl());
 
         // Verify the image URLs (continued)
         List<OrderReceivedDto> februaryCategory2OrderItems = category2Data.getOrderItems();
         assertEquals(1, februaryCategory2OrderItems.size());
-        assertEquals("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png", februaryCategory2OrderItems.get(0).getImageUrl());
+        assertEquals(NGROK+"/api/v1/file/view/test2_image.png", februaryCategory2OrderItems.get(0).getImageUrl());
 
         // Verify the repository method invocations
         verify(orderRepository).findAll();
 
         // Assert imageUrl of each OrderItem
         List<String> expectedImageUrls = Arrays.asList(
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png",
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test1_image.png",
-                "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test3_image.png"
+                NGROK+"/api/v1/file/view/test2_image.png",
+                NGROK+"/api/v1/file/view/test1_image.png",
+                NGROK+"/api/v1/file/view/test3_image.png"
         );
         List<String> actualImageUrls = result.values().stream()
                 .flatMap(subcategoryData -> subcategoryData.values().stream())

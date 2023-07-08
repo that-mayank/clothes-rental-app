@@ -6,7 +6,7 @@ public class MessageStrings {
     public static final String AUTH_TOKEN_NOT_VALID = "Authentication Token Not Valid";
     public static final String USER_CREATED = "User Created Successfully";
     public static final String ID_NOT_PRESENT = "Primary key is required for updating";
-    public static final String WRONG_PASSWORD = "Please Check The Credentials";
+    public static final String WRONG_CREDENTIAL = "Please Check The Credentials";
     public static final String ORDER_ITEM_UNAUTHORIZED_ACCESS = "OrderItem does not belong to current user";
     public static final String CART_ITEM_INVALID = "Cart Item is invalid: ";
     public static final String DELETED_PRODUCT_FILTER = "deletedProductFilter";

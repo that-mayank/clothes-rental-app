@@ -6,7 +6,6 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.nineleaps.leaps.service.StorageServiceInterface;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,29 +16,30 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.Objects;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
-@Transactional
 public class StorageServiceImpl implements StorageServiceInterface {
 
-    private final String baseUrl = NGROK;
+    String baseUrl = NGROK;
+
     @Value("${application.bucket.name}")
-    private String bucketName;
-    private final AmazonS3 s3Client;
+    String bucketName;
+
+    @Autowired
+    AmazonS3 s3Client;
 
     // private method to determine Content type
-    private String determineContentType(String fileName) {
+    String determineContentType(String fileName) {
         String contentType;
         if (fileName.endsWith(".pdf")) {
             contentType = MediaType.APPLICATION_PDF_VALUE;
@@ -55,15 +55,17 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
 
     // private method to convert multipart file to file
-    private File convertMultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(file.getOriginalFilename());
+    File convertMultiPartFileToFile(MultipartFile file) {
+        File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-            fos.write(file.getBytes());
+            byte[] fileBytes = file.getBytes();
+            fos.write(fileBytes);
         } catch (IOException e) {
             log.error("Error converting multipartFile to file", e);
         }
         return convertedFile;
     }
+
 
 
     // upload file to s3 cloud AWS storage
@@ -74,7 +76,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
         try {
             Files.delete(fileObj.toPath());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(String.valueOf(e));
         }
         return UriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
     }
@@ -88,7 +90,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
             return IOUtils.toByteArray(inputStream);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(String.valueOf(e));
         }
         return new byte[0];
     }

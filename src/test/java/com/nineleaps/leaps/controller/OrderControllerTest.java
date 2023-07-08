@@ -335,7 +335,7 @@ class OrderControllerTest {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrder(order);
         orderItem.setProduct(product);
-        orderItem.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test_image.png");
+        orderItem.setImageUrl("NGROK/api/v1/file/view/test_image.png");
         orderItem.setRentalStartDate(LocalDateTime.now().minusDays(2));
         orderItem.setRentalEndDate(LocalDateTime.now().plusDays(2));
         Map<YearMonth, List<OrderReceivedDto>> orderItemsDashboardData = Map.of(YearMonth.now(), Arrays.asList(new OrderReceivedDto(orderItem)));
@@ -520,7 +520,7 @@ class OrderControllerTest {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrder(order);
         orderItem.setProduct(product);
-        orderItem.setImageUrl("https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test_image.png");
+        orderItem.setImageUrl("NGROK/api/v1/file/view/test_image.png");
         orderItem.setRentalStartDate(LocalDateTime.now().minusDays(2));
         orderItem.setRentalEndDate(LocalDateTime.now().plusDays(2));
         LocalDateTime startDate = LocalDateTime.now().minusDays(7);

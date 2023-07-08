@@ -21,11 +21,12 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Api(tags = "Notifications Api", description = "Contains api for sending sms")
+@SuppressWarnings("deprecation")
 public class SMSController {
 
-    private final SmsServiceInterface smsServiceInterface;
-    private String topicDestination = "/lesson/sms";
     private final SmsServiceInterface smsService;
+    private String topicDestination = "/lesson/sms";
+
     private final UserServiceInterface userService;
 
     private final SimpMessagingTemplate webSocket;
@@ -42,7 +43,7 @@ public class SMSController {
             return new ResponseEntity<>(new ApiResponse(false, "Phone number not present in database"), HttpStatus.NOT_FOUND);
         }
         try {
-            smsServiceInterface.send(phoneNumber);
+            smsService.send(phoneNumber);
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(false, "Enter a valid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.DELETED_PRODUCT_FILTER;
 import static com.nineleaps.leaps.config.MessageStrings.DISABLED_PRODUCT_FILTER;
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +71,7 @@ class ProductServiceImplTest {
     void addProduct() {
         // Given
         ProductDto productDto = new ProductDto();
-        String url = "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png";
+        String url = "NGROK/api/v1/file/view/test2_image.png";
         productDto.setImageUrl(List.of(url));
         List<SubCategory> subCategories = new ArrayList<>();
         List<Category> categories = new ArrayList<>();
@@ -138,7 +139,7 @@ class ProductServiceImplTest {
         // Given
         Long productId = 1L;
         ProductDto productDto = new ProductDto();
-        String url = "https://e651-106-51-70-135.ngrok-free.app/api/v1/file/view/test2_image.png";
+        String url = NGROK+"/api/v1/file/view/test2_image.png";
         productDto.setImageUrl(List.of(url));
         List<SubCategory> subCategories = new ArrayList<>();
         List<Category> categories = new ArrayList<>();

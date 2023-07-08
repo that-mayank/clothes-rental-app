@@ -54,7 +54,6 @@ public class StorageController {
             jsonResponse.put("url", url);
             return ResponseEntity.ok(jsonResponse.toString());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

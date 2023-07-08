@@ -2,12 +2,14 @@ package com.nineleaps.leaps.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nineleaps.leaps.model.RefreshToken;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +25,20 @@ import java.util.Arrays;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class SecurityUtility {
     private final UserServiceInterface userServiceInterface;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private RefreshTokenRepository refreshTokenRepository;
 
+    public void setRefreshTokenRepository(RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
     public boolean isAccessTokenExpired(String accessToken) {
         DecodedJWT decodedAccessToken = JWT.decode(accessToken);
         Date expirationDate = decodedAccessToken.getExpiresAt();
         return expirationDate.before(new Date());
     }
+
 
     public boolean saveTokens(String rtoken, String email) {
         RefreshToken refreshToken = new RefreshToken();
@@ -45,7 +51,7 @@ public class SecurityUtility {
     public String updateAccessToken(String email2, HttpServletRequest request) throws IOException {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
-        String secretFilePath = "Desktop/leaps/secret/secret.txt";
+        String secretFilePath = "/Desktop"+"/Backend Leaps"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
@@ -66,7 +72,7 @@ public class SecurityUtility {
 
     }
 
-    public String readSecretFromFile(String filePath) throws IOException {
+    private String readSecretFromFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             return reader.readLine();

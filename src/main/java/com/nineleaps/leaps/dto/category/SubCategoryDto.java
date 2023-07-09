@@ -16,13 +16,5 @@ public class SubCategoryDto {
     private @NotNull String imageURL;
     private @NotNull String description;
     private @NotNull Long categoryId;
-
-    public SubCategoryDto(SubCategory subCategory) {
-        this.setId(subCategory.getId());
-        this.setSubcategoryName(subCategory.getSubcategoryName());
-        this.setImageURL(subCategory.getImageUrl());
-        this.setDescription(subCategory.getDescription());
-        this.setCategoryId(subCategory.getCategory().getId());
-    }
 }
 

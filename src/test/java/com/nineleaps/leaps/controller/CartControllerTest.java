@@ -55,9 +55,9 @@ class CartControllerTest {
         User user = new User();
         Product product = new Product();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(productService.getProductById(eq(addToCartDto.getProductId()))).thenReturn(product);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(productService.getProductById((addToCartDto.getProductId()))).thenReturn(product);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.addToCart(addToCartDto, request);
@@ -86,9 +86,9 @@ class CartControllerTest {
         User user = new User();
         CartDto cartDto = new CartDto();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(cartService.listCartItems(eq(user))).thenReturn(cartDto);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(cartService.listCartItems((user))).thenReturn(cartDto);
 
         // Act
         ResponseEntity<CartDto> responseEntity = cartController.getCartItems(request);
@@ -108,8 +108,8 @@ class CartControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.updateCartItem(addToCartDto, request);
@@ -136,8 +136,8 @@ class CartControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.deleteCartItem(productId, request);
@@ -150,7 +150,7 @@ class CartControllerTest {
         assertTrue(response.isSuccess());
         assertEquals("Item has been removed from cart successfully", response.getMessage());
 
-        verify(cartService).deleteCartItem(eq(productId), eq(user));
+        verify(cartService).deleteCartItem((productId), (user));
     }
 
     @Test
@@ -160,8 +160,8 @@ class CartControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.updateQuantity(updateProductQuantityDto, request);

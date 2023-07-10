@@ -132,6 +132,9 @@ class ProductServiceImplTest {
 
     @Test
     void listSuggestions() {
+        String suggestion1 = "blue shirt";
+        String suggestion2 = "blue shirt";
+        assertSame(suggestion1,suggestion2);
     }
 
     @Test

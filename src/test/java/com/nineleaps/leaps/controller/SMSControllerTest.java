@@ -6,7 +6,7 @@ import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,9 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
  class SMSControllerTest {
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(true, response.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
         // Add more assertions for the response body if necessary
 
         verify(smsServiceInterface, times(1)).send(phoneNumber);
@@ -73,7 +73,7 @@ import static org.mockito.Mockito.*;
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Phone number not present in database", response.getBody().getMessage());
 
         // Add more assertions for the response body if necessary
@@ -96,7 +96,7 @@ import static org.mockito.Mockito.*;
 
         // Assert
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertEquals(true, apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
         // Add more assertions for the response body if necessary
 
         verify(smsServiceInterface, times(1)).verifyOtp(phoneNumber, otp, response, request);

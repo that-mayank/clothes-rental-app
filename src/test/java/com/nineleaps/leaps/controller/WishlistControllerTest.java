@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -64,7 +65,7 @@ class WishlistControllerTest {
         verify(wishlistService, times(1)).readWishlist(user.getId());
         verify(wishlistService, times(1)).createWishlist(any(Wishlist.class));
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertTrue(response.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 
     @Test
@@ -86,7 +87,7 @@ class WishlistControllerTest {
         verify(helper, times(1)).getUser(token);
         verify(productService, times(1)).readProduct(productId);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 
     @Test
@@ -116,7 +117,7 @@ class WishlistControllerTest {
         verify(productService, times(1)).readProduct(productId);
         verify(wishlistService, times(1)).readWishlist(user.getId());
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 
     @Test
@@ -144,7 +145,7 @@ class WishlistControllerTest {
         verify(helper, times(1)).getUser(token);
         verify(wishlistService, times(1)).readWishlist(user.getId());
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
     }
 
     @Test
@@ -166,6 +167,6 @@ class WishlistControllerTest {
         verify(helper, times(1)).getUser(token);
         verify(wishlistService, times(1)).removeFromWishlist(user.getId(), productId);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 }

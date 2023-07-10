@@ -14,8 +14,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +38,7 @@ class StorageControllerTest {
         MockMultipartFile file1 = new MockMultipartFile("file", "filename1.txt", "text/plain", "File content 1".getBytes());
         MockMultipartFile file2 = new MockMultipartFile("file", "filename2.txt", "text/plain", "File content 2".getBytes());
         MultipartFile[] files = {file1, file2};
-        List<String> urls = new ArrayList<>();
+
         when(storageServiceInterface.uploadFile(any(MultipartFile.class))).thenReturn("example-url");
 
         // Execute
@@ -63,14 +62,13 @@ class StorageControllerTest {
 
         // Verify
         verify(storageServiceInterface, times(1)).uploadFile(any(MultipartFile.class));
-        assertTrue(!Helper.notNull(response.getUrls()));
+        assertFalse(Helper.notNull(response.getUrls()));
     }
 
         @Test
     void uploadProfileFile() {
         // Prepare
-        MockMultipartFile file1 = new MockMultipartFile("file", "filename1.txt", "text/plain", "File content 1".getBytes());
-        MultipartFile file = file1;
+            MultipartFile file = new MockMultipartFile("file", "filename1.txt", "text/plain", "File content 1".getBytes());
         when(storageServiceInterface.uploadFile(any(MultipartFile.class))).thenReturn("example-url");
 
         // Execute
@@ -84,8 +82,7 @@ class StorageControllerTest {
     @Test
     void uploadProfileFile_withException() {
         // Prepare
-        MockMultipartFile file1 = new MockMultipartFile("file", "filename1.txt", "text/plain", "File content 1".getBytes());
-        MultipartFile file = file1;        when(storageServiceInterface.uploadFile(any(MultipartFile.class))).thenThrow(RuntimeException.class);
+        MultipartFile file = new MockMultipartFile("file", "filename1.txt", "text/plain", "File content 1".getBytes());        when(storageServiceInterface.uploadFile(any(MultipartFile.class))).thenThrow(RuntimeException.class);
 
         // Execute
         ResponseEntity<String> response = storageController.uploadProfileFile(file);

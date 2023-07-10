@@ -792,17 +792,18 @@ class OrderServiceImplTest {
         assertNotNull(result);
     }
 
-//    @Test
-//    void addContent() throws DocumentException, IOException {
-//        // Prepare test data
-//        User user = new User();
-//        Document document = new Document();
-//
-//        // Invoke the method
-//        orderService.addContent(document, user);
-//
-//        // No assertion is needed as the method modifies the document
-//    }
+    @Test
+    void addContent() throws DocumentException, IOException {
+        // Prepare test data
+        User user = new User();
+        Document document = new Document();
+        document.open();
+
+        // Invoke the method
+        orderService.addContent(document, user);
+
+        // No assertion is needed as the method modifies the document
+    }
 
     @Test
     void getOrderItem() {

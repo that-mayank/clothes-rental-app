@@ -9,4 +9,5 @@ import java.io.IOException;
 public interface SmsServiceInterface {
     void send(String phoneNumber);
     void verifyOtp(String phoneNumber, Integer otp, HttpServletResponse response, HttpServletRequest request) throws OtpValidationException, IOException;
+    void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException;
 }

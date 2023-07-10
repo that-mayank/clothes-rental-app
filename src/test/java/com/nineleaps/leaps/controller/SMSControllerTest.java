@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
-public class SMSControllerTest {
+ class SMSControllerTest {
 
     @Mock
     private SmsServiceInterface smsServiceInterface;
@@ -45,7 +45,7 @@ public class SMSControllerTest {
     }
 
     @Test
-    public void smsSubmit_ValidPhoneNumber_ReturnsSuccessResponse() {
+     void smsSubmit_ValidPhoneNumber_ReturnsSuccessResponse() {
         // Arrange
         String phoneNumber = "9066650446";
         when(userService.getUserViaPhoneNumber(phoneNumber)).thenReturn(someUserObject());
@@ -63,7 +63,7 @@ public class SMSControllerTest {
     }
 
     @Test
-    public void smsSubmit_PhoneNumberNotPresentInDatabase_ReturnsNotFoundResponse() {
+     void smsSubmit_PhoneNumberNotPresentInDatabase_ReturnsNotFoundResponse() {
         // Arrange
         String phoneNumber = "1234567890";
         when(userService.getUserViaPhoneNumber(phoneNumber)).thenReturn(null);
@@ -84,7 +84,7 @@ public class SMSControllerTest {
 
 
     @Test
-    public void verifyOTP_ValidOTP_ReturnsSuccessResponse() throws OtpValidationException, IOException {
+     void verifyOTP_ValidOTP_ReturnsSuccessResponse() throws OtpValidationException, IOException {
         // Arrange
         String phoneNumber = "9066650446";
         int otp = 123456;

@@ -11,10 +11,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CategoryTest {
+ class CategoryTest {
 
     @Test
-    public void testCategoryGettersAndSetters() {
+     void testCategoryGettersAndSetters() {
         // Create a sample Category instance
         Category category = new Category();
         category.setId(1L);
@@ -43,7 +43,7 @@ public class CategoryTest {
     }
 
     @Test
-    public void testCategoryConstructor() {
+     void testCategoryConstructor() {
         // Create a CategoryDto instance
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(1L);

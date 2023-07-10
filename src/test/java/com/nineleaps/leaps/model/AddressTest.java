@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AddressTest {
+ class AddressTest {
 
     @Test
-    public void testAddressGettersAndSetters() {
+     void testAddressGettersAndSetters() {
         // Create a sample User
         User user = new User();
         user.setId(1L);
@@ -54,7 +54,7 @@ public class AddressTest {
     }
 
     @Test
-    public void testAddressConstructors() {
+     void testAddressConstructors() {
         // Create a sample User
         User user = new User();
         user.setId(1L);

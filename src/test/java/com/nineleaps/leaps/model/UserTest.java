@@ -10,10 +10,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserTest {
+ class UserTest {
 
     @Test
-    public void testUserGettersAndSetters() {
+     void testUserGettersAndSetters() {
         // Create a sample User instance
         User user = new User();
         user.setId(1L);
@@ -59,7 +59,7 @@ public class UserTest {
     }
 
     @Test
-    public void testUserConstructor() {
+     void testUserConstructor() {
         // Create a ProfileUpdateDto instance
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         profileUpdateDto.setFirstName("John");

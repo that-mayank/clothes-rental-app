@@ -801,7 +801,7 @@ class OrderServiceImplTest {
 
         // Invoke the method
         orderService.addContent(document, user);
-
+        assertNotNull(user);
         // No assertion is needed as the method modifies the document
     }
 

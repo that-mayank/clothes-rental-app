@@ -10,10 +10,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CartTest {
+ class CartTest {
 
     @Test
-    public void testCartGettersAndSetters() {
+     void testCartGettersAndSetters() {
         // Create a sample Cart instance
         Cart cart = new Cart();
         cart.setId(1L);
@@ -47,7 +47,7 @@ public class CartTest {
     }
 
     @Test
-    public void testCartConstructor() {
+     void testCartConstructor() {
         // Create a sample Product instance
         Product product = new Product();
         product.setId(1L);

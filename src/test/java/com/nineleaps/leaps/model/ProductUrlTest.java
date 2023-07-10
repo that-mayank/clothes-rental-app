@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-public class ProductUrlTest {
+ class ProductUrlTest {
 
     private Product product;
     private ProductUrl productUrl;

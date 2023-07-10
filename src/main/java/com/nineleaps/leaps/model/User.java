@@ -65,6 +65,5 @@ public class User {
         this.profileImageUrl = oldUser.getProfileImageUrl();
     }
 
-    public User(String email) {
-    }
+
 }

@@ -30,6 +30,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/product")
 @AllArgsConstructor
 @Api(tags = "Products Api", description = "Contains api for adding products, listing products, updating products and soft deleting products")
+@SuppressWarnings("deprecation")
 public class ProductController {
     private final ProductServiceInterface productService;
     private final SubCategoryServiceInterface subCategoryService;

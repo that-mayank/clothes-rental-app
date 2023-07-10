@@ -32,6 +32,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/user")
 @AllArgsConstructor
 @Api(tags = "User Api", description = "Contains api for user onboarding")
+@SuppressWarnings("deprecation")
 public class UserController {
     private final UserServiceInterface userServiceInterface;
     private final SwitchProfile switchprofile;

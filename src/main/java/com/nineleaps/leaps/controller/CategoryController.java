@@ -22,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1/category")
 @AllArgsConstructor
 @Api(tags = "Category Api", description = "Contains api for adding category, updating category, and list categories")
+@SuppressWarnings("deprecation")
 public class CategoryController {
     //Linking Service layer using constructor injection
     private final CategoryServiceInterface categoryService;

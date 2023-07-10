@@ -85,7 +85,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void listProducts() {
+     void listProducts() {
         // Create a list of dummy products
         int pageNumber = 0;
         int pageSize = 10;
@@ -287,7 +287,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testListProductByid() throws ProductNotExistException {
+     void testListProductByid() throws ProductNotExistException {
         // Create a dummy product
         Product product = new Product();
         product.setId(1L);
@@ -310,7 +310,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductById() throws ProductNotExistException {
+     void testGetProductById() throws ProductNotExistException {
         // Create a dummy product
         Product product = new Product();
         product.setId(1L);
@@ -333,7 +333,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testListProductsDesc() {
+     void testListProductsDesc() {
         // Create a list of dummy products
         User user = new User();
         List<Product> products = new ArrayList<>();
@@ -380,7 +380,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testListOwnerProducts() {
+    void testListOwnerProducts() {
         // Create a user
         User user = new User();
         user.setId(1L);
@@ -433,7 +433,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductsByPriceRange() {
+     void testGetProductsByPriceRange() {
         // Create a list of dummy products
         List<Product> products = new ArrayList<>();
         Product product1 = new Product();
@@ -482,7 +482,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testSearchProducts() {
+     void testSearchProducts() {
         // Create a list of dummy products
         User user = new User();
         User user1 = new User();
@@ -535,7 +535,7 @@ class ProductServiceImplTest {
 
 
     @Test
-    public void testFilterProducts() {
+     void testFilterProducts() {
         // Create a list of dummy products
         List<Product> products = new ArrayList<>();
         Product product1 = new Product();
@@ -586,7 +586,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testDeleteProduct() {
+     void testDeleteProduct() {
 
         // Create a mock object
         Product product = Mockito.mock(Product.class);
@@ -617,7 +617,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testDeleteProduct_ProductNotExistException() {
+     void testDeleteProduct_ProductNotExistException() {
         // Mock the behavior of the productRepository.findByUserIdAndId() to return null
         when(productRepository.findByUserIdAndId(1L, 1L)).thenReturn(null);
 

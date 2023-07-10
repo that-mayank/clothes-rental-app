@@ -2,15 +2,14 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.nineleaps.leaps.dto.cart.CartDto;
-import com.nineleaps.leaps.dto.cart.CartItemDto;
+
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
-import com.nineleaps.leaps.dto.product.ProductDto;
+
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.Product;
-import com.nineleaps.leaps.model.ProductUrl;
+
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
@@ -24,9 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -35,8 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
-import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
-import static org.hamcrest.Matchers.any;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -245,14 +241,14 @@ class OrderServiceImplTest {
                 "Thank you for your understanding.";
 
         // Stub the behavior of the email service
-        when(emailService.sendEmail(eq(expectedSubject), eq(expectedMessage), eq(user.getEmail())))
+        when(emailService.sendEmail((expectedSubject), (expectedMessage), (user.getEmail())))
                 .thenReturn(true); // Assuming the sendEmail method returns a boolean indicating success
 
         // Act
         orderService.sendDelayChargeEmail(orderItem, securityDeposit);
 
         // Assert
-        verify(emailService).sendEmail(eq(expectedSubject), eq(expectedMessage), eq(user.getEmail()));
+        verify(emailService).sendEmail((expectedSubject), (expectedMessage), (user.getEmail()));
     }
 
     @Test
@@ -306,11 +302,10 @@ class OrderServiceImplTest {
     }
 
     @Test
-    public void testOnClickDashboardYearWiseData() {
+     void testOnClickDashboardYearWiseData() {
         // Mock data
         User user = new User();
-        LocalDateTime startDate = LocalDateTime.of(2022, 1, 1, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2022, 12, 31, 23, 59);
+
 
         Order order1 = new Order();
         OrderItem orderItem1 = new OrderItem();
@@ -728,6 +723,7 @@ class OrderServiceImplTest {
                 .map(OrderReceivedDto::getImageUrl)
                 .collect(Collectors.toList());
     }
+
 
 //    @Test
 //    void getRentedOutProducts() {

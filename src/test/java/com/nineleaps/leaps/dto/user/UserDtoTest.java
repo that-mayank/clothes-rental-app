@@ -4,6 +4,7 @@ import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.User;
 import org.junit.jupiter.api.Test;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserDtoTest {
@@ -31,7 +32,7 @@ class UserDtoTest {
         assertEquals(user.getEmail(), userDto.getEmail());
         assertEquals(user.getPhoneNumber(), userDto.getPhoneNumber());
         assertEquals(user.getRole(), userDto.getRole());
-        assertEquals("https://e02b-106-51-70-135.ngrok-free.appprofile-image.jpg", userDto.getProfileImageUrl());
+        assertEquals(NGROK+"profile-image.jpg", userDto.getProfileImageUrl());
     }
 
     @Test

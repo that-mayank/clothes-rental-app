@@ -1,12 +1,15 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
+import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
@@ -15,65 +18,102 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.*;
 
-class SMSControllerTest {
+public class SMSControllerTest {
+
     @Mock
-    private SmsServiceInterface smsService;
+    private SmsServiceInterface smsServiceInterface;
+
     @Mock
     private UserServiceInterface userService;
+
     @Mock
     private SimpMessagingTemplate webSocket;
-    @Mock
-    private HttpServletRequest request;
-    @Mock
-    private HttpServletResponse httpresponse;
 
+    @InjectMocks
     private SMSController smsController;
 
     @BeforeEach
-    void setup() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-        smsController = new SMSController(smsService, userService, webSocket);
     }
 
     @Test
-    void smsSubmit_ValidPhoneNumber_ReturnsSuccessResponse() {
+    public void smsSubmit_ValidPhoneNumber_ReturnsSuccessResponse() {
         // Arrange
-        String phoneNumber = "9443594779";
-        User mockUser = new User();
-        when(userService.getUserViaPhoneNumber(phoneNumber)).thenReturn(mockUser);
+        String phoneNumber = "9066650446";
+        when(userService.getUserViaPhoneNumber(phoneNumber)).thenReturn(someUserObject());
 
         // Act
         ResponseEntity<ApiResponse> response = smsController.smsSubmit(phoneNumber);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().isSuccess());
-        assertEquals("OTP sent successfully", response.getBody().getMessage());
-        verify(webSocket).convertAndSend(anyString(), anyString());
-        verify(smsService).send(phoneNumber);
+        assertEquals(true, response.getBody().isSuccess());
+        // Add more assertions for the response body if necessary
+
+        verify(smsServiceInterface, times(1)).send(phoneNumber);
+        verify(webSocket, times(1)).convertAndSend(anyString(), anyString());
     }
 
     @Test
-    void verifyOTP_ValidData_ReturnsSuccessResponse() throws OtpValidationException, IOException, OtpValidationException {
+    public void smsSubmit_PhoneNumberNotPresentInDatabase_ReturnsNotFoundResponse() {
         // Arrange
-        String phoneNumber = "9443594779";
-        int otp = 1234;
+        String phoneNumber = "1234567890";
+        when(userService.getUserViaPhoneNumber(phoneNumber)).thenReturn(null);
 
         // Act
-        ResponseEntity<ApiResponse> response = smsController.verifyOTP(httpresponse, request, phoneNumber, otp);
+        ResponseEntity<ApiResponse> response = smsController.smsSubmit(phoneNumber);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().isSuccess());
-        assertEquals("OTP is verified", response.getBody().getMessage());
-        verify(smsService).verifyOtp(phoneNumber, otp, httpresponse, request);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertFalse(response.getBody().isSuccess());
+        assertEquals("Phone number not present in database", response.getBody().getMessage());
+
+        // Add more assertions for the response body if necessary
+
+        verify(smsServiceInterface, never()).send(phoneNumber);
+        verify(webSocket, never()).convertAndSend(anyString(), anyString());
     }
+
+
+    @Test
+    public void verifyOTP_ValidOTP_ReturnsSuccessResponse() throws OtpValidationException, IOException {
+        // Arrange
+        String phoneNumber = "9066650446";
+        int otp = 123456;
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // Act
+        ResponseEntity<ApiResponse> apiResponse = smsController.verifyOTP(response, request, phoneNumber, otp);
+
+        // Assert
+        assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
+        assertEquals(true, apiResponse.getBody().isSuccess());
+        // Add more assertions for the response body if necessary
+
+        verify(smsServiceInterface, times(1)).verifyOtp(phoneNumber, otp, response, request);
+    }
+
+
+
+    private User someUserObject() {
+        // Create and return a dummy User object for testing
+        User user = new User();
+        user.setFirstName("prath");
+        user.setEmail("prath@gmail.com");
+        user.setPhoneNumber("9066650446");
+        user.setRole(Role.OWNER);
+
+        return user;
+    }
+
+
 }

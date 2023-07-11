@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
  class UserTest {
 
@@ -88,4 +91,5 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         assertEquals(oldUser.getProfileImageUrl(), user.getProfileImageUrl());
 
     }
+
 }

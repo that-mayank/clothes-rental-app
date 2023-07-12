@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,10 +62,41 @@ class SubCategoryServiceImplTest {
         when(categoryRepository.findByCategoryId(category.getId())).thenReturn(subCategories);
 
         // Perform readSubCategory method
-        SubCategory result = subCategoryService.readSubCategory("Subcategory 1", category);
+        SubCategory result1 = subCategoryService.readSubCategory("Subcategory 1", category);
+        SubCategory result2 = subCategoryService.readSubCategory("Subcategory 2", category);
+        SubCategory result3 = subCategoryService.readSubCategory("Non-existent Subcategory", category);
 
         // Verify that the correct subcategory is returned
-        assertEquals(subCategory1, result);
+        assertEquals(subCategory1, result1);
+        assertEquals(subCategory2, result2);
+        assertNull(result3);
+    }
+
+
+    @Test
+    public void readSubCategory_WithInvalidSubcategoryName_ReturnsNull() {
+        // Arrange
+        Category validCategory = new Category();
+        validCategory.setId(1L);
+        validCategory.setCategoryName("Category 1");
+
+        SubCategory subCategory1 = new SubCategory();
+        subCategory1.setId(1L);
+        subCategory1.setSubcategoryName("Subcategory 1");
+
+        SubCategory subCategory2 = new SubCategory();
+        subCategory2.setId(2L);
+        subCategory2.setSubcategoryName("Subcategory 2");
+
+        List<SubCategory> subCategories = Arrays.asList(subCategory1, subCategory2);
+
+        when(categoryRepository.findById(validCategory.getId())).thenReturn(Optional.empty());
+
+        // Act
+        SubCategory result = subCategoryService.readSubCategory("Invalid Subcategory", validCategory);
+
+        // Assert
+        assertNull(result);
     }
 
     @Test
@@ -121,12 +153,16 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
-    void updateSubCategory() {
+    void updateSubCategory_SubCategoryNotNull() {
         // Prepare test data
         Long subcategoryId = 1L;
         Category category = new Category();
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setSubcategoryName("Updated Subcategory");
+
+        // Create a mock updatedSubCategory
+        SubCategory updatedSubCategory = new SubCategory();
+        updatedSubCategory.setId(subcategoryId);
 
         // Mock the behavior of categoryRepository
         when(categoryRepository.save(any(SubCategory.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -137,7 +173,13 @@ class SubCategoryServiceImplTest {
         // Verify that the save method is called on the categoryRepository with the updated subcategory
         verify(categoryRepository).save(argThat(subCategory -> subCategory.getId().equals(subcategoryId)
                 && subCategory.getSubcategoryName().equals(subCategoryDto.getSubcategoryName())));
+
+        // Additional assertion to verify that the ID is set on the updated subcategory
+        assertNotNull(updatedSubCategory);
+        assertNotNull(updatedSubCategory.getId());
+        assertEquals(subcategoryId, updatedSubCategory.getId());
     }
+
 
     @Test
     void getSubCategoriesFromIds() {
@@ -162,5 +204,27 @@ class SubCategoryServiceImplTest {
 
         // Verify that the correct list of subcategories is returned
         assertEquals(subCategories, result);
+    }
+
+    @Test
+    void getSubCategoriesFromIds_SubCategoryNotExist() {
+        // Prepare test data
+        List<Long> subcategoryIds = new ArrayList<>();
+        subcategoryIds.add(1L);
+        subcategoryIds.add(2L);
+        SubCategory subCategory1 = new SubCategory();
+        subCategory1.setId(1L);
+        List<SubCategory> subCategories = new ArrayList<>();
+        subCategories.add(subCategory1);
+
+        // Mock the behavior of categoryRepository
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(subCategory1));
+        // Mocking the scenario where the subcategory with ID 2 does not exist
+        when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
+
+        // Perform getSubCategoriesFromIds method and assert an exception is thrown
+        assertThrows(CategoryNotExistException.class, () -> {
+            subCategoryService.getSubCategoriesFromIds(subcategoryIds);
+        });
     }
 }

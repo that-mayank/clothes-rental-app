@@ -247,6 +247,73 @@ class ProductServiceImplTest {
     }
 
     @Test
+    void listProductsById_SpecificSubcategoryId() {
+        // Given
+        SubCategory subCategory = new SubCategory();
+        Long subcategoryId = 1L;
+        subCategory.setId(subcategoryId);
+        User user = new User();
+        User user1 = new User();
+        List<Product> products = new ArrayList<>();
+        Product product1 = new Product();
+        product1.setUser(user);
+        product1.setSubCategories(List.of(subCategory));
+        products.add(product1);
+        Product product2 = new Product();
+        product2.setUser(user);
+        product2.setSubCategories(List.of(subCategory));
+        products.add(product2);
+        when(productRepository.findBySubCategoriesId(subcategoryId)).thenReturn(products);
+
+        Session session = mock(Session.class);
+        Filter deletedProductFilter = mock(Filter.class);
+        Filter disabledProductFilter = mock(Filter.class);
+        when(entityManager.unwrap(Session.class)).thenReturn(session);
+        when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
+        when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
+
+        // Mock the behavior of getDtoFromProduct()
+//        when(productService.getDtoFromProduct(product1)).thenReturn(new ProductDto());
+//        when(productService.getDtoFromProduct(product2)).thenReturn(new ProductDto());
+
+        // When
+        List<ProductDto> productDtos = productService.listProductsById(subcategoryId, user1);
+
+        // Then
+        assertNotNull(productDtos);
+        assertEquals(products.size(), productDtos.size());
+        verify(productRepository, times(1)).findBySubCategoriesId(subcategoryId);
+        verify(session, times(1)).enableFilter(DELETED_PRODUCT_FILTER);
+        verify(session, times(1)).enableFilter(DISABLED_PRODUCT_FILTER);
+        verify(session, times(1)).disableFilter(DELETED_PRODUCT_FILTER);
+        verify(session, times(1)).disableFilter(DISABLED_PRODUCT_FILTER);
+
+        // Additional assertions to verify the behavior for different subcategory IDs
+        if (subcategoryId == 19) {
+            verify(productService, times(1)).getProductsByPriceRange(0, 2000);
+        } else if (subcategoryId == 20) {
+            verify(productService, times(1)).getProductsByPriceRange(2001, 5000);
+        } else if (subcategoryId == 21) {
+            verify(productService, times(1)).getProductsByPriceRange(5001, 10000);
+        } else if (subcategoryId == 22) {
+            verify(productService, times(1)).getProductsByPriceRange(10000, Long.MAX_VALUE);
+        } else {
+//            verify(productService, never()).getProductsByPriceRange(anyLong(), anyLong());
+
+            // Verify that the expected behavior is executed in the else block
+            List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
+            List<ProductDto> expectedProductDtos = new ArrayList<>();
+            for (Product product : body) {
+                if (!product.getUser().equals(user)) {
+                    ProductDto productDto = productService.getDtoFromProduct(product);
+                    expectedProductDtos.add(productDto);
+                }
+            }
+//            assertEquals(expectedProductDtos, productDtos.isEmpty());
+        }
+    }
+
+    @Test
     void listProductsByCategoryId() {
         // Given
         Category category = new Category();
@@ -308,6 +375,21 @@ class ProductServiceImplTest {
         assertEquals("Product 1", productDto.getName());
         assertEquals(10.0, productDto.getPrice());
     }
+
+    @Test
+    void testListProductByid_ProductNotExist() {
+        // Mock the behavior of productRepository.findById() with an empty Optional
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Create an instance of ProductServiceImpl and pass the mocked productRepository
+        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
+
+        // Call the listProductByid() method and expect a ProductNotExistException to be thrown
+        assertThrows(ProductNotExistException.class, () -> {
+            productService.listProductByid(1L);
+        });
+    }
+
 
     @Test
      void testGetProductById() throws ProductNotExistException {

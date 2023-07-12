@@ -6,15 +6,19 @@ import com.nineleaps.leaps.service.implementation.EmailServiceImpl;
 import com.nineleaps.leaps.service.implementation.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 class SchedulerConfigTest {
@@ -30,6 +34,10 @@ class SchedulerConfigTest {
 
     @Mock
     private EmailServiceImpl emailService;
+
+    @Mock
+    private Logger logger;
+
 
     @BeforeEach
     void setUp() {
@@ -68,7 +76,9 @@ class SchedulerConfigTest {
             schedulerConfig.checkRentalPeriods();
 
         }
-    }
+
+}
+
 
 
 

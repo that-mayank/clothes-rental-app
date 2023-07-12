@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_ACCESS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -137,7 +138,7 @@ class OrderControllerTest {
         Order responseBody = responseEntity.getBody();
         assertNotNull(responseBody);
         assertEquals(order, responseBody);
-
+        assertNotNull(order);
         verify(orderService).getOrder(orderId, user);
     }
 
@@ -149,6 +150,7 @@ class OrderControllerTest {
         String authorizationHeader = "Bearer token";
         User user = new User();
         OrderItem orderItem = new OrderItem();
+
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(orderItem);
@@ -164,9 +166,25 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is in transit", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "IN TRANSIT");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderInTransit(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals(ORDER_ITEM_UNAUTHORIZED_ACCESS, forbiddenResponseBody.getMessage());
     }
+
 
     @Test
     void orderDelivered_ValidOrderItemIdAndToken_ReturnsSuccessResponse() throws AuthenticationFailException {
@@ -192,9 +210,25 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order delivered", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "DELIVERED");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderDelivered(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals(ORDER_ITEM_UNAUTHORIZED_ACCESS, forbiddenResponseBody.getMessage());
     }
+
 
     @Test
     void orderPickup_ValidOrderItemIdAndToken_ReturnsSuccessResponse() throws AuthenticationFailException {
@@ -219,8 +253,23 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is picked up", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "PICKED UP");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderPickup(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals(ORDER_ITEM_UNAUTHORIZED_ACCESS, forbiddenResponseBody.getMessage());
     }
 
     @Test
@@ -231,6 +280,7 @@ class OrderControllerTest {
         String authorizationHeader = "Bearer token";
         User user = new User();
         OrderItem orderItem = new OrderItem();
+
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(orderItem);
@@ -246,8 +296,23 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is returned", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "ORDER RETURNED");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderReturned(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals("Order does not belong to current user", forbiddenResponseBody.getMessage());
     }
 
     @Test

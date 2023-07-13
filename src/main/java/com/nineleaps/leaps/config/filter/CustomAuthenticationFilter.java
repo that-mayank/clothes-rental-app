@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
-import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -37,23 +37,18 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @Setter
+@AllArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final SecurityUtility securityUtility;
     private final RefreshTokenRepository refreshTokenRepository;
-    private UserServiceInterface userServiceInterface;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, SecurityUtility securityUtility, RefreshTokenRepository refreshTokenRepository) {
-        this.authenticationManager = authenticationManager;
-        this.securityUtility = securityUtility;
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
 
     //Authenticates the user using login credentials - email and password
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
+        JsonNode jsonNode;
         try {
             jsonNode = objectMapper.readTree(request.getInputStream());
         } catch (IOException e) {
@@ -69,9 +64,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     //generates access and refresh token
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
-        String secretFilePath = "Desktop/leaps/secret/secret.txt";
+        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
@@ -103,10 +98,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         }
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
-        response.getWriter().write("authentication successful");
     }
 
-    private String readSecretFromFile(String filePath) throws IOException {
+    String readSecretFromFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             return reader.readLine();

@@ -44,6 +44,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/order")
 @AllArgsConstructor
 @Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
+@SuppressWarnings("deprecation")
 public class OrderController {
     private final OrderServiceInterface orderService;
     private final Helper helper;

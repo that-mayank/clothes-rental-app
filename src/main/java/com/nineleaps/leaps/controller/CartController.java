@@ -31,6 +31,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/cart")
 @AllArgsConstructor
 @Api(tags = "Cart Api", description = "Contains api for adding products, updating products, list products and delete products in the cart")
+@SuppressWarnings("deprecation")
 public class CartController {
     private final CartServiceInterface cartService;
     private final ProductServiceInterface productService;

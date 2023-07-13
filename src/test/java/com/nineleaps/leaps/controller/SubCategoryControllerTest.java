@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +54,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertTrue(response.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Category is created", response.getBody().getMessage());
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
@@ -74,7 +75,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Parent Category is invalid", response.getBody().getMessage());
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
@@ -98,7 +99,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Sub Category already exists", response.getBody().getMessage());
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
@@ -178,7 +179,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Subcategory updated successfully", response.getBody().getMessage());
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
@@ -200,7 +201,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Category is invalid", response.getBody().getMessage());
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
@@ -224,7 +225,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Subcategory is invalid", response.getBody().getMessage());
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());

@@ -61,7 +61,7 @@ public class EmailServiceImpl {
             f = true;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("email notification sending failed");
         }
 
         return f;

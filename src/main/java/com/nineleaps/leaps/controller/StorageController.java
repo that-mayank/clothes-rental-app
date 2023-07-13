@@ -22,6 +22,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 @Api(tags = "Storage Api", description = "Contains api for uploading multiple images, downloading images, view images and delete images")
+@SuppressWarnings("deprecation")
 public class StorageController {
     private final StorageServiceInterface storageServiceInterface;
 
@@ -54,7 +55,6 @@ public class StorageController {
             jsonResponse.put("url", url);
             return ResponseEntity.ok(jsonResponse.toString());
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

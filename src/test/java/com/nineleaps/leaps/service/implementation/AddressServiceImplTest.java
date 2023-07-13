@@ -11,16 +11,20 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class AddressServiceImplTest {
 
     @Mock
     private AddressRepository addressRepository;
+    @Mock
+    private AddressDto addressDto;
 
     @InjectMocks
     private AddressServiceImpl addressService;
@@ -42,6 +46,35 @@ class AddressServiceImplTest {
         // Assert
         verify(addressRepository, times(1)).save(any(Address.class));
     }
+
+    @Test
+    void saveAddress_withDefaultAddress() {
+        // Prepare
+        User user = new User();
+        when(addressDto.isDefaultAddress()).thenReturn(true);
+        List<Address> addresses = Arrays.asList(mock(Address.class), mock(Address.class));
+        when(addressRepository.findAllByUser(user)).thenReturn(addresses);
+
+        // Stub the behavior of the Address class constructor
+        Address addressMock = mock(Address.class);
+        doReturn(false).when(addressMock).isDefaultAddress(); // Stub the internal isDefaultAddress() call
+
+        doReturn(addressMock).when(addressRepository).save(any(Address.class));
+
+        // Execute
+        AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
+        addressServiceImpl.saveAddress(addressDto, user);
+
+        // Verify
+        verify(addressDto, times(2)).isDefaultAddress();
+        verify(addressRepository, times(1)).findAllByUser(user);
+        for (Address address : addresses) {
+            verify(address, times(1)).setDefaultAddress(false);
+        }
+        verify(addressRepository, times(1)).save(any(Address.class));
+    }
+
+
 
     @Test
     void listAddress_shouldReturnListOfAddresses() {
@@ -82,7 +115,8 @@ class AddressServiceImplTest {
         Long addressId = 1L;
         User user = new User();
         List<Address> addresses = new ArrayList<>();
-        addresses.add(new Address(addressId, user));
+        Address matchingAddress = new Address(addressId, user);
+        addresses.add(matchingAddress);
         addresses.add(new Address());
 
         when(addressRepository.findAllByUser(user)).thenReturn(addresses);
@@ -91,7 +125,24 @@ class AddressServiceImplTest {
         Address result = addressService.readAddress(user, addressId);
 
         // Assert
-        assertEquals(addresses.get(0), result);
+        assertEquals(matchingAddress, result);
+    }
+    @Test
+    void testReadAddress_shouldReturnNullWhenNoMatchingAddress() {
+        // Arrange
+        Long addressId = 1L;
+        User user = new User();
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(new Address(2L, user));
+        addresses.add(new Address(3L, user));
+
+        when(addressRepository.findAllByUser(user)).thenReturn(addresses);
+
+        // Act
+        Address result = addressService.readAddress(user, addressId);
+
+        // Assert
+        assertNull(result);
     }
 
     @Test

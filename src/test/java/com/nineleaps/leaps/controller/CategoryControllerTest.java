@@ -40,7 +40,7 @@ class CategoryControllerTest {
         // Arrange
         CategoryDto categoryDto = new CategoryDto();
         Category category = new Category();
-        when(categoryService.readCategory(eq(categoryDto.getCategoryName()))).thenReturn(null);
+        when(categoryService.readCategory((categoryDto.getCategoryName()))).thenReturn(null);
         doNothing().when(categoryService).createCategory(any(Category.class));
 
         // Act
@@ -62,7 +62,7 @@ class CategoryControllerTest {
         // Arrange
         CategoryDto categoryDto = new CategoryDto();
         Category existingCategory = new Category();
-        when(categoryService.readCategory(eq(categoryDto.getCategoryName()))).thenReturn(existingCategory);
+        when(categoryService.readCategory((categoryDto.getCategoryName()))).thenReturn(existingCategory);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto);
@@ -101,7 +101,7 @@ class CategoryControllerTest {
         Long categoryId = 1L;
         CategoryDto updateCategoryDto = new CategoryDto();
         Category existingCategory = new Category();
-        when(categoryService.readCategory(eq(categoryId))).thenReturn(Optional.of(existingCategory));
+        when(categoryService.readCategory((categoryId))).thenReturn(Optional.of(existingCategory));
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto);
@@ -114,7 +114,7 @@ class CategoryControllerTest {
         assertTrue(response.isSuccess());
         assertEquals("category has been updated", response.getMessage());
 
-        verify(categoryService).updateCategory(eq(categoryId), eq(updateCategoryDto));
+        verify(categoryService).updateCategory((categoryId), (updateCategoryDto));
     }
 
     @Test
@@ -122,7 +122,7 @@ class CategoryControllerTest {
         // Arrange
         Long categoryId = 1L;
         CategoryDto updateCategoryDto = new CategoryDto();
-        when(categoryService.readCategory(eq(categoryId))).thenReturn(Optional.empty());
+        when(categoryService.readCategory((categoryId))).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto);
@@ -135,6 +135,6 @@ class CategoryControllerTest {
         assertFalse(response.isSuccess());
         assertEquals("category does not exist", response.getMessage());
 
-        verify(categoryService, never()).updateCategory(eq(categoryId), eq(updateCategoryDto));
+        verify(categoryService, never()).updateCategory((categoryId), (updateCategoryDto));
     }
 }

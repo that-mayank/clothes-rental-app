@@ -48,8 +48,8 @@ class AddressControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.addAddress(addressDto, request);
@@ -78,10 +78,10 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress(eq(user), eq(addressId))).thenReturn(address);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
+        when(addressService.readAddress((user), (addressId))).thenReturn(address);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.updateAddress(addressId, addressDto, request);
@@ -111,9 +111,9 @@ class AddressControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.empty());
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.readAddress((addressId))).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.updateAddress(addressId, addressDto, request);
@@ -136,10 +136,10 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress(eq(user), eq(addressId))).thenReturn(null);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
+        when(addressService.readAddress((user), (addressId))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.updateAddress(addressId, addressDto, request);
@@ -160,9 +160,9 @@ class AddressControllerTest {
         User user = new User();
         List<Address> addressList = new ArrayList<>();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.listAddress(eq(user))).thenReturn(addressList);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.listAddress((user))).thenReturn(addressList);
 
         // Act
         ResponseEntity<List<Address>> responseEntity = addressController.listAddress(request);
@@ -182,10 +182,10 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress(eq(user), eq(addressId))).thenReturn(address);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
+        when(addressService.readAddress((user), (addressId))).thenReturn(address);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.deleteAddress(addressId, request);
@@ -198,7 +198,7 @@ class AddressControllerTest {
         assertTrue(response.isSuccess());
         assertEquals("Address deleted successfully", response.getMessage());
 
-        verify(addressService).deleteAddress(eq(addressId));
+        verify(addressService).deleteAddress((addressId));
     }
 
     @Test
@@ -208,9 +208,9 @@ class AddressControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.empty());
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.readAddress((addressId))).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.deleteAddress(addressId, request);
@@ -232,10 +232,10 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(eq("token"))).thenReturn(user);
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress(eq(user), eq(addressId))).thenReturn(null);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
+        when(helper.getUser(("token"))).thenReturn(user);
+        when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
+        when(addressService.readAddress((user), (addressId))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.deleteAddress(addressId, request);
@@ -254,7 +254,7 @@ class AddressControllerTest {
         // Arrange
         Long addressId = 1L;
         Address address = new Address();
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.of(address));
+        when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
 
         // Act
         ResponseEntity<Address> responseEntity = addressController.getAddressById(addressId);
@@ -271,7 +271,7 @@ class AddressControllerTest {
     void getAddressById_NonExistingAddressId_ReturnsNotFoundResponse() {
         // Arrange
         Long addressId = 1L;
-        when(addressService.readAddress(eq(addressId))).thenReturn(Optional.empty());
+        when(addressService.readAddress((addressId))).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<Address> responseEntity = addressController.getAddressById(addressId);

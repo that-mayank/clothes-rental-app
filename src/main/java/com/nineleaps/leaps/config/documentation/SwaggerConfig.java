@@ -26,6 +26,7 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(getApiInfo())
                 .select()
                 .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.nineleaps.leaps"))

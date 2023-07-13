@@ -143,4 +143,23 @@ class SubCategoryDtoTest {
         // Assert
         assertEquals(1L, subCategoryDto.getCategoryId());
     }
+    @Test
+    void testAllArgsConstructor() {
+        // Arrange
+        Long id = 1L;
+        String subcategoryName = "Test Subcategory";
+        String imageURL = "test_image.jpg";
+        String description = "Test subcategory description";
+        Long categoryId = 2L;
+
+        // Act
+        SubCategoryDto subCategoryDto = new SubCategoryDto(id, subcategoryName, imageURL, description, categoryId);
+
+        // Assert
+        assertEquals(id, subCategoryDto.getId());
+        assertEquals(subcategoryName, subCategoryDto.getSubcategoryName());
+        assertEquals(imageURL, subCategoryDto.getImageURL());
+        assertEquals(description, subCategoryDto.getDescription());
+        assertEquals(categoryId, subCategoryDto.getCategoryId());
+    }
 }

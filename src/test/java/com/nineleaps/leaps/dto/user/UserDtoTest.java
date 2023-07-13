@@ -262,6 +262,29 @@ class UserDtoTest {
         assertNotEquals(hashCode1, hashCode2);
     }
 
+    @Test
+    void testSetters() {
+        // Arrange
+        UserDto userDto = new UserDto(new User());
+
+        // Act
+        userDto.setId(1L);
+        userDto.setFirstName("John");
+        userDto.setLastName("Doe");
+        userDto.setEmail("john.doe@example.com");
+        userDto.setPhoneNumber("1234567890");
+        userDto.setRole(Role.BORROWER);
+        userDto.setProfileImageUrl("profile.jpg");
+
+        // Assert
+        assertEquals(1L, userDto.getId());
+        assertEquals("John", userDto.getFirstName());
+        assertEquals("Doe", userDto.getLastName());
+        assertEquals("john.doe@example.com", userDto.getEmail());
+        assertEquals("1234567890", userDto.getPhoneNumber());
+        assertEquals(Role.BORROWER, userDto.getRole());
+        assertEquals("profile.jpg", userDto.getProfileImageUrl());
+    }
 
 
 

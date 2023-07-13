@@ -3,6 +3,7 @@ package com.nineleaps.leaps.dto.user;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LoginResponseDtoTest {
@@ -60,4 +61,19 @@ class LoginResponseDtoTest {
         // Assert
         assertEquals(token, loginResponseDto.getToken());
     }
+
+    @Test
+    void testLoginResponseDtoConstructor() {
+        // Create sample data
+        String status = "success";
+        String token = "abc123";
+
+        // Create the LoginResponseDto instance using the constructor
+        LoginResponseDto loginResponseDto = new LoginResponseDto(status, token);
+
+        // Verify the values using assertions
+        assertThat(loginResponseDto.getStatus()).isEqualTo(status);
+        assertThat(loginResponseDto.getToken()).isEqualTo(token);
+    }
+
 }

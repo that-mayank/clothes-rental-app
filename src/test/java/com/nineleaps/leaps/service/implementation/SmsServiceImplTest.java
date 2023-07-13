@@ -1,118 +1,91 @@
 package com.nineleaps.leaps.service.implementation;
+import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.model.User;
-import com.nineleaps.leaps.repository.UserRepository;
+import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.twilio.Twilio;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class SmsServiceImplTest {
-    @Mock
-    private UserServiceImpl userService;
+
     @Mock
     private UserServiceInterface userServiceInterface;
-    private UserRepository userRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Mock
     private SecurityUtility securityUtility;
 
-    @InjectMocks
     private SmsServiceImpl smsService;
 
-    @Value("${twilio.account_sid}")
-    private String accountSid;
-    @Value("${twilio.token}")
-    private String authToken;
-    @Value("${twilio.from_number}")
-    private String fromNumber;
-
-    @BeforeAll
-    static void setUpTwilio() {
-        String accountSid = "ACe47c40c1144c690f78982e8d814abe5d";
-        String authToken = "2727852852992be1d14a9e1307a0dfb0";
-        Twilio.init(accountSid, authToken);
-
-    }
-
-
-    private Map<String, Integer> otpMap;
+    private MockHttpServletRequest request;
+    private MockHttpServletResponse response;
 
     @BeforeEach
-    public void setup() {
-        smsService = new SmsServiceImpl(userService, securityUtility);
-        otpMap = new HashMap<>();
-        //setPrivateField(smsService, "otpMap", otpMap);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        smsService = new SmsServiceImpl(userServiceInterface, securityUtility);
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
     }
 
-
     @Test
-    public void testVerifyOtpInvalid() throws IOException {
+    void verifyOtp_withInvalidOTP_shouldThrowOtpValidationException() {
         String phoneNumber = "1234567890";
-        Integer otp = 123456;
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        int otp = 123456;
 
-        otpMap.put(phoneNumber, otp);
-
-        Assertions.assertThrows(OtpValidationException.class, () -> smsService.verifyOtp(phoneNumber, 654321, response, request));
-        Assertions.assertTrue(otpMap.containsKey(phoneNumber));
+        assertThrows(OtpValidationException.class, () -> smsService.verifyOtp(phoneNumber, otp, response, request));
     }
 
     @Test
-    public void testVerifyOtpNotGenerated() throws IOException {
+    void verifyOtp_withInvalidPhoneNumber_shouldThrowOtpValidationException() {
         String phoneNumber = "1234567890";
-        Integer otp = 123456;
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        int otp = 123456;
 
-        Assertions.assertThrows(OtpValidationException.class, () -> smsService.verifyOtp(phoneNumber, otp, response, request));
-        Assertions.assertFalse(otpMap.containsKey(phoneNumber));
+        assertThrows(OtpValidationException.class, () -> smsService.verifyOtp(phoneNumber, otp, response, request));
     }
 
     @Test
-    void testGetUserViaPhoneNumber() {
-        // Create a mock UserRepository
-        UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
+    void generateToken_shouldGenerateTokenAndSetHeaders() throws IOException {
+        String phoneNumber = "1234567890";
 
-        // Create a sample user
-        User sampleUser = new User();
-        sampleUser.setId(1L);
-        sampleUser.setPhoneNumber("1234567890");
+        // Mock the behavior of the userServiceInterface
+        User user = new User();
+        user.setRole(Role.BORROWER);
+        user.setEmail("test@example.com");
+        when(userServiceInterface.getUserViaPhoneNumber(phoneNumber)).thenReturn(user);
 
-        // Define the behavior of the mock UserRepository
-        Mockito.when(userRepositoryMock.findByPhoneNumber("1234567890"))
-                .thenReturn(sampleUser);
-        Mockito.when(userRepositoryMock.findByPhoneNumber("9876543210"))
-                .thenReturn(null);
+        smsService.generateToken(response, request, phoneNumber);
 
-        // Create an instance of the class under test and inject the mock repository
-        UserServiceImpl userService = new UserServiceImpl(userRepositoryMock, passwordEncoder);
-
-        // Test case 1: Existing user
-        User foundUser = userService.getUserViaPhoneNumber("1234567890");
-        assertEquals(sampleUser, foundUser);
-
-        // Test case 2: Non-existent user
-        User nonExistentUser = userService.getUserViaPhoneNumber("9876543210");
-        assertNull(nonExistentUser);
+        assertNotNull(response.getHeader("access_token"));
+        assertNotNull(response.getHeader("refresh_token"));
+        verify(securityUtility).saveTokens(anyString(), eq(user.getEmail()));
     }
 
+    @Test
+    void readSecretFromFile_shouldReadSecretFromFile() throws IOException {
+        String homeDirectory = System.getProperty("user.home");
+        String filePath = homeDirectory + "/Desktop/leaps/secret/secret.txt";
+        String expectedSecret = "meinhuchotadon";
+
+        String secret = smsService.readSecretFromFile(filePath);
+
+        assertEquals(expectedSecret, secret);
+    }
+
+    @Test
+    void readSecretFromFile_withIOException_shouldThrowIOException() throws IOException {
+        String filePath = "test/secret.txt";
+
+        assertThrows(IOException.class, () -> smsService.readSecretFromFile(filePath));
+    }
 }

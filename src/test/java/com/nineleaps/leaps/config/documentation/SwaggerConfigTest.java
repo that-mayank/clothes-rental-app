@@ -17,21 +17,6 @@ class SwaggerConfigTest {
 
     private SwaggerConfig swaggerConfig = new SwaggerConfig();
 
-//    @Test
-//    void testSwaggerConfigBean() {
-//        // Arrange & Act
-//        Docket docket = swaggerConfig.api();
-//
-//        // Assert
-//        assertThat(docket).isNotNull();
-//        // Add more assertions to verify the desired configuration settings
-//        // For example:
-//        assertThat(getSecuritySchemes(docket)).hasSize(1);
-//        assertThat(getSecuritySchemes(docket).get(0).getName()).isEqualTo("JWT");
-//        assertThat(getSecurityContexts(docket)).hasSize(1);
-//        // Add more assertions as needed
-//    }
-
     @Test
     void testGetApiInfo() throws Exception {
         // Arrange
@@ -51,7 +36,7 @@ class SwaggerConfigTest {
 
         Contact contact = apiInfo.getContact();
         assertThat(contact).isNotNull();
-        assertThat(contact.getName()).isEqualTo("Batch 4 Team 3");
+        assertThat(contact.getName()).isEqualTo("Leaps Dev Team");
         assertThat(contact.getUrl()).isEqualTo("https://github.com/that-mayank");
         assertThat(contact.getEmail()).isEqualTo("mayank.01@nineleaps.com");
     }

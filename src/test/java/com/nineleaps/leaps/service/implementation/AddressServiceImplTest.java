@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class AddressServiceImplTest {
@@ -114,7 +115,8 @@ class AddressServiceImplTest {
         Long addressId = 1L;
         User user = new User();
         List<Address> addresses = new ArrayList<>();
-        addresses.add(new Address(addressId, user));
+        Address matchingAddress = new Address(addressId, user);
+        addresses.add(matchingAddress);
         addresses.add(new Address());
 
         when(addressRepository.findAllByUser(user)).thenReturn(addresses);
@@ -123,7 +125,24 @@ class AddressServiceImplTest {
         Address result = addressService.readAddress(user, addressId);
 
         // Assert
-        assertEquals(addresses.get(0), result);
+        assertEquals(matchingAddress, result);
+    }
+    @Test
+    void testReadAddress_shouldReturnNullWhenNoMatchingAddress() {
+        // Arrange
+        Long addressId = 1L;
+        User user = new User();
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(new Address(2L, user));
+        addresses.add(new Address(3L, user));
+
+        when(addressRepository.findAllByUser(user)).thenReturn(addresses);
+
+        // Act
+        Address result = addressService.readAddress(user, addressId);
+
+        // Assert
+        assertNull(result);
     }
 
     @Test

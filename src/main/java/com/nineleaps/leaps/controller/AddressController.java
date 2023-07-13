@@ -27,6 +27,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/address")
 @AllArgsConstructor
 @Api(tags = "Address Api", description = "Contains api for add, update, list and delete address")
+@SuppressWarnings("deprecation")
 public class AddressController {
     private final AddressServiceInterface addressService;
     private final Helper helper;

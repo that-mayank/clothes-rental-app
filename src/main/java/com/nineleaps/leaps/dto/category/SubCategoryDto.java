@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.dto.category;
 
-import com.nineleaps.leaps.model.categories.SubCategory;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

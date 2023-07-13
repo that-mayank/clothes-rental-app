@@ -63,6 +63,8 @@ public class SmsServiceImpl implements SmsServiceInterface {
     public User user(String phoneNumber) {
         return userServiceInterface.getUserViaPhoneNumber(phoneNumber);
     }
+
+    @Override
     public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
         String secretFilePath = "Desktop/leaps/secret/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
@@ -98,7 +100,6 @@ public class SmsServiceImpl implements SmsServiceInterface {
             return reader.readLine();
         }
     }
-
 }
 
 

@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         newOrder.setTotalPrice(cartDto.getTotalCost());
         newOrder.setSessionId(sessionId);
         newOrder.setUser(user);
-//        orderRepository.save(newOrder);
+
         List<OrderItem> orderItemList = new ArrayList<>();
         for (CartItemDto cartItemDto : cartItemDtos) {
             //create cartItem and save each
@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             int quantity = orderItem.getQuantity();
             long rentalPeriod = ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
             double price = orderItem.getPrice() * orderItem.getQuantity() * rentalPeriod;
-//            double price = orderItem.getPrice() * orderItem.getQuantity() * (int) ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
+
             messageBuilder.append("Product: ").append(productName).append("\n");
             messageBuilder.append("Quantity: ").append(quantity).append("\n");
             messageBuilder.append("Price: ").append(price).append("\n");

@@ -167,8 +167,8 @@ class ProductControllerTest {
         Long productId = 1L;
         ProductDto productDto = new ProductDto();
         User user = new User();
-        List<Category> categories = new ArrayList<>();
-        List<SubCategory> subCategories = new ArrayList<>();
+
+
         Optional<Product> optionalProduct = Optional.empty();
 
         when(request.getHeader("Authorization")).thenReturn("Bearer token");

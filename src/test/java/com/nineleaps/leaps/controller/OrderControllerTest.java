@@ -1,7 +1,7 @@
 package com.nineleaps.leaps.controller;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
+
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
@@ -17,14 +17,13 @@ import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.core.io.InputStreamResource;
@@ -35,7 +34,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
@@ -43,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_ACCESS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -138,7 +138,7 @@ class OrderControllerTest {
         Order responseBody = responseEntity.getBody();
         assertNotNull(responseBody);
         assertEquals(order, responseBody);
-
+        assertNotNull(order);
         verify(orderService).getOrder(orderId, user);
     }
 
@@ -150,6 +150,7 @@ class OrderControllerTest {
         String authorizationHeader = "Bearer token";
         User user = new User();
         OrderItem orderItem = new OrderItem();
+
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(orderItem);
@@ -165,9 +166,25 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is in transit", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "IN TRANSIT");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderInTransit(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals(ORDER_ITEM_UNAUTHORIZED_ACCESS, forbiddenResponseBody.getMessage());
     }
+
 
     @Test
     void orderDelivered_ValidOrderItemIdAndToken_ReturnsSuccessResponse() throws AuthenticationFailException {
@@ -193,9 +210,25 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order delivered", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "DELIVERED");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderDelivered(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals(ORDER_ITEM_UNAUTHORIZED_ACCESS, forbiddenResponseBody.getMessage());
     }
+
 
     @Test
     void orderPickup_ValidOrderItemIdAndToken_ReturnsSuccessResponse() throws AuthenticationFailException {
@@ -220,8 +253,23 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is picked up", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "PICKED UP");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderPickup(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals(ORDER_ITEM_UNAUTHORIZED_ACCESS, forbiddenResponseBody.getMessage());
     }
 
     @Test
@@ -232,6 +280,7 @@ class OrderControllerTest {
         String authorizationHeader = "Bearer token";
         User user = new User();
         OrderItem orderItem = new OrderItem();
+
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(orderItem);
@@ -247,8 +296,23 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is returned", response.getMessage());
-
+        assertNotNull(orderItem);
         verify(orderService).orderStatus(orderItem, "ORDER RETURNED");
+
+        // Additional assertion for Helper.notNull(orderItem) = false
+        // Arrange
+        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> forbiddenResponse = orderController.orderReturned(orderItemId, request);
+
+        // Assert
+        assertNotNull(forbiddenResponse);
+        assertEquals(HttpStatus.FORBIDDEN, forbiddenResponse.getStatusCode());
+        ApiResponse forbiddenResponseBody = forbiddenResponse.getBody();
+        assertNotNull(forbiddenResponseBody);
+        assertFalse(forbiddenResponseBody.isSuccess());
+        assertEquals("Order does not belong to current user", forbiddenResponseBody.getMessage());
     }
 
     @Test
@@ -338,7 +402,7 @@ class OrderControllerTest {
         orderItem.setImageUrl("NGROK/api/v1/file/view/test_image.png");
         orderItem.setRentalStartDate(LocalDateTime.now().minusDays(2));
         orderItem.setRentalEndDate(LocalDateTime.now().plusDays(2));
-        Map<YearMonth, List<OrderReceivedDto>> orderItemsDashboardData = Map.of(YearMonth.now(), Arrays.asList(new OrderReceivedDto(orderItem)));
+        Map<YearMonth, List<OrderReceivedDto>> orderItemsDashboardData = Map.of(YearMonth.now(), List.of(new OrderReceivedDto(orderItem)));
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getOrderedItemsByMonth(user)).thenReturn(orderItemsDashboardData);
@@ -410,7 +474,7 @@ class OrderControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         String authorizationHeader = "Bearer token";
         User user = new User();
-        List<ProductDto> rentedOutProducts = Arrays.asList(new ProductDto());
+        List<ProductDto> rentedOutProducts = List.of(new ProductDto());
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getRentedOutProducts(user)).thenReturn(rentedOutProducts);
@@ -495,18 +559,7 @@ class OrderControllerTest {
         return new InputStreamResource(inputStream);
     }
 
-    private void assertInputStreamContentEquals(InputStream expected, InputStream actual) throws IOException {
-        try (BufferedReader expectedReader = new BufferedReader(new InputStreamReader(expected, StandardCharsets.UTF_8));
-             BufferedReader actualReader = new BufferedReader(new InputStreamReader(actual, StandardCharsets.UTF_8))) {
-            String expectedLine;
-            String actualLine;
-            while ((expectedLine = expectedReader.readLine()) != null) {
-                actualLine = actualReader.readLine();
-                assertEquals(expectedLine, actualLine);
-            }
-            assertNull(actualReader.readLine());
-        }
-    }
+
 
     @Test
     void getOrderItemsDashboardBwDates_ValidTokenAndDates_ReturnsOrderItemsDashboardDataBetweenDates() {
@@ -525,7 +578,7 @@ class OrderControllerTest {
         orderItem.setRentalEndDate(LocalDateTime.now().plusDays(2));
         LocalDateTime startDate = LocalDateTime.now().minusDays(7);
         LocalDateTime endDate = LocalDateTime.now();
-        Map<YearMonth, List<OrderReceivedDto>> orderItemsDashboardData = Map.of(YearMonth.now(), Arrays.asList(new OrderReceivedDto(orderItem)));
+        Map<YearMonth, List<OrderReceivedDto>> orderItemsDashboardData = Map.of(YearMonth.now(), List.of(new OrderReceivedDto(orderItem)));
         when(request.getHeader("Authorization")).thenReturn(authorizationHeader);
         when(helper.getUser("token")).thenReturn(user);
         when(orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate)).thenReturn(orderItemsDashboardData);

@@ -72,12 +72,14 @@ public class SecurityUtility {
 
     }
 
-    private String readSecretFromFile(String filePath) throws IOException {
+    public String readSecretFromFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             return reader.readLine();
         }
     }
+
+
 }
 
 

@@ -27,10 +27,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+
 import static org.mockito.Mockito.*;
 
 class UserControllerTest {
@@ -97,7 +98,7 @@ class UserControllerTest {
         verify(userServiceInterface, times(1)).getGuest();
         verify(userServiceInterface, times(0)).saveProfile(expectedUser); //change this to 1 and correct test case
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertTrue(apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
 
@@ -111,17 +112,17 @@ class UserControllerTest {
         user.setRole(Role.BORROWER);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(user);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.switchProfile(profile, response, request);
 
         // Assert
         verify(userServiceInterface, times(1)).saveProfile(user);
-        verify(switchProfile, times(1)).generateTokenForSwitchProfile(eq(response), eq(profile), eq(request));
+        verify(switchProfile, times(1)).generateTokenForSwitchProfile((response), (profile), (request));
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertEquals(true, apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -131,8 +132,8 @@ class UserControllerTest {
         String token = "token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(null);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(null);
 
         // Act & Assert
         assertThrows(UserNotExistException.class, () -> userController.switchProfile(profile, response, request));
@@ -147,16 +148,16 @@ class UserControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         String token = "token";
         User oldUser = new User();
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(oldUser);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(oldUser);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateProfile(profileUpdateDto, request);
 
         // Assert
-        verify(userServiceInterface, times(1)).updateProfile(eq(oldUser), eq(profileUpdateDto));
+        verify(userServiceInterface, times(1)).updateProfile((oldUser), (profileUpdateDto));
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertEquals(true, apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -165,8 +166,8 @@ class UserControllerTest {
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         HttpServletRequest request = mock(HttpServletRequest.class);
         String token = "token";
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(null);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateProfile(profileUpdateDto, request);
@@ -174,7 +175,7 @@ class UserControllerTest {
         // Assert
         verify(userServiceInterface, never()).updateProfile(any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertEquals(false, apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -184,9 +185,9 @@ class UserControllerTest {
         String token = "token";
         User user = new User();
         UserDto expectedUserDto = new UserDto(user);
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(user);
-        when(userServiceInterface.getUser(eq(user))).thenReturn(expectedUserDto);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(user);
+        when(userServiceInterface.getUser((user))).thenReturn(expectedUserDto);
 
         // Act
         ResponseEntity<UserDto> response = userController.getUser(request);
@@ -203,16 +204,16 @@ class UserControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         String token = "token";
         User user = new User();
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(user);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.profileImage(profileImageUrl, request);
 
         // Assert
-        verify(userServiceInterface, times(1)).updateProfileImage(eq(profileImageUrl), eq(user));
+        verify(userServiceInterface, times(1)).updateProfileImage((profileImageUrl), (user));
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
-        assertEquals(true, apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -221,8 +222,8 @@ class UserControllerTest {
         String profileImageUrl = "profileImageUrl";
         HttpServletRequest request = mock(HttpServletRequest.class);
         String token = "token";
-        when(request.getHeader(eq("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser(eq(token))).thenReturn(null);
+        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
+        when(helper.getUser((token))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.profileImage(profileImageUrl, request);
@@ -230,6 +231,6 @@ class UserControllerTest {
         // Assert
         verify(userServiceInterface, never()).updateProfileImage(any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertEquals(false, apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 }

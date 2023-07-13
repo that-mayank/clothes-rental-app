@@ -22,6 +22,6 @@ spring:
 
 twilio:
   account_sid: ACe47c40c1144c690f78982e8d814abe5d
-  token: ac741bd784b467d357794af3d43f4e04
+  token: 2727852852992be1d14a9e1307a0dfb0
   from_number: +12542724507
 

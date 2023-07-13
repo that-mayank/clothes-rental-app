@@ -22,6 +22,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1/subcategory")
 @AllArgsConstructor
 @Api(tags = "Subcategory Api", description = "Contains api for adding subcategory, updating subcategory, and list subcategories")
+@SuppressWarnings("deprecation")
 public class SubCategoryController {
     private final CategoryServiceInterface categoryService;
     private final SubCategoryServiceInterface subCategoryService;

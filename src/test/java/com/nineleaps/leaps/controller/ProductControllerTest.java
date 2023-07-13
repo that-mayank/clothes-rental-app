@@ -485,6 +485,21 @@ class ProductControllerTest {
 
         verify(productService).readProduct(productId);
         verifyNoMoreInteractions(productService);
+
+        // Additional assertion for Helper.notNull(user) = false
+        // Arrange
+        when(helper.getUser("token")).thenReturn(null);
+
+        // Act
+        ResponseEntity<ApiResponse> notFoundResponse = productController.deleteProduct(productId, request);
+
+        // Assert
+        assertNotNull(notFoundResponse);
+        assertEquals(HttpStatus.NOT_FOUND, notFoundResponse.getStatusCode());
+        ApiResponse notFoundResponseBody = notFoundResponse.getBody();
+        assertNotNull(notFoundResponseBody);
+        assertFalse(notFoundResponseBody.isSuccess());
+        assertEquals("User is invalid!", notFoundResponseBody.getMessage());
     }
 
 

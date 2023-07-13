@@ -3,6 +3,7 @@ package com.nineleaps.leaps.dto.checkout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckoutItemDtoTest {
@@ -138,4 +139,25 @@ class CheckoutItemDtoTest {
         // Verify
         assertEquals(price, checkoutItemDto.getPrice());
     }
+
+    @Test
+    void testCheckoutItemDtoConstructor() {
+        // Create sample data
+        Long userId = 1L;
+        Long productId = 100L;
+        String productName = "Example Product";
+        int quantity = 2;
+        double price = 19.99;
+
+        // Create the CheckoutItemDto instance using the constructor
+        CheckoutItemDto checkoutItemDto = new CheckoutItemDto(userId, productId, productName, quantity, price);
+
+        // Verify the values using assertions
+        assertThat(checkoutItemDto.getUserId()).isEqualTo(userId);
+        assertThat(checkoutItemDto.getProductId()).isEqualTo(productId);
+        assertThat(checkoutItemDto.getProductName()).isEqualTo(productName);
+        assertThat(checkoutItemDto.getQuantity()).isEqualTo(quantity);
+        assertThat(checkoutItemDto.getPrice()).isEqualTo(price);
+    }
+
 }

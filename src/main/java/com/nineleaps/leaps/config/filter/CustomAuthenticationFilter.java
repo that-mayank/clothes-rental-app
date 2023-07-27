@@ -68,11 +68,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal();
         String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
-        String secret = readSecretFromFile(absolutePath);
+        String secret = securityUtility.readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         // Update access token expiration time dynamically
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time 24hrs or one day
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(2); // Update to desired expiration time 24hrs or one day
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
@@ -100,10 +100,5 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.setHeader("refresh_token", refreshToken);
     }
 
-    String readSecretFromFile(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
-            return reader.readLine();
-        }
-    }
+
 }

@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/login/**","/api/v1/phoneNo","/api/v1/otp","/api/v1/user/signup").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/login/**","/api/v1/phoneNo","/api/v1/otp","/api/v1/user/signup","/api/v1/user/refreshtoken").permitAll();
 
 
         http.authorizeRequests().antMatchers("/api/v1/category/list","/api/v1/file/view/**","/api/v1/subcategory/list","/api/v1/product/search", "/api/v1/product/list", "/api/v1/product/listByPriceRange").permitAll();
@@ -79,6 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("/api/v1/wishlist/add","/api/v1/wishlist/addtowishlist","/api/v1/wishlist/findallwishlist","/api/v1/wishlist/remove","/api/v1/wishlist/removebyid").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
         http.authorizeRequests().antMatchers("/api/v1/file/uploadProfileImage").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
+
 
 
         http.addFilter(customAuthenticationFilter);

@@ -13,7 +13,9 @@ import com.nineleaps.leaps.model.Guest;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import com.nineleaps.leaps.utils.SecurityUtility;
 import com.nineleaps.leaps.utils.SwitchProfile;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -37,6 +39,7 @@ public class UserController {
     private final UserServiceInterface userServiceInterface;
     private final SwitchProfile switchprofile;
     private final Helper helper;
+    private final SecurityUtility securityUtility;
 
 
     @ApiOperation(value = "user registration api")
@@ -118,5 +121,24 @@ public class UserController {
         }
         userServiceInterface.updateProfileImage(profileImageUrl, user);
         return new ResponseEntity<>(new ApiResponse(true, "Profile picture has been updated."), HttpStatus.CREATED);
+    }
+    @ApiOperation(value = "Api to update and add new access token")
+    @PostMapping("/refreshToken")
+    public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring(7);
+        if(!securityUtility.isRefreshTokenExpired(token)){
+            User user = helper.getUser(token);
+            String email = user.getEmail();
+            String new_access_token = securityUtility.updateAccessTokenViaRefreshToken(email,request,response,token);
+            response.setHeader("access_token",new_access_token);
+            return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
+        }else{
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED,"Refreshtoken token expired");
+            return new ResponseEntity<>(new ApiResponse(false, "RefreshToken Expired , Login Again"), HttpStatus.UNAUTHORIZED);
+        }
+
+
+
     }
 }

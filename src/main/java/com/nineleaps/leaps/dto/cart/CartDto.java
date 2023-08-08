@@ -15,12 +15,14 @@ public class CartDto {
     private double tax;
     private double totalCost;
     private double finalPrice;
+    private Long userId;
 
-    public CartDto(List<CartItemDto> cartItems, double totalCost, double tax, double finalPrice) {
+    public CartDto(List<CartItemDto> cartItems, double totalCost, double tax, double finalPrice, long userId) {
         this.cartItems = cartItems;
         this.totalCost = totalCost;
         this.tax = tax;
         this.shippingCost = 100;
         this.finalPrice = finalPrice + shippingCost;
+        this.userId = userId;
     }
 }

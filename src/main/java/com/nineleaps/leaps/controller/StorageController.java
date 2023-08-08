@@ -1,7 +1,9 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.UrlResponse;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -13,9 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping("/api/v1/file")
@@ -25,6 +30,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class StorageController {
     private final StorageServiceInterface storageServiceInterface;
+    private final Helper helper;
 
     // used to upload images of the product to s3
     @ApiOperation(value = "Upload image to amazon s3")
@@ -45,8 +51,6 @@ public class StorageController {
     }
 
     @ApiOperation(value = "Upload profile image to amazon s3")
-
-
     @PostMapping("/uploadProfileImage")
     public ResponseEntity<String> uploadProfileFile(@RequestParam("file") MultipartFile file) {
         try {
@@ -77,8 +81,15 @@ public class StorageController {
     // to view the uploaded image
     @ApiOperation(value = "to view the uploaded image")
     @GetMapping("/view/{fileName}")
-    public void viewFile(@PathVariable String fileName, HttpServletResponse response) {
-        storageServiceInterface.viewFile(fileName, response);
+    public void viewFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = "";
+        if (Helper.notNull(authorizationHeader)) {
+            token = authorizationHeader.substring(7);
+            User user = helper.getUser(token);
+            if (Helper.notNull(user))
+                storageServiceInterface.viewFile(fileName, response);
+        }
     }
 
 

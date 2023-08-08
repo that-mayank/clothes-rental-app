@@ -68,7 +68,7 @@ public class CartServiceImpl implements CartServiceInterface {
         }
         double tax = 0.18 * totalCost;
         double finalPrice = totalCost + tax;
-        return new CartDto(cartItems, totalCost, Math.round(tax), Math.round(finalPrice));
+        return new CartDto(cartItems, totalCost, Math.round(tax), Math.round(finalPrice), user.getId());
     }
 
     @Override

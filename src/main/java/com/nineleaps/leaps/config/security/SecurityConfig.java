@@ -79,8 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("/api/v1/wishlist/add","/api/v1/wishlist/addtowishlist","/api/v1/wishlist/findallwishlist","/api/v1/wishlist/remove","/api/v1/wishlist/removebyid").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
         http.authorizeRequests().antMatchers("/api/v1/file/uploadProfileImage").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
-
-
+        http.authorizeRequests().antMatchers("/api/v1/chatbot/welcome","/api/v1/chatbot/getanswer").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
+        http.authorizeRequests().antMatchers("/api/v1/question-answer/welcomemessage").permitAll();
 
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(securityUtility), UsernamePasswordAuthenticationFilter.class);

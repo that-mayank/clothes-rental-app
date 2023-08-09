@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -25,11 +26,12 @@ class StorageControllerTest {
     private StorageServiceInterface storageServiceInterface;
 
     private StorageController storageController;
+    private Helper helper;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        storageController = new StorageController(storageServiceInterface);
+        storageController = new StorageController(storageServiceInterface,helper);
     }
 
     @Test
@@ -115,9 +117,9 @@ class StorageControllerTest {
         // Prepare
         String fileName = "example-file";
         HttpServletResponse response = mock(HttpServletResponse.class);
-
+        HttpServletRequest request = mock(HttpServletRequest.class);
         // Execute
-        storageController.viewFile(fileName, response);
+        storageController.viewFile(fileName,request,response);
 
         // Verify
         verify(storageServiceInterface, times(1)).viewFile(fileName, response);

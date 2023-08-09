@@ -148,10 +148,10 @@ class CustomAuthenticationFilterTest {
         String secret = "meinhuchotadon";
         new BufferedReader(new StringReader(secret));
         when(request.getServletContext()).thenReturn(mock(ServletContext.class));
-        when(request.getServletContext().getRealPath(any())).thenReturn("/home/nineleaps/Desktop/leaps/secret/secret.txt");
+        when(request.getServletContext().getRealPath(any())).thenReturn("/home/nineleaps/Desktop/Leaps-Backend/secret/secret.txt");
 
         // Act
-        String result = customAuthenticationFilter.readSecretFromFile("/home/nineleaps/Desktop/leaps/secret/secret.txt");
+        String result = securityUtility.readSecretFromFile("/home/nineleaps/Desktop/Leaps-Backend/secret/secret.txt");
 
         // Assert
         assertEquals(secret, result);
@@ -164,6 +164,6 @@ class CustomAuthenticationFilterTest {
         when(request.getServletContext().getRealPath(any())).thenReturn(null);
 
         // Act & Assert
-        assertThrows(IOException.class, () -> customAuthenticationFilter.readSecretFromFile("dummyFilePath"));
+        assertThrows(IOException.class, () -> securityUtility.readSecretFromFile("dummyFilePath"));
     }
 }

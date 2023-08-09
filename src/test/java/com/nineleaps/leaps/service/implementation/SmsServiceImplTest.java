@@ -82,7 +82,7 @@ class SmsServiceImplTest {
         String filePath = homeDirectory + "/Desktop/leaps/secret/secret.txt";
         String expectedSecret = "meinhuchotadon";
 
-        String secret = smsService.readSecretFromFile(filePath);
+        String secret = securityUtility.readSecretFromFile(filePath);
 
         assertEquals(expectedSecret, secret);
     }
@@ -91,7 +91,7 @@ class SmsServiceImplTest {
     void readSecretFromFile_withIOException_shouldThrowIOException() throws IOException {
         String filePath = "test/secret.txt";
 
-        assertThrows(IOException.class, () -> smsService.readSecretFromFile(filePath));
+        assertThrows(IOException.class, () -> securityUtility.readSecretFromFile(filePath));
     }
     @Test
     public void testGetUserViaPhoneNumber() {

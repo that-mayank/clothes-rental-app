@@ -33,6 +33,10 @@ public class SecurityUtility {
     private final UserServiceInterface userServiceInterface;
     private RefreshTokenRepository refreshTokenRepository;
 
+    public void getDeviceToken(String email,String deviceToken){
+        userServiceInterface.saveDeviceTokenToUser(email,deviceToken);
+    }
+
     public void setRefreshTokenRepository(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }

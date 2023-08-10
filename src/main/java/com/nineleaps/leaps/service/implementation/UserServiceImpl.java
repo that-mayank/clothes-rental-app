@@ -7,7 +7,9 @@ import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
+import com.nineleaps.leaps.model.DeviceToken;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.repository.DeviceTokenRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -21,10 +23,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
@@ -37,6 +41,34 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final DeviceTokenRepository deviceTokenRepository;
+    @Override
+    public void saveDeviceTokenToUser(String email, String deviceToken) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.error("User not found in the database");
+            throw new UsernameNotFoundException("User not found in the database");
+        } else {
+            DeviceToken existingDeviceToken = deviceTokenRepository.findByUserEmail(email).orElse(null);
+
+            if (existingDeviceToken != null) {
+                existingDeviceToken.setToken(deviceToken);
+                deviceTokenRepository.save(existingDeviceToken);
+                log.info("Device token updated for user: {} and token is : {} ", email,deviceToken);
+
+            } else {
+                DeviceToken newDeviceToken = new DeviceToken(deviceToken, user);
+                deviceTokenRepository.save(newDeviceToken);
+                log.info("Device token saved for user: {}", email);
+            }
+        }
+    }
+
+    @Override
+    public String getDeviceTokenByUserId(Long userId) {
+        Optional<DeviceToken> deviceTokenOptional = deviceTokenRepository.findByUserId(userId);
+        return deviceTokenOptional.map(DeviceToken::getToken).orElse(null);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

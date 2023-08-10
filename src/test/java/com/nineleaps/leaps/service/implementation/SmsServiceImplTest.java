@@ -2,6 +2,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.repository.DeviceTokenRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
@@ -97,6 +98,7 @@ class SmsServiceImplTest {
     public void testGetUserViaPhoneNumber() {
         // Create a mock UserRepository
         UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
+        DeviceTokenRepository deviceTokenRepositoryMock = Mockito.mock(DeviceTokenRepository.class);
 
         // Create a sample user
         User sampleUser = new User();
@@ -110,7 +112,7 @@ class SmsServiceImplTest {
                 .thenReturn(null);
 
         // Create an instance of the class under test and inject the mock repository
-        UserServiceImpl userService = new UserServiceImpl(userRepositoryMock,passwordEncoder);
+        UserServiceImpl userService = new UserServiceImpl(userRepositoryMock,passwordEncoder,deviceTokenRepositoryMock);
 
         // Test case 1: Existing user
         User foundUser = userService.getUserViaPhoneNumber("1234567890");

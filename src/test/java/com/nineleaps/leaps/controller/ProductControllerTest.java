@@ -9,6 +9,7 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
+import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class ProductControllerTest {
-
     @Mock
     private ProductServiceInterface productService;
 

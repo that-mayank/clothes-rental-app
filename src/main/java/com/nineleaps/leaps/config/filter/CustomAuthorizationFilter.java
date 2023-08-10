@@ -39,8 +39,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final SecurityUtility securityUtility;
 
     public CustomAuthorizationFilter(SecurityUtility securityUtility) {
-
-
         this.securityUtility = securityUtility;
 
     }

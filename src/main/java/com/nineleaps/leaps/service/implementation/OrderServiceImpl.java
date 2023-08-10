@@ -143,9 +143,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
     }
 
-    private void sendEmailToBorrower(String subject, String message, String email){
-        emailServiceImpl.sendEmail(subject, message, email);
-    }
+
 
     private void sendEmailToOwner(String subject, String message, String email){
         emailServiceImpl.sendEmailForOwner(subject, message, email);
@@ -178,12 +176,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         if (status.equals("ORDER RETURNED")) {
             Product product = orderItem.getProduct();
             product.setAvailableQuantities(product.getAvailableQuantities() + orderItem.getQuantity());
-            if(product.getRentedQuantities() - orderItem.getQuantity() >= 0) {
-                product.setRentedQuantities(product.getRentedQuantities() - orderItem.getQuantity());
-            }
-            else {
-                product.setRentedQuantities(0);
-            }
+            product.setRentedQuantities(Math.max(product.getRentedQuantities() - orderItem.getQuantity(), 0));
             productRepository.save(product);
         }
     }

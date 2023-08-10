@@ -82,14 +82,9 @@ public class StorageController {
     @ApiOperation(value = "to view the uploaded image")
     @GetMapping("/view/{fileName}")
     public void viewFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = "";
-        if (Helper.notNull(authorizationHeader)) {
-            token = authorizationHeader.substring(7);
-            User user = helper.getUser(token);
-            if (Helper.notNull(user))
+
                 storageServiceInterface.viewFile(fileName, response);
-        }
+
     }
 
 

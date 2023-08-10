@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecurityUtility securityUtility;
     private static final String ROLEOWNER = "OWNER";
     private static final String ROLEBORROWER = "BORROWER";
+    private static final String ROLEGUEST = "GUEST";
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
@@ -50,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/login/**","/api/v1/phoneNo","/api/v1/otp","/api/v1/user/signup","/api/v1/user/refreshtoken").permitAll();
 
-
-        http.authorizeRequests().antMatchers("/api/v1/category/list","/api/v1/file/view/**","/api/v1/subcategory/list","/api/v1/product/search", "/api/v1/product/list", "/api/v1/product/listByPriceRange").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/file/view/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/category/list","/api/v1/subcategory/list","/api/v1/product/search", "/api/v1/product/list", "/api/v1/product/listByPriceRange").hasAnyAuthority(ROLEOWNER,ROLEBORROWER,ROLEGUEST);
 
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/v1/users").hasAuthority("admin");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/address/add").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
@@ -64,9 +65,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("/api/v1/order/create-checkout-session","/api/v1/order/add","/api/v1/order/list","/api/v1/order/getOrderById/**").hasAnyAuthority(ROLEBORROWER,ROLEOWNER);
 
-        http.authorizeRequests().antMatchers("/api/v1/product/update/**","/api/v1/product/listByProductId/**", "/api/v1/product/listInDesc", "/api/v1/product/listOWNERProducts","/api/v1/subcategory/listbyid/**").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
+        http.authorizeRequests().antMatchers("/api/v1/product/update/**","/api/v1/product/listByProductId/**", "/api/v1/product/listInDesc", "/api/v1/product/listOWNERProducts","/api/v1/subcategory/listbyid/**").hasAnyAuthority(ROLEOWNER,ROLEBORROWER,ROLEGUEST);
 
-        http.authorizeRequests().antMatchers("/api/v1/product/listBySubcategoryId/**", "/api/v1/product/listByCategoryId/**", "/api/v1/product/listByProductId/**", "/api/v1/product/listByPriceRange").hasAnyAuthority(ROLEOWNER,ROLEBORROWER);
+        http.authorizeRequests().antMatchers("/api/v1/product/listBySubcategoryId/**", "/api/v1/product/listByCategoryId/**", "/api/v1/product/listByProductId/**", "/api/v1/product/listByPriceRange").hasAnyAuthority(ROLEOWNER,ROLEBORROWER,ROLEGUEST);
 
 
         http.authorizeRequests().antMatchers("/api/v1/file/upload","/api/v1/file/download/**","/api/v1/file/delete/**","/api/v1/file/uploadbannerimage", "/api/v1/product/add").hasAuthority(ROLEOWNER);

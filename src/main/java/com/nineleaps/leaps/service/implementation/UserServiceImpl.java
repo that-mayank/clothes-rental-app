@@ -182,4 +182,9 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         }
     }
 
+
+//    public UserDeviceDetailDTO getUserDeviceDetailByEmail(String email) {
+//        return userRepository.findUserDeviceDetailByEmail(email);
+//    }
+
 }

@@ -93,7 +93,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         // Update access token expiration time dynamically
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(3); // Update to desired expiration time 24hrs or one day
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(2); // Update to desired expiration time 24hrs or one day
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         String accessToken = JWT.create()
                 .withSubject(customUser.getUsername())

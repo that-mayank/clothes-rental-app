@@ -4,6 +4,8 @@ import com.nineleaps.leaps.config.filter.CustomAuthenticationFilter;
 import com.nineleaps.leaps.config.filter.CustomAuthorizationFilter;
 import com.nineleaps.leaps.repository.AccessTokenRepository;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
+import com.nineleaps.leaps.repository.UserDeviceDetailRepository;
+import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final SecurityUtility securityUtility;
+    private final UserServiceInterface userServiceInterface;
+    private final UserDeviceDetailRepository userDeviceDetailRepository;
     private static final String ROLEOWNER = "OWNER";
     private static final String ROLEBORROWER = "BORROWER";
     private static final String ROLEGUEST = "GUEST";
@@ -40,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility,userServiceInterface,userDeviceDetailRepository);
 
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 

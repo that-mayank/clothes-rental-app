@@ -13,6 +13,7 @@ public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> 
     // Add any custom query methods if needed
     AccessToken findByUser(User user);
     AccessToken findByJwtTokenAndUser_Email(String jwtToken, String userEmail);
+    AccessToken findByUser_EmailAndUserDeviceDetail_UniqueDeviceId(String email, String uniqueDeviceId);
 
     List<AccessToken> findAllByIsExpiredFalseAndTokenExpiryBefore(Date date);
 }

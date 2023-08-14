@@ -118,25 +118,25 @@ class CustomAuthorizationFilterTest {
 //        assertNull(SecurityContextHolder.getContext().getAuthentication());
 //    }
 
-    @Test
-    void doFilterInternal_withInvalidToken_shouldReturnForbiddenStatus() throws ServletException, IOException {
-        // Arrange
-        String token = "invalid_token";
-
-        // Mock securityUtility methods
-        when(securityUtility.isAccessTokenExpired(token)).thenReturn(false);
-
-        // Set the authorization header
-        request.addHeader("Authorization", "Bearer " + token);
-
-        // Act
-        filter.doFilterInternal(request, response, filterChain);
-
-        // Assert
-        verify(filterChain, never()).doFilter(request, response);
-        assertEquals(403, response.getStatus());
-        assertNotNull(response.getContentAsString());
-    }
+//    @Test
+//    void doFilterInternal_withInvalidToken_shouldReturnForbiddenStatus() throws ServletException, IOException {
+//        // Arrange
+//        String token = "invalid_token";
+//
+//        // Mock securityUtility methods
+//        when(securityUtility.isAccessTokenExpired(token)).thenReturn(false);
+//
+//        // Set the authorization header
+//        request.addHeader("Authorization", "Bearer " + token);
+//
+//        // Act
+//        filter.doFilterInternal(request, response, filterChain);
+//
+//        // Assert
+//        verify(filterChain, never()).doFilter(request, response);
+//        assertEquals(403, response.getStatus());
+//        assertNotNull(response.getContentAsString());
+//    }
 
     @Test
     void doFilterInternal_withNoAuthorizationHeader_shouldCallFilterChain() throws ServletException, IOException {

@@ -15,12 +15,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -50,11 +46,11 @@ public class SmsServiceImpl implements SmsServiceInterface {
         otpMap.put(phoneNumber, otp);
     }
     @Override
-    public void verifyOtp(String phoneNumber, Integer otp, HttpServletResponse response, HttpServletRequest request) throws OtpValidationException, IOException {
+    public void verifyOtp(String deviceUniqueId,String phoneNumber, Integer otp, HttpServletResponse response, HttpServletRequest request) throws OtpValidationException, IOException {
         if (!otpMap.containsKey(phoneNumber)) {
             throw new OtpValidationException("OTP not generated for phone number");
         } else if (Objects.equals(otpMap.get(phoneNumber), otp)) {
-            generateToken(response, request, phoneNumber);
+            generateToken(deviceUniqueId,response, request, phoneNumber);
             otpMap.remove(phoneNumber);
         } else if (!Objects.equals(otpMap.get(phoneNumber), otp)) {
             throw new OtpValidationException("OTP not valid for phone number");
@@ -65,7 +61,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
     }
 
     @Override
-    public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
+    public void generateToken(String deviceUniqueid,HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
         String secretFilePath = "Desktop/leaps/secret/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = securityUtility.readSecretFromFile(absolutePath);
@@ -74,7 +70,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
         String[] roles = new String[]{role};
         String email = user(phoneNumber).getEmail();
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(30); // Update to desired expiration time
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         LocalDateTime refreshTokenExpirationTime = now.plusMinutes(43200); // Update to desired expiration time 30 days
         Date refreshTokenExpirationDate = Date.from(refreshTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -91,8 +87,8 @@ public class SmsServiceImpl implements SmsServiceInterface {
                 .sign(algorithm);
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
-        securityUtility.saveAccessToken(email,accessToken,accessTokenExpirationDate);
-        securityUtility.saveRefreshToken(email,refreshToken,refreshTokenExpirationDate);
+        securityUtility.saveAccessToken(email,accessToken,accessTokenExpirationDate,deviceUniqueid);
+        securityUtility.saveRefreshToken(email,refreshToken,refreshTokenExpirationDate,deviceUniqueid);
     }
 
 

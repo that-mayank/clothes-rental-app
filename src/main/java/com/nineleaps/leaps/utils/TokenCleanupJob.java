@@ -15,7 +15,7 @@ public class TokenCleanupJob {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Scheduled(cron = "0 * * * * *") // Schedule the job to run every hour
+    @Scheduled(cron = "0 * * * * *") // Schedule the job to run every minute
     public void cleanupExpiredAccessTokens() {
         Date now = new Date();
         // Find and update expired access tokens
@@ -28,7 +28,7 @@ public class TokenCleanupJob {
     }
 
 
-    @Scheduled(cron = "0 * * * * *") // Schedule the job to run every hour
+    @Scheduled(cron = "0 * * * * *") // Schedule the job to run every minute
     public void cleanupExpiredRefreshTokens() {
         Date now = new Date();
         // Find and update expired refresh tokens

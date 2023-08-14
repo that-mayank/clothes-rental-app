@@ -13,6 +13,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     // Add any custom query methods if needed
     RefreshToken findByUser(User user);
     RefreshToken findByJwtTokenAndUser_Email(String jwtToken, String userEmail);
+    RefreshToken findByJwtTokenAndUser_EmailAndUserDeviceDetail_UniqueDeviceId(String jwtToken, String email, String uniqueDeviceId);
 
     List<RefreshToken> findAllByIsExpiredIsFalseAndTokenExpiryBefore(Date date);
 

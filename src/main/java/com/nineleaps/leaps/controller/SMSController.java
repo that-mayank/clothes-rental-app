@@ -54,8 +54,8 @@ public class SMSController {
 
     @ApiOperation(value = "Verify otp")
     @PostMapping("/otp")
-    public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
-        smsService.verifyOtp(phoneNumber, otp, response, request);
+    public ResponseEntity<ApiResponse> verifyOTP(@RequestParam("deviceUniqueId") String deviceUniqueId, HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
+        smsService.verifyOtp(deviceUniqueId,phoneNumber, otp, response, request);
         return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
 
     }

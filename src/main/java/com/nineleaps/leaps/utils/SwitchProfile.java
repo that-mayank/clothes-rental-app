@@ -30,7 +30,7 @@ public class SwitchProfile {
     private final Helper helper;
     private final SecurityUtility securityUtility;
 
-    public void generateTokenForSwitchProfile(HttpServletResponse response, Role profile, HttpServletRequest request) throws IOException {
+    public void generateTokenForSwitchProfile(String deviceUniqueId,HttpServletResponse response, Role profile, HttpServletRequest request) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
@@ -41,7 +41,7 @@ public class SwitchProfile {
         String role = profile.toString();
         String[] roles = new String[]{role};
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(30); // Update to desired expiration time
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         String accessToken = JWT.create()
                 .withSubject(user.getEmail())
@@ -49,7 +49,7 @@ public class SwitchProfile {
                 .withClaim("roles", Arrays.asList(roles))
                 .sign(algorithm);
         response.setHeader("access_token", accessToken);
-        securityUtility.saveAccessToken(user.getEmail(),accessToken,accessTokenExpirationDate);
+        securityUtility.saveAccessToken(user.getEmail(),accessToken,accessTokenExpirationDate,deviceUniqueId);
     }
 
     private String readSecretFromFile(String filePath) throws IOException {

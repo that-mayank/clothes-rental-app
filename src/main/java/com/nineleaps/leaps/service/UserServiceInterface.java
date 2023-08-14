@@ -28,9 +28,9 @@ public interface UserServiceInterface {
     void updateProfile(User oldUser, ProfileUpdateDto profileUpdateDto);
 
     void updateProfileImage(String profileImageUrl, User user);
-    void saveDeviceTokenToUser(String email,String deviceToken);
 
-    String getDeviceTokenByUserId(Long userId);
 
-    ApiResponse logout(String token);
+
+
+    ApiResponse logout(String token, String uniqueDeviceId);
 }

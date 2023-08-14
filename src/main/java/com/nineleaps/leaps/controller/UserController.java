@@ -45,20 +45,7 @@ public class UserController {
     public ResponseDto signup(@RequestBody SignupDto signupDto) throws CustomException {
         return userServiceInterface.signUp(signupDto);
     }
-    @ApiOperation(value = "Api to store user DeviceToken")
-    @PostMapping("/devicetoken")
-    public ResponseEntity<ApiResponse> saveDeviceToken(@RequestParam(value = "deviceToken", required = true) String deviceToken, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
 
-        if (deviceToken != null && !deviceToken.isEmpty()) {
-            securityUtility.getDeviceToken(user.getEmail(), deviceToken);
-            return ResponseEntity.ok(new ApiResponse(true, "Device Token Updated for user: " + user.getEmail()));
-        } else {
-            return ResponseEntity.ok(new ApiResponse(false, "Device Token Updation failed for user: " + user.getEmail() + " DeviceToken was null or empty"));
-        }
-    }
 
 
 
@@ -72,7 +59,7 @@ public class UserController {
 
     @ApiOperation(value = "To switch between owner and borrower")
     @PostMapping("/switch")
-    public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
+    public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile,@RequestParam("deviceUniqueId") String deviceUniqueId, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
         User user;
         if (profile == Role.GUEST) {
             user = userServiceInterface.getGuest();
@@ -89,7 +76,7 @@ public class UserController {
             }
             user.setRole(profile);
             userServiceInterface.saveProfile(user);
-            switchprofile.generateTokenForSwitchProfile(response, profile, request);
+            switchprofile.generateTokenForSwitchProfile(deviceUniqueId,response, profile, request);
         }
         return new ResponseEntity<>(new ApiResponse(true, "Role switch to: " + user.getRole()), HttpStatus.OK);
     }
@@ -138,22 +125,22 @@ public class UserController {
     }
     @ApiOperation(value = "Api to update and add new access token")
     @PostMapping("/refreshToken")
-    public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException{
+    public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(@RequestParam("deviceUniqueId") String deviceUniqueId, HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException{
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
-        String new_access_token = securityUtility.updateExpiredAccessTokenViaRefreshToken(request,response,token);
+        String new_access_token = securityUtility.updateExpiredAccessTokenViaRefreshToken(request,response,deviceUniqueId,token);
         response.setHeader("access_token",new_access_token);
-        return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken for the Particular userDevice"), HttpStatus.CREATED);
 
     }
 
     @ApiOperation(value = "Logout user")
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> logout(@RequestParam("deviceUniqueId") String deviceUniqueId, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring("Bearer ".length());
-            ApiResponse response = userServiceInterface.logout(token);
+            ApiResponse response = userServiceInterface.logout(token,deviceUniqueId);
             if (response.isSuccess()) {
                 return ResponseEntity.ok(response);
             } else {

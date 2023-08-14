@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.model.tokens;
 
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.UserDeviceDetail;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +19,13 @@ public class RefreshToken implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_device_detail_id")
+    private UserDeviceDetail userDeviceDetail;
 
     @Column(name = "jwt_token")
     private String jwtToken;

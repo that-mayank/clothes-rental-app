@@ -3,6 +3,8 @@ package com.nineleaps.leaps.service.implementation;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nineleaps.leaps.common.ApiResponse;
+import com.nineleaps.leaps.config.filter.CustomUser;
+
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
@@ -10,19 +12,16 @@ import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
-import com.nineleaps.leaps.model.DeviceToken;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.tokens.AccessToken;
 import com.nineleaps.leaps.repository.AccessTokenRepository;
-import com.nineleaps.leaps.repository.DeviceTokenRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,10 +29,7 @@ import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
@@ -46,48 +42,35 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     private final UserRepository userRepository;
     private final AccessTokenRepository accessTokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final DeviceTokenRepository deviceTokenRepository;
+
+
+
+
     @Override
-    public void saveDeviceTokenToUser(String email, String deviceToken) {
+    public CustomUser loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         } else {
-            DeviceToken existingDeviceToken = deviceTokenRepository.findByUserEmail(email).orElse(null);
-
-            if (existingDeviceToken != null) {
-                existingDeviceToken.setToken(deviceToken);
-                deviceTokenRepository.save(existingDeviceToken);
-                log.info("Device token updated for user: {} and token is : {} ", email,deviceToken);
-
-            } else {
-                DeviceToken newDeviceToken = new DeviceToken(deviceToken, user);
-                deviceTokenRepository.save(newDeviceToken);
-                log.info("Device token saved for user: {}", email);
-            }
+            log.info("User found in the database: {}", email);
         }
+        String[] roles = new String[1];
+        roles[0] = user.getRole().toString();
+
+        // Fetch the uniqueDeviceId from the authentication context
+        String uniqueDeviceId = SecurityContextHolder.getContext().toString();
+
+        // Create CustomUser with the uniqueDeviceId and authorities
+        return new CustomUser(
+                user.getEmail(),
+                user.getPassword(),
+                roles,
+                uniqueDeviceId
+        );
     }
 
-    @Override
-    public String getDeviceTokenByUserId(Long userId) {
-        Optional<DeviceToken> deviceTokenOptional = deviceTokenRepository.findByUserId(userId);
-        return deviceTokenOptional.map(DeviceToken::getToken).orElse(null);
-    }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            log.error("User not found in the database");
-            throw new UsernameNotFoundException("user not found in the database");
-        } else {
-            log.info("user found in the database: {}", email);
-        }
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
-    }
 
     @Override
     public ResponseDto signUp(SignupDto signupDto) throws CustomException {
@@ -170,8 +153,9 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         return userRepository.findAll();
     }
 
+
     @Override
-    public ApiResponse logout(String token) {
+    public ApiResponse logout(String token, String uniqueDeviceId) {
         try {
             DecodedJWT decodedJWT = JWT.decode(token);
             String email = decodedJWT.getSubject();
@@ -179,14 +163,16 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
             User user = userRepository.findByEmail(email);
 
             if (user != null) {
-                AccessToken tokenEntity = accessTokenRepository.findByJwtTokenAndUser_Email(token, email);
+                AccessToken tokenEntity = accessTokenRepository.findByUser_EmailAndUserDeviceDetail_UniqueDeviceId(email, uniqueDeviceId);
+
                 if (tokenEntity != null) {
                     tokenEntity.setRevoked(true);
                     tokenEntity.setExpired(true);
                     accessTokenRepository.save(tokenEntity);
-                    return new ApiResponse(true, "Logged out successfully.");
+
+                    return new ApiResponse(true, "Logged out successfully from the specific device.");
                 } else {
-                    return new ApiResponse(false, "Token not found.");
+                    return new ApiResponse(false, "Token not found for the specified device.");
                 }
             } else {
                 return new ApiResponse(false, "User not found.");
@@ -195,4 +181,5 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
             return new ApiResponse(false, "Logout failed.");
         }
     }
+
 }

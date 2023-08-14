@@ -52,10 +52,20 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // Extract the username and password from the JSON data
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
-        String deviceToken = jsonNode.get("deviceToken").asText();
-        securityUtility.getDeviceToken(email,deviceToken);
+        // Check if device token is present
+        JsonNode deviceTokenNode = jsonNode.get("deviceToken");
+        String deviceToken = null;
+        if (deviceTokenNode != null) {
+            deviceToken = deviceTokenNode.asText();
+        }
 
+        // Process authentication
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+
+        // Set device token if available
+        if (deviceToken != null) {
+            securityUtility.getDeviceToken(email, deviceToken);
+        }
         return authenticationManager.authenticate(authenticationToken);
     }
 

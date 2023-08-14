@@ -1,0 +1,38 @@
+package com.nineleaps.leaps.model.tokens;
+
+import com.nineleaps.leaps.model.User;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
+@Entity
+@Table(name = "access_tokens")
+@Getter
+@Setter
+public class AccessToken implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "jwt_token")
+    private String jwtToken;
+
+    @Column(name = "token_expiry")
+    private Date tokenExpiry;
+
+    @Column(name = "is_expired")
+    private boolean isExpired;
+
+    @Column(name = "is_revoked")
+    private boolean isRevoked;
+
+    // Constructors, getters, setters, etc.
+}

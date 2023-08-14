@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.controller;
 
+
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
@@ -15,19 +16,16 @@ import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.nineleaps.leaps.utils.SwitchProfile;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
@@ -47,6 +45,22 @@ public class UserController {
     public ResponseDto signup(@RequestBody SignupDto signupDto) throws CustomException {
         return userServiceInterface.signUp(signupDto);
     }
+    @ApiOperation(value = "Api to store user DeviceToken")
+    @PostMapping("/devicetoken")
+    public ResponseEntity<ApiResponse> saveDeviceToken(@RequestParam(value = "deviceToken", required = true) String deviceToken, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring(7);
+        User user = helper.getUser(token);
+
+        if (deviceToken != null && !deviceToken.isEmpty()) {
+            securityUtility.getDeviceToken(user.getEmail(), deviceToken);
+            return ResponseEntity.ok(new ApiResponse(true, "Device Token Updated for user: " + user.getEmail()));
+        } else {
+            return ResponseEntity.ok(new ApiResponse(false, "Device Token Updation failed for user: " + user.getEmail() + " DeviceToken was null or empty"));
+        }
+    }
+
+
 
     // admin functionality to get all the users
     @ApiOperation(value = "Api to get all the users")
@@ -124,21 +138,31 @@ public class UserController {
     }
     @ApiOperation(value = "Api to update and add new access token")
     @PostMapping("/refreshToken")
-    public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
+    public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException{
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
-        if(!securityUtility.isRefreshTokenExpired(token)){
-            User user = helper.getUser(token);
-            String email = user.getEmail();
-            String new_access_token = securityUtility.updateAccessTokenViaRefreshToken(email,request,response,token);
-            response.setHeader("access_token",new_access_token);
-            return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
-        }else{
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED,"Refreshtoken token expired");
-            return new ResponseEntity<>(new ApiResponse(false, "RefreshToken Expired , Login Again"), HttpStatus.UNAUTHORIZED);
-        }
-
-
+        String new_access_token = securityUtility.updateExpiredAccessTokenViaRefreshToken(request,response,token);
+        response.setHeader("access_token",new_access_token);
+        return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
 
     }
+
+    @ApiOperation(value = "Logout user")
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring("Bearer ".length());
+            ApiResponse response = userServiceInterface.logout(token);
+            if (response.isSuccess()) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.badRequest().body(response);
+            }
+        } else {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "Invalid authorization header."));
+        }
+    }
+
+
 }

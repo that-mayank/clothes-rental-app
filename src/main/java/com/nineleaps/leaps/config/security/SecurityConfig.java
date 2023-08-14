@@ -2,6 +2,7 @@ package com.nineleaps.leaps.config.security;
 
 import com.nineleaps.leaps.config.filter.CustomAuthenticationFilter;
 import com.nineleaps.leaps.config.filter.CustomAuthorizationFilter;
+import com.nineleaps.leaps.repository.AccessTokenRepository;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder bCryptPasswordEncoder;
-
-    private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
     private static final String ROLEOWNER = "OWNER";
     private static final String ROLEBORROWER = "BORROWER";
@@ -41,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility, refreshTokenRepository);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility);
 
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 

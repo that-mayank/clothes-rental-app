@@ -1,5 +1,8 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
@@ -9,12 +12,14 @@ import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.model.DeviceToken;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.tokens.AccessToken;
+import com.nineleaps.leaps.repository.AccessTokenRepository;
 import com.nineleaps.leaps.repository.DeviceTokenRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +28,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +44,7 @@ import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 @Transactional
 public class UserServiceImpl implements UserServiceInterface, UserDetailsService {
     private final UserRepository userRepository;
-
+    private final AccessTokenRepository accessTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final DeviceTokenRepository deviceTokenRepository;
     @Override
@@ -163,5 +168,31 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         log.info("getting all user from the database");
 
         return userRepository.findAll();
+    }
+
+    @Override
+    public ApiResponse logout(String token) {
+        try {
+            DecodedJWT decodedJWT = JWT.decode(token);
+            String email = decodedJWT.getSubject();
+
+            User user = userRepository.findByEmail(email);
+
+            if (user != null) {
+                AccessToken tokenEntity = accessTokenRepository.findByJwtTokenAndUser_Email(token, email);
+                if (tokenEntity != null) {
+                    tokenEntity.setRevoked(true);
+                    tokenEntity.setExpired(true);
+                    accessTokenRepository.save(tokenEntity);
+                    return new ApiResponse(true, "Logged out successfully.");
+                } else {
+                    return new ApiResponse(false, "Token not found.");
+                }
+            } else {
+                return new ApiResponse(false, "User not found.");
+            }
+        } catch (Exception e) {
+            return new ApiResponse(false, "Logout failed.");
+        }
     }
 }

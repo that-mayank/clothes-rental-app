@@ -91,7 +91,8 @@ public class SmsServiceImpl implements SmsServiceInterface {
                 .sign(algorithm);
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
-        securityUtility.saveTokens(refreshToken, email);
+        securityUtility.saveAccessToken(email,accessToken,accessTokenExpirationDate);
+        securityUtility.saveRefreshToken(email,refreshToken,refreshTokenExpirationDate);
     }
 
 

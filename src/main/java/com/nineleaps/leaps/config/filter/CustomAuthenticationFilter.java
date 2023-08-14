@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
-import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,8 @@ import java.util.stream.Collectors;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final SecurityUtility securityUtility;
-    private final RefreshTokenRepository refreshTokenRepository;
+
+
 
 
     //Authenticates the user using login credentials - email and password
@@ -52,27 +51,18 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // Extract the username and password from the JSON data
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
-        // Check if device token is present
-        JsonNode deviceTokenNode = jsonNode.get("deviceToken");
-        String deviceToken = null;
-        if (deviceTokenNode != null) {
-            deviceToken = deviceTokenNode.asText();
-        }
 
         // Process authentication
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
 
-        // Set device token if available
-        if (deviceToken != null) {
-            securityUtility.getDeviceToken(email, deviceToken);
-        }
         return authenticationManager.authenticate(authenticationToken);
     }
 
     //generates access and refresh token
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
-        User user = (User) authentication.getPrincipal();
+        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+
         String secretFilePath = "/Desktop"+"/Leaps-Backend"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = securityUtility.readSecretFromFile(absolutePath);
@@ -97,12 +87,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         String email = user.getUsername();
+        securityUtility.saveAccessToken(email,accessToken,accessTokenExpirationDate);
+        securityUtility.saveRefreshToken(email,refreshToken,refreshTokenExpirationDate);
 
-        if (securityUtility.saveTokens(refreshToken, email)) {
-            response.getWriter().write("RefreshTokens added successfully!");
-        } else {
-            response.getWriter().write("Token not added");
-        }
+
+//        if (securityUtility.saveTokens(refreshToken, email)) {
+//            response.getWriter().write("RefreshTokens added successfully!");
+//        } else {
+//            response.getWriter().write("Token not added");
+//        }
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
     }

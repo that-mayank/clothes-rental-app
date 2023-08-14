@@ -28,6 +28,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class SwitchProfile {
 
     private final Helper helper;
+    private final SecurityUtility securityUtility;
 
     public void generateTokenForSwitchProfile(HttpServletResponse response, Role profile, HttpServletRequest request) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -48,6 +49,7 @@ public class SwitchProfile {
                 .withClaim("roles", Arrays.asList(roles))
                 .sign(algorithm);
         response.setHeader("access_token", accessToken);
+        securityUtility.saveAccessToken(user.getEmail(),accessToken,accessTokenExpirationDate);
     }
 
     private String readSecretFromFile(String filePath) throws IOException {

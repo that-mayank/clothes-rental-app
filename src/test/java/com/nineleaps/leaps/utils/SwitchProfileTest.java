@@ -24,14 +24,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SwitchProfileTest {
     private SwitchProfile switchProfile;
-
+private SecurityUtility securityUtility;
     @Mock
     private Helper helper;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        switchProfile = new SwitchProfile(helper);
+        switchProfile = new SwitchProfile(helper,securityUtility);
     }
 
     @Test

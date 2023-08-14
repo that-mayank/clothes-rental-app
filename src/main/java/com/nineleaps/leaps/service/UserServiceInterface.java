@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.service;
 
+import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
@@ -30,4 +31,6 @@ public interface UserServiceInterface {
     void saveDeviceTokenToUser(String email,String deviceToken);
 
     String getDeviceTokenByUserId(Long userId);
+
+    ApiResponse logout(String token);
 }

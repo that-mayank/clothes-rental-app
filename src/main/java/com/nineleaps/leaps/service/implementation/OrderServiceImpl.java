@@ -143,8 +143,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
     }
 
-
-
     private void sendEmailToOwner(String subject, String message, String email){
         emailServiceImpl.sendEmailForOwner(subject, message, email);
     }

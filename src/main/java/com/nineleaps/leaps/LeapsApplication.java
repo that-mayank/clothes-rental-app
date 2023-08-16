@@ -22,6 +22,6 @@ public class LeapsApplication {
 
 
 
-    public static final String NGROK = "https://6727-106-51-70-135.ngrok-free.app";
+    public static final String NGROK = "https://6557-180-151-122-98.ngrok-free.app";
 
 }

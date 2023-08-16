@@ -38,4 +38,6 @@ public class OrderItem {
     private String imageUrl;
     private String status;
     private @NotNull double securityDeposit;
+    //TODO -- confirm status
+    //TODO -- shipped status
 }

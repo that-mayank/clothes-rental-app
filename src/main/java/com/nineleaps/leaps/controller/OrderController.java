@@ -40,7 +40,6 @@ import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
-@Transactional
 @RequestMapping("/api/v1/order")
 @AllArgsConstructor
 @Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
@@ -147,15 +146,7 @@ public class OrderController {
         return new ResponseEntity<>(new ApiResponse(true, "Order is returned"), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Gives details about how many orders the owner has got and the total earnings")
-    @GetMapping("/dashboard")
-    public ResponseEntity<Map<String, Object>> dashboard(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<String, Object> result = orderService.dashboard(user);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+
 
     @ApiOperation(value = "Gives details about how many orders the owner has got")
     @GetMapping("/onClickDashboard")

@@ -146,46 +146,6 @@ public class OrderController {
         return new ResponseEntity<>(new ApiResponse(true, "Order is returned"), HttpStatus.OK);
     }
 
-
-
-    @ApiOperation(value = "Gives details about how many orders the owner has got")
-    @GetMapping("/onClickDashboard")
-    public ResponseEntity<Map<YearMonth, Map<String, Object>>> onClickDashboard(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<YearMonth, Map<String, Object>> body = orderService.onClickDasboard(user);
-        return new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Gives details about how many orders the owner has got")
-    @GetMapping("/onClickDashboardYearlyWiseData")
-    public ResponseEntity<Map<Year, Map<YearMonth, Map<String, Object>>>> onClickDashboardYearWiseData(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<Year, Map<YearMonth, Map<String, Object>>> body = orderService.onClickDashboardYearWiseData(user);
-        return new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
-    @GetMapping("/dashboardOrderItems")
-    public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboard(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<YearMonth, List<OrderReceivedDto>> body = orderService.getOrderedItemsByMonth(user);
-        return new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
-    @GetMapping("/dashboardSubCategoriesAnalytics")
-    public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsBySubCategories(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<YearMonth, Map<String, OrderItemsData>> body = orderService.getOrderItemsBySubCategories(user);
-        return new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
     @GetMapping("/dashboardCategoriesAnalytics")
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsByCategories(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);

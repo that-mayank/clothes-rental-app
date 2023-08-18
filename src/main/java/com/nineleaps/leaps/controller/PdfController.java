@@ -5,6 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.OrderServiceInterface;
+import com.nineleaps.leaps.service.PdfServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -28,7 +29,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @AllArgsConstructor
 public class PdfController {
 
-    private final OrderServiceInterface orderService;
+    private final PdfServiceInterface pdfService;
     private final Helper helper;
 
     @GetMapping("/export") //exportPdf
@@ -37,7 +38,7 @@ public class PdfController {
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
 
-        Document document = orderService.getPdf(user);
+        Document document = pdfService.getPdf(user);
 
         // Convert the Document into a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -47,7 +48,7 @@ public class PdfController {
         document.open();
 
         // Add content to the document
-        orderService.addContent(document, user);
+        pdfService.addContent(document, user);
 
         // Close the document
         document.close();

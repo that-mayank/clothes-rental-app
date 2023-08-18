@@ -179,24 +179,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
     }
 
-    @Override
-    public Map<String, Object> dashboard(User user) {
-        double totalEarnings = 0;
-        int totalNumberOfItems = 0;
-        for (Order order : orderRepository.findAll()) {
-            for (OrderItem orderItem : order.getOrderItems()) {
-                if (orderItem.getProduct().getUser().equals(user)) {
-                    totalNumberOfItems += 1;
-                    totalEarnings += orderItem.getPrice() * orderItem.getQuantity() * (ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate()));
-                }
-            }
-        }
-        Map<String, Object> result = new HashMap<>();
-        result.put(TOTAL_NUMBER, totalNumberOfItems);
-        result.put(TOTAL_INCOME, totalEarnings);
-        return result;
-    }
-
     public void sendDelayChargeEmail(OrderItem orderItem, double securityDeposit) {
         String email = orderItem.getOrder().getUser().getEmail();
         String subject = "\"Reminder: Your rental period is ended.";
@@ -243,41 +225,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         } else {
             return securityDeposit;
         }
-    }
-
-    @Override
-    public Map<YearMonth, Map<String, Object>> onClickDasboard(User user) {
-        Map<YearMonth, Double> totalEarningsByMonth = new HashMap<>();
-        Map<YearMonth, Integer> totalItemsByMonth = new HashMap<>();
-
-        for (Order order : orderRepository.findAll()) {
-            for (OrderItem orderItem : order.getOrderItems()) {
-                if (orderItem.getProduct().getUser().equals(user)) {
-                    int quantity = orderItem.getQuantity();
-                    double price = orderItem.getPrice();
-                    LocalDateTime rentalStartDate = orderItem.getRentalStartDate();
-                    LocalDateTime rentalEndDate = orderItem.getRentalEndDate();
-
-                    long rentalDurationInDays = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate);
-                    double earnings = price * quantity * rentalDurationInDays;
-
-                    YearMonth month = YearMonth.from(rentalStartDate);
-
-                    totalEarningsByMonth.put(month, totalEarningsByMonth.getOrDefault(month, 0.0) + earnings);
-                    totalItemsByMonth.put(month, totalItemsByMonth.getOrDefault(month, 0) + quantity);
-                }
-            }
-        }
-        Map<YearMonth, Map<String, Object>> result = new HashMap<>();
-        for (Map.Entry<YearMonth, Double> monthEntry : totalEarningsByMonth.entrySet()) {
-            YearMonth month = monthEntry.getKey();
-            Map<String, Object> monthData = new HashMap<>();
-            monthData.put(TOTAL_NUMBER, totalItemsByMonth.get(month));
-            monthData.put(TOTAL_INCOME, monthEntry.getValue());
-            result.put(month, monthData);
-        }
-        return result;
-
     }
 
     @Override
@@ -461,104 +408,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         return productDtos;
     }
 
-
-    @Override
-    public Document getPdf(User user) {
-        return new Document();
-    }
-
-    @Override
-    public void addContent(Document document, User user) throws DocumentException, IOException {
-
-        // Add header
-        Font headingFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 30, BaseColor.BLACK);
-        Chunk chunkHeading = new Chunk("Leaps", headingFont);
-        Paragraph headingParagraph = new Paragraph(chunkHeading);
-        headingParagraph.setAlignment(Element.ALIGN_CENTER);
-        document.add(headingParagraph);
-        // Add empty line
-        document.add(new Paragraph(" "));
-
-        // Add subheading
-        Font subheadingFont = FontFactory.getFont(FontFactory.COURIER_OBLIQUE, 18, BaseColor.BLACK);
-        Chunk chunkSubheading = new Chunk("Report for " + user.getFirstName() + " " + user.getLastName(), subheadingFont);
-        Paragraph subheadingParagraph = new Paragraph(chunkSubheading);
-        subheadingParagraph.setAlignment(Element.ALIGN_CENTER);
-        document.add(subheadingParagraph);
-
-        // Add empty line
-        document.add(new Paragraph(" "));
-        // Get the dashboard data
-        Map<YearMonth, Map<String, Object>> dashboardData = onClickDasboard(user);
-        // Determine the number of columns based on the data
-        int numColumns = dashboardData.isEmpty() ? 0 : dashboardData.values().iterator().next().size();
-        // Create table
-        PdfPTable table = new PdfPTable(numColumns + 1); // setting columns
-        // Set cell alignment
-        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        // Add table headers
-        Font tableHeaderFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, BaseColor.BLACK);
-        PdfPCell cell1 = new PdfPCell(new Phrase("Month", tableHeaderFont));
-        PdfPCell cell2 = new PdfPCell(new Phrase("Total Earnings", tableHeaderFont));
-        PdfPCell cell3 = new PdfPCell(new Phrase("Number of Items Sold", tableHeaderFont));
-        setCellPadding(cell1);
-        setCellPadding(cell2);
-        setCellPadding(cell3);
-        table.addCell(cell1);
-        table.addCell(cell2);
-        table.addCell(cell3);
-
-
-        // Add the total earnings and total number of items sold per month to the document
-        for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
-            YearMonth month = entry.getKey();
-            Map<String, Object> monthData = entry.getValue();
-            String monthString = month.toString();
-            String earnings = monthData.get(TOTAL_INCOME).toString();
-            String numberOfItems = monthData.get(TOTAL_NUMBER).toString();
-            table.addCell(monthString);
-            table.addCell(earnings);
-            table.addCell(numberOfItems);
-        }
-        document.add(table);
-        //add bar chart to pdf for all months of the year
-
-        // Add bar chart
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        // Add data to the dataset
-        for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
-            YearMonth month = entry.getKey();
-            Map<String, Object> monthData = entry.getValue();
-            String monthString = month.getMonth().toString().substring(0, 3);
-            double earnings = Double.parseDouble(monthData.get(TOTAL_INCOME).toString());
-            int numberOfItems = Integer.parseInt(monthData.get(TOTAL_NUMBER).toString());
-
-            dataset.addValue(earnings, "Total Earnings", monthString);
-            dataset.addValue(numberOfItems, "Number of Items Sold", monthString);
-        }
-
-        JFreeChart chart = ChartFactory.createBarChart(
-                "Monthly Performance", // Chart title
-                "Month", // X-axis label
-                "Value", // Y-axis label
-                dataset, // Dataset
-                PlotOrientation.VERTICAL, // Plot orientation
-                true, // Show legend
-                true, // Show tooltips
-                false // Show URLs
-        );
-
-        // Set the width and height of the chart
-        int chartWidth = 500;
-        int chartHeight = 300;
-        // Convert the chart to an image and add it to the PDF
-        ByteArrayOutputStream chartImageStream = new ByteArrayOutputStream();
-        ChartUtilities.writeChartAsPNG(chartImageStream, chart, chartWidth, chartHeight);
-        Image chartImage = Image.getInstance(chartImageStream.toByteArray());
-        document.add(chartImage);
-
-    }
-
     @Override
     public OrderItem getOrderItem(Long orderItemId, User user) {
         Optional<OrderItem> optionalOrderItem = orderItemRepository.findById(orderItemId);
@@ -566,10 +415,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
             return optionalOrderItem.get();
         }
         return null;
-    }
-
-    private void setCellPadding(PdfPCell cell) {
-        cell.setPadding(6);
     }
 
     public void getRentalPeriods() {

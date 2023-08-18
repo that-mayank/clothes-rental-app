@@ -12,6 +12,7 @@ import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,8 +74,8 @@ public class OrderController {
     }
 
     //Dummy  apis for transit, delivered, pickup and return
-    @PostMapping("/orderInTransit")
-    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
+    @PostMapping("/order-status")
+    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
@@ -83,50 +84,8 @@ public class OrderController {
         if (!Helper.notNull(orderItem)) {
             return new ResponseEntity<>(new ApiResponse(false, ORDER_ITEM_UNAUTHORIZED_ACCESS), HttpStatus.FORBIDDEN);
         }
-        orderService.orderStatus(orderItem, "IN TRANSIT");
-        return new ResponseEntity<>(new ApiResponse(true, "Order is in transit"), HttpStatus.OK);
-    }
-
-    @PostMapping("/orderDelivered")
-    public ResponseEntity<ApiResponse> orderDelivered(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //check if order belong to current user
-        OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
-        if (!Helper.notNull(orderItem)) {
-            return new ResponseEntity<>(new ApiResponse(false, ORDER_ITEM_UNAUTHORIZED_ACCESS), HttpStatus.FORBIDDEN);
-        }
-        orderService.orderStatus(orderItem, "DELIVERED");
-        return new ResponseEntity<>(new ApiResponse(true, "Order delivered"), HttpStatus.OK);
-    }
-
-    @PostMapping("/orderPickup")
-    public ResponseEntity<ApiResponse> orderPickup(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //check if order belong to current user
-        OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
-        if (!Helper.notNull(orderItem)) {
-            return new ResponseEntity<>(new ApiResponse(false, ORDER_ITEM_UNAUTHORIZED_ACCESS), HttpStatus.FORBIDDEN);
-        }
-        orderService.orderStatus(orderItem, "PICKED UP");
-        return new ResponseEntity<>(new ApiResponse(true, "Order is picked up"), HttpStatus.OK);
-    }
-
-    @PostMapping("/orderReturned")
-    public ResponseEntity<ApiResponse> orderReturned(@RequestParam("orderItemId") Long orderItemId, HttpServletRequest request) throws AuthenticationFailException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //check if order belong to current user
-        OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
-        if (!Helper.notNull(orderItem)) {
-            return new ResponseEntity<>(new ApiResponse(false, "Order does not belong to current user"), HttpStatus.FORBIDDEN);
-        }
-        orderService.orderStatus(orderItem, "ORDER RETURNED");
-        return new ResponseEntity<>(new ApiResponse(true, "Order is returned"), HttpStatus.OK);
+        orderService.orderStatus(orderItem, orderStatus); // IN TRANSIT, DELIVERED, PICKED UP, RETURNED
+        return new ResponseEntity<>(new ApiResponse(true, "Order is " + orderStatus), HttpStatus.OK);
     }
 
 

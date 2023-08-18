@@ -1,9 +1,11 @@
 package com.nineleaps.leaps.controller;
 
+import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
+import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -13,11 +15,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_ACCESS;
@@ -97,5 +102,34 @@ public class OrderController {
         List<ProductDto> body = orderService.getRentedOutProducts(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
+
+    @GetMapping("/generateInvoice/{orderId}")
+    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
+        try {
+            String authorizationHeader = request.getHeader("Authorization");
+            String token = authorizationHeader.substring(7);
+            User user = helper.getUser(token); // Assuming you have a helper method to get the user
+
+            Order order = orderService.getOrder(orderId, user);
+
+            if(!Helper.notNull(order)) {
+                throw new OrderNotFoundException("No order items found for the user and order ID");
+            }
+
+            List<OrderItem> orderItems = order.getOrderItems(); //From entity relation
+
+            byte[] pdfBytes = orderService.generateInvoicePDF(orderItems,user,order);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "invoice.pdf");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (IOException | DocumentException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
 

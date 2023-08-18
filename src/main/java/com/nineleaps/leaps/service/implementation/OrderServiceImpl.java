@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.orders.OrderDto;
@@ -32,10 +33,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.YearMonth;
+import java.text.SimpleDateFormat;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.*;
@@ -439,4 +438,81 @@ public class OrderServiceImpl implements OrderServiceInterface {
             }
         }
     }
+
+    public byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Document document = new Document();
+
+        try {
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+            document.open();
+
+            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            // Display overall order details (summary)
+            document.add(new Paragraph("Order ID: " + order.getId()));
+            document.add(new Paragraph("Order Date: " + dateFormat.format(convertToDate(order.getCreateDate()))));
+            document.add(new Paragraph("Name: " + user.getFirstName() + " " + user.getLastName()));
+            document.add(new Paragraph("\n"));
+
+            // Create and populate order items table
+            PdfPTable table = new PdfPTable(new float[]{20, 20, 15, 18, 35, 35,35});
+            table.setWidthPercentage(100);
+
+            Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            PdfPCell cell1 = new PdfPCell(new Phrase("Product Name", tableHeaderFont));
+            PdfPCell cell2 = new PdfPCell(new Phrase("Quantity", tableHeaderFont));
+            PdfPCell cell3 = new PdfPCell(new Phrase("Price", tableHeaderFont));
+            PdfPCell cell4 = new PdfPCell(new Phrase("Product Brand", tableHeaderFont));
+            PdfPCell cell5 = new PdfPCell(new Phrase("Rental Start Date", tableHeaderFont));
+            PdfPCell cell6 = new PdfPCell(new Phrase("Rental End Date", tableHeaderFont));
+            PdfPCell cell7 = new PdfPCell(new Phrase("Security Deposit", tableHeaderFont));
+
+            cell1.setFixedHeight(20);
+            cell2.setFixedHeight(20);
+            cell3.setFixedHeight(20);
+            cell4.setFixedHeight(20);
+            cell5.setFixedHeight(20);
+            cell6.setFixedHeight(20);
+            cell7.setFixedHeight(20);
+
+            table.addCell(cell1);
+            table.addCell(cell2);
+            table.addCell(cell3);
+            table.addCell(cell4);
+            table.addCell(cell5);
+            table.addCell(cell6);
+            table.addCell(cell7);
+
+            // Populate order items in the table
+            for (OrderItem orderItem : orderItems) {
+                table.addCell(orderItem.getName());
+                table.addCell(String.valueOf(orderItem.getQuantity()));
+                table.addCell(String.valueOf(orderItem.getPrice()));
+                table.addCell(orderItem.getProduct().getBrand());
+                table.addCell(dateFormat.format(convertToDate(orderItem.getRentalStartDate())));
+                table.addCell(dateFormat.format(convertToDate(orderItem.getRentalEndDate())));
+                table.addCell(String.valueOf(orderItem.getSecurityDeposit()));
+            }
+
+            document.add(table);
+            document.add(new Paragraph("\n"));
+            document.add(new Paragraph("Grand Total: " + order.getTotalPrice()));
+
+
+        } finally {
+            document.close();
+        }
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+
+    private Date convertToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+
 }

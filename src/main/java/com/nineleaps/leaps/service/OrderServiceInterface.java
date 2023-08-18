@@ -40,4 +40,7 @@ public interface OrderServiceInterface {
     Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(User user);
 
     Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(User user, LocalDateTime startDate, LocalDateTime endDate);
+
+    byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException;
+
 }

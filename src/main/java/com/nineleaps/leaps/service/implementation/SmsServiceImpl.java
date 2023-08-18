@@ -68,7 +68,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
     public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
         String secretFilePath = "Desktop/leaps/secret/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
-        String secret = readSecretFromFile(absolutePath);
+        String secret = securityUtility.readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String role = user(phoneNumber).getRole().toString();
         String[] roles = new String[]{role};
@@ -94,12 +94,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
         securityUtility.saveTokens(refreshToken, email);
     }
 
-    String readSecretFromFile(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
-            return reader.readLine();
-        }
-    }
+
 
 }
 

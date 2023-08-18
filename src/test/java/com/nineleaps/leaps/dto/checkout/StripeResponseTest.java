@@ -3,6 +3,7 @@ package com.nineleaps.leaps.dto.checkout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StripeResponseTest {
@@ -38,4 +39,16 @@ class StripeResponseTest {
         // Verify
         assertEquals(sessionId, stripeResponse.getSessionId());
     }
-}
+
+
+        @Test
+        void testStripeResponseClass() {
+            // Create a StripeResponse object
+            StripeResponse stripeResponse = new StripeResponse("session123");
+
+            // Verify the values using assertions
+            assertThat(stripeResponse.getSessionId()).isEqualTo("session123");
+        }
+    }
+
+

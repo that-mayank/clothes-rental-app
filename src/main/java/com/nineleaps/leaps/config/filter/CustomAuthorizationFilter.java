@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.utils.SecurityUtility;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +31,7 @@ import java.util.Map;
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -37,8 +39,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final SecurityUtility securityUtility;
 
     public CustomAuthorizationFilter(SecurityUtility securityUtility) {
-
-
         this.securityUtility = securityUtility;
 
     }
@@ -46,7 +46,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     // method for authorizing api requests to respective person
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/v1/user/signup")) {
+        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/v1/user/signup") || request.getServletPath().equals("/api/v1/user/refreshToken")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -56,7 +56,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     if (!securityUtility.isAccessTokenExpired(token)) {
                         String secretFilePath = "Desktop/leaps/secret/secret.txt";
                         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
-                        String secret = readSecretFromFile(absolutePath);
+                        String secret = securityUtility.readSecretFromFile(absolutePath);
                         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
                         JWTVerifier verifier = JWT.require(algorithm).build();
                         DecodedJWT decodedJWT = verifier.verify(token);
@@ -71,10 +71,12 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
                         filterChain.doFilter(request, response);
                     } else {
-                        DecodedJWT decodedAccessToken = JWT.decode(token);
-                        String email = decodedAccessToken.getSubject();
-                        String accessToken = securityUtility.updateAccessToken(email, request);
-                        response.setHeader("access_token", accessToken);
+//                        DecodedJWT decodedAccessToken = JWT.decode(token);
+//                        String email = decodedAccessToken.getSubject();
+//                        String accessToken = securityUtility.updateAccessToken(email, request);
+//                        response.setHeader("access_token", accessToken);
+
+                        response.setStatus(UNAUTHORIZED.value(),"Access Token Expired");
                     }
                 } catch (Exception exception) {
 //
@@ -91,10 +93,5 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private String readSecretFromFile(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
-            return reader.readLine();
-        }
-    }
+
 }

@@ -118,6 +118,33 @@ public class OrderServiceImpl implements OrderServiceInterface {
         messageBuilder.append("Total Price of order: ").append(latestOrder.getTotalPrice()).append("\n\n");
         String message = messageBuilder.toString();
         emailServiceImpl.sendEmail(subject, message, email);
+
+        StringBuilder messageBuilderforowner = new StringBuilder();
+        List<OrderItem> orderItemsforowner = latestOrder.getOrderItems();
+        for (OrderItem orderItem : orderItemsforowner) {
+            String subjectforowner = "Order placed";
+            String emailofowner = orderItem.getProduct().getUser().getEmail();
+            messageBuilderforowner.setLength(0);
+            messageBuilderforowner.append(DEAR_PREFIX).append(orderItem.getProduct().getUser().getFirstName()).append(" ").append(orderItem.getProduct().getUser().getLastName()).append(",\n");
+            messageBuilderforowner.append("Order has been successfully placed for your Product.\n");
+            messageBuilderforowner.append("Here are the details of your order:\n");
+            messageBuilder.append("Order ID: ").append(newOrder.getId()).append("\n");
+            String productName = orderItem.getName();
+            int quantity = orderItem.getQuantity();
+            long rentalPeriod = ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
+            double price = orderItem.getPrice() * orderItem.getQuantity() * rentalPeriod;
+
+            messageBuilderforowner.append("Product: ").append(productName).append("\n");
+            messageBuilderforowner.append("Quantity: ").append(quantity).append("\n");
+            messageBuilderforowner.append("Price: ").append(price).append("\n");
+            String messageforowner = messageBuilderforowner.toString();
+            sendEmailToOwner(subjectforowner, messageforowner, emailofowner);
+        }
+
+    }
+
+    private void sendEmailToOwner(String subject, String message, String email){
+        emailServiceImpl.sendEmailForOwner(subject, message, email);
     }
 
     @Override
@@ -147,12 +174,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         if (status.equals("ORDER RETURNED")) {
             Product product = orderItem.getProduct();
             product.setAvailableQuantities(product.getAvailableQuantities() + orderItem.getQuantity());
-            if(product.getRentedQuantities() - orderItem.getQuantity() >= 0) {
-                product.setRentedQuantities(product.getRentedQuantities() - orderItem.getQuantity());
-            }
-            else {
-                product.setRentedQuantities(0);
-            }
+            product.setRentedQuantities(Math.max(product.getRentedQuantities() - orderItem.getQuantity(), 0));
             productRepository.save(product);
         }
     }

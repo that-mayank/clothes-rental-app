@@ -1,12 +1,16 @@
 package com.nineleaps.leaps.model.categories;
 
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
+import com.nineleaps.leaps.model.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
- class SubCategoryTest {
+class SubCategoryTest {
 
     private Category category;
     private SubCategory subCategory;
@@ -38,10 +42,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
     @Test
     void testGettersAndSetters() {
-
         assertEquals("Test Subcategory", subCategory.getSubcategoryName());
         assertEquals("test_image.jpg", subCategory.getImageUrl());
         assertEquals("Test subcategory description", subCategory.getDescription());
         assertEquals(category, subCategory.getCategory());
+    }
+
+    @Test
+    void testJsonIgnoreAnnotationOnProductsField() {
+        // Arrange
+        List<Product> products = List.of(new Product(), new Product());
+        subCategory.setProducts(products);
+
+        // Act
+        List<Product> ignoredProducts = subCategory.getProducts();
+
     }
 }

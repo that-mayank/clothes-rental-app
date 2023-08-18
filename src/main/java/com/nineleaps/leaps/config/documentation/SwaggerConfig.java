@@ -52,7 +52,7 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInfo() {
-        Contact contact = new Contact("Batch 4 Team 3", "https://github.com/that-mayank", "mayank.01@nineleaps.com");
+        Contact contact = new Contact("Leaps Dev Team", "https://github.com/that-mayank", "mayank.01@nineleaps.com");
         return new ApiInfoBuilder()
                 .title("Leaps API")
                 .description("Clothes Rental Application")

@@ -3,6 +3,7 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class DashboardController {
 
+    private final DashboardServiceInterface dashboardService;
     private final OrderServiceInterface orderService;
     private final Helper helper;
 
@@ -38,7 +40,7 @@ public class DashboardController {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        Map<String, Object> result = orderService.dashboard(user);
+        Map<String, Object> result = dashboardService.dashboardOwnerView(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -48,7 +50,7 @@ public class DashboardController {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        Map<YearMonth, Map<String, Object>> body = orderService.onClickDasboard(user);
+        Map<YearMonth, Map<String, Object>> body = dashboardService.analytics(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 

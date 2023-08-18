@@ -25,19 +25,11 @@ public interface OrderServiceInterface {
 
     Order getOrder(Long orderId, User user);
 
-    Map<String, Object> dashboard(User user);
-
-    Map<YearMonth, Map<String, Object>> onClickDasboard(User user);
-
     Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user);
 
     Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user);
 
     List<ProductDto> getRentedOutProducts(User user);
-
-    Document getPdf(User user) throws FileNotFoundException, DocumentException;
-
-    void addContent(Document document, User user) throws DocumentException, IOException;
 
     OrderItem getOrderItem(Long orderItemId, User user);
 

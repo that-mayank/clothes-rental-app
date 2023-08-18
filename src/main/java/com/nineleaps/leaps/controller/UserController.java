@@ -11,6 +11,7 @@ import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.UserNotExistException;
 import com.nineleaps.leaps.model.Guest;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.service.RefreshTokenServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
@@ -40,6 +41,7 @@ public class UserController {
     private final SwitchProfile switchprofile;
     private final Helper helper;
     private final SecurityUtility securityUtility;
+    private final RefreshTokenServiceInterface refreshTokenService;
 
 
     @ApiOperation(value = "user registration api")
@@ -138,7 +140,17 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, "RefreshToken Expired , Login Again"), HttpStatus.UNAUTHORIZED);
         }
 
-
-
+    }
+    @ApiOperation(value="Api to Logout")
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring(7);
+        User user = helper.getUser(token);
+        String email = user.getEmail();
+        refreshTokenService.deleteRefreshTokenByEmailAndToken(email,token);
+        return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out "), HttpStatus.CREATED);
     }
 }
+
+

@@ -19,5 +19,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenServiceInterface {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email);
         return refreshToken.getToken();
     }
-
+    @Override
+    public void deleteRefreshTokenByEmailAndToken(String email, String token) {
+        refreshTokenRepository.deleteByEmailAndToken(email,token);
+    }
 }

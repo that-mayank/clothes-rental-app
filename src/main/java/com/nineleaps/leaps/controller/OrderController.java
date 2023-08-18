@@ -1,12 +1,7 @@
 package com.nineleaps.leaps.controller;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
-import com.nineleaps.leaps.dto.orders.OrderItemsData;
-import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.User;
@@ -17,24 +12,12 @@ import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 
 import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_ACCESS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -146,65 +129,13 @@ public class OrderController {
         return new ResponseEntity<>(new ApiResponse(true, "Order is returned"), HttpStatus.OK);
     }
 
-    @GetMapping("/dashboardCategoriesAnalytics")
-    public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsByCategories(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<YearMonth, Map<String, OrderItemsData>> body = orderService.getOrderItemsByCategories(user);
-        return new ResponseEntity<>(body, HttpStatus.OK);
-    }
 
-    @GetMapping("/rentedProducts")
+    @GetMapping("/owner-order-history") //rentedProducts
     public ResponseEntity<List<ProductDto>> getRentedOutProducts(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
         List<ProductDto> body = orderService.getRentedOutProducts(user);
-        return new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
-
-    @GetMapping("/exportPdf")
-    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-
-        Document document = orderService.getPdf(user);
-
-        // Convert the Document into a byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, baos);
-
-        // Open the document
-        document.open();
-
-        // Add content to the document
-        orderService.addContent(document, user);
-
-        // Close the document
-        document.close();
-
-        byte[] pdfBytes = baos.toByteArray();
-
-        // Create the InputStreamResource from the byte array
-        InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
-
-        // Set the Content-Disposition header to force download the PDF
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "report.pdf");
-
-            return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
-    }
-
-    @GetMapping("/dashboardDateSelector")
-    public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboardBwDates(HttpServletRequest request, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        Map<YearMonth, List<OrderReceivedDto>> body = orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }

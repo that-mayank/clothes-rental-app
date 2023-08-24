@@ -81,7 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/v1/order/create-checkout-session",
                         "/api/v1/order/add",
                         "/api/v1/order/list",
-                        "/api/v1/order/getOrderById/**"
+                        "/api/v1/order/getOrderById/**",
+                        "/api/v1/user/update"
                 ).hasAnyAuthority(ROLE_BORROWER, ROLE_OWNER)
                 .antMatchers(
                         "/api/v1/dashboard/owner-view",

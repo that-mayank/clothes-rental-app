@@ -3,15 +3,18 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.PushNotificationRequest;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
 import com.nineleaps.leaps.service.implementation.ProductServiceImpl;
+import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +29,14 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/v1/wishlist")
 @AllArgsConstructor
+@Slf4j
 @Api(tags = "Wishlist Api", description = "Contains api for adding and removing products to/from wishlist")
 @SuppressWarnings("deprecation")
 public class WishlistController {
     private final WishlistServiceInterface wishlistService;
     private final ProductServiceInterface productService;
     private final Helper helper;
+    private final PushNotificationServiceImpl pushNotificationService;
 
     //Add product to Wishlist
     //change Product to ProductDto

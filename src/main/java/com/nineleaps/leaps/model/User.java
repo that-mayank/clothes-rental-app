@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.orders.Order;
@@ -34,6 +35,8 @@ public class User {
     @Column(name = "role")
     private Role role;
     private String profileImageUrl;
+    @JsonIgnore
+    private String deviceToken;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
@@ -43,6 +46,8 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> products;
+//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private DeviceToken deviceToken;
 
     public User(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {
         this.firstName = firstName;
@@ -63,5 +68,6 @@ public class User {
         this.password = oldUser.getPassword();
         this.role = oldUser.getRole();
         this.profileImageUrl = oldUser.getProfileImageUrl();
+        this.deviceToken = oldUser.getDeviceToken();
     }
 }

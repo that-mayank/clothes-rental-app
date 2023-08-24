@@ -12,7 +12,6 @@ import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +50,50 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
+
+//    @Override
+//    public void saveDeviceTokenToUser(String email, String deviceToken) {
+//        User user = userRepository.findByEmail(email);
+//        if (user == null) {
+//            log.error("User not found in the database");
+//            throw new UsernameNotFoundException("User not found in the database");
+//        } else {
+//            DeviceToken existingDeviceToken = deviceTokenRepository.findByUserEmail(email).orElse(null);
+//
+//            if (existingDeviceToken != null) {
+//                existingDeviceToken.setToken(deviceToken);
+//                deviceTokenRepository.save(existingDeviceToken);
+//                log.info("Device token updated for user: {} and token is : {} ", email,deviceToken);
+//
+//            } else {
+//                DeviceToken newDeviceToken = new DeviceToken(deviceToken, user);
+//                deviceTokenRepository.save(newDeviceToken);
+//                log.info("Device token saved for user: {}", email);
+//            }
+//        }
+//    }
+
+    @Override
+    public void saveDeviceTokenToUser(String email, String deviceToken) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.error("User not found in the database");
+            throw new UsernameNotFoundException("User not found in the database");
+        } else {
+            User existingDeviceToken = userRepository.findDeviceTokenByEmail(email);
+
+            if (existingDeviceToken != null) {
+                user.setDeviceToken(deviceToken);
+                userRepository.save(user);
+                log.info("Device token updated for user: {} and token is: {}", email, deviceToken);
+            } else {
+                user.setDeviceToken(deviceToken);
+                userRepository.save(user);
+                log.info("Device token saved for user: {}", email);
+            }
+        }
+    }
+
 
     @Override
     public ResponseDto signUp(SignupDto signupDto) throws CustomException {

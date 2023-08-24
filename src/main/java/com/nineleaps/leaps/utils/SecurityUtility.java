@@ -36,6 +36,11 @@ public class SecurityUtility {
     public void setRefreshTokenRepository(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }
+
+    public void getDeviceToken(String email,String deviceToken){
+        userServiceInterface.saveDeviceTokenToUser(email,deviceToken);
+    }
+
     public boolean isAccessTokenExpired(String accessToken) {
         DecodedJWT decodedAccessToken = JWT.decode(accessToken);
         Date expirationDate = decodedAccessToken.getExpiresAt();

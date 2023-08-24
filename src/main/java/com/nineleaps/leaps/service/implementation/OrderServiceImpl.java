@@ -12,6 +12,7 @@ import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.PushNotificationRequest;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
@@ -23,6 +24,7 @@ import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -46,12 +48,14 @@ import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getD
 @Service
 @Transactional
 @AllArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderServiceInterface {
     private final OrderRepository orderRepository;
     private final CartServiceInterface cartService;
     private final OrderItemRepository orderItemRepository;
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
+    private final PushNotificationServiceImpl pushNotificationService;
 
     @Override
     public void placeOrder(User user, String sessionId) {
@@ -93,7 +97,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         //delete cart items after placing order
         cartService.deleteUserCartItems(user);
 
-
         // function to send email
         String email = user.getEmail();
         String subject = "Order placed";
@@ -118,32 +121,17 @@ public class OrderServiceImpl implements OrderServiceInterface {
         String message = messageBuilder.toString();
         emailServiceImpl.sendEmail(subject, message, email);
 
-        StringBuilder messageBuilderforowner = new StringBuilder();
-        List<OrderItem> orderItemsforowner = latestOrder.getOrderItems();
-        for (OrderItem orderItem : orderItemsforowner) {
-            String subjectforowner = "Order placed";
-            String emailofowner = orderItem.getProduct().getUser().getEmail();
-            messageBuilderforowner.setLength(0);
-            messageBuilderforowner.append(DEAR_PREFIX).append(orderItem.getProduct().getUser().getFirstName()).append(" ").append(orderItem.getProduct().getUser().getLastName()).append(",\n");
-            messageBuilderforowner.append("Order has been successfully placed for your Product.\n");
-            messageBuilderforowner.append("Here are the details of your order:\n");
-            messageBuilder.append("Order ID: ").append(newOrder.getId()).append("\n");
-            String productName = orderItem.getName();
-            int quantity = orderItem.getQuantity();
-            long rentalPeriod = ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
-            double price = orderItem.getPrice() * orderItem.getQuantity() * rentalPeriod;
 
-            messageBuilderforowner.append("Product: ").append(productName).append("\n");
-            messageBuilderforowner.append("Quantity: ").append(quantity).append("\n");
-            messageBuilderforowner.append("Price: ").append(price).append("\n");
-            String messageforowner = messageBuilderforowner.toString();
-            sendEmailToOwner(subjectforowner, messageforowner, emailofowner);
+        for(OrderItem orderItem:orderItemList){
+            String deviceToken = orderItem.getProduct().getUser().getDeviceToken();
+            log.debug("Device token of owner from oder service is: {}",deviceToken);
+            var request = PushNotificationRequest.builder()
+                    .title("Order info")
+                    .message("Order placed")
+                    .token(deviceToken)
+                    .build();
+            pushNotificationService.sendPushNotificationToToken(request);
         }
-
-    }
-
-    private void sendEmailToOwner(String subject, String message, String email){
-        emailServiceImpl.sendEmailForOwner(subject, message, email);
     }
 
     @Override
@@ -455,6 +443,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             document.add(new Paragraph("Order ID: " + order.getId()));
             document.add(new Paragraph("Order Date: " + dateFormat.format(convertToDate(order.getCreateDate()))));
             document.add(new Paragraph("Name: " + user.getFirstName() + " " + user.getLastName()));
+            document.add(new Paragraph(("Address: "+ order.getUser().getAddresses())));
             document.add(new Paragraph("\n"));
 
             // Create and populate order items table

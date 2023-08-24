@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
+import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +39,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final RefreshTokenRepository refreshTokenRepository;
 
 
+
     //Authenticates the user using login credentials - email and password
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -52,12 +54,26 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // Extract the username and password from the JSON data
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
+        // Check if device token is present
+        JsonNode deviceTokenNode = jsonNode.get("deviceToken");
+        String deviceToken = null;
+        if (deviceTokenNode != null) {
+            deviceToken = deviceTokenNode.asText();
+        }
+
+        // Process authentication
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+
+        // Set device token if available
+        if (deviceToken != null) {
+            securityUtility.getDeviceToken(email, deviceToken);
+        }
         return authenticationManager.authenticate(authenticationToken);
+
     }
 
-    //generates access and refresh token
-    @Override
+
+
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
         String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
@@ -93,6 +109,4 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
     }
-
-
 }

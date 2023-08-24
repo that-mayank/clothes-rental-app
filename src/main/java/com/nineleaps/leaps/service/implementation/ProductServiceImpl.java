@@ -3,8 +3,8 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
-import com.nineleaps.leaps.model.Product;
-import com.nineleaps.leaps.model.ProductUrl;
+import com.nineleaps.leaps.model.product.Product;
+import com.nineleaps.leaps.model.product.ProductUrl;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.*;

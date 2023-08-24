@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.repository;
 
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

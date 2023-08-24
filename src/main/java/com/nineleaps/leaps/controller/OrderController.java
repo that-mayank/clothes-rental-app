@@ -3,6 +3,7 @@ package com.nineleaps.leaps.controller;
 import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
+import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
@@ -15,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +33,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/v1/order")
 @AllArgsConstructor
+@Slf4j
 @Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
 @SuppressWarnings("deprecation")
 public class OrderController {
@@ -103,6 +106,15 @@ public class OrderController {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
+    @GetMapping("/shipping-status")
+    public ResponseEntity<List<OrderItemDto>> getShippingStatus(@RequestParam("status") String shippingStatus, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring(7);
+        User user = helper.getUser(token);
+        List<OrderItemDto> body = orderService.getOrdersItemByStatus(shippingStatus, user);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
     @GetMapping("/generateInvoice/{orderId}")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
         try {
@@ -126,7 +138,7 @@ public class OrderController {
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (IOException | DocumentException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            log.error(String.valueOf(e)); // Handle the exception appropriately
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

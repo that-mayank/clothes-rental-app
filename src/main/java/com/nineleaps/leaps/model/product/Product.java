@@ -1,7 +1,10 @@
-package com.nineleaps.leaps.model;
+package com.nineleaps.leaps.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.dto.product.ProductDto;
+import com.nineleaps.leaps.model.Cart;
+import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import lombok.Getter;

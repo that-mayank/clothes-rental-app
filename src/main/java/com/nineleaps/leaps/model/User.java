@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.orders.Order;
+import com.nineleaps.leaps.model.product.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

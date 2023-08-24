@@ -2,16 +2,13 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.model.Product;
-import com.nineleaps.leaps.model.PushNotificationRequest;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
 import com.nineleaps.leaps.service.implementation.ProductServiceImpl;
-import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import com.nineleaps.leaps.utils.Helper;
-import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +33,6 @@ public class WishlistController {
     private final WishlistServiceInterface wishlistService;
     private final ProductServiceInterface productService;
     private final Helper helper;
-    private final PushNotificationServiceImpl pushNotificationService;
 
     //Add product to Wishlist
     //change Product to ProductDto
@@ -48,7 +44,7 @@ public class WishlistController {
         User user = helper.getUser(token);
         //check if product is valid
         Optional<Product> optionalProduct = productService.readProduct(productId);
-        if (!optionalProduct.isPresent()) {
+        if (optionalProduct.isEmpty()) {
             return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
         }
         //check the same product cannot be added to wishlist

@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.model;
+package com.nineleaps.leaps.dto.pushNotification;
 
 import lombok.*;
 

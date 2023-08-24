@@ -3,7 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.nineleaps.leaps.model.PushNotificationRequest;
+import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

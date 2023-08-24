@@ -7,12 +7,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.orders.OrderDto;
+import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
-import com.nineleaps.leaps.model.Product;
-import com.nineleaps.leaps.model.PushNotificationRequest;
+import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
@@ -25,11 +26,6 @@ import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -496,6 +492,16 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
 
         return byteArrayOutputStream.toByteArray();
+    }
+
+    @Override
+    public List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, User user) {
+        List<OrderItem> orderItemList = orderItemRepository.findAll();
+        List<OrderItemDto> orderItemDtos = new ArrayList<>();
+        for (var orderItem : orderItemList) {
+            if(orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus)) orderItemDtos.add(new OrderItemDto(orderItem));
+        }
+        return orderItemDtos;
     }
 
 

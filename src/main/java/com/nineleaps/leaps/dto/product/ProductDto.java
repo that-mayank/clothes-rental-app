@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.dto.product;
 
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import lombok.Getter;

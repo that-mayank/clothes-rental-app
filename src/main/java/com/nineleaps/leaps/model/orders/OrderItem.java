@@ -1,7 +1,7 @@
 package com.nineleaps.leaps.model.orders;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.product.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

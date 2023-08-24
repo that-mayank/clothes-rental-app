@@ -3,7 +3,7 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;

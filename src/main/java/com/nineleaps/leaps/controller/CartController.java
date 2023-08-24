@@ -7,7 +7,7 @@ import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
-import com.nineleaps.leaps.model.Product;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;

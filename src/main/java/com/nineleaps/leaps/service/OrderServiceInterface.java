@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.dto.orders.OrderDto;
+import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
@@ -43,4 +44,5 @@ public interface OrderServiceInterface {
 
     byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException;
 
+    List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, User user);
 }

@@ -64,6 +64,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // Process authentication
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
 
+
         // Set device token if available
         if (deviceToken != null) {
             securityUtility.getDeviceToken(email, deviceToken);

@@ -1,5 +1,8 @@
 package com.nineleaps.leaps.utils;
 
+import lombok.Data;
+
+@Data
 public class PdfResponse {
     private byte[] pdfBytes;
 

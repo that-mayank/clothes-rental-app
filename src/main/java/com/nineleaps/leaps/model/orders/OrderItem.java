@@ -38,6 +38,8 @@ public class OrderItem {
     private String imageUrl;
     private String status;
     private @NotNull double securityDeposit;
+    @Column(name = "owner_id")
+    private Long ownerId;
     //TODO -- confirm status
     //TODO -- shipped status
 }

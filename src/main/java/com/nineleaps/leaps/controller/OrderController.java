@@ -98,11 +98,11 @@ public class OrderController {
 
 
     @GetMapping("/owner-order-history") //rentedProducts
-    public ResponseEntity<List<ProductDto>> getRentedOutProducts(HttpServletRequest request) {
+    public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        List<ProductDto> body = orderService.getRentedOutProducts(user);
+        List<ProductDto> body = orderService.getRentedOutProducts(user, pageNumber, pageSize);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 

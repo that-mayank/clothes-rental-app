@@ -7,8 +7,10 @@ import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
+import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -35,6 +37,7 @@ public class CartController {
     private final CartServiceInterface cartService;
     private final ProductServiceInterface productService;
     private final Helper helper;
+    private final OrderItemRepository orderItemRepository;
 
 
     //Add to cart
@@ -47,6 +50,7 @@ public class CartController {
         User user = helper.getUser(token);
         //get product
         Product product = productService.getProductById(addToCartDto.getProductId());
+
         //add to cart
         cartService.addToCart(addToCartDto, product, user);
         return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);

@@ -26,6 +26,9 @@ import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -79,6 +82,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
             orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
             orderItem.setStatus("Order placed");
+            orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
             //add to orderItem table
             orderItemRepository.save(orderItem);
             orderItemList.add(orderItem);
@@ -375,20 +379,15 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public List<ProductDto> getRentedOutProducts(User user) {
-        List<Product> products = new ArrayList<>();
-        for (Order order : orderRepository.findAll()) {
-            for (OrderItem orderItem : order.getOrderItems()) {
-                if (orderItem.getProduct().getUser().equals(user)) {
-                    products.add(orderItem.getProduct());
-                }
-            }
+    public List<ProductDto> getRentedOutProducts(User user, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<OrderItem> page = orderItemRepository.findByOwnerId(pageable, user.getId());
+        List<ProductDto> productDtoList = new ArrayList<>();
+        for (var orderItem : page.getContent()) {
+            ProductDto productDto = new ProductDto(orderItem.getProduct());
+            productDtoList.add(productDto);
         }
-        List<ProductDto> productDtos = new ArrayList<>();
-        for (Product product : products) {
-            productDtos.add(getDtoFromProduct(product));
-        }
-        return productDtos;
+        return productDtoList;
     }
 
     @Override

@@ -30,7 +30,7 @@ public interface OrderServiceInterface {
 
     Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user);
 
-    List<ProductDto> getRentedOutProducts(User user);
+    List<ProductDto> getRentedOutProducts(User user, int pageNumber, int pageSize);
 
     OrderItem getOrderItem(Long orderItemId, User user);
 

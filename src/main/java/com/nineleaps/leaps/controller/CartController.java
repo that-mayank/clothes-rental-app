@@ -27,7 +27,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @RestController
-@Transactional
 @RequestMapping("/api/v1/cart")
 @AllArgsConstructor
 @Api(tags = "Cart Api", description = "Contains api for adding products, updating products, list products and delete products in the cart")

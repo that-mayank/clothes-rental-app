@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Service
 @Slf4j
+@Transactional
 public class StorageServiceImpl implements StorageServiceInterface {
 
     String baseUrl = NGROK;

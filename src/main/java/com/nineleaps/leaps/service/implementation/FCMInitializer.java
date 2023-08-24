@@ -2,6 +2,8 @@ package com.nineleaps.leaps.service.implementation;
 
 import java.io.IOException;
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 @Service
+@Transactional
 public class FCMInitializer {
 
     @Value("${app.firebase-configuration-file}")

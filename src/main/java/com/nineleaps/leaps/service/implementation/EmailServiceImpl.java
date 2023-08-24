@@ -15,15 +15,14 @@ import java.util.Properties;
 @AllArgsConstructor
 @Transactional
 public class EmailServiceImpl {
-    public boolean sendEmail(String subject, String message, String to) {
+    public void sendEmail(String subject, String message, String to) {
 
         if (to == null) {
             // Handle the null value here, such as throwing an exception or returning false
-            return false;
+            return;
         }
         String host = "smtp.gmail.com";
 
-        boolean f = false;
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "465");
@@ -41,7 +40,7 @@ public class EmailServiceImpl {
 
         session.setDebug(true);
 
-        // Step 2 : compose the message [text,multi media]
+        // Step 2 : compose the message [text,multimedia]
         MimeMessage m = new MimeMessage(session);
 
         try {
@@ -56,13 +55,11 @@ public class EmailServiceImpl {
             Transport.send(m);
             log.trace("sent success");
 
-            f = true;
 
         } catch (Exception e) {
             log.error("email notification sending failed");
         }
 
-        return f;
     }
 
 }

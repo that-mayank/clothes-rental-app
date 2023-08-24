@@ -4,7 +4,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.model.User;
-import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.service.PdfServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;

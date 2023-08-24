@@ -8,6 +8,7 @@ import com.nineleaps.leaps.service.DashboardServiceInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -19,6 +20,7 @@ import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class DashboardServiceImpl implements DashboardServiceInterface {
 
     private final OrderRepository orderRepository;

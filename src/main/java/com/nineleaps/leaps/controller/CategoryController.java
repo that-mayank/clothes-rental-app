@@ -18,7 +18,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@Transactional
 @RequestMapping("/api/v1/category")
 @AllArgsConstructor
 @Api(tags = "Category Api", description = "Contains api for adding category, updating category, and list categories")

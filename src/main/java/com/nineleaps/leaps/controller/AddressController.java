@@ -23,7 +23,6 @@ import java.util.Optional;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
-@Transactional
 @RequestMapping("/api/v1/address")
 @AllArgsConstructor
 @Api(tags = "Address Api", description = "Contains api for add, update, list and delete address")

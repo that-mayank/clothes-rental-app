@@ -9,10 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.concurrent.ExecutionException;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class PushNotificationServiceImpl {
     private final Logger logger = LoggerFactory.getLogger(PushNotificationServiceImpl.class);
 
@@ -29,10 +31,10 @@ public class PushNotificationServiceImpl {
 
         try {
             String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-            logger.info("Sent message to token. Device token: " + request.getToken() + ", response: " + response);
+            logger.info("Sent message to token. Device token: {} , response: {}", request.getToken() , response);
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            logger.error("Error sending FCM message: " + e.getMessage());
+            logger.error("Error sending FCM message: {}", e.getMessage());
         }
     }
 
@@ -45,13 +47,12 @@ public void sendNotification(String token) {
             .build();
     try {
         String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-        logger.info("Sent message to token. Device token: " + token + ", response: " + response);
+        logger.info("Sent message to token. Device token: {}, response: {}", token ,response);
     } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
-        logger.error("InterruptedException while sending FCM message: " + e.getMessage());
+        logger.error("InterruptedException while sending FCM message: {}",e.getMessage());
     } catch (ExecutionException e) {
-        logger.error("Error sending FCM message: " + e.getMessage());
-        e.printStackTrace();
+        logger.error("Error sending FCM message: {}",e.getMessage());
     }
 }
 

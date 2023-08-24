@@ -14,6 +14,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.YearMonth;
@@ -24,6 +25,7 @@ import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class PdfServiceImpl implements PdfServiceInterface {
 
     private final DashboardServiceInterface dashboardService;

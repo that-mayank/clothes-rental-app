@@ -21,9 +21,8 @@ public class PushNotificationController {
 
     @PostMapping("/notification/token")
     @ApiOperation(value = "Send push notification to device using fcm token")
-    public ResponseEntity sendTokenNotification(@RequestBody String token) {
+    public ResponseEntity<PushNotificationResponse> sendTokenNotification(@RequestBody String token) {
         pushNotificationService.sendNotification(token);
-        System.out.println("done");
         return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."),
                 HttpStatus.OK);
     }

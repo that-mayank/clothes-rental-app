@@ -10,41 +10,53 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.transfer.s3.S3TransferManager;
+import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
+import software.amazon.awssdk.transfer.s3.model.FileUpload;
+import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
+import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.concurrent.CompletionException;
+
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
+
 @Slf4j
 @Service
-@Transactional
 public class StorageServiceImpl implements StorageServiceInterface {
     private final String baseUrl = NGROK;
     private final String bucketName;
     private final S3Client s3Client;
+    private final S3TransferManager transferManager;
 
     public StorageServiceImpl(
             @Value("${application.bucket.name}") String bucketName,
-            S3Client s3Client
+            S3Client s3Client,
+            S3TransferManager transferManager
     ) {
         this.bucketName = bucketName;
         this.s3Client = s3Client;
+        this.transferManager = transferManager;
     }
 
-    @Override
     public String uploadFile(MultipartFile file) throws IOException {
         File fileObj = convertMultiPartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
         try {
-            s3Client.putObject(PutObjectRequest.builder()
-                            .bucket(bucketName)
-                            .key(fileName)
-                            .build(),
-                    RequestBody.fromFile(fileObj));
+            UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
+                    .putObjectRequest(b -> b.bucket(bucketName).key(fileName))
+                    .addTransferListener(LoggingTransferListener.create())
+                    .source(fileObj.toPath())
+                    .build();
+
+            FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
+
+            // Wait for the upload to complete and handle errors
+            CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
 
             Files.delete(fileObj.toPath());
 
@@ -52,11 +64,18 @@ public class StorageServiceImpl implements StorageServiceInterface {
                     .path("/api/v1/file/view/")
                     .path(fileName)
                     .toUriString();
+        } catch (CompletionException e) {
+            // Handle any exceptions during upload
+            throw new IOException("Error uploading file to S3", e.getCause());
         } catch (S3Exception e) {
-            log.error("Error uploading file to S3: {}", e.getMessage(), e);
-            throw new IOException("Error uploading file to S3", e);
+            // Handle S3 exceptions
+            throw new IOException("Error uploading file to S3: " + e.getMessage(), e);
+        } finally {
+            // Ensure the temp file is deleted in case of any errors
+            Files.deleteIfExists(fileObj.toPath());
         }
     }
+
 
     @Override
     public byte[] downloadFile(String fileName) throws IOException {
@@ -125,8 +144,6 @@ public class StorageServiceImpl implements StorageServiceInterface {
         }
     }
 
-
-
     private String determineContentType(String fileName) {
         String contentType;
         if (fileName.endsWith(".pdf")) {
@@ -143,10 +160,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
     private File convertMultiPartFileToFile(MultipartFile file) throws IOException {
         File convertedFile = File.createTempFile("temp_", "_" + file.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-            byte[] fileBytes = file.getBytes();
-            fos.write(fileBytes);
-        }
+        file.transferTo(convertedFile);
         return convertedFile;
     }
 }

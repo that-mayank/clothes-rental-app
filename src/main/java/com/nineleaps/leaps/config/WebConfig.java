@@ -8,6 +8,7 @@ import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Configuration
 public class WebConfig {
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

@@ -7,7 +7,10 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.transfer.s3.S3TransferManager;
+
 
 @Configuration
 public class StorageConfig {
@@ -17,6 +20,7 @@ public class StorageConfig {
 
     @Value("${cloud.aws.credentials.secret-key}")
     private String accessSecret;
+
     @Value("${cloud.aws.region}")
     private String region;
 
@@ -30,6 +34,21 @@ public class StorageConfig {
         return S3Client.builder()
                 .credentialsProvider(awsCredentialsProvider())
                 .region(Region.of(region))
+                .build();
+    }
+
+    @Bean
+    public S3AsyncClient s3AsyncClient() {
+        return S3AsyncClient.builder()
+                .region(Region.of(region))
+                .credentialsProvider(awsCredentialsProvider())
+                .build();
+    }
+
+    @Bean
+    public S3TransferManager transferManager(S3AsyncClient s3AsyncClient) {
+        return S3TransferManager.builder()
+                .s3Client(s3AsyncClient)
                 .build();
     }
 }

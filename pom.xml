@@ -25,7 +25,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.20.135</version>
+        </dependency>
 
 
         <dependency>
@@ -38,6 +43,9 @@
             <artifactId>javax.mail-api</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/http-client-spi -->
+
+
 
         <dependency>
             <groupId>com.sun.mail</groupId>
@@ -112,11 +120,7 @@
             <version>2.7.3</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.google.guava</groupId>-->
-        <!--            <artifactId>guava</artifactId>-->
-        <!--            <version>16.0.1</version>-->
-        <!--        </dependency>-->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
@@ -126,11 +130,11 @@
             <artifactId>stripe-java</artifactId>
             <version>22.16.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.467</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.amazonaws</groupId>-->
+<!--            <artifactId>aws-java-sdk-s3</artifactId>-->
+<!--            <version>1.12.467</version>-->
+<!--        </dependency>-->
 
         <!--         to create pdf-->
         <dependency>

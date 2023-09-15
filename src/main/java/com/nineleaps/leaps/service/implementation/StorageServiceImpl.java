@@ -1,47 +1,133 @@
 package com.nineleaps.leaps.service.implementation;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
-import java.util.Objects;
-
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
-
-
-@Service
 @Slf4j
+@Service
 @Transactional
 public class StorageServiceImpl implements StorageServiceInterface {
+    private final String baseUrl = NGROK;
+    private final String bucketName;
+    private final S3Client s3Client;
 
-    String baseUrl = NGROK;
+    public StorageServiceImpl(
+            @Value("${application.bucket.name}") String bucketName,
+            S3Client s3Client
+    ) {
+        this.bucketName = bucketName;
+        this.s3Client = s3Client;
+    }
 
-    @Value("${application.bucket.name}")
-    String bucketName;
+    @Override
+    public String uploadFile(MultipartFile file) throws IOException {
+        File fileObj = convertMultiPartFileToFile(file);
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
-    @Autowired
-    AmazonS3 s3Client;
+        try {
+            s3Client.putObject(PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(fileName)
+                            .build(),
+                    RequestBody.fromFile(fileObj));
 
-    // private method to determine Content type
-    String determineContentType(String fileName) {
+            Files.delete(fileObj.toPath());
+
+            return UriComponentsBuilder.fromHttpUrl(baseUrl)
+                    .path("/api/v1/file/view/")
+                    .path(fileName)
+                    .toUriString();
+        } catch (S3Exception e) {
+            log.error("Error uploading file to S3: {}", e.getMessage(), e);
+            throw new IOException("Error uploading file to S3", e);
+        }
+    }
+
+    @Override
+    public byte[] downloadFile(String fileName) throws IOException {
+        try {
+            ResponseBytes<GetObjectResponse> responseBytes = s3Client.getObjectAsBytes(GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build());
+
+            return responseBytes.asByteArray();
+        } catch (S3Exception e) {
+            log.error("Error downloading file from S3: {}", e.getMessage(), e);
+            throw new IOException("Error downloading file from S3", e);
+        }
+    }
+
+    @Override
+    public String deleteFile(String fileName) throws IOException {
+        try {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build());
+            return fileName + " removed ...";
+        } catch (S3Exception e) {
+            log.error("Error deleting file from S3: {}", e.getMessage(), e);
+            throw new IOException("Error deleting file from S3", e);
+        }
+    }
+
+    @Override
+    public void viewFile(String fileName, HttpServletResponse response) throws IOException {
+        try {
+            ResponseBytes<GetObjectResponse> responseBytes = s3Client.getObjectAsBytes(GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build());
+
+            String contentType = determineContentType(fileName);
+            response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
+            response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(responseBytes.asByteArray().length));
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"");
+
+            InputStream inputStream = new ByteArrayInputStream(responseBytes.asByteArray());
+            OutputStream outputStream = response.getOutputStream();
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            // Check if the response is already committed
+            if (!response.isCommitted()) {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+
+            // Close the streams
+            inputStream.close();
+            outputStream.flush();
+        } catch (ClientAbortException e) {
+            // Log the exception (optional) - client aborted the request
+            log.warn("ClientAbortException: The client aborted the request.");
+        } catch (S3Exception e) {
+            log.error("Error viewing file from S3: {}", e.getMessage(), e);
+            throw new IOException("Error viewing file from S3", e);
+        }
+    }
+
+
+
+    private String determineContentType(String fileName) {
         String contentType;
         if (fileName.endsWith(".pdf")) {
             contentType = MediaType.APPLICATION_PDF_VALUE;
@@ -55,77 +141,12 @@ public class StorageServiceImpl implements StorageServiceInterface {
         return contentType;
     }
 
-
-    // private method to convert multipart file to file
-    File convertMultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+    private File convertMultiPartFileToFile(MultipartFile file) throws IOException {
+        File convertedFile = File.createTempFile("temp_", "_" + file.getOriginalFilename());
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             byte[] fileBytes = file.getBytes();
             fos.write(fileBytes);
-        } catch (IOException e) {
-            log.error("Error converting multipartFile to file", e);
         }
         return convertedFile;
     }
-
-
-
-    // upload file to s3 cloud AWS storage
-    public String uploadFile(MultipartFile file) {
-        File fileObj = convertMultiPartFileToFile(file);
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-        try {
-            Files.delete(fileObj.toPath());
-        } catch (IOException e) {
-            log.error(String.valueOf(e));
-        }
-        return UriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
-    }
-
-    // download the image from s3
-    public byte[] downloadFile(String fileName) {
-        S3Object s3Object = s3Client.getObject(bucketName, fileName);
-        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-
-        try {
-            return IOUtils.toByteArray(inputStream);
-
-        } catch (IOException e) {
-            log.error(String.valueOf(e));
-        }
-        return new byte[0];
-    }
-
-    //delete the file from s3
-    public String deleteFile(String fileName) {
-        s3Client.deleteObject(bucketName, fileName);
-        return fileName + " removed ...";
-    }
-
-
-    //view the file from s3
-    public void viewFile(String fileName, HttpServletResponse response) {
-        try {
-            S3Object s3Object = s3Client.getObject(bucketName, fileName);
-            S3ObjectInputStream inputStream = s3Object.getObjectContent();
-
-            // Set the response headers
-            String contentType = determineContentType(fileName);
-            response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-
-
-            OutputStream outputStream = response.getOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            inputStream.close();
-            outputStream.flush();
-        } catch (IOException e) {
-            log.error("Amazon S3 Network Error");
-        }
-    }
 }
-

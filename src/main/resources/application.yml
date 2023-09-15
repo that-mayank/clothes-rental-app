@@ -3,14 +3,13 @@ cloud:
     credentials:
       access-key: AKIA2SH7LQXPJ7D7U5MZ
       secret-key: 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
-      static: eu-north-1
+    region: eu-north-1
     stack:
       auto: false
 
 application:
   bucket:
     name: leapsimagebucket
-
 
 spring:
   servlet:

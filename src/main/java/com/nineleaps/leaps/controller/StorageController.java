@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class StorageController {
     // to download the image of the product from s3
     @ApiOperation(value = "to download the image of the product from s3")
     @GetMapping("/download/{fileName}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) throws IOException {
         byte[] data = storageServiceInterface.downloadFile(fileName);
         ByteArrayResource resource = new ByteArrayResource(data);
         return ResponseEntity
@@ -81,7 +82,7 @@ public class StorageController {
     // to view the uploaded image
     @ApiOperation(value = "to view the uploaded image")
     @GetMapping("/view/{fileName}")
-    public void viewFile(@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) {
+    public void viewFile(@PathVariable String fileName, HttpServletResponse response) throws IOException {
 
                 storageServiceInterface.viewFile(fileName, response);
 
@@ -91,7 +92,7 @@ public class StorageController {
     // to delete the image in s3 cloud storage
     @ApiOperation(value = "to delete the image in s3 cloud storage")
     @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
+    public ResponseEntity<String> deleteFile(@PathVariable String fileName) throws IOException {
         return new ResponseEntity<>(storageServiceInterface.deleteFile(fileName), HttpStatus.OK);
     }
 }

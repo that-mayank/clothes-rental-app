@@ -48,8 +48,5 @@ public class Cart {
         } else {
             this.imageUrl = null; // or set a default value if needed
         }
-
-//
-
     }
 }

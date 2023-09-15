@@ -104,9 +104,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
         messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
         messageBuilder.append("Here are the details of your order:\n");
-        Order latestOrder = newOrder;
-        messageBuilder.append("Order ID: ").append(latestOrder.getId()).append("\n");
-        List<OrderItem> orderItems = latestOrder.getOrderItems();
+        messageBuilder.append("Order ID: ").append(newOrder.getId()).append("\n");
+        List<OrderItem> orderItems = newOrder.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             String productName = orderItem.getName();
             int quantity = orderItem.getQuantity();
@@ -117,7 +116,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             messageBuilder.append("Quantity: ").append(quantity).append("\n");
             messageBuilder.append("Price: ").append(price).append("\n");
         }
-        messageBuilder.append("Total Price of order: ").append(latestOrder.getTotalPrice()).append("\n\n");
+        messageBuilder.append("Total Price of order: ").append(newOrder.getTotalPrice()).append("\n\n");
         String message = messageBuilder.toString();
         emailServiceImpl.sendEmail(subject, message, email);
 

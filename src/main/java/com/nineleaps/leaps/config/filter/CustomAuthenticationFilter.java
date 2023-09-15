@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
-import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

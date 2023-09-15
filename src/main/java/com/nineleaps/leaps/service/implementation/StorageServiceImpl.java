@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.service.StorageServiceInterface;
+import io.github.resilience4j.retry.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,52 +32,60 @@ public class StorageServiceImpl implements StorageServiceInterface {
     private final String bucketName;
     private final S3Client s3Client;
     private final S3TransferManager transferManager;
+    private final Retry retry;
 
     public StorageServiceImpl(
             @Value("${application.bucket.name}") String bucketName,
             S3Client s3Client,
-            S3TransferManager transferManager
+            S3TransferManager transferManager,
+            Retry retry
     ) {
         this.bucketName = bucketName;
         this.s3Client = s3Client;
         this.transferManager = transferManager;
+        this.retry = retry;
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
-        File fileObj = convertMultiPartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
         try {
-            UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
-                    .putObjectRequest(b -> b.bucket(bucketName).key(fileName))
-                    .addTransferListener(LoggingTransferListener.create())
-                    .source(fileObj.toPath())
-                    .build();
+            return Retry.decorateFunction(retry, (MultipartFile f) -> {
+                File fileObj;
+                try {
+                    fileObj = convertMultiPartFileToFile(f);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-            FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
+                try {
+                    UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
+                            .putObjectRequest(b -> b.bucket(bucketName).key(fileName))
+                            .addTransferListener(LoggingTransferListener.create())
+                            .source(fileObj.toPath())
+                            .build();
 
-            // Wait for the upload to complete and handle errors
-            CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
+                    FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
 
-            Files.delete(fileObj.toPath());
+                    // Wait for the upload to complete and handle errors
+                    CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
 
-            return UriComponentsBuilder.fromHttpUrl(baseUrl)
-                    .path("/api/v1/file/view/")
-                    .path(fileName)
-                    .toUriString();
-        } catch (CompletionException e) {
-            // Handle any exceptions during upload
-            throw new IOException("Error uploading file to S3", e.getCause());
-        } catch (S3Exception e) {
-            // Handle S3 exceptions
-            throw new IOException("Error uploading file to S3: " + e.getMessage(), e);
-        } finally {
-            // Ensure the temp file is deleted in case of any errors
-            Files.deleteIfExists(fileObj.toPath());
+                    Files.delete(fileObj.toPath());
+
+                    return UriComponentsBuilder.fromHttpUrl(baseUrl)
+                            .path("/api/v1/file/view/")
+                            .path(fileName)
+                            .toUriString();
+                } catch (Exception e) {
+                    log.error("Error during file upload: {}", e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            }).apply(file);
+        } catch (RuntimeException e) {
+            log.error("Retry failed for uploading file: {}", e.getMessage(), e);
+            throw new IOException("Error uploading file to S3 after retries", e);
         }
     }
-
-
     @Override
     public byte[] downloadFile(String fileName) throws IOException {
         try {

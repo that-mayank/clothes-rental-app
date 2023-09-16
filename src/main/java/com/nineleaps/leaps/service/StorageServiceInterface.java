@@ -8,6 +8,8 @@ import java.io.IOException;
 public interface StorageServiceInterface {
     String uploadFile(MultipartFile file) throws IOException;
 
+    String uploadFileToBucket(MultipartFile file,Long categoryId,Long subcategoryId) throws IOException;
+
     byte[] downloadFile(String fileName) throws IOException;
 
     String deleteFile(String fileName) throws IOException;

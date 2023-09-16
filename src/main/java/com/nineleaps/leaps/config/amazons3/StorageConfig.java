@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.config;
+package com.nineleaps.leaps.config.amazons3;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
-import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -74,7 +73,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 
 
-
+    @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
         String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";

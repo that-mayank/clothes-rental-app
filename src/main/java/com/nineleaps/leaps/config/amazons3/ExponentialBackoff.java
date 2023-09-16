@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.config;
+package com.nineleaps.leaps.config.amazons3;
 
 import io.github.resilience4j.retry.RetryConfig;
 import software.amazon.awssdk.services.s3.model.S3Exception;

@@ -1,4 +1,5 @@
-package com.nineleaps.leaps.config;
+package com.nineleaps.leaps.config.amazons3;
+
 
 import io.github.resilience4j.retry.Retry;
 import org.springframework.context.annotation.Bean;

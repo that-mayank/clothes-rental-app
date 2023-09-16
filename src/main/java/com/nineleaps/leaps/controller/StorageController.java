@@ -1,7 +1,7 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.UrlResponse;
-import com.nineleaps.leaps.model.User;
+
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
@@ -50,6 +50,29 @@ public class StorageController {
         }
         return urlResponse;
     }
+
+    @ApiOperation(value = "Upload image to Amazon S3")
+    @PostMapping("/uploadFileToBucket")
+    public UrlResponse uploadFileToSpecificBucket(
+            @RequestParam("file") MultipartFile[] files,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("subcategoryId") Long subcategoryId) {
+        UrlResponse urlResponse = new UrlResponse();
+        List<String> urls = new ArrayList<>();
+        try {
+            for (MultipartFile file : files) {
+                // Construct the bucket path based on category and subcategory
+
+                String url = storageServiceInterface.uploadFileToBucket(file, categoryId,subcategoryId);
+                urls.add(url);
+            }
+            urlResponse.setUrls(urls);
+        } catch (Exception e) {
+            log.error("Network Error in fetching Amazon S3");
+        }
+        return urlResponse;
+    }
+
 
     @ApiOperation(value = "Upload profile image to amazon s3")
     @PostMapping("/uploadProfileImage")

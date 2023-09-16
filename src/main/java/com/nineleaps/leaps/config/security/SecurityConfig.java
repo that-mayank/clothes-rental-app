@@ -21,16 +21,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@SuppressWarnings("deprecation")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
-    private  final String ROLE_OWNER = "OWNER";
-    private  final String ROLE_BORROWER = "BORROWER";
-    private  final String ROLE_GUEST = "GUEST";
-    private final String ROLE_ADMIN = "ADMIN";
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -41,6 +38,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility, refreshTokenRepository);
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
+        String ROLE_OWNER = "OWNER";
+        String ROLE_BORROWER = "BORROWER";
+        String ROLE_GUEST = "GUEST";
+        String ROLE_ADMIN = "ADMIN";
         http
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -59,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/v1/product/search",
                         "/api/v1/product/list",
                         "/api/v1/product/listByPriceRange"
-                ).hasAnyAuthority(ROLE_OWNER, ROLE_BORROWER, ROLE_GUEST )
+                ).hasAnyAuthority(ROLE_OWNER, ROLE_BORROWER, ROLE_GUEST)
                 .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority(ROLE_ADMIN)
                 .antMatchers(
                         "/api/v1/address/add",

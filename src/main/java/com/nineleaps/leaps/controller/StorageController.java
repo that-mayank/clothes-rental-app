@@ -2,6 +2,7 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.UrlResponse;
 
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
@@ -33,27 +34,10 @@ public class StorageController {
     private final StorageServiceInterface storageServiceInterface;
     private final Helper helper;
 
-    // used to upload images of the product to s3
-    @ApiOperation(value = "Upload image to amazon s3")
-    @PostMapping("/upload")
-    public UrlResponse uploadFile(@RequestParam(value = "file") MultipartFile[] files) {
-        UrlResponse urlResponse = new UrlResponse();
-        List<String> urls = new ArrayList<>();
-        try {
-            for (MultipartFile file : files) {
-                String url = storageServiceInterface.uploadFile(file);
-                urls.add(url);
-            }
-            urlResponse.setUrls(urls);
-        } catch (Exception e) {
-            log.error("Network Error in fetching Amazon S3");
-        }
-        return urlResponse;
-    }
 
     @ApiOperation(value = "Upload image to Amazon S3")
-    @PostMapping("/uploadFileToBucket")
-    public UrlResponse uploadFileToSpecificBucket(
+    @PostMapping("/uploadProductImage")
+    public ResponseEntity<UrlResponse> uploadFileToSpecificBucket(
             @RequestParam("file") MultipartFile[] files,
             @RequestParam("categoryId") Long categoryId,
             @RequestParam("subcategoryId") Long subcategoryId) {
@@ -62,23 +46,26 @@ public class StorageController {
         try {
             for (MultipartFile file : files) {
                 // Construct the bucket path based on category and subcategory
-
-                String url = storageServiceInterface.uploadFileToBucket(file, categoryId,subcategoryId);
+                String url = storageServiceInterface.uploadFileToBucket(file, categoryId, subcategoryId);
                 urls.add(url);
             }
             urlResponse.setUrls(urls);
+            return ResponseEntity.ok(urlResponse);  // Return 200 OK with the UrlResponse
         } catch (Exception e) {
             log.error("Network Error in fetching Amazon S3");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // Return 500 Internal Server Error
         }
-        return urlResponse;
     }
 
 
     @ApiOperation(value = "Upload profile image to amazon s3")
     @PostMapping("/uploadProfileImage")
-    public ResponseEntity<String> uploadProfileFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadProfileImage(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring(7);
+        User user = helper.getUser(token);
         try {
-            String url = storageServiceInterface.uploadFile(file);
+            String url = storageServiceInterface.uploadProfileImage(file,user);
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("url", url);
             return ResponseEntity.ok(jsonResponse.toString());
@@ -104,18 +91,30 @@ public class StorageController {
 
     // to view the uploaded image
     @ApiOperation(value = "to view the uploaded image")
-    @GetMapping("/view/{fileName}")
-    public void viewFile(@PathVariable String fileName, HttpServletResponse response) throws IOException {
-
-                storageServiceInterface.viewFile(fileName, response);
-
+    @GetMapping("/view")
+    public ResponseEntity<String> viewFile(@RequestParam("imageurl") String fileName, HttpServletResponse response) throws IOException {
+        try {
+            storageServiceInterface.viewFile(fileName, response);
+            return ResponseEntity.ok("Image fetched from S3");  // Return 200 OK with a success message
+        } catch (IOException e) {
+            log.error("Error viewing file from S3: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error viewing file from S3");  // Return 500 Internal Server Error with an error message
+        }
     }
+
 
 
     // to delete the image in s3 cloud storage
     @ApiOperation(value = "to delete the image in s3 cloud storage")
-    @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) throws IOException {
-        return new ResponseEntity<>(storageServiceInterface.deleteFile(fileName), HttpStatus.OK);
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteFile(@RequestParam("fileurl") String fileName) {
+        try {
+            String result = storageServiceInterface.deleteFile(fileName);
+            return ResponseEntity.noContent().build();  // Return 204 No Content for successful deletion
+        } catch (IOException e) {
+            log.error("Error deleting file from S3: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting file from S3");  // Return 500 Internal Server Error with an error message
+        }
     }
+
 }

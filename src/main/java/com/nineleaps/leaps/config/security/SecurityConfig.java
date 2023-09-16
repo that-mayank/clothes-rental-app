@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/v1/user/signup",
                         "/api/v1/user/refreshtoken"
                 ).permitAll()
-                .antMatchers("/api/v1/file/view/**").permitAll()
+                .antMatchers("/api/v1/file/view/**","/api/v1/file/uploadProductImage","/api/v1/file/uploadProfileImage").permitAll()
                 .antMatchers(
                         "/api/v1/category/list",
                         "/api/v1/subcategory/list",

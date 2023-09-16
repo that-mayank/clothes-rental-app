@@ -4,19 +4,76 @@ import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.CategoryRepository;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
+import io.github.resilience4j.retry.Retry;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
+import software.amazon.awssdk.transfer.s3.S3TransferManager;
+import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
+import software.amazon.awssdk.transfer.s3.model.FileUpload;
+import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
+import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
+import static com.nineleaps.leaps.LeapsApplication.bucketName;
+
 @Component
 @AllArgsConstructor
+@Slf4j
 public class StorageUtility {
 
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final Retry retry;
 
+    private final S3TransferManager transferManager;
+
+    public String uploadFile(MultipartFile file, String folderPath, String fileName) throws IOException {
+        try {
+            return Retry.decorateFunction(retry, (MultipartFile f) -> {
+                File fileObj;
+                try {
+                    fileObj = convertMultiPartFileToFile(f);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try {
+                    UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
+                            .putObjectRequest(b -> b.bucket(bucketName).key(folderPath + "/" + fileName))
+                            .addTransferListener(LoggingTransferListener.create())
+                            .source(fileObj.toPath())
+                            .build();
+
+                    FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
+
+                    // Wait for the upload to complete and handle errors
+                    CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
+
+                    Files.delete(fileObj.toPath());
+
+                    return UriComponentsBuilder.fromHttpUrl(NGROK)
+                            .path("/api/v1/file/view")
+                            .queryParam("imageurl", folderPath + "/" + fileName)
+                            .toUriString();
+
+                } catch (Exception e) {
+                    log.error("Error during file upload: {}", e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            }).apply(file);
+        } catch (RuntimeException e) {
+            log.error("Retry failed for uploading file: {}", e.getMessage(), e);
+            throw new IOException("Error uploading file to S3 after retries", e);
+        }
+    }
 
     public String determineContentType(String fileName) {
         String contentType;

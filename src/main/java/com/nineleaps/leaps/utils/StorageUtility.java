@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 @Component
@@ -17,6 +16,8 @@ public class StorageUtility {
 
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
+
+
     public String determineContentType(String fileName) {
         String contentType;
         if (fileName.endsWith(".pdf")) {
@@ -36,6 +37,10 @@ public class StorageUtility {
         file.transferTo(convertedFile);
         return convertedFile;
     }
+    public String getSubCategoryNameById(Long subCategoryId) {
+        SubCategory subCategory = subCategoryRepository.findById(subCategoryId).orElse(null);
+        return (subCategory != null) ? subCategory.getSubcategoryName() : null;
+    }
 
     public String getCategoryNameById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
@@ -43,8 +48,5 @@ public class StorageUtility {
     }
 
     // Method to get subcategory name based on ID
-    public String getSubCategoryNameById(Long subCategoryId) {
-        SubCategory subCategory = subCategoryRepository.findById(subCategoryId).orElse(null);
-        return (subCategory != null) ? subCategory.getSubcategoryName() : null;
-    }
+
 }

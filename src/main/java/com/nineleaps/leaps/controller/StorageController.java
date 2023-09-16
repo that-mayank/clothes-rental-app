@@ -1,7 +1,6 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.UrlResponse;
-
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -92,7 +90,7 @@ public class StorageController {
     // to view the uploaded image
     @ApiOperation(value = "to view the uploaded image")
     @GetMapping("/view")
-    public ResponseEntity<String> viewFile(@RequestParam("imageurl") String fileName, HttpServletResponse response) throws IOException {
+    public ResponseEntity<String> viewFile(@RequestParam("image") String fileName, HttpServletResponse response){
         try {
             storageServiceInterface.viewFile(fileName, response);
             return ResponseEntity.ok("Image fetched from S3");  // Return 200 OK with a success message
@@ -107,9 +105,9 @@ public class StorageController {
     // to delete the image in s3 cloud storage
     @ApiOperation(value = "to delete the image in s3 cloud storage")
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteFile(@RequestParam("fileurl") String fileName) {
+    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName) {
         try {
-            String result = storageServiceInterface.deleteFile(fileName);
+           storageServiceInterface.deleteFile(fileName);
             return ResponseEntity.noContent().build();  // Return 204 No Content for successful deletion
         } catch (IOException e) {
             log.error("Error deleting file from S3: {}", e.getMessage(), e);

@@ -1,8 +1,8 @@
 package com.nineleaps.leaps.config.amazons3;
 
+import com.nineleaps.leaps.utils.StorageUtility;
 import io.github.resilience4j.retry.RetryConfig;
 import software.amazon.awssdk.services.s3.model.S3Exception;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
@@ -16,7 +16,7 @@ public class ExponentialBackoff {
         return RetryConfig.custom()
                 .maxAttempts(maxAttempts)
                 .waitDuration(Duration.ofMillis(waitDuration))
-                .retryExceptions(S3Exception.class, IOException.class, TimeoutException.class)  // Add specific exceptions if needed
+                .retryExceptions(S3Exception.class, IOException.class, TimeoutException.class, StorageUtility.S3UploadException.class)  // Add specific exceptions if needed
                 .build();
     }
 }

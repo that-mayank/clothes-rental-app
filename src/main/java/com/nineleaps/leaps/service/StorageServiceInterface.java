@@ -13,7 +13,7 @@ public interface StorageServiceInterface {
 
     byte[] downloadFile(String fileName) throws IOException;
 
-    String deleteFile(String fileName) throws IOException;
+    void deleteFile(String fileName) throws IOException;
 
     void viewFile(String fileName, HttpServletResponse response) throws IOException;
 }

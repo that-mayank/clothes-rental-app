@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
-import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
-import software.amazon.awssdk.transfer.s3.model.FileUpload;
+
 import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
 
@@ -32,17 +31,22 @@ public class StorageUtility {
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final Retry retry;
-
     private final S3TransferManager transferManager;
 
-    public String uploadFile(MultipartFile file, String folderPath, String fileName) throws IOException {
+    public static class S3UploadException extends RuntimeException {
+        public S3UploadException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    public String uploadFile(MultipartFile file, String folderPath, String fileName){
         try {
             return Retry.decorateFunction(retry, (MultipartFile f) -> {
                 File fileObj;
                 try {
                     fileObj = convertMultiPartFileToFile(f);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new S3UploadException("Error converting multipart file to file", e);
                 }
 
                 try {
@@ -52,28 +56,26 @@ public class StorageUtility {
                             .source(fileObj.toPath())
                             .build();
 
-                    FileUpload fileUpload = transferManager.uploadFile(uploadFileRequest);
-
-                    // Wait for the upload to complete and handle errors
-                    CompletedFileUpload uploadResult = fileUpload.completionFuture().join();
+                    transferManager.uploadFile(uploadFileRequest).completionFuture().join();
 
                     Files.delete(fileObj.toPath());
 
                     return UriComponentsBuilder.fromHttpUrl(NGROK)
                             .path("/api/v1/file/view")
-                            .queryParam("imageurl", folderPath + "/" + fileName)
+                            .queryParam("image", folderPath + "/" + fileName)
                             .toUriString();
 
                 } catch (Exception e) {
                     log.error("Error during file upload: {}", e.getMessage(), e);
-                    throw new RuntimeException(e);
+                    throw new S3UploadException("Error uploading file to S3", e);
                 }
             }).apply(file);
         } catch (RuntimeException e) {
             log.error("Retry failed for uploading file: {}", e.getMessage(), e);
-            throw new IOException("Error uploading file to S3 after retries", e);
+            throw new S3UploadException("Error uploading file to S3 after retries", e);
         }
     }
+
 
     public String determineContentType(String fileName) {
         String contentType;
@@ -94,16 +96,18 @@ public class StorageUtility {
         file.transferTo(convertedFile);
         return convertedFile;
     }
+
     public String getSubCategoryNameById(Long subCategoryId) {
         SubCategory subCategory = subCategoryRepository.findById(subCategoryId).orElse(null);
         return (subCategory != null) ? subCategory.getSubcategoryName() : null;
     }
+
 
     public String getCategoryNameById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         return (category != null) ? category.getCategoryName() : null;
     }
 
-    // Method to get subcategory name based on ID
+
 
 }

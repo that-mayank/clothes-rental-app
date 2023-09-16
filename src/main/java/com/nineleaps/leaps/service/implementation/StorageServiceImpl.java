@@ -25,7 +25,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
     private final StorageUtility storageUtility;
 
 
-    public String uploadProfileImage(MultipartFile file, User user) throws IOException {
+    public String uploadProfileImage(MultipartFile file, User user){
         String nameFirst = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         String userName = user.getId() + "_" + user.getEmail() + "_";
         String fileName = userName + nameFirst;
@@ -33,7 +33,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
         return storageUtility.uploadFile(file, folderPath, fileName);
     }
 
-    public String uploadFileToBucket(MultipartFile file, Long categoryId, Long subcategoryId) throws IOException {
+    public String uploadFileToBucket(MultipartFile file, Long categoryId, Long subcategoryId){
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         String categoryName = storageUtility.getCategoryNameById(categoryId);
         String subCategoryName = storageUtility.getSubCategoryNameById(subcategoryId);
@@ -59,13 +59,12 @@ public class StorageServiceImpl implements StorageServiceInterface {
     }
 
     @Override
-    public String deleteFile(String fileName) throws IOException {
+    public void deleteFile(String fileName) throws IOException {
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileName)
                     .build());
-            return fileName + " removed ...";
         } catch (S3Exception e) {
             log.error("Error deleting file from S3: {}", e.getMessage(), e);
             throw new IOException("Error deleting file from S3", e);

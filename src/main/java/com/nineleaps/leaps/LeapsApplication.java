@@ -26,4 +26,7 @@ public class LeapsApplication {
     public static final String NGROK = "https://cb79-106-51-70-135.ngrok-free.app";
     public static final String bucketName = "leapsimagebucket";
 
+    public static final Integer ACCOUNT_LOCK_DURATION_MINUTES = 2;
+    public static final Integer MAX_LOGIN_ATTEMPTS = 3;
+
 }

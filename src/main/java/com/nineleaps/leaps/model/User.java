@@ -46,6 +46,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> products;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private UserLoginInfo userLoginInfo;
+
 //    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private DeviceToken deviceToken;
 
@@ -57,6 +61,7 @@ public class User {
         this.password = password;
         this.role = role;
         this.products = new ArrayList<>();
+
     }
 
     public User(ProfileUpdateDto profileUpdateDto, User oldUser) {

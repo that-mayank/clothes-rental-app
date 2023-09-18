@@ -3,6 +3,7 @@ package com.nineleaps.leaps.config.security;
 import com.nineleaps.leaps.config.filter.CustomAuthenticationFilter;
 import com.nineleaps.leaps.config.filter.CustomAuthorizationFilter;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
+import com.nineleaps.leaps.repository.UserLoginInfoRepository;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
+    private final UserLoginInfoRepository userLoginInfoRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -37,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility, refreshTokenRepository);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility, refreshTokenRepository,userLoginInfoRepository);
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 
         // Define your CSP policy
@@ -47,13 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .headers()
                 .contentSecurityPolicy(cspPolicy); // Set the CSP policy
-
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(customAuthenticationFilter)
                 .addFilterBefore(new CustomAuthorizationFilter(securityUtility), UsernamePasswordAuthenticationFilter.class);
     }
-
 
     @Bean
     @Override

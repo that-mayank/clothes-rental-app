@@ -11,6 +11,9 @@ import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.UserNotExistException;
 import com.nineleaps.leaps.model.Guest;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.UserLoginInfo;
+import com.nineleaps.leaps.repository.UserLoginInfoRepository;
+import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.RefreshTokenServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -43,7 +46,8 @@ public class UserController {
     private final Helper helper;
     private final SecurityUtility securityUtility;
     private final RefreshTokenServiceInterface refreshTokenService;
-
+    private final UserRepository userRepository;
+private final UserLoginInfoRepository userLoginInfoRepository;
 
     @ApiOperation(value = "user registration api")
     @PostMapping("/signup")
@@ -156,6 +160,28 @@ public class UserController {
         String email = user.getEmail();
         refreshTokenService.deleteRefreshTokenByEmailAndToken(email,token);
         return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out "), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/activate-account")
+    public ResponseEntity<String> activateAccount(@RequestParam(name = "useremail") String email) {
+        try {
+            User user = userRepository.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+
+            // Activate the user's account
+            UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(user.getId());
+            if(userLoginInfo != null){
+               userLoginInfo.resetLoginAttempts();
+               userLoginInfoRepository.save(userLoginInfo);
+            }
+
+            return ResponseEntity.ok("User account activated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+        }
     }
 }
 

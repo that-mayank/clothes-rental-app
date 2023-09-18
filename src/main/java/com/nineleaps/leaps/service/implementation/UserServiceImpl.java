@@ -8,6 +8,8 @@ import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.UserLoginInfo;
+import com.nineleaps.leaps.repository.UserLoginInfoRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -34,7 +36,7 @@ import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 @Transactional
 public class UserServiceImpl implements UserServiceInterface, UserDetailsService {
     private final UserRepository userRepository;
-
+private final UserLoginInfoRepository userLoginInfoRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -89,6 +91,10 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
         try {
             userRepository.save(user);
+            UserLoginInfo userLoginInfo = new UserLoginInfo();
+            userLoginInfo.initializeLoginInfo(user);
+            userLoginInfoRepository.save(userLoginInfo);
+            System.out.println(userLoginInfo.getLoginAttempts());
             return new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
         } catch (Exception e) {
             //handle signup error

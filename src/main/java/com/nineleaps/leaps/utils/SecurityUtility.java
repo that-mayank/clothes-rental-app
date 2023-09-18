@@ -4,9 +4,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nineleaps.leaps.model.RefreshToken;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.UserLoginInfo;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
+import com.nineleaps.leaps.repository.UserLoginInfoRepository;
+import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Component;
 
 
@@ -24,11 +28,19 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.nineleaps.leaps.LeapsApplication.ACCOUNT_LOCK_DURATION_MINUTES;
+import static com.nineleaps.leaps.LeapsApplication.MAX_LOGIN_ATTEMPTS;
+
+
+
 @Component
 @AllArgsConstructor
 public class SecurityUtility {
+
     private final UserServiceInterface userServiceInterface;
     private RefreshTokenRepository refreshTokenRepository;
+    private final UserLoginInfoRepository userLoginInfoRepository;
+    private final UserRepository userRepository;
 
     public void getDeviceToken(String email,String deviceToken){
         userServiceInterface.saveDeviceTokenToUser(email,deviceToken);
@@ -92,6 +104,98 @@ public class SecurityUtility {
             return reader.readLine();
         }
     }
+
+
+    public void updateLoginAttempts(String email) {
+        User user = userRepository.findByEmail(email);
+        Long userId = user.getId();
+        UserLoginInfo loginInfo = userLoginInfoRepository.findByUserId(userId);
+
+        if (loginInfo == null) {
+            loginInfo = new UserLoginInfo();
+            loginInfo.setUser(user);
+            loginInfo.setLoginAttempts(1);
+        } else {
+            int attempts = loginInfo.getLoginAttempts();
+            loginInfo.setLoginAttempts(attempts + 1);
+        }
+
+        // Check if login attempts exceed the maximum allowed
+        if (loginInfo.getLoginAttempts() >= MAX_LOGIN_ATTEMPTS) {
+            loginInfo.lockAccount();
+
+            // Set the lock time to the current time plus the lock duration
+            LocalDateTime lockTime = LocalDateTime.now().plusMinutes(ACCOUNT_LOCK_DURATION_MINUTES);
+            loginInfo.setLockTime(lockTime);
+            loginInfo.setLocked(true);  // Set locked to true
+        } else {
+            loginInfo.setLocked(false);  // Reset locked to false if attempts < MAX_LOGIN_ATTEMPTS
+        }
+
+        // Update or save the login info
+        userLoginInfoRepository.save(loginInfo);
+    }
+
+
+    public void checkAccountLockAndLoginAttempts(String email) {
+        User user = userRepository.findByEmail(email);
+        Long userId = user.getId();
+        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
+
+        if(userLoginInfo == null){
+            UserLoginInfo userLoginInfo2 = new UserLoginInfo();
+            userLoginInfo2.initializeLoginInfo(user);
+            userLoginInfoRepository.save(userLoginInfo2);
+        }else{
+            LocalDateTime unlockTime = userLoginInfo.getLockTime();
+            if (userLoginInfo.isAccountLocked() && unlockTime != null && LocalDateTime.now().isBefore(unlockTime)) {
+                throw new LockedException("Account is locked. Please try again later.");
+            } else if (userLoginInfo.isAccountLocked() && unlockTime != null && LocalDateTime.now().isAfter(unlockTime)) {
+                userLoginInfo.resetLoginAttempts();
+                userLoginInfo.setLocked(false);  // Unlock the account
+                userLoginInfo.setLockTime(null);
+                userLoginInfoRepository.save(userLoginInfo);
+                System.out.println("Account got unlocked");
+            }
+        }
+
+        // Check if the account is locked or login attempts exceed the limit
+
+        // ... other logic
+    }
+
+
+
+    public void setLastLoginAttempt(String email){
+        User user = userRepository.findByEmail(email);
+        Long userId = user.getId();
+        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
+        if (userLoginInfo != null) {
+            userLoginInfo.setLastLoginAttempt(LocalDateTime.now());
+            userLoginInfoRepository.save(userLoginInfo);
+        }
+    }
+
+    public void initializeUserLoginInfo(String email){
+        User user = userRepository.findByEmail(email);
+        Long userId = user.getId();
+        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
+        if(userLoginInfo != null){
+            userLoginInfo.initializeLoginInfo(user);
+        }
+    }
+
+//    public void checkIfUserHasLoginInfo(String email){
+//        User user = userRepository.findByEmail(email);
+//        Long userId = user.getId();
+//        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
+//        if(userLoginInfo == null){
+//            UserLoginInfo userLoginInfo2 = new UserLoginInfo();
+//            userLoginInfo2.initializeLoginInfo(user);
+//            userLoginInfoRepository.save(userLoginInfo);
+//        }
+//    }
+
 
 
 }

@@ -6,9 +6,13 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+
 
 
 @RestController
@@ -20,6 +24,7 @@ public class PushNotificationController {
 
 
     @PostMapping("/notification/token")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     @ApiOperation(value = "Send push notification to device using fcm token")
     public ResponseEntity<PushNotificationResponse> sendTokenNotification(@RequestBody String token) {
         pushNotificationService.sendNotification(token);

@@ -21,6 +21,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ public class OrderController {
     //place order after checkout
     @ApiOperation(value = "Add new order after successful payment")
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> placeOrder(@RequestParam("razorpayId") String razorpayId, HttpServletRequest request) throws AuthenticationFailException {
         //authenticate the token
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -57,6 +60,7 @@ public class OrderController {
     //get all orders
     @ApiOperation(value = "List all the orders for a particular user")
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
         //authenticate token
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -70,6 +74,7 @@ public class OrderController {
     //get order items for an order
     @ApiOperation(value = "Get details of an order")
     @GetMapping("/getOrderById/{orderId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
         //authenticate token
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -83,6 +88,7 @@ public class OrderController {
 
     //Dummy  apis for transit, delivered, pickup and return
     @PostMapping("/order-status")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -98,6 +104,7 @@ public class OrderController {
 
 
     @GetMapping("/owner-order-history") //rentedProducts
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -107,6 +114,7 @@ public class OrderController {
     }
 
     @GetMapping("/shipping-status")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<OrderItemDto>> getShippingStatus(@RequestParam("status") String shippingStatus, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -116,6 +124,7 @@ public class OrderController {
     }
 
     @GetMapping("/generateInvoice/{orderId}")
+    @PreAuthorize("hasAuthority('BORROWER')")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
         try {
             String authorizationHeader = request.getHeader("Authorization");

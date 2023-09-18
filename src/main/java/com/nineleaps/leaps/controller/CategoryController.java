@@ -11,11 +11,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
+
 import javax.validation.Valid;
 import java.util.List;
+
+
 
 @RestController
 @RequestMapping("/api/v1/category")
@@ -29,6 +33,7 @@ public class CategoryController {
 
     @ApiOperation(value = "Add new category")
     @PostMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
         if (Helper.notNull(categoryService.readCategory(categoryDto.getCategoryName()))) {
             return new ResponseEntity<>(new ApiResponse(false, "Category already exists"), HttpStatus.CONFLICT);
@@ -40,6 +45,7 @@ public class CategoryController {
 
     @ApiOperation(value = "List categories")
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<Category>> listCategory() {
         List<Category> body = categoryService.listCategory();
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -47,6 +53,7 @@ public class CategoryController {
 
     @ApiOperation(value = "update category")
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable("id") Long id, @Valid @RequestBody CategoryDto updateCategory) {
         //Check to see if category exists
         if ((categoryService.readCategory(id)).isPresent()) {

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,7 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
+
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -36,6 +39,7 @@ public class DashboardController {
 
     @ApiOperation(value = "Gives details about how many orders the owner has got and the total earnings")
     @GetMapping("/owner-view")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<String, Object>> dashboard(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -46,6 +50,7 @@ public class DashboardController {
 
     @ApiOperation(value = "Gives details about how many orders the owner has got")
     @GetMapping("/analytics")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, Map<String, Object>>> onClickDashboard(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -56,6 +61,7 @@ public class DashboardController {
 
     @ApiOperation(value = "Gives details about how many orders the owner has got")
     @GetMapping("/analytics-yearly") //onClickDashboardYearlyWiseData
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<Year, Map<YearMonth, Map<String, Object>>>> onClickDashboardYearWiseData(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -65,6 +71,7 @@ public class DashboardController {
     }
 
     @GetMapping("/monthly-order-items") //dashboardOrderItems
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboard(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -74,6 +81,7 @@ public class DashboardController {
     }
 
     @GetMapping("/subcategories-analytics")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsBySubCategories(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -82,7 +90,8 @@ public class DashboardController {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/categories-analytics") //dashboardCategoriesAnalytics
+    @GetMapping("/categories-analytics")
+    @PreAuthorize("hasAuthority('OWNER')")//dashboardCategoriesAnalytics
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsByCategories(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -92,6 +101,7 @@ public class DashboardController {
     }
 
     @GetMapping("/date-selector")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboardBwDates(HttpServletRequest request, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);

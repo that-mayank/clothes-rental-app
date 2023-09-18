@@ -14,12 +14,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -37,6 +40,8 @@ public class WishlistController {
     //Add product to Wishlist
     //change Product to ProductDto
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
+
     public ResponseEntity<ApiResponse> addWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
         //check if token is valid
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -62,6 +67,7 @@ public class WishlistController {
 
     //Get all items of Wishlist
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> getWishlist(HttpServletRequest request) {
         //check if token is valid
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -80,6 +86,7 @@ public class WishlistController {
 
     //Remove items from wishlist
     @DeleteMapping("/remove")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> removeFromWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
         //verify token
         String authorizationHeader = request.getHeader(AUTHORIZATION);

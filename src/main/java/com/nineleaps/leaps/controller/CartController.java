@@ -7,7 +7,7 @@ import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
-import com.nineleaps.leaps.model.orders.OrderItem;
+
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.OrderItemRepository;
@@ -19,10 +19,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -43,6 +45,7 @@ public class CartController {
     //Add to cart
     @ApiOperation(value = "Add new product to cart")
     @PostMapping("/add") //change the code accordingly so that duplicate items cannot be added *Done*
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> addToCart(@RequestBody AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
         //authenticate token is valid or not
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -59,6 +62,7 @@ public class CartController {
     //Get products of cart
     @ApiOperation(value = "List products of cart")
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -70,6 +74,7 @@ public class CartController {
     //update the cart
     @ApiOperation(value = "Update product in cart")
     @PutMapping("/update") //productId
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> updateCartItem(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -81,6 +86,7 @@ public class CartController {
     //remove from cart
     @ApiOperation(value = "Delete product from cart")
     @DeleteMapping("/delete/{productId}") //productId
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -91,6 +97,7 @@ public class CartController {
 
     //update cart quantity
     @PutMapping("/updateQuantity")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> updateQuantity(@RequestBody @Valid UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);

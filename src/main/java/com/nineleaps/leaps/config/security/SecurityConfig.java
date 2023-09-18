@@ -7,9 +7,9 @@ import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @SuppressWarnings("deprecation")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -38,61 +39,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility, refreshTokenRepository);
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
-        String ROLE_OWNER = "OWNER";
-        String ROLE_BORROWER = "BORROWER";
-        String ROLE_GUEST = "GUEST";
-        String ROLE_ADMIN = "ADMIN";
+
+        // Define your CSP policy
+        String cspPolicy = "default-src 'self'; script-src 'self' https://8473-106-51-70-135.ngrok-free.app";
+
         http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(
-                        "/api/v1/phoneNo",
-                        "/api/v1/otp",
-                        "/api/v1/user/signup",
-                        "/api/v1/user/refreshtoken"
-                ).permitAll()
-                .antMatchers("/api/v1/file/view/**","/api/v1/file/uploadProductImage","/api/v1/file/uploadProfileImage").permitAll()
-                .antMatchers(
-                        "/api/v1/category/list",
-                        "/api/v1/subcategory/list",
-                        "/api/v1/product/search",
-                        "/api/v1/product/list",
-                        "/api/v1/product/listByPriceRange"
-                ).hasAnyAuthority(ROLE_OWNER, ROLE_BORROWER, ROLE_GUEST)
-                .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority(ROLE_ADMIN)
-                .antMatchers(
-                        "/api/v1/address/add",
-                        "/api/v1/address/update/**",
-                        "/api/v1/address/listaddress",
-                        "/api/v1/address/delete/**"
-                ).hasAnyAuthority(ROLE_OWNER, ROLE_BORROWER)
-                .antMatchers(
-                        "/api/v1/cart/add",
-                        "/api/v1/cart/list",
-                        "/api/v1/cart/update",
-                        "/api/v1/cart/delete/**"
-                ).hasAnyAuthority(ROLE_OWNER, ROLE_BORROWER)
-                .antMatchers(
-                        "/api/v1/category/create",
-                        "/api/v1/category/update/**"
-                ).permitAll()
-                .antMatchers(
-                        "/api/v1/order/create-checkout-session",
-                        "/api/v1/order/add",
-                        "/api/v1/order/list",
-                        "/api/v1/order/getOrderById/**",
-                        "/api/v1/user/update"
-                ).hasAnyAuthority(ROLE_BORROWER, ROLE_OWNER)
-                .antMatchers(
-                        "/api/v1/dashboard/owner-view",
-                        "/api/v1/dashboard/analytics"
-                ).hasAuthority(ROLE_OWNER)
+                .headers()
+                .contentSecurityPolicy(cspPolicy); // Set the CSP policy
+
+                http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(customAuthenticationFilter)
                 .addFilterBefore(new CustomAuthorizationFilter(securityUtility), UsernamePasswordAuthenticationFilter.class);
     }
+
 
     @Bean
     @Override

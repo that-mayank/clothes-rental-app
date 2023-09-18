@@ -16,6 +16,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,7 @@ public class ProductController {
 
     @ApiOperation(value = "Add product to owner")
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductDto productDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -58,6 +61,7 @@ public class ProductController {
 
     @ApiOperation(value = "List all the products and same user cannot see his/her own products in borrower flow")
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> listProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -68,6 +72,7 @@ public class ProductController {
 
     @ApiOperation(value = "Update product of owner")
     @PutMapping("/update/{productId}")
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody @Valid ProductDto productDto, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -85,6 +90,7 @@ public class ProductController {
     //list by subcategory id
     @ApiOperation(value = "List product by subcategory id")
     @GetMapping("/listBySubcategoryId/{subcategoryId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> listBySubcategoryId(@PathVariable("subcategoryId") Long subcategoryId, HttpServletRequest request) {
         //check if subcategory is valid
         Optional<SubCategory> optionalSubCategory = subCategoryService.readSubCategory(subcategoryId);
@@ -102,6 +108,7 @@ public class ProductController {
     //list by category id
     @ApiOperation(value = "List products by category id")
     @GetMapping("/listByCategoryId/{categoryId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> listByCategoryId(@PathVariable("categoryId") Long categoryId, HttpServletRequest request) {
         //check if category id is valid
         Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
@@ -119,6 +126,7 @@ public class ProductController {
     //list by product id
     @ApiOperation(value = "Get individual product details")
     @GetMapping("/listByProductId/{productId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ProductDto> listByProductId(@PathVariable("productId") Long productId) {
         //check if product id is valid
         ProductDto product = productService.listProductByid(productId);
@@ -128,6 +136,7 @@ public class ProductController {
     //List Products according to price range
     @ApiOperation(value = "Filter products according to price range")
     @GetMapping("/listByPriceRange")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> getProductsByPriceRange(@RequestParam("minPrice") double minPrice, @RequestParam("maxPrice") double maxPrice) {
         List<ProductDto> body = productService.getProductsByPriceRange(minPrice, maxPrice);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -135,6 +144,7 @@ public class ProductController {
 
     @ApiOperation(value = "Search product api")
     @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam("query") String query, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -145,6 +155,7 @@ public class ProductController {
 
     @ApiOperation(value = "Api for recently added in owner flow")
     @GetMapping("/listInDesc") //List products in descending order for recently added functionality in owner flow
+    @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> listProductsDesc(HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -154,7 +165,8 @@ public class ProductController {
     }
 
     @ApiOperation(value = "Only show products which user had added")
-    @GetMapping("/listOwnerProducts") // Api for My Rentals
+    @GetMapping("/listOwnerProducts")
+    @PreAuthorize("hasAuthority('OWNER')")// Api for My Rentals
     public ResponseEntity<List<ProductDto>> listOwnerProducts(HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -165,6 +177,7 @@ public class ProductController {
 
     @ApiOperation(value = "Filter api")
     @GetMapping("/filterProducts")
+    @PreAuthorize("hasAnyAuthority('BORROWER')")
     public ResponseEntity<List<ProductDto>> filterProducts(@RequestParam("size") String size, @RequestParam("subcategoryId") Long subcategoryId, @RequestParam("minPrice") double minPrice, @RequestParam("maxPrice") double maxPrice) {
         List<ProductDto> body = productService.filterProducts(size, subcategoryId, minPrice, maxPrice);
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -172,6 +185,7 @@ public class ProductController {
 
     @ApiOperation(value = "Api for soft deleting products")
     @DeleteMapping("/deleteProduct/{productId}")
+    @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("productId") Long productId, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -188,6 +202,7 @@ public class ProductController {
     }
 
     @GetMapping("/disableProduct")
+    @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<ApiResponse> disableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -201,6 +216,7 @@ public class ProductController {
     }
 
     @GetMapping("/enableProduct")
+    @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<ApiResponse> enableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);

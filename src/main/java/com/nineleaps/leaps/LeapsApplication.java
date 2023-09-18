@@ -23,7 +23,7 @@ public class LeapsApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static final String NGROK = "https://fc81-180-151-122-199.ngrok-free.app";
+    public static final String NGROK = "https://cb79-106-51-70-135.ngrok-free.app";
     public static final String bucketName = "leapsimagebucket";
 
 }

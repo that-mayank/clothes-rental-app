@@ -16,12 +16,13 @@ import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.nineleaps.leaps.utils.SwitchProfile;
-import io.jsonwebtoken.ExpiredJwtException;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +61,7 @@ public class UserController {
 
     @ApiOperation(value = "To switch between owner and borrower")
     @PostMapping("/switch")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
         User user;
         if (profile == Role.GUEST) {
@@ -85,6 +87,7 @@ public class UserController {
     //update profile
     @ApiOperation(value = "Api to update user profile")
     @PutMapping("/update")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> updateProfile(@RequestBody ProfileUpdateDto profileUpdateDto, HttpServletRequest request) throws AuthenticationFailException {
 
 
@@ -113,6 +116,7 @@ public class UserController {
 
     @ApiOperation(value = "Api to update and add user profile picture")
     @PostMapping("/updateProfilePicture")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
         //check if user is valid or not
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -126,6 +130,7 @@ public class UserController {
     }
     @ApiOperation(value = "Api to update and add new access token")
     @PostMapping("/refreshToken")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -143,6 +148,7 @@ public class UserController {
     }
     @ApiOperation(value="Api to Logout")
     @PostMapping("/logout")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);

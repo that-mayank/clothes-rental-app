@@ -12,14 +12,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
@@ -34,6 +32,7 @@ public class AddressController {
     //add
     @ApiOperation(value = "Add new address to particular user")
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -47,6 +46,7 @@ public class AddressController {
     //update
     @ApiOperation(value = "update address for particular user")
     @PutMapping("/update/{addressId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -70,6 +70,7 @@ public class AddressController {
     //listByUserId
     @ApiOperation(value = "List all addresses for particular user")
     @GetMapping("/listAddress")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<Address>> listAddress(HttpServletRequest request) throws AuthenticationFailException {
 
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -83,6 +84,7 @@ public class AddressController {
     //delete
     @ApiOperation(value = "Delete address for particular user")
     @DeleteMapping("/delete/{addressId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> deleteAddress(@PathVariable("addressId") Long addressId, HttpServletRequest request) throws AuthenticationFailException {
 
         //authenticate token
@@ -106,6 +108,7 @@ public class AddressController {
 
     //prefilled address on update address tab
     @GetMapping("/getAddressById/{addressId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<Address> getAddressById(@PathVariable("addressId") Long addressId) {
         Optional<Address> optionalAddress = addressService.readAddress(addressId);
         if (optionalAddress.isEmpty()) {

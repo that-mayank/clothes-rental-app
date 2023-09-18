@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -35,6 +38,7 @@ public class StorageController {
 
     @ApiOperation(value = "Upload image to Amazon S3")
     @PostMapping("/uploadProductImage")
+    @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<UrlResponse> uploadFileToSpecificBucket(
             @RequestParam("file") MultipartFile[] files,
             @RequestParam("categoryId") Long categoryId,
@@ -58,6 +62,7 @@ public class StorageController {
 
     @ApiOperation(value = "Upload profile image to amazon s3")
     @PostMapping("/uploadProfileImage")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<String> uploadProfileImage(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -105,6 +110,7 @@ public class StorageController {
     // to delete the image in s3 cloud storage
     @ApiOperation(value = "to delete the image in s3 cloud storage")
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName) {
         try {
            storageServiceInterface.deleteFile(fileName);

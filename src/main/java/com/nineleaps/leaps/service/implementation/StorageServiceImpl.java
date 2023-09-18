@@ -3,11 +3,13 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.StorageUtility;
+import io.github.resilience4j.retry.Retry;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -23,6 +25,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
     private final S3Client s3Client;
     private final StorageUtility storageUtility;
+    private final Retry retry;
 
 
     public String uploadProfileImage(MultipartFile file, User user){
@@ -73,6 +76,9 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
     @Override
     public void viewFile(String fileName, HttpServletResponse response) throws IOException {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
         try {
             ResponseBytes<GetObjectResponse> responseBytes = s3Client.getObjectAsBytes(GetObjectRequest.builder()
                     .bucket(bucketName)
@@ -84,32 +90,38 @@ public class StorageServiceImpl implements StorageServiceInterface {
             response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(responseBytes.asByteArray().length));
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"");
 
-            InputStream inputStream = new ByteArrayInputStream(responseBytes.asByteArray());
-            OutputStream outputStream = response.getOutputStream();
+            inputStream = new ByteArrayInputStream(responseBytes.asByteArray());
+            outputStream = response.getOutputStream();
 
-            byte[] buffer = new byte[1024];
-            int bytesRead;
+            // Copy the input stream to the output stream using Spring's utility
+            StreamUtils.copy(inputStream, outputStream);
 
-            // Check if the response is already committed
-            if (!response.isCommitted()) {
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-            }
-
-            // Close the streams
-            inputStream.close();
-            outputStream.flush();
         } catch (ClientAbortException e) {
-            // Log the exception (optional) - client aborted the request
-            log.warn("ClientAbortException: The client aborted the request.");
+            // Client disconnected; log this as info or handle as needed
+            log.info("Client disconnected: {}", e.getMessage());
         } catch (S3Exception e) {
             log.error("Error viewing file from S3: {}", e.getMessage(), e);
             throw new IOException("Error viewing file from S3", e);
+        } finally {
+            // Close the streams in a finally block to ensure they're always closed
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    log.error("Error closing input stream: {}", e.getMessage(), e);
+                }
+            }
+
+            if (outputStream != null) {
+                try {
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    log.error("Error closing output stream: {}", e.getMessage(), e);
+                }
+            }
         }
     }
-
-
 
 
 }

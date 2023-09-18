@@ -11,12 +11,16 @@ import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+
 
 @RestController
 @RequestMapping("/api/v1/subcategory")
@@ -29,6 +33,7 @@ public class SubCategoryController {
 
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ApiResponse> createSubCategory(@Valid @RequestBody SubCategoryDto subCategoryDto) {
         Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
         if (!optionalCategory.isPresent()) {
@@ -44,6 +49,7 @@ public class SubCategoryController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<SubCategory>> listSubCategories() {
         List<SubCategory> body = subCategoryService.listSubCategory();
         return new ResponseEntity<>(body, HttpStatus.OK);
@@ -52,6 +58,7 @@ public class SubCategoryController {
     //list sub category by category id
     //use put mapping
     @GetMapping("/listbyid/{categoryId}")
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<SubCategory>> listSubCategoriesByCategoriesId(@PathVariable("categoryId") Long categoryId) {
         //check if the category id is valid
         Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
@@ -65,6 +72,7 @@ public class SubCategoryController {
 
     //update product
     @PutMapping("/update/{subcategoryId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ApiResponse> updateSubCategory(@PathVariable("subcategoryId") Long subcategoryId, @Valid @RequestBody SubCategoryDto subCategoryDto) {
         Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
         if (!optionalCategory.isPresent()) {

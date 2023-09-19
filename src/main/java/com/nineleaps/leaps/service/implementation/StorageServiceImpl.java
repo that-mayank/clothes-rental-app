@@ -100,7 +100,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
     //delete the file from s3
     public String deleteFile(String fileName) {
         s3Client.deleteObject(bucketName, fileName);
-        return fileName + " removed ...";
+        return fileName + " removed";
     }
 
 

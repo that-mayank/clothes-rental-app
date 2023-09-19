@@ -86,7 +86,7 @@ public class DashboardController {
     // API : Gives details about how many orders the owner has got month wise in provided year
 
     @ApiOperation(value = "API : Gives details about how many orders the owner has got month wise in provided year")
-    @GetMapping("/analytics-yearly")
+    @GetMapping(value = "/analytics-yearly", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 
@@ -98,48 +98,79 @@ public class DashboardController {
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
 
+        // Calling service layer to get data
 
         Map<Year, Map<YearMonth, Map<String, Object>>> body = orderService.onClickDashboardYearWiseData(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/monthly-order-items") //dashboardOrderItems\
+    // API: Retrieves monthly order items for the dashboard
+
+    @ApiOperation("API: Retrieves monthly order items for the dashboard")
+    @GetMapping(value = "/monthly-order-items", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 
     public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboard(HttpServletRequest request) {
+
+        // JWT: Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Calling service layer to retrieve monthly order items
+
         Map<YearMonth, List<OrderReceivedDto>> body = orderService.getOrderedItemsByMonth(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/subcategories-analytics")
+    // API: Retrieves order items by subcategories for the dashboard
+
+    @ApiOperation("API: Retrieves order items by subcategories for the dashboard")
+    @GetMapping(value = "/subcategories-analytics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsBySubCategories(HttpServletRequest request) {
+
+        // JWT: Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Calling service layer to retrieve order items by subcategories
+
         Map<YearMonth, Map<String, OrderItemsData>> body = orderService.getOrderItemsBySubCategories(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/categories-analytics") //dashboardCategoriesAnalytics
+    // API: Retrieves order items by categories for the dashboard
+
+    @ApiOperation("API: Retrieves order items by categories for the dashboard")
+    @GetMapping(value = "/categories-analytics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsByCategories(HttpServletRequest request) {
+
+        // JWT: Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Calling service layer to retrieve order items by categories
+
         Map<YearMonth, Map<String, OrderItemsData>> body = orderService.getOrderItemsByCategories(user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/date-selector")
+    // API: Retrieves order items for the dashboard within a specified date range
+
+    @ApiOperation("API: Retrieves order items for the dashboard within a specified date range")
+    @GetMapping(value = "/date-selector", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 

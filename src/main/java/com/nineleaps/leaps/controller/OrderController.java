@@ -213,13 +213,21 @@ public class OrderController {
                 throw new OrderNotFoundException("No order items found for the user and order ID");
             }
 
-            List<OrderItem> orderItems = order.getOrderItems(); //From entity relation
+            // Retrieve order items associated with the order from entity relation
+
+            List<OrderItem> orderItems = order.getOrderItems();
+
+            // Generate the PDF invoice
 
             byte[] pdfBytes = orderService.generateInvoicePDF(orderItems,user,order);
+
+            // Set headers for the PDF response
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", "invoice.pdf");
+
+            // Return the PDF bytes as a ResponseEntity
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (IOException | DocumentException e) {

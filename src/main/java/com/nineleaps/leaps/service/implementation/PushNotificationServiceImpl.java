@@ -38,18 +38,18 @@ public class PushNotificationServiceImpl {
         }
     }
 
-public void sendNotification(String token) {
+public void sendNotification(String deviceToken) {
     String title = "Order info";
     String pretext = "Order has been placed by a customer";
     Message message = Message.builder()
 //            .setNotification(new Notification(title, pretext))
             .putData("title", title)
             .putData("text", pretext)
-            .setToken(token)
+            .setToken(deviceToken)
             .build();
     try {
         String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-        logger.info("Sent message to token. Device token: {}, response: {}", token ,response);
+        logger.info("Sent message to token. Device token: {}, response: {}", deviceToken ,response);
     } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         logger.error("InterruptedException while sending FCM message: {}",e.getMessage());

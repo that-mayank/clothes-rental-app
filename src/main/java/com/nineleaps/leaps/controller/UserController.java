@@ -177,7 +177,7 @@ public class UserController {
 
     // API - Allows the user to generate new Access token using refresh token when the access token got expired
     @ApiOperation(value = "Api to update and add new access token")
-    @GetMapping(value = "/refreshToken")
+    @PostMapping(value = "/refreshToken")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
 

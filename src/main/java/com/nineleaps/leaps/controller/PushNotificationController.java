@@ -24,7 +24,7 @@ public class PushNotificationController {
 
 
     @PostMapping("/notification/token")
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
+    @PreAuthorize("hasAnyAuthority( 'BORROWER')")
     @ApiOperation(value = "Send push notification to device using fcm token")
     public ResponseEntity<PushNotificationResponse> sendTokenNotification(@RequestBody String token) {
         pushNotificationService.sendNotification(token);

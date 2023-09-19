@@ -82,7 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // Fetch the local time and set the Access Token Expiry Time
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1); // Update to desired expiration time 24hrs
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(10); // Update to desired expiration time 24hrs
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
 
         // Generate Token

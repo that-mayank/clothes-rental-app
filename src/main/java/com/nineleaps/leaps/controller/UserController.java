@@ -65,10 +65,10 @@ public class UserController {
 
     // API : Functionality to Switch Between Borrower and Owner
     @ApiOperation(value = "To switch between owner and borrower")
-    @PostMapping(value = "/switch", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/switch")
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ApiResponse> switchProfile(@RequestParam @Valid Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
+    public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
         User user;
 
         // Check if the user is a guest . If not then switch profile for the user
@@ -152,7 +152,7 @@ public class UserController {
     @PostMapping(value = "/updateProfilePicture",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") @Valid String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
 
         // Fetch token from header
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -177,7 +177,7 @@ public class UserController {
 
     // API - Allows the user to generate new Access token using refresh token when the access token got expired
     @ApiOperation(value = "Api to update and add new access token")
-    @GetMapping(value = "/refreshToken",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/refreshToken")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
 
@@ -202,7 +202,7 @@ public class UserController {
 
     // API - Allows the user to Logout
     @ApiOperation(value="Api to Logout")
-    @PostMapping(value = "/logout",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/logout")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
 

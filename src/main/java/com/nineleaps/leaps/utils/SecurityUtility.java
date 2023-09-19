@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -118,7 +117,7 @@ public class SecurityUtility {
             loginInfo.setLoginAttempts(attempts + 1);
         }
 
-        // Check if login attempts exceed the maximum allowed
+        // Check if login attempts to exceed the maximum allowed
         if (loginInfo.getLoginAttempts() >= MAX_LOGIN_ATTEMPTS) {
             loginInfo.lockAccount();
 

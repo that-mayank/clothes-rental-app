@@ -195,7 +195,7 @@ public class UserController {
             // set the newly generated token to its respective header
             response.setHeader("access_token",accessToken);
 
-            // Status Code : 201 - HttpStatus.CREATED
+            // Status Code : 201-HttpStatus.CREATED
             return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
     }
 
@@ -217,7 +217,7 @@ public class UserController {
         // Calling service layer to delete the refresh token in DB during logout .
         refreshTokenService.deleteRefreshTokenByEmailAndToken(email,token);
 
-        // Status Code : 200 - HttpStatus.OK
+        // Status Code : 200-HttpStatus.OK
         return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out "), HttpStatus.OK);
     }
 

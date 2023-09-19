@@ -26,11 +26,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/file")
 @Slf4j
 @AllArgsConstructor
-@Api(tags = "Storage Api", description = "Contains api for uploading multiple images, downloading images, view images and delete images")
-@SuppressWarnings("deprecation")
+@Api(tags = "Storage Api")
+
 public class StorageController {
     private final StorageServiceInterface storageServiceInterface;
-    private final Helper helper;
 
     // used to upload images of the product to s3
     @ApiOperation(value = "Upload image to amazon s3")

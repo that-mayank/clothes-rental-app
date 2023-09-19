@@ -7,10 +7,8 @@ import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
-import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
-import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -18,11 +16,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -31,70 +31,106 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/api/v1/cart")
 @AllArgsConstructor
-@Api(tags = "Cart Api", description = "Contains api for adding products, updating products, list products and delete products in the cart")
-@SuppressWarnings("deprecation")
+@Validated
+@Api(tags = "Cart Api")
+
 public class CartController {
+
+    //Linking layers using constructor injection
+
     private final CartServiceInterface cartService;
     private final ProductServiceInterface productService;
     private final Helper helper;
-    private final OrderItemRepository orderItemRepository;
 
+    // API : To add products to cart for particular user
 
-    //Add to cart
-    @ApiOperation(value = "Add new product to cart")
-    @PostMapping("/add") //change the code accordingly so that duplicate items cannot be added *Done*
-    public ResponseEntity<ApiResponse> addToCart(@RequestBody AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
-        //authenticate token is valid or not
+    @ApiOperation(value = "API : To add products to cart for particular user")
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
+    // Validate the addToCartDto object
+
+    public ResponseEntity<ApiResponse> addToCart(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        //get product
+
+
+        // Retrive product from id
+
         Product product = productService.getProductById(addToCartDto.getProductId());
 
-        //add to cart
+        // Calling service layer to add product to cart
+
         cartService.addToCart(addToCartDto, product, user);
         return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);
     }
 
-    //Get products of cart
-    @ApiOperation(value = "List products of cart")
-    @GetMapping("/list")
+    // API : To list products of cart for particular user
+
+    @ApiOperation(value = "API : To list products of cart for particular user")
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
     public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) throws AuthenticationFailException {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Calling service layer to get all products from cart
+
         CartDto cartDto = cartService.listCartItems(user);
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
-    //update the cart
-    @ApiOperation(value = "Update product in cart")
-    @PutMapping("/update") //productId
-    public ResponseEntity<ApiResponse> updateCartItem(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        cartService.updateCartItem(addToCartDto, user);
-        return new ResponseEntity<>(new ApiResponse(true, "Cart item has been updated"), HttpStatus.OK);
-    }
+    // API : To remove product from cart for particular user
 
-    //remove from cart
     @ApiOperation(value = "Delete product from cart")
-    @DeleteMapping("/delete/{productId}") //productId
+    @DeleteMapping("/delete/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
     public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) throws AuthenticationFailException {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Calling service layer to remove product from cart
+
         cartService.deleteCartItem(productId, user);
-        return new ResponseEntity<>(new ApiResponse(true, "Item has been removed from cart successfully"), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(true, "Item has been removed from cart successfully"), HttpStatus.NO_CONTENT);
     }
 
-    //update cart quantity
-    @PutMapping("/updateQuantity")
+    // API : To update product quantity in cart for particular user
+
+    @ApiOperation(value = "API : To update products quantity in cart for particular user")
+    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
+    // Validate the updateProductQuantityDto object
+
     public ResponseEntity<ApiResponse> updateQuantity(@RequestBody @Valid UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request) {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Calling service layer to update product quantity in cart
+
         cartService.updateProductQuantity(updateProductQuantityDto, user);
         return new ResponseEntity<>(new ApiResponse(true, "Product quantity has been updated successfully"), HttpStatus.OK);
     }

@@ -11,10 +11,8 @@ import com.nineleaps.leaps.service.UserServiceInterface;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -49,7 +47,7 @@ public class SecurityUtility {
     public boolean isRefreshTokenExpired(String refreshToken) {
         DecodedJWT decodedAccessToken = JWT.decode(refreshToken);
         Date expirationDate = decodedAccessToken.getExpiresAt();
-        return expirationDate.before(new Date());
+        return !expirationDate.before(new Date());
     }
 
 
@@ -84,11 +82,11 @@ public class SecurityUtility {
                 .sign(algorithm);
 
     }
-    public String updateAccessTokenViaRefreshToken(String email2, HttpServletRequest request, HttpServletResponse response,String tokenToCheck) throws IOException {
+    public String updateAccessTokenViaRefreshToken(String email2, HttpServletRequest request, String tokenToCheck) throws IOException {
 
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
-        if(!isRefreshTokenExpired(token)){
+        if(isRefreshTokenExpired(token)){
             if(Objects.equals(token, tokenToCheck)){
                 String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
                 String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;

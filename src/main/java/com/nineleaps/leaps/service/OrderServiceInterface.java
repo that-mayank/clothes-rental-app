@@ -1,6 +1,5 @@
 package com.nineleaps.leaps.service;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderServiceInterface {
-    void placeOrder(User user, String sessionId);
+    void placeOrder(User user, String razorpayId);
 
     List<OrderDto> listOrders(User user);
 

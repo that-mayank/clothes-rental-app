@@ -52,4 +52,9 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleUpdateFailException(QuantityOutOfBoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = AddressOwnershipException.class)
+    public final ResponseEntity<String> handleUpdateFailException(AddressOwnershipException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }

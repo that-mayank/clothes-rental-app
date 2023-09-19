@@ -21,9 +21,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
 
@@ -34,96 +37,178 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequestMapping("/api/v1/order")
 @AllArgsConstructor
 @Slf4j
-@Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
-@SuppressWarnings("deprecation")
+@Validated
+@Api(tags = "Order Api")
 public class OrderController {
+
+    //Linking layers using constructor injection
+
     private final OrderServiceInterface orderService;
     private final Helper helper;
 
 
-    //place order after checkout
-    @ApiOperation(value = "Add new order after successful payment")
-    @PostMapping("/add")
+    //API : To place order after checkout
+
+    @ApiOperation(value = "API : Add new order after successful payment")
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
     public ResponseEntity<ApiResponse> placeOrder(@RequestParam("razorpayId") String razorpayId, HttpServletRequest request) throws AuthenticationFailException {
-        //authenticate the token
+
+        // Guard Statement : The required parameter razorpayId is missing or empty
+
+        if (razorpayId == null || razorpayId.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse(false, "Missing or empty razorpayId parameter"), HttpStatus.BAD_REQUEST);
+        }
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        //place the order
+
+        // Calling service layer to place order
+
         orderService.placeOrder(user, razorpayId);
         return new ResponseEntity<>(new ApiResponse(true, "Order has been placed"), HttpStatus.CREATED);
     }
 
-    //get all orders
-    @ApiOperation(value = "List all the orders for a particular user")
-    @GetMapping("/list")
+    //API : To get list of order for particular user
+
+    @ApiOperation(value = "API : To List all the orders for a particular user")
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
     public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
-        //authenticate token
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        //get orders
+
+        // Calling service layer to get orders
+
         List<OrderDto> orders = orderService.listOrders(user);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    //get order items for an order
-    @ApiOperation(value = "Get details of an order")
-    @GetMapping("/getOrderById/{orderId}")
+    //API : To get order items for an order
+
+    @ApiOperation(value = "API : Get details of an order")
+    @GetMapping(value = "/getOrderById/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
     public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
-        //authenticate token
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        //check if the order belong to current user
+
+        //Calling service layer to get order items
+
         Order order = orderService.getOrder(orderId, user);
         return new ResponseEntity<>(order, HttpStatus.OK);
 
     }
 
-    //Dummy  apis for transit, delivered, pickup and return
-    @PostMapping("/order-status")
+    //API : To alter order status i.e. transit, delivered, pickup and return
+
+    @ApiOperation(value = "API : To alter order status")
+    @PostMapping(value = "/order-status", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
+
+    // Validating the orderStatus variable
+
     public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) throws AuthenticationFailException {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        //check if order item belong to current user
+
+        //Guard Statement : Check if order item belongs to the current user
+
         OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
         if (!Helper.notNull(orderItem)) {
             return new ResponseEntity<>(new ApiResponse(false, ORDER_ITEM_UNAUTHORIZED_ACCESS), HttpStatus.FORBIDDEN);
         }
+
         orderService.orderStatus(orderItem, orderStatus); // IN TRANSIT, DELIVERED, PICKED UP, RETURNED
-        return new ResponseEntity<>(new ApiResponse(true, "Order is " + orderStatus), HttpStatus.OK);
+
+        return new ResponseEntity<>(new ApiResponse(true, "Order is " + orderStatus), HttpStatus.CREATED);
     }
 
+    //API : To get owner order received history or rented products
 
-    @GetMapping("/owner-order-history") //rentedProducts
-    public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
+    @ApiOperation(value = "API : To get owner order received history")
+    @GetMapping(value = "/owner-order-history", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('OWNER')")
+
+    public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "100", required = false) int pageSize, HttpServletRequest request) {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        //Calling service layer to get owner order received history
+
         List<ProductDto> body = orderService.getRentedOutProducts(user, pageNumber, pageSize);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/shipping-status")
-    public ResponseEntity<List<OrderItemDto>> getShippingStatus(@RequestParam("status") String shippingStatus, HttpServletRequest request) {
+    //API : To get orders by shipping/order status
+
+    @ApiOperation(value = "API : To get orders by shipping/order status")
+    @GetMapping(value = "/shipping-status", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('OWNER')")
+
+    // Validating shipping status
+
+    public ResponseEntity<List<OrderItemDto>> getShippingStatus(@NotBlank @RequestParam("status") String shippingStatus, HttpServletRequest request) {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        //Calling service layer to get orders by shipping/order status
+
         List<OrderItemDto> body = orderService.getOrdersItemByStatus(shippingStatus, user);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/generateInvoice/{orderId}")
+    //API : To get generate invoice
+
+    @ApiOperation(value = "API : To get generate invoice")
+    @GetMapping(value = "/generateInvoice/{orderId}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
         try {
+
+            // JWT : Extracting user info from token
+
             String authorizationHeader = request.getHeader("Authorization");
             String token = authorizationHeader.substring(7);
-            User user = helper.getUser(token); // Assuming you have a helper method to get the user
+            User user = helper.getUser(token);
+
+            //Guard Statement : Check if order item belongs to the current user
 
             Order order = orderService.getOrder(orderId, user);
-
             if(!Helper.notNull(order)) {
                 throw new OrderNotFoundException("No order items found for the user and order ID");
             }

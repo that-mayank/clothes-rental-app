@@ -75,10 +75,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null) {
             try {
                 String token = authorizationHeader.substring(bearerHeader.length());
-                if (!securityUtility.isRefreshTokenExpired(token)) {
+                if (securityUtility.isRefreshTokenExpired(token)) {
                     filterChain.doFilter(request, response);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "Refreshtoken token expired");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refreshtoken token expired");
                 }
             } catch (Exception e) {
                 response.setStatus(FORBIDDEN.value());
@@ -109,7 +109,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "Access Token token expired");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token token expired");
 
         }
 

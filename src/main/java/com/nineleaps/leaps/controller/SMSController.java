@@ -20,12 +20,10 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Api(tags = "Notifications Api", description = "Contains api for sending sms")
-@SuppressWarnings("deprecation")
+@Api(tags = "Sms Api")
 public class SMSController {
 
     private final SmsServiceInterface smsService;
-    private String topicDestination = "/lesson/sms";
 
     private final UserServiceInterface userService;
 
@@ -47,6 +45,7 @@ public class SMSController {
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(false, "Enter a valid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        String topicDestination = "/lesson/sms";
         webSocket.convertAndSend(topicDestination, getTimeStamp() + ":SMS has been sent " + phoneNumber);
         return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
 

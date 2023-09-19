@@ -27,6 +27,7 @@ import java.util.List;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
+import static com.nineleaps.leaps.config.MessageStrings.USER_NOT_FOUND;
 
 @Service
 @Slf4j
@@ -41,8 +42,8 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            log.error("User not found in the database");
-            throw new UsernameNotFoundException("user not found in the database");
+            log.error(USER_NOT_FOUND);
+            throw new UsernameNotFoundException(USER_NOT_FOUND);
         } else {
             log.info("user found in the database: {}", email);
         }
@@ -55,8 +56,8 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     public void saveDeviceTokenToUser(String email, String deviceToken) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            log.error("User not found in the database");
-            throw new UsernameNotFoundException("User not found in the database");
+            log.error(USER_NOT_FOUND);
+            throw new UsernameNotFoundException(USER_NOT_FOUND);
         } else {
             User existingDeviceToken = userRepository.findDeviceTokenByEmail(email);
 

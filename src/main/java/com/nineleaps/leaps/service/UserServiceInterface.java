@@ -10,25 +10,13 @@ import java.util.List;
 
 public interface UserServiceInterface {
     ResponseDto signUp(SignupDto signupDto);
-
-
     List<User> getUsers();
-
     void saveProfile(User user);
-
     User getUser(String email);
-
     UserDto getUser(User user);
-
     User getGuest();
-
     User getUserViaPhoneNumber(String phoneNumber);
-
     void updateProfile(User oldUser, ProfileUpdateDto profileUpdateDto);
-
     void updateProfileImage(String profileImageUrl, User user);
-
     void saveDeviceTokenToUser(String email,String deviceToken);
-
-
 }

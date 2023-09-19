@@ -12,7 +12,7 @@ import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
-import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
+import com.nineleaps.leaps.dto.notifications.PushNotificationRequest;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.*;
 
 import static com.nineleaps.leaps.config.MessageStrings.*;
-import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 
 
 @Service
@@ -57,7 +56,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final PushNotificationServiceImpl pushNotificationService;
 
     @Override
-    public void placeOrder(User user, String sessionId) {
+    public void placeOrder(User user, String razorpayId) {
         //retrieve the cart items for the user
         CartDto cartDto = cartService.listCartItems(user);
         List<CartItemDto> cartItemDtos = cartDto.getCartItems();
@@ -65,7 +64,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         Order newOrder = new Order();
         newOrder.setCreateDate(LocalDateTime.now());
         newOrder.setTotalPrice(cartDto.getTotalCost());
-        newOrder.setSessionId(sessionId);
+        newOrder.setSessionId(razorpayId);
         newOrder.setUser(user);
 
         List<OrderItem> orderItemList = new ArrayList<>();
@@ -81,7 +80,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
             orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
             orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
-            orderItem.setStatus("Order placed");
+            orderItem.setStatus(ORDER_PLACED);
             orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
             //add to orderItem table
             orderItemRepository.save(orderItem);
@@ -99,12 +98,12 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
         // function to send email
         String email = user.getEmail();
-        String subject = "Order placed";
+        String subject = ORDER_PLACED;
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
         messageBuilder.append("Here are the details of your order:\n");
-        messageBuilder.append("Order ID: ").append(newOrder.getId()).append("\n");
+        messageBuilder.append(ORDER_ID).append(newOrder.getId()).append("\n");
         List<OrderItem> orderItems = newOrder.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             String productName = orderItem.getName();
@@ -126,7 +125,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             log.debug("Device token of owner from oder service is: {}",deviceToken);
             var request = PushNotificationRequest.builder()
                     .title("Order info")
-                    .message("Order placed")
+                    .message(ORDER_PLACED)
                     .token(deviceToken)
                     .build();
             pushNotificationService.sendPushNotificationToToken(request);
@@ -172,7 +171,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 "We regret to inform you that your rental period has exceeded the expected return date. " +
                 "As a result, a delay charge has been deducted from your security deposit.\n\n" +
                 "Rental Details:\n" +
-                "Order ID: " + orderItem.getId() + "\n" +
+                ORDER_ID + orderItem.getId() + "\n" +
                 "Item Name: " + orderItem.getProduct().getName() + "\n" +
                 "Rental Start Date: " + orderItem.getRentalStartDate() + "\n" +
                 "Rental End Date: " + orderItem.getRentalEndDate() + "\n" +
@@ -430,11 +429,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
 
-            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             // Display overall order details (summary)
-            document.add(new Paragraph("Order ID: " + order.getId()));
+            document.add(new Paragraph(ORDER_ID + order.getId()));
             document.add(new Paragraph("Order Date: " + dateFormat.format(convertToDate(order.getCreateDate()))));
             document.add(new Paragraph("Name: " + user.getFirstName() + " " + user.getLastName()));
             document.add(new Paragraph(("Address: "+ order.getUser().getAddresses())));

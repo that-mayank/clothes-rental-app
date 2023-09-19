@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.nineleaps.leaps.dto.dashboard.DashboardAnalyticsDto;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.PdfServiceInterface;
@@ -18,10 +19,8 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.YearMonth;
-import java.util.Map;
+import java.util.List;
 
-import static com.nineleaps.leaps.config.MessageStrings.TOTAL_INCOME;
-import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 
 @Service
 @AllArgsConstructor
@@ -61,11 +60,11 @@ public class PdfServiceImpl implements PdfServiceInterface {
         // Add empty line
         document.add(new Paragraph(" "));
         // Get the dashboard data
-        Map<YearMonth, Map<String, Object>> dashboardData = dashboardService.analytics(user);
+        List<DashboardAnalyticsDto> dashboardData = dashboardService.analytics(user);
         // Determine the number of columns based on the data
-        int numColumns = dashboardData.isEmpty() ? 0 : dashboardData.values().iterator().next().size();
+        int numColumns = 3;
         // Create table
-        PdfPTable table = new PdfPTable(numColumns + 1); // setting columns
+        PdfPTable table = new PdfPTable(numColumns); // setting columns
         // Set cell alignment
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         // Add table headers
@@ -82,12 +81,11 @@ public class PdfServiceImpl implements PdfServiceInterface {
 
 
         // Add the total earnings and total number of items sold per month to the document
-        for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
-            YearMonth month = entry.getKey();
-            Map<String, Object> monthData = entry.getValue();
-            String monthString = month.toString();
-            String earnings = monthData.get(TOTAL_INCOME).toString();
-            String numberOfItems = monthData.get(TOTAL_NUMBER).toString();
+        for (DashboardAnalyticsDto analyticsDto : dashboardData) {
+            YearMonth month = analyticsDto.getMonth();
+            String monthString = month.getMonth().toString();
+            String earnings = String.valueOf(analyticsDto.getTotalEarnings());
+            String numberOfItems = String.valueOf(analyticsDto.getTotalOrders());
             table.addCell(monthString);
             table.addCell(earnings);
             table.addCell(numberOfItems);
@@ -98,12 +96,11 @@ public class PdfServiceImpl implements PdfServiceInterface {
         // Add bar chart
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         // Add data to the dataset
-        for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
-            YearMonth month = entry.getKey();
-            Map<String, Object> monthData = entry.getValue();
+        for (DashboardAnalyticsDto analyticsDto : dashboardData) {
+            YearMonth month = analyticsDto.getMonth();
             String monthString = month.getMonth().toString().substring(0, 3);
-            double earnings = Double.parseDouble(monthData.get(TOTAL_INCOME).toString());
-            int numberOfItems = Integer.parseInt(monthData.get(TOTAL_NUMBER).toString());
+            double earnings = analyticsDto.getTotalEarnings();
+            int numberOfItems = analyticsDto.getTotalOrders();
 
             dataset.addValue(earnings, "Total Earnings", monthString);
             dataset.addValue(numberOfItems, "Number of Items Sold", monthString);

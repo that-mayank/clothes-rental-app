@@ -3,7 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
+import com.nineleaps.leaps.dto.notifications.PushNotificationRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,9 @@ public void sendNotification(String token) {
     String title = "Order info";
     String pretext = "Order has been placed by a customer";
     Message message = Message.builder()
-            .setNotification(new Notification(title, pretext))
+//            .setNotification(new Notification(title, pretext))
+            .putData("title", title)
+            .putData("text", pretext)
             .setToken(token)
             .build();
     try {

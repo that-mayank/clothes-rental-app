@@ -46,8 +46,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> products;
-//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private DeviceToken deviceToken;
 
     public User(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {
         this.firstName = firstName;

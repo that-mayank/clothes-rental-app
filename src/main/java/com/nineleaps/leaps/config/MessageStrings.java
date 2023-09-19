@@ -16,6 +16,11 @@ public class MessageStrings {
     public static final String DEAR_PREFIX = "Dear ";
     public static final String TOTAL_NUMBER = "totalNumberOfItems";
     public static final String TOTAL_INCOME = "totalEarnings";
+    public static final String ORDER_ID = "Order ID: ";
+    public static final String ORDER_PLACED = "Order placed";
+    public static final String USER_NOT_FOUND = "User not found in the database";
+
+
 
     private MessageStrings() {
         // Private constructor to prevent instantiation

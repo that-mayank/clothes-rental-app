@@ -12,8 +12,6 @@ public interface CartServiceInterface {
 
     CartDto listCartItems(User user);
 
-    void updateCartItem(AddToCartDto addToCartDto, User user);
-
     void deleteCartItem(Long productId, User user);
 
     void deleteUserCartItems(User user);

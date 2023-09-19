@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.controller;
 
-import com.nineleaps.leaps.dto.pushNotification.PushNotificationResponse;
+import com.nineleaps.leaps.dto.notifications.PushNotificationResponse;
 import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;

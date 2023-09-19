@@ -142,7 +142,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public ProductDto listProductByid(Long productId) throws ProductNotExistException {
         Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (!optionalProduct.isPresent()) {
+
+        //check if product id is valid
+
+        if (optionalProduct.isEmpty()) {
             throw new ProductNotExistException("Product is invalid: " + productId);
         }
         return getDtoFromProduct(optionalProduct.get());

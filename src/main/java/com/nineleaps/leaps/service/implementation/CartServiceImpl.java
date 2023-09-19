@@ -71,24 +71,6 @@ public class CartServiceImpl implements CartServiceInterface {
     }
 
     @Override
-    public void updateCartItem(AddToCartDto addToCartDto, User user) throws CartItemNotExistException, QuantityOutOfBoundException {
-        Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), addToCartDto.getProductId());
-        if (!Helper.notNull(cartItem)) {
-            throw new CartItemNotExistException(CART_ITEM_INVALID + addToCartDto.getProductId());
-        }
-        if (addToCartDto.getQuantity() == 0) {
-            deleteCartItem(addToCartDto.getProductId(), user);
-            return;
-        }
-
-        cartItem.setQuantity(addToCartDto.getQuantity());
-        cartItem.setCreateDate(new Date());
-        cartItem.setRentalStartDate(addToCartDto.getRentalStartDate());
-        cartItem.setRentalEndDate(addToCartDto.getRentalEndDate());
-        cartRepository.save(cartItem);
-    }
-
-    @Override
     public void deleteCartItem(Long productId, User user) throws CartItemNotExistException {
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), productId);
         if (!Helper.notNull(cartItem)) {

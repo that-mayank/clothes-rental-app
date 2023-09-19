@@ -62,7 +62,7 @@ public class CartController {
         // Calling service layer to add products to cart
         cartService.addToCart(addToCartDto, product, user);
 
-        // Status Code - 201-HttpStatus.CREATED
+        // Status Code : 201-HttpStatus.CREATED
         return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);
     }
 

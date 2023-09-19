@@ -334,29 +334,58 @@ public class ProductController {
         return new ResponseEntity<>(new ApiResponse(true, "Product has been deleted successfully."), HttpStatus.OK);
     }
 
+    // API : For disabling products
+
     @ApiOperation(value = "API : For disabling products")
-    @GetMapping("/disableProduct")
+    @PutMapping(value = "/disableProduct", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('OWNER')")
+
     public ResponseEntity<ApiResponse> disableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Guard Statement : To check product belongs to current user
+
         Product product = productService.getProduct(productId, user.getId());
         if (!Helper.notNull(product)) {
             return new ResponseEntity<>(new ApiResponse(false, "The product does not belong to current user"), HttpStatus.FORBIDDEN);
         }
+
+        // Calling service layer to disable product
+
         productService.disableProduct(product, quantity);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been disabled"), HttpStatus.OK);
     }
 
-    @GetMapping("/enableProduct")
+    // API : For enabling products
+
+    @ApiOperation(value = "API : For enabling products")
+    @PutMapping(value = "/enableProduct", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('OWNER')")
+
     public ResponseEntity<ApiResponse> enableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity", required = false) int quantity, HttpServletRequest request) {
+
+        // JWT : Extracting user info from token
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
+
+        // Guard Statement : To check product belongs to current user
+
         Product product = productService.getProduct(productId, user.getId());
         if (!Helper.notNull(product)) {
             return new ResponseEntity<>(new ApiResponse(false, "The product does not belong to current user"), HttpStatus.FORBIDDEN);
         }
+
+        // Calling service layer to enable product
+
         productService.enableProduct(product, quantity);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been enabled"), HttpStatus.OK);
     }

@@ -1,18 +1,15 @@
 package com.nineleaps.leaps.service;
 
-import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.model.User;
 
-import java.util.List;
-
 public interface UserServiceInterface {
-    ResponseDto signUp(SignupDto signupDto);
+    void signUp(SignupDto signupDto);
 
 
-    List<User> getUsers();
+    void getUsers();
 
     void saveProfile(User user);
 

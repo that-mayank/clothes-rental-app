@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
@@ -76,7 +75,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
 
 
     @Override
-    public ResponseDto signUp(SignupDto signupDto) throws CustomException {
+    public void signUp(SignupDto signupDto) throws CustomException {
         //Check if the current email has already been registered. i.e. User already exists
         if (Helper.notNull(userRepository.findByEmail(signupDto.getEmail()))) {
             //if email already registered throw custom exception
@@ -95,7 +94,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
             userLoginInfo.initializeLoginInfo(user);
             userLoginInfoRepository.save(userLoginInfo);
             System.out.println(userLoginInfo.getLoginAttempts());
-            return new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
+            new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
         } catch (Exception e) {
             //handle signup error
             throw new CustomException(e.getMessage());
@@ -154,9 +153,8 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     }
 
     @Override
-    public List<User> getUsers() {
+    public void getUsers() {
         log.info("getting all user from the database");
-
-        return userRepository.findAll();
+        userRepository.findAll();
     }
 }

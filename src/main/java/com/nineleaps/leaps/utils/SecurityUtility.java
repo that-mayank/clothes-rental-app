@@ -12,8 +12,6 @@ import com.nineleaps.leaps.service.UserServiceInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Component;
-
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -67,7 +65,7 @@ public class SecurityUtility {
     }
 
 
-    public String updateAccessTokenViaRefreshToken(String email2, HttpServletRequest request, HttpServletResponse response,String tokenToCheck) throws IOException {
+    public String updateAccessTokenViaRefreshToken(String email2, HttpServletRequest request,String tokenToCheck) throws IOException {
 
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
@@ -155,13 +153,10 @@ public class SecurityUtility {
                 userLoginInfo.setLocked(false);  // Unlock the account
                 userLoginInfo.setLockTime(null);
                 userLoginInfoRepository.save(userLoginInfo);
-                System.out.println("Account got unlocked");
             }
         }
 
-        // Check if the account is locked or login attempts exceed the limit
 
-        // ... other logic
     }
 
 

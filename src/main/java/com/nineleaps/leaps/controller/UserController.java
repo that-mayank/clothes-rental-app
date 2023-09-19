@@ -134,7 +134,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     }
     @ApiOperation(value = "Api to update and add new access token")
     @PostMapping("/refreshToken")
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
+
     public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
@@ -152,7 +152,6 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     }
     @ApiOperation(value="Api to Logout")
     @PostMapping("/logout")
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);

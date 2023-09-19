@@ -185,16 +185,6 @@ public class SecurityUtility {
         }
     }
 
-//    public void checkIfUserHasLoginInfo(String email){
-//        User user = userRepository.findByEmail(email);
-//        Long userId = user.getId();
-//        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
-//        if(userLoginInfo == null){
-//            UserLoginInfo userLoginInfo2 = new UserLoginInfo();
-//            userLoginInfo2.initializeLoginInfo(user);
-//            userLoginInfoRepository.save(userLoginInfo);
-//        }
-//    }
 
 
 

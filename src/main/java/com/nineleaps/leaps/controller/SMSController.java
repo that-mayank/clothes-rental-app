@@ -20,44 +20,61 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Api(tags = "Notifications Api", description = "Contains api for sending sms")
+@Api(tags = "Notifications Api", description = "Contains APIs for sending SMS")
 @SuppressWarnings("deprecation")
 public class SMSController {
 
-    private final SmsServiceInterface smsService;
-    private String topicDestination = "/lesson/sms";
+    /**
+     * Status Code: 200 - HttpStatus.OK
+     * Description: The request was successful, and the response contains the requested data.
 
+     * Status Code: 500 - HttpStatus.INTERNAL_SERVER_ERROR
+     * Description: An error occurred on the server and no more specific message is suitable.
+     */
+
+    // SMS service for SMS-related operations
+    private final SmsServiceInterface smsService;
+
+    // User service for user-related operations
     private final UserServiceInterface userService;
 
+    // SimpMessagingTemplate for sending WebSocket messages
     private final SimpMessagingTemplate webSocket;
 
+
+    // Method to get the timestamp
     private String getTimeStamp() {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
     }
 
-    @ApiOperation(value = "Send sms to phone number")
+    // API to send an SMS to a phone number
+    @ApiOperation(value = "Send SMS to phone number")
     @PostMapping("/phoneNo")
     public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
-        //if the phoneNumber is in database or not
+        // Check if the phone number is in the database
         if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
-            return new ResponseEntity<>(new ApiResponse(false, "Phone number not present in database"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApiResponse(false, "Phone number not present in the database"), HttpStatus.NOT_FOUND);
         }
         try {
+            // Send the SMS
             smsService.send(phoneNumber);
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(false, "Enter a valid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        webSocket.convertAndSend(topicDestination, getTimeStamp() + ":SMS has been sent " + phoneNumber);
-        return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
 
+        // Send a WebSocket message about the sent SMS
+        // Destination for web socket
+        String topicDestination = "/lesson/sms";
+        webSocket.convertAndSend(topicDestination, getTimeStamp() + ": SMS has been sent to " + phoneNumber);
+        return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Verify otp")
+    // API to verify OTP
+    @ApiOperation(value = "Verify OTP")
     @PostMapping("/otp")
     public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
+        // Verify the OTP
         smsService.verifyOtp(phoneNumber, otp, response, request);
         return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
-
     }
-
 }

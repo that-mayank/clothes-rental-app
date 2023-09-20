@@ -47,7 +47,7 @@ public class UserController {
     private final SecurityUtility securityUtility;
     private final RefreshTokenServiceInterface refreshTokenService;
 
-    // API : Allows the users to do Sign-Up
+    // API: Allows the users to do Sign-Up
     @ApiOperation(value = "user registration api")
     @PostMapping(value = "/signup" , consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -63,15 +63,15 @@ public class UserController {
 
 
 
-    // API : Functionality to Switch Between Borrower and Owner
+    // API: Functionality to Switch Between Borrower and Owner
     @ApiOperation(value = "To switch between owner and borrower")
     @PostMapping(value = "/switch")
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
         User user;
 
-        // Check if the user is a guest . If not then switch profile for the user
+        // Check if the user is a guest. If not, then switch profile for the user
         if (profile == Role.GUEST) {
             user = userServiceInterface.getGuest();
             if (!Helper.notNull(user)) {
@@ -79,18 +79,15 @@ public class UserController {
                 userServiceInterface.saveProfile(user);
             }
         } else {
-            // Fetch Token Via Header
-            String authorizationHeader = request.getHeader(AUTHORIZATION);
-            String token = authorizationHeader.substring(7);
+            // Extract User from the token
+            user = helper.getUserFromToken(request);
 
-            // Extract User from token
-            user = helper.getUser(token);
             if (!Helper.notNull(user)) {
                 throw new UserNotExistException("User is invalid");
             }
             user.setRole(profile);
 
-            // Calling service layer to save profile of the user
+            // Calling the service layer to save profile of the user
             userServiceInterface.saveProfile(user);
 
             //  Calling switch profile utility file to Generate new AccessTokens for the newly Switched Profile.
@@ -103,21 +100,18 @@ public class UserController {
     // API - Helps user to update his profile information
     @ApiOperation(value = "Api to update user profile")
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> updateProfile(@RequestBody @Valid ProfileUpdateDto profileUpdateDto, HttpServletRequest request) throws AuthenticationFailException {
 
-        // Fetch Token from Header
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
+        // Extract User from the token
+        User oldUser = helper.getUserFromToken(request);
 
-        // Extract user From Token
-        User oldUser = helper.getUser(token);
 
         // Check if user is null
         if (!Helper.notNull(oldUser)) {
 
-            // Status Code : 404-HttpStatus.NOT_FOUND
+            // Status Code: 404-HttpStatus.NOT_FOUND
             return new ResponseEntity<>(new ApiResponse(false, "User not found"), HttpStatus.NOT_FOUND);
         }
         // Interact with the service layer to update profile
@@ -131,16 +125,13 @@ public class UserController {
     @ApiOperation(value = "Api to get current user")
     @GetMapping(value = "/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<UserDto> getUser(HttpServletRequest request) {
-        // Fetch Token from header
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
 
-        // Extract user from token
-        User user = helper.getUser(token);
 
-        // Calling service layer to get user details
+        // Calling the service layer to get user details
         UserDto userDto = userServiceInterface.getUser(user);
 
         // Status Code : 200-HttpStatus.OK
@@ -150,24 +141,21 @@ public class UserController {
     // API - Allows the User to Update his profile picture
     @ApiOperation(value = "Api to update and add user profile picture")
     @PostMapping(value = "/updateProfilePicture",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
 
-        // Fetch token from header
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
 
-        // Extract user from token
-        User user = helper.getUser(token);
 
         // check if user is null
         if (!Helper.notNull(user)) {
 
-            // Status Code : 404-HttpStatus.NOT_FOUND
+            // Status Code: 404-HttpStatus.NOT_FOUND
             return new ResponseEntity<>(new ApiResponse(false, "User is invalid"), HttpStatus.NOT_FOUND);
         }
-        // Calling Service Layer to update profile picture
+        // Calling the Service Layer to update profile picture
         userServiceInterface.updateProfileImage(profileImageUrl, user);
 
         // Status Code : 201-HttpStatus.CREATED
@@ -175,7 +163,7 @@ public class UserController {
     }
 
 
-    // API - Allows the user to generate new Access token using refresh token when the access token got expired
+    // API - Allows the user to generate a new Access token using refresh token when the access token got expired
     @ApiOperation(value = "Api to update and add new access token")
     @PostMapping(value = "/refreshToken")
     @ResponseStatus(HttpStatus.CREATED)
@@ -189,7 +177,7 @@ public class UserController {
             User user = helper.getUser(token);
             String email = user.getEmail();
 
-            // Calling Security utility file to generate new token
+            // Calling Security utility file to generate a new token
             String accessToken = securityUtility.updateAccessTokenViaRefreshToken(email,request,token);
 
             // set the newly generated token to its respective header
@@ -200,7 +188,7 @@ public class UserController {
     }
 
 
-    // API - Allows the user to Logout
+    // API - Allows the user to Log out
     @ApiOperation(value="Api to Logout")
     @PostMapping(value = "/logout")
     @ResponseStatus(HttpStatus.OK)
@@ -214,7 +202,7 @@ public class UserController {
         User user = helper.getUser(token);
         String email = user.getEmail();
 
-        // Calling service layer to delete the refresh token in DB during logout .
+        // Calling the service layer to delete the refresh token in DB during logout.
         refreshTokenService.deleteRefreshTokenByEmailAndToken(email,token);
 
         // Status Code : 200-HttpStatus.OK

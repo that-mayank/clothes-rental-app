@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 
         // Define your CSP policy
-        String cspPolicy = "default-src 'self'; script-src 'self' https://8473-106-51-70-135.ngrok-free.app";
+        String cspPolicy = "default-src 'self'; script-src 'self' https://9a8d-180-151-122-199.ngrok-free.app";
 
         http
                 .csrf().disable()

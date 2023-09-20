@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,16 +29,22 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @AllArgsConstructor
 public class PdfController {
 
+
+    // linking service layers
     private final PdfServiceInterface pdfService;
     private final Helper helper;
 
-    @GetMapping("/export") //exportPdf
-    @PreAuthorize("hasAuthority('OWNER')")
+    @GetMapping("/export") // Handler method to export PDF
+    @PreAuthorize("hasAuthority('OWNER')") // Requires 'OWNER' authority to access
     public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
+        // Extracting the token from the Authorization header
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
+
+        // Retrieve user information from the token
         User user = helper.getUser(token);
 
+        // Create a new PDF document
         Document document = pdfService.getPdf(user);
 
         // Convert the Document into a byte array
@@ -55,6 +60,7 @@ public class PdfController {
         // Close the document
         document.close();
 
+        // Convert the PDF content to a byte array
         byte[] pdfBytes = baos.toByteArray();
 
         // Create the InputStreamResource from the byte array
@@ -65,6 +71,7 @@ public class PdfController {
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "report.pdf");
 
+        // Return the ResponseEntity with the PDF content and headers
         return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
     }
 }

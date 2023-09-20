@@ -10,6 +10,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,6 +30,12 @@ public class Helper {
         DecodedJWT decodedAccessToken = JWT.decode(token);
         String email = decodedAccessToken.getSubject();
         return userRepository.findByEmail(email);
+    }
+
+    public User getUserFromToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String token = authorizationHeader.substring(7);
+        return getUser(token);
     }
 
 

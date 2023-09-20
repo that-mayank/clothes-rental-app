@@ -6,7 +6,7 @@ import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
-import com.nineleaps.leaps.exceptions.OrderNotFoundException;
+
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -21,7 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,121 +29,164 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_ACCESS;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 
 @RestController
-@RequestMapping("/api/v1/order")
 @AllArgsConstructor
+@RequestMapping("/api/v1/order")
 @Slf4j
-@Api(tags = "Order Api", description = "Contains api for adding order, listing order, get particular order details and dashboard api")
+@Api(tags = "Order Api", description = "Contains API for adding orders, listing orders, getting particular order details, and dashboard API")
 @SuppressWarnings("deprecation")
 public class OrderController {
+
+    /**
+     * Status Code: 200 - HttpStatus.OK
+     * Description: The request was successful, and the response contains the requested data.
+
+     * Status Code: 201 - HttpStatus.CREATED
+     * Description: The request was successful, and a new resource has been created as a result.
+
+     * Status Code: 500 - HttpStatus.INTERNAL_SERVER_ERROR
+     * Description: An error occurred on the server and no more specific message is suitable.
+     */
+
+
+    // Order service for handling order-related operations
     private final OrderServiceInterface orderService;
     private final Helper helper;
 
 
-    //place order after checkout
-    @ApiOperation(value = "Add new order after successful payment")
+
+    // API to place a new order after successful payment
+    @ApiOperation(value = "Add a new order after successful payment")
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> placeOrder(@RequestParam("razorpayId") String razorpayId, HttpServletRequest request) throws AuthenticationFailException {
-        //authenticate the token
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //place the order
+
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
+        // Place the order
         orderService.placeOrder(user, razorpayId);
+
+        // Return success response
         return new ResponseEntity<>(new ApiResponse(true, "Order has been placed"), HttpStatus.CREATED);
     }
 
-    //get all orders
+
+    // API to get all orders for a particular user
     @ApiOperation(value = "List all the orders for a particular user")
     @GetMapping("/list")
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
-        //authenticate token
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //get orders
+
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
+        // Get orders for the user
         List<OrderDto> orders = orderService.listOrders(user);
+
+        // Return the list of orders
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    //get order items for an order
+
+
+    // API to get order items for a specific order
     @ApiOperation(value = "Get details of an order")
     @GetMapping("/getOrderById/{orderId}")
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
-        //authenticate token
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //check if the order belong to current user
-        Order order = orderService.getOrder(orderId, user);
-        return new ResponseEntity<>(order, HttpStatus.OK);
 
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
+        // Check if the order belongs to the current user
+        Order order = orderService.getOrder(orderId, user);
+
+        // Return the order details
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    //Dummy  apis for transit, delivered, pickup and return
+
+
+    // Test double APIs for order status updates (transit, delivered, pickup, return)
     @PostMapping("/order-status")
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) throws AuthenticationFailException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
-        //check if order item belong to current user
+
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
+        // Check if the order item belongs to the current user
         OrderItem orderItem = orderService.getOrderItem(orderItemId, user);
+
         if (!Helper.notNull(orderItem)) {
             return new ResponseEntity<>(new ApiResponse(false, ORDER_ITEM_UNAUTHORIZED_ACCESS), HttpStatus.FORBIDDEN);
         }
-        orderService.orderStatus(orderItem, orderStatus); // IN TRANSIT, DELIVERED, PICKED UP, RETURNED
+
+        // Update the order status (IN TRANSIT, DELIVERED, PICKED UP, RETURNED)
+        orderService.orderStatus(orderItem, orderStatus);
+
+        // Return success response
         return new ResponseEntity<>(new ApiResponse(true, "Order is " + orderStatus), HttpStatus.OK);
     }
 
 
-    @GetMapping("/owner-order-history") //rentedProducts
+
+    // API to get products rented out by the owner
+    @GetMapping("/owner-order-history")
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
+        // Get rented out products for the owner
         List<ProductDto> body = orderService.getRentedOutProducts(user, pageNumber, pageSize);
+
+        // Return the list of rented-out products
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
+
+
+    // API to get order items by shipping status
     @GetMapping("/shipping-status")
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<OrderItemDto>> getShippingStatus(@RequestParam("status") String shippingStatus, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
+        // Get order items by the specified shipping status
         List<OrderItemDto> body = orderService.getOrdersItemByStatus(shippingStatus, user);
+
+        // Return the list of order items by shipping status
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
+
+
+    // API to generate an invoice for a specific order
     @GetMapping("/generateInvoice/{orderId}")
-    @PreAuthorize("hasAuthority('BORROWER')")
+    @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
         try {
-            String authorizationHeader = request.getHeader("Authorization");
-            String token = authorizationHeader.substring(7);
-            User user = helper.getUser(token); // Assuming you have a helper method to get the user
+            // Extract User from the token
+            User user = helper.getUserFromToken(request);
 
+            // Get the order and order items
             Order order = orderService.getOrder(orderId, user);
+            List<OrderItem> orderItems = order.getOrderItems();
 
-            if(!Helper.notNull(order)) {
-                throw new OrderNotFoundException("No order items found for the user and order ID");
-            }
+            // Generate the invoice in PDF format
+            byte[] pdfBytes = orderService.generateInvoicePDF(orderItems, user, order);
 
-            List<OrderItem> orderItems = order.getOrderItems(); //From entity relation
-
-            byte[] pdfBytes = orderService.generateInvoicePDF(orderItems,user,order);
-
+            // set the headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", "invoice.pdf");
 
+            // Return the generated invoice as a byte array
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (IOException | DocumentException e) {
             log.error(String.valueOf(e)); // Handle the exception appropriately
@@ -152,5 +194,8 @@ public class OrderController {
         }
     }
 
+
+
 }
+
 

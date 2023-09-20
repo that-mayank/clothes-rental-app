@@ -23,7 +23,7 @@ public class LeapsApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static final String NGROK = "https://d887-106-51-70-135.ngrok-free.app";
+    public static final String NGROK = "https://9a8d-180-151-122-199.ngrok-free.app";
     public static final String bucketName = "leapsimagebucket";
 
     public static final Integer ACCOUNT_LOCK_DURATION_MINUTES = 2;

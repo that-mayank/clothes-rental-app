@@ -27,20 +27,20 @@ public class CategoryController {
     //Linking Service layer using constructor injection
     private final CategoryServiceInterface categoryService;
 
-    // API - Allows the admin to create new category
+    // API - Allows the admin to create a new category
     @ApiOperation(value = "Add new category")
     @PostMapping(value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('ADMIN')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAnyAuthority('ADMIN')") // Adding Method Level Authorization Via RBAC - Role-Based Access Control
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
 
-        // calling service layer to check if the category is already present or not
+        // calling the service layer to check if the category is already present or not
         if (Helper.notNull(categoryService.readCategory(categoryDto.getCategoryName()))) {
 
-            // Status Code : 409-HttpStatus.CONFLICT
+            // Status Code: 409-HttpStatus.CONFLICT
             return new ResponseEntity<>(new ApiResponse(false, "Category already exists"), HttpStatus.CONFLICT);
         }
-        // Creating new category object
+        // Creating a new category object
         Category category = new Category(categoryDto);
 
         // Calling service layer to create new category
@@ -53,7 +53,7 @@ public class CategoryController {
     // API - Allows the user to list categories
     @ApiOperation(value = "List categories")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<Category>> listCategory() {
 
@@ -67,7 +67,7 @@ public class CategoryController {
     // API - Allows admin to update category
     @ApiOperation(value = "update category")
     @PutMapping(value = "/update/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')") // Adding Method Level Authorization Via RBAC - Role Based Access Control
+    @PreAuthorize("hasAuthority('ADMIN')") // Adding Method Level Authorization Via RBAC - Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable("id") Long id, @Valid @RequestBody CategoryDto updateCategory) {
 
@@ -82,7 +82,7 @@ public class CategoryController {
         }
 
         //Return this if category does not exist
-        // Status Code : 404-HttpStatus.NOT_FOUND
+        // Status Code: 404-HttpStatus.NOT_FOUND
         return new ResponseEntity<>(new ApiResponse(false, "category does not exist"), HttpStatus.NOT_FOUND);
     }
 }

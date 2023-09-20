@@ -10,6 +10,7 @@ import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class SubCategoryController {
 
 
     // API to create a new subcategory
-    @PostMapping("/create")
+    @PostMapping(value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ApiResponse> createSubCategory(@Valid @RequestBody SubCategoryDto subCategoryDto) {
         // Check if the parent category exists
@@ -69,7 +70,7 @@ public class SubCategoryController {
     }
 
     // API to list all subcategories
-    @GetMapping("/list")
+    @GetMapping(value = "/list",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<SubCategory>> listSubCategories() {
         // Get the list of all subcategories
@@ -78,7 +79,7 @@ public class SubCategoryController {
     }
 
     // API to list subcategories by category id
-    @GetMapping("/listbyid/{categoryId}")
+    @GetMapping(value = "/listbyid/{categoryId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<SubCategory>> listSubCategoriesByCategoriesId(@PathVariable("categoryId") Long categoryId) {
         // Check if the category id is valid
@@ -93,7 +94,7 @@ public class SubCategoryController {
 
 
     // API to update a subcategory
-    @PutMapping("/update/{subcategoryId}")
+    @PutMapping(value = "/update/{subcategoryId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ApiResponse> updateSubCategory(@PathVariable("subcategoryId") Long subcategoryId, @Valid @RequestBody SubCategoryDto subCategoryDto) {
         // Check if the category is valid

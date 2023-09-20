@@ -11,11 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,7 +44,7 @@ public class StorageController {
 
     // API to upload an image to Amazon S3
     @ApiOperation(value = "Upload image to Amazon S3")
-    @PostMapping("/uploadProductImage")
+    @PostMapping(value = "/uploadProductImage",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<UrlResponse> uploadFileToSpecificBucket(
             @RequestParam("file") MultipartFile[] files,
@@ -68,7 +71,7 @@ public class StorageController {
 
     // API to upload a profile image to Amazon S3
     @ApiOperation(value = "Upload profile image to Amazon S3")
-    @PostMapping("/uploadProfileImage")
+    @PostMapping(value = "/uploadProfileImage",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<String> uploadProfileImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         // Extract User from the token
@@ -87,7 +90,7 @@ public class StorageController {
 
     // API to download an image from S3
     @ApiOperation(value = "Download an image from S3")
-    @GetMapping("/download/{fileName}")
+    @GetMapping(value = "/download/{fileName}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) throws IOException {
         // Download the file data as a byte array
         byte[] data = storageServiceInterface.downloadFile(fileName);
@@ -104,7 +107,7 @@ public class StorageController {
 
     // API to view an uploaded image
     @ApiOperation(value = "View an uploaded image")
-    @GetMapping("/view")
+    @GetMapping(value = "/view",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> viewFile(@RequestParam("image") String fileName, HttpServletResponse response) {
         try {
             // View the file in the response

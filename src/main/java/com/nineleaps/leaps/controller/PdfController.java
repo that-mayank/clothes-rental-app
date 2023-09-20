@@ -34,7 +34,7 @@ public class PdfController {
     private final PdfServiceInterface pdfService;
     private final Helper helper;
 
-    @GetMapping("/export") // Handler method to export PDF
+    @GetMapping(value = "/export",produces = MediaType.APPLICATION_JSON_VALUE) // Handler method to export PDF
     @PreAuthorize("hasAuthority('OWNER')") // Requires 'OWNER' authority to access
     public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
         // Extracting the token from the Authorization header

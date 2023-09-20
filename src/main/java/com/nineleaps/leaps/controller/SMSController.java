@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class SMSController {
 
     // API to send an SMS to a phone number
     @ApiOperation(value = "Send SMS to phone number")
-    @PostMapping("/phoneNo")
+    @PostMapping(value = "/phoneNo",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
         // Check if the phone number is in the database
         if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
@@ -71,7 +72,7 @@ public class SMSController {
 
     // API to verify OTP
     @ApiOperation(value = "Verify OTP")
-    @PostMapping("/otp")
+    @PostMapping(value = "/otp",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
         // Verify the OTP
         smsService.verifyOtp(phoneNumber, otp, response, request);

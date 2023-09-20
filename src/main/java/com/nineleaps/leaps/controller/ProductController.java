@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,7 +77,7 @@ public class ProductController {
 
     // API to add a product to the owner's inventory.
     @ApiOperation(value = "Add product to owner")
-    @PostMapping("/add")
+    @PostMapping(value = "/add",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductDto productDto, HttpServletRequest request) {
         // Extract User from the token
@@ -104,7 +106,7 @@ public class ProductController {
 
     // API to list all products
     @ApiOperation(value = "List all the products and same user cannot see his/her own products in borrower flow")
-    @GetMapping("/list")
+    @GetMapping(value = "/list",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> listProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
         // Extract User from the token
@@ -120,7 +122,7 @@ public class ProductController {
 
     // API to update a product belonging to the owner.
     @ApiOperation(value = "Update product of owner")
-    @PutMapping("/update/{productId}")
+    @PutMapping(value = "/update/{productId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody @Valid ProductDto productDto, HttpServletRequest request) {
         // Extract User from the token
@@ -148,7 +150,7 @@ public class ProductController {
 
     // API to list products by a specific subcategory ID.
     @ApiOperation(value = "List product by subcategory id")
-    @GetMapping("/listBySubcategoryId/{subcategoryId}")
+    @GetMapping(value = "/listBySubcategoryId/{subcategoryId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> listBySubcategoryId(@PathVariable("subcategoryId") Long subcategoryId, HttpServletRequest request) {
         // Check if the provided subcategory ID is valid
@@ -170,7 +172,7 @@ public class ProductController {
 
     // API to list products by a specific category ID.
     @ApiOperation(value = "List products by category id")
-    @GetMapping("/listByCategoryId/{categoryId}")
+    @GetMapping(value = "/listByCategoryId/{categoryId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> listByCategoryId(@PathVariable("categoryId") Long categoryId, HttpServletRequest request) {
         // Check if the provided category ID is valid
@@ -191,7 +193,7 @@ public class ProductController {
 
     // API to get details of an individual product by its ID.
     @ApiOperation(value = "Get individual product details")
-    @GetMapping("/listByProductId/{productId}")
+    @GetMapping(value = "/listByProductId/{productId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ProductDto> listByProductId(@PathVariable("productId") Long productId) {
         // Check if the provided product ID is valid
@@ -202,7 +204,7 @@ public class ProductController {
 
     // API to filter products based on a price range.
     @ApiOperation(value = "Filter products according to price range")
-    @GetMapping("/listByPriceRange")
+    @GetMapping(value="/listByPriceRange" , produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> getProductsByPriceRange(@RequestParam("minPrice") double minPrice, @RequestParam("maxPrice") double maxPrice) {
         // Fetch products within the specified price range
@@ -212,7 +214,7 @@ public class ProductController {
 
     // API to search for products based on a query string.
     @ApiOperation(value = "Search product api")
-    @GetMapping("/search")
+    @GetMapping(value="/search",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam("query") String query, HttpServletRequest request) {
         // Extract User from the token
@@ -225,7 +227,7 @@ public class ProductController {
 
 
     // API to list products in descending order for recently added functionality in owner flow
-    @GetMapping("/listInDesc")
+    @GetMapping(value="/listInDesc",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> listProductsDesc(HttpServletRequest request) throws AuthenticationFailException {
         // Extract User from the token
@@ -238,7 +240,7 @@ public class ProductController {
     }
 
     // API to list products added by the current user (owner)
-    @GetMapping("/listOwnerProducts")
+    @GetMapping(value="/listOwnerProducts",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')") // API for My Rentals
     public ResponseEntity<List<ProductDto>> listOwnerProducts(HttpServletRequest request) throws AuthenticationFailException {
         // Extract User from the token
@@ -251,7 +253,7 @@ public class ProductController {
     }
 
     // API to filter products based on size, subcategory ID, and price range
-    @GetMapping("/filterProducts")
+    @GetMapping(value="/filterProducts",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('BORROWER')")
     public ResponseEntity<List<ProductDto>> filterProducts(
             @RequestParam("size") String size,
@@ -289,7 +291,7 @@ public class ProductController {
     }
 
     // API to disable a product
-    @GetMapping("/disableProduct")
+    @GetMapping(value="/disableProduct",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<ApiResponse> disableProducts(
             @RequestParam("productId") Long productId,
@@ -311,7 +313,7 @@ public class ProductController {
     }
 
     // API to enable a product
-    @GetMapping("/enableProduct")
+    @GetMapping(value="/enableProduct",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<ApiResponse> enableProducts(
             @RequestParam("productId") Long productId,

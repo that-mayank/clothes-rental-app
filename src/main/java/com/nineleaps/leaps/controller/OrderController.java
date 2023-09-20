@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.controller;
 
+import com.fasterxml.jackson.databind.deser.std.MapDeserializer;
 import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
@@ -59,7 +60,7 @@ public class OrderController {
 
     // API to place a new order after successful payment
     @ApiOperation(value = "Add a new order after successful payment")
-    @PostMapping("/add")
+    @PostMapping(value = "/add",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> placeOrder(@RequestParam("razorpayId") String razorpayId, HttpServletRequest request) throws AuthenticationFailException {
 
@@ -76,7 +77,7 @@ public class OrderController {
 
     // API to get all orders for a particular user
     @ApiOperation(value = "List all the orders for a particular user")
-    @GetMapping("/list")
+    @GetMapping(value = "/list",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
 
@@ -94,7 +95,7 @@ public class OrderController {
 
     // API to get order items for a specific order
     @ApiOperation(value = "Get details of an order")
-    @GetMapping("/getOrderById/{orderId}")
+    @GetMapping(value = "/getOrderById/{orderId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
 
@@ -111,7 +112,7 @@ public class OrderController {
 
 
     // Test double APIs for order status updates (transit, delivered, pickup, return)
-    @PostMapping("/order-status")
+    @PostMapping(value = "/order-status",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) throws AuthenticationFailException {
 
@@ -135,7 +136,7 @@ public class OrderController {
 
 
     // API to get products rented out by the owner
-    @GetMapping("/owner-order-history")
+    @GetMapping(value = "/owner-order-history",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize, HttpServletRequest request) {
         // Extract User from the token
@@ -151,7 +152,7 @@ public class OrderController {
 
 
     // API to get order items by shipping status
-    @GetMapping("/shipping-status")
+    @GetMapping(value = "/shipping-status",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<OrderItemDto>> getShippingStatus(@RequestParam("status") String shippingStatus, HttpServletRequest request) {
         // Extract User from the token
@@ -167,7 +168,7 @@ public class OrderController {
 
 
     // API to generate an invoice for a specific order
-    @GetMapping("/generateInvoice/{orderId}")
+    @GetMapping(value = "/generateInvoice/{orderId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
         try {

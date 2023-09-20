@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class AddressController {
 
     // API: Allows the user to add address
     @ApiOperation(value = "Add new address to particular user")
-    @PostMapping("/add")
+    @PostMapping(value = "/add",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
 
@@ -51,7 +52,7 @@ public class AddressController {
 
     // API - Allows the user to update existing address via addressID
     @ApiOperation(value = "update address for particular user")
-    @PutMapping("/update/{addressId}")
+    @PutMapping(value = "/update/{addressId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
 
@@ -81,7 +82,7 @@ public class AddressController {
 
     // API - Allows the user to get all his address by using his UserId
     @ApiOperation(value = "List all addresses for particular user")
-    @GetMapping("/listAddress")
+    @GetMapping(value = "/listAddress",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<List<Address>> listAddress(HttpServletRequest request) throws AuthenticationFailException {
         // Extract User from the token
@@ -127,7 +128,7 @@ public class AddressController {
     }
 
     // API - Helps to get prefilled address on update address tab
-    @GetMapping("/getAddressById/{addressId}")
+    @GetMapping(value = "/getAddressById/{addressId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<Address> getAddressById(@PathVariable("addressId") Long addressId) {
 

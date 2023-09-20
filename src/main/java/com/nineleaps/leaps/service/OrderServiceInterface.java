@@ -1,6 +1,4 @@
 package com.nineleaps.leaps.service;
-
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
@@ -10,8 +8,6 @@ import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;

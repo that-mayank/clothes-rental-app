@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,7 +60,7 @@ public class WishlistController {
     private final Helper helper;
 
     // API to add a product to the wishlist
-    @PostMapping("/add")
+    @PostMapping(value = "/add",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> addWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
         // Extract User from the token
@@ -85,7 +86,7 @@ public class WishlistController {
     }
 
     // API to get all items in the wishlist
-    @GetMapping("/list")
+    @GetMapping(value = "/list",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> getWishlist(HttpServletRequest request) {
         // Extract User from the token

@@ -51,7 +51,7 @@ public class CartController {
 
     // Validate the addToCartDto object
 
-    public ResponseEntity<ApiResponse> addToCart(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
+    public ResponseEntity<ApiResponse> addToCart(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws ProductNotExistException {
 
         // JWT : Extracting user info from token
 
@@ -93,7 +93,7 @@ public class CartController {
 
     // API : To remove product from cart for particular user
 
-    @ApiOperation(value = "Delete product from cart")
+    @ApiOperation(value = "API : To remove product from cart for particular user")
     @DeleteMapping("/delete/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('BORROWER')")

@@ -12,25 +12,31 @@ import org.springframework.stereotype.Service;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-@Service
-@Transactional
+
+@Service // Marks this class as a Spring service component
+@Transactional // Marks this class as transactional for database operations
 public class FCMInitializer {
 
-    @Value("${app.firebase-configuration-file}")
+    @Value("${app.firebase-configuration-file}") // Reads the path to the Firebase configuration file from properties
     private String firebaseConfigPath;
-    Logger logger = LoggerFactory.getLogger(FCMInitializer.class);
-    @PostConstruct
+
+    Logger logger = LoggerFactory.getLogger(FCMInitializer.class); // Create a logger for this class
+
+    @PostConstruct // Annotated method to be executed after bean initialization
     public void initialize() {
         try {
+            // Build FirebaseOptions using the Firebase configuration file
             FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())).build();
+                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream()))
+                    .build();
+
+            // Check if FirebaseApp is not already initialized
             if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
-                logger.info("Firebase application has been initialized");
+                FirebaseApp.initializeApp(options); // Initialize FirebaseApp with the provided options
+                logger.info("Firebase application has been initialized"); // Log a success message
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage()); // Log an error message if there is an exception
         }
     }
 }
-

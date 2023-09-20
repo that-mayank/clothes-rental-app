@@ -26,23 +26,23 @@ import java.util.Objects;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
-
-@Service
-@Slf4j
-@Transactional
+@Service // This class is a service component.
+@Slf4j // A tool to log messages.
+@Transactional // Helps manage database transactions.
 public class StorageServiceImpl implements StorageServiceInterface {
 
-    String baseUrl = NGROK;
+    String baseUrl = NGROK; // The base URL for accessing files.
 
-    @Value("${application.bucket.name}")
+    @Value("${application.bucket.name}") // The name of the AWS S3 bucket.
     String bucketName;
 
     @Autowired
-    AmazonS3 s3Client;
+    AmazonS3 s3Client; // An interface for working with AWS S3.
 
-    // private method to determine Content type
+    // Determine the type of content based on the file extension.
     String determineContentType(String fileName) {
         String contentType;
+        // Check the file extension and set the appropriate content type.
         if (fileName.endsWith(".pdf")) {
             contentType = MediaType.APPLICATION_PDF_VALUE;
         } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
@@ -55,8 +55,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
         return contentType;
     }
 
-
-    // private method to convert multipart file to file
+    // Convert a file uploaded as a MultipartFile into a regular file.
     File convertMultiPartFileToFile(MultipartFile file) {
         File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
@@ -68,56 +67,61 @@ public class StorageServiceImpl implements StorageServiceInterface {
         return convertedFile;
     }
 
-
-
-    // upload file to s3 cloud AWS storage
+    // Upload a file to AWS S3 cloud storage.
     public String uploadFile(MultipartFile file) {
+        // Convert the MultipartFile to a regular file.
         File fileObj = convertMultiPartFileToFile(file);
+        // Generate a unique file name using the current timestamp and the original file name.
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        // Upload the file to the specified AWS S3 bucket.
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
         try {
+            // Delete the temporary file created during the conversion.
             Files.delete(fileObj.toPath());
         } catch (IOException e) {
             log.error(String.valueOf(e));
         }
+        // Return the URL for accessing the uploaded file.
         return UriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
     }
 
-    // download the image from s3
+    // Download a file from AWS S3.
     public byte[] downloadFile(String fileName) {
         S3Object s3Object = s3Client.getObject(bucketName, fileName);
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
 
         try {
+            // Read the file content from the input stream and convert it to a byte array.
             return IOUtils.toByteArray(inputStream);
-
         } catch (IOException e) {
             log.error(String.valueOf(e));
         }
+        // Return an empty byte array if there's an error.
         return new byte[0];
     }
 
-    //delete the file from s3
+    // Delete a file from AWS S3.
     public String deleteFile(String fileName) {
+        // Delete the specified file from the AWS S3 bucket.
         s3Client.deleteObject(bucketName, fileName);
+        // Return a message indicating that the file has been removed.
         return fileName + " removed";
     }
 
-
-    //view the file from s3
+    // View a file from AWS S3 and send it as a response.
     public void viewFile(String fileName, HttpServletResponse response) {
         try {
             S3Object s3Object = s3Client.getObject(bucketName, fileName);
             S3ObjectInputStream inputStream = s3Object.getObjectContent();
 
-            // Set the response headers
+            // Set the response headers to specify the content type.
             String contentType = determineContentType(fileName);
             response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-
 
             OutputStream outputStream = response.getOutputStream();
             byte[] buffer = new byte[1024];
             int bytesRead;
+            // Read the file content from the input stream and write it to the response output stream.
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
@@ -128,4 +132,3 @@ public class StorageServiceImpl implements StorageServiceInterface {
         }
     }
 }
-

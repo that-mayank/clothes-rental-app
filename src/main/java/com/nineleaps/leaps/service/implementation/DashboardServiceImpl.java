@@ -17,31 +17,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-@Service
-@AllArgsConstructor
-@Transactional
+@Service // Marks this class as a Spring service component
+@AllArgsConstructor // Lombok's annotation to generate a constructor with all required fields
+@Transactional // Marks this class as transactional for database operations
 public class DashboardServiceImpl implements DashboardServiceInterface {
 
     private final OrderItemRepository orderItemRepository;
 
+    // Calculate the dashboard view for the owner user
     @Override
     public DashboardDto dashboardOwnerView(User user) {
         double totalEarnings = 0;
         int totalNumberOfItems = orderItemRepository.findByOwnerId(user.getId()).size();
 
+        // Calculate total earnings by iterating over order items
         for (OrderItem orderItem : orderItemRepository.findByOwnerId(user.getId())) {
             totalEarnings += orderItem.getPrice() * orderItem.getQuantity() * (ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate()));
         }
 
+        // Create and return a DashboardDto with the calculated values
         return new DashboardDto(totalNumberOfItems, totalEarnings);
     }
 
+    // Generate analytics data for the owner user
     @Override
     public List<DashboardAnalyticsDto> analytics(User user) {
         Map<YearMonth, Double> totalEarningsByMonth = new HashMap<>();
         Map<YearMonth, Integer> totalItemsByMonth = new HashMap<>();
 
+        // Calculate total earnings and total items sold by month
         for (OrderItem orderItem : orderItemRepository.findByOwnerId(user.getId())) {
             int quantity = orderItem.getQuantity();
             double price = orderItem.getPrice();
@@ -57,15 +61,14 @@ public class DashboardServiceImpl implements DashboardServiceInterface {
 
         List<DashboardAnalyticsDto> result = new ArrayList<>();
 
+        // Create a list of DashboardAnalyticsDto objects with calculated values
         for (Map.Entry<YearMonth, Double> monthEntry : totalEarningsByMonth.entrySet()) {
-
             YearMonth month = monthEntry.getKey();
             int totalOrders = totalItemsByMonth.get(month);
             double totalEarning = monthEntry.getValue();
-
             result.add(new DashboardAnalyticsDto(month, totalOrders, totalEarning));
         }
 
-        return result;
+        return result; // Return the list of analytics data
     }
 }

@@ -77,7 +77,7 @@ public class SMSController {
 
     // API : To verify OTP sent to phone number
 
-    @ApiOperation(value = "Verify otp")
+    @ApiOperation(value = "API : To verify OTP sent to phone number")
     @PostMapping(value = "/otp", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
 

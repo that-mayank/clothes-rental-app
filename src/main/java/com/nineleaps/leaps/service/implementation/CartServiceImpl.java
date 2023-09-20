@@ -36,7 +36,7 @@ public class CartServiceImpl implements CartServiceInterface {
 
     // Add a product to the user's cart
     @Override
-    public void addToCart(AddToCartDto addToCartDto, Product product, User user) throws CartItemAlreadyExistException, QuantityOutOfBoundException {
+    public void addToCart(AddToCartDto addToCartDto, Product product, User user)  {
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), product.getId());
         if (Helper.notNull(cartItem)) {
             throw new CartItemAlreadyExistException("Product is already in the Cart: " + product.getId());

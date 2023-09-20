@@ -40,7 +40,7 @@ public interface ProductServiceInterface {
 
     Product getProduct(Long productId, Long userId);
 
-    void disableProduct(Product product, int quantity);
+    void disableProduct(Product product, int quantity,User user);
 
-    void enableProduct(Product product, int quantity);
+    void enableProduct(Product product, int quantity,User user);
 }

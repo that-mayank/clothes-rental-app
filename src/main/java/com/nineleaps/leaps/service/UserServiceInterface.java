@@ -8,7 +8,6 @@ import com.nineleaps.leaps.model.User;
 public interface UserServiceInterface {
     void signUp(SignupDto signupDto);
 
-
     void getUsers();
 
     void saveProfile(User user);

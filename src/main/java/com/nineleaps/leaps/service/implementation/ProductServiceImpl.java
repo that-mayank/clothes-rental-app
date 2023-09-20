@@ -49,6 +49,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
         productRepository.save(product);
         //setting image url
         setImageUrl(product, productDto);
+        product.setAuditColumns(user.getId());
+        productRepository.save(product);
     }
 
     @Override
@@ -77,11 +79,11 @@ public class ProductServiceImpl implements ProductServiceInterface {
             throw new ProductNotExistException("Product does not belong to the user: " + user.getFirstName() + " " + user.getLastName());
         }
         Product product = getProductFromDto(productDto, subCategories, categories, user);
-        if (Helper.notNull(product)) {
-            product.setId(productId);
-            //setting image url
-            setImageUrl(product, productDto);
-        }
+        product.setId(productId);
+        //setting image url
+        setImageUrl(product, productDto);
+        product.setAuditColumns(user.getId());
+        productRepository.save(product);
     }
 
     @Override
@@ -266,6 +268,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
             throw new ProductNotExistException("Product does not belong to current user.");
         }
         product.setDeleted(true);
+        product.setAuditColumns(userId);
         productRepository.save(product);
     }
 
@@ -275,7 +278,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public void disableProduct(Product product, int quantity) {
+    public void disableProduct(Product product, int quantity,User user) {
         if (quantity > product.getAvailableQuantities()) {
             throw new QuantityOutOfBoundException("User cannot disable more quantities than available quantities");
         }
@@ -284,11 +287,12 @@ public class ProductServiceImpl implements ProductServiceInterface {
         if (product.getAvailableQuantities() == 0) {
             product.setDisabled(true);
         }
+        product.setAuditColumns(user.getId());
         productRepository.save(product);
     }
 
     @Override
-    public void enableProduct(Product product, int quantity) {
+    public void enableProduct(Product product, int quantity,User user) {
         if (quantity > product.getDisabledQuantities()) {
             throw new QuantityOutOfBoundException("User cannot enable more quantities than disabled quantities");
         }
@@ -297,6 +301,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         if (product.isDisabled()) {
             product.setDisabled(false);
         }
+        product.setAuditColumns(user.getId());
         productRepository.save(product);
     }
 

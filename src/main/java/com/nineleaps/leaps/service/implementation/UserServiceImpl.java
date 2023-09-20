@@ -63,10 +63,12 @@ private final UserLoginInfoRepository userLoginInfoRepository;
 
             if (existingDeviceToken != null) {
                 user.setDeviceToken(deviceToken);
+                user.setAuditColumns(user.getId());
                 userRepository.save(user);
                 log.info("Device token updated for user: {} and token is: {}", email, deviceToken);
             } else {
                 user.setDeviceToken(deviceToken);
+                user.setAuditColumns(user.getId());
                 userRepository.save(user);
                 log.info("Device token saved for user: {}", email);
             }
@@ -78,7 +80,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     public void signUp(SignupDto signupDto) throws CustomException {
         //Check if the current email has already been registered. i.e. User already exists
         if (Helper.notNull(userRepository.findByEmail(signupDto.getEmail()))) {
-            //if email already registered throw custom exception
+            //if email already registered throws custom exception
             throw new CustomException("Email already associated with other user");
         }
         //add exception for registered phone number
@@ -89,11 +91,13 @@ private final UserLoginInfoRepository userLoginInfoRepository;
         String encryptedPassword = passwordEncoder.encode(signupDto.getPassword());
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
         try {
+
+            userRepository.save(user);
+            user.setAuditColumns(user.getId());
             userRepository.save(user);
             UserLoginInfo userLoginInfo = new UserLoginInfo();
             userLoginInfo.initializeLoginInfo(user);
             userLoginInfoRepository.save(userLoginInfo);
-            System.out.println(userLoginInfo.getLoginAttempts());
             new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
         } catch (Exception e) {
             //handle signup error
@@ -131,6 +135,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     @Override
     public void updateProfile(User oldUser, ProfileUpdateDto profileUpdateDto) {
         User user = new User(profileUpdateDto, oldUser);
+        user.setAuditColumns(user.getId());
         userRepository.save(user);
     }
 
@@ -143,6 +148,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
             imageUrl = profileImageUrl.substring(NGROK.length());
         }
         user.setProfileImageUrl(imageUrl);
+        user.setAuditColumns(user.getId());
         userRepository.save(user);
     }
 

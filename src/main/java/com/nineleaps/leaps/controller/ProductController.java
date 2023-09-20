@@ -308,7 +308,7 @@ public class ProductController {
         }
 
         // Disable the product with an optional quantity
-        productService.disableProduct(product, quantity);
+        productService.disableProduct(product, quantity, user);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been disabled"), HttpStatus.OK);
     }
 
@@ -331,7 +331,7 @@ public class ProductController {
         }
 
         // Enable the product with an optional quantity
-        productService.enableProduct(product, quantity);
+        productService.enableProduct(product, quantity,user);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been enabled"), HttpStatus.OK);
     }
 

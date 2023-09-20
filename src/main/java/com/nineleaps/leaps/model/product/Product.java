@@ -16,6 +16,7 @@ import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,19 @@ import java.util.List;
 @FilterDef(name = "disabledProductFilter", parameters = @ParamDef(name = "isDisabled", type = "boolean"))
 @Filter(name = "disabledProductFilter", condition = "disabled = :isDisabled")
 public class Product {
+
+    // Audit Columns
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by")
+    private Long createdBy;
+
+    @Column(name = "updated_by")
+    private Long updatedBy;
 
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -98,5 +112,16 @@ public class Product {
         this.subCategories = subCategories;
         this.categories = categories;
         this.user = user;
+    }
+
+    public void setAuditColumns(Long userId) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (this.createdAt == null) {
+            this.createdAt = now;
+            this.createdBy = userId;
+        }
+        this.updatedAt = now;
+        this.updatedBy = userId;
     }
 }

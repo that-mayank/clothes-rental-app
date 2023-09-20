@@ -51,7 +51,7 @@ public class UserController {
     @ApiOperation(value = "user registration api")
     @PostMapping(value = "/signup" , consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse> signup(@RequestBody @Valid SignupDto signupDto) throws CustomException {
+    public ResponseEntity<ApiResponse> signup(@RequestBody SignupDto signupDto) throws CustomException {
 
         // Calling userServiceInterface to do the signup process
         userServiceInterface.signUp(signupDto);

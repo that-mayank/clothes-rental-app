@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,8 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
 
     @Override
     public void createCategory(Category category, User user) {
-        category.setAuditColumnsCreate(user);
+        category.setCategoryCreatedAt(LocalDateTime.now());
+        category.setCategoryCreatedBy(user.getId());
         category.setAuditColumnsUpdate(user.getId());
         categoryRepository.save(category);
     }

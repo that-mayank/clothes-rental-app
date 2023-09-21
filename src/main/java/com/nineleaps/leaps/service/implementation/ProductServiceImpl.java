@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
@@ -51,7 +52,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
         productRepository.save(product);
         //setting image url
         setImageUrl(product, productDto);
-        product.setAuditColumnsCreate(user);
+        product.setCreatedAt(LocalDateTime.now());
+        product.setCreatedBy(user.getId());
         product.setAuditColumnsUpdate(user.getId());
         productRepository.save(product);
     }

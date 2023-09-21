@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -42,7 +43,6 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            log.error("User not found in the database");
             throw new UsernameNotFoundException("user not found in the database");
         } else {
             log.info("user found in the database: {}", email);
@@ -56,19 +56,20 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     public void saveDeviceTokenToUser(String email, String deviceToken) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         } else {
             User existingDeviceToken = userRepository.findDeviceTokenByEmail(email);
 
             if (existingDeviceToken != null) {
                 user.setDeviceToken(deviceToken);
-                user.setAuditColumns(user.getId());
+                user.setAuditColumnsCreate(user);
+                user.setAuditColumnsUpdate(user.getId());
                 userRepository.save(user);
                 log.info("Device token updated for user: {} and token is: {}", email, deviceToken);
             } else {
                 user.setDeviceToken(deviceToken);
-                user.setAuditColumns(user.getId());
+                user.setAuditColumnsCreate(user);
+                user.setAuditColumnsUpdate(user.getId());
                 userRepository.save(user);
                 log.info("Device token saved for user: {}", email);
             }
@@ -78,7 +79,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
 
     @Override
     public void signUp(SignupDto signupDto) throws CustomException {
-        //Check if the current email has already been registered. i.e. User already exists
+        //Check if the current email has already been registered. I.e. User already exists
         if (Helper.notNull(userRepository.findByEmail(signupDto.getEmail()))) {
             //if email already registered throws custom exception
             throw new CustomException("Email already associated with other user");
@@ -91,9 +92,9 @@ private final UserLoginInfoRepository userLoginInfoRepository;
         String encryptedPassword = passwordEncoder.encode(signupDto.getPassword());
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
         try {
-
-            userRepository.save(user);
-            user.setAuditColumns(user.getId());
+            user.setCreatedAt(LocalDateTime.now());
+            user.setCreatedBy(user.getId());
+            user.setAuditColumnsUpdate(user.getId());
             userRepository.save(user);
             UserLoginInfo userLoginInfo = new UserLoginInfo();
             userLoginInfo.initializeLoginInfo(user);
@@ -135,7 +136,8 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     @Override
     public void updateProfile(User oldUser, ProfileUpdateDto profileUpdateDto) {
         User user = new User(profileUpdateDto, oldUser);
-        user.setAuditColumns(user.getId());
+        user.setAuditColumnsCreate(oldUser);
+        user.setAuditColumnsUpdate(user.getId());
         userRepository.save(user);
     }
 
@@ -148,7 +150,8 @@ private final UserLoginInfoRepository userLoginInfoRepository;
             imageUrl = profileImageUrl.substring(NGROK.length());
         }
         user.setProfileImageUrl(imageUrl);
-        user.setAuditColumns(user.getId());
+        user.setAuditColumnsCreate(user);
+        user.setAuditColumnsUpdate(user.getId());
         userRepository.save(user);
     }
 

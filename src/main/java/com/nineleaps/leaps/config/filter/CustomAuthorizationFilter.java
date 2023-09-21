@@ -35,7 +35,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,  FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String servletPath = request.getServletPath();
 
@@ -70,7 +70,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    private void handleRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null) {
             try {
@@ -78,7 +78,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 if (!securityUtility.isRefreshTokenExpired(token)) {
                     filterChain.doFilter(request, response);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "Refreshtoken token expired");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token expired");
+
                 }
             } catch (Exception e) {
                 response.setStatus(FORBIDDEN.value());
@@ -109,7 +110,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "Access Token token expired");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token expired");
+
 
         }
 

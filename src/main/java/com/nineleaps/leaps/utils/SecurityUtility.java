@@ -55,10 +55,11 @@ public class SecurityUtility {
     }
 
 
-    public boolean saveTokens(String rtoken, String email) {
+    public boolean saveTokens(String token, String email,LocalDateTime time) {
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(rtoken);
+        refreshToken.setToken(token);
         refreshToken.setEmail(email);
+        refreshToken.setAuditColumns(time);
         refreshTokenRepository.save(refreshToken);
         return true;
     }

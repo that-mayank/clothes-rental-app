@@ -2,11 +2,12 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,7 +23,9 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public void createCategory(Category category) {
+    public void createCategory(Category category, User user) {
+        category.setAuditColumnsCreate(user);
+        category.setAuditColumnsUpdate(user.getId());
         categoryRepository.save(category);
     }
 
@@ -32,7 +35,7 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
     }
 
     @Override
-    public void updateCategory(Long id, CategoryDto updateCategory) {
+    public void updateCategory(Long id, CategoryDto updateCategory,User user) {
         Category category;
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty()) {
@@ -44,6 +47,8 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
                 category.setCategoryName(updateCategory.getCategoryName());
                 category.setDescription(updateCategory.getDescription());
                 category.setImageUrl(updateCategory.getImageUrl());
+                category.setAuditColumnsCreate(user);
+                category.setAuditColumnsUpdate(user.getId());
                 categoryRepository.save(category);
             }
         }
@@ -64,7 +69,7 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
         List<Category> categories = new ArrayList<>();
         for (Long categoryId : categoryIds) {
             Optional<Category> optionalCategory = readCategory(categoryId);
-            if (!optionalCategory.isPresent()) {
+            if (optionalCategory.isEmpty()) {
                 throw new CategoryNotExistException("Category is invalid: " + categoryId);
             }
             categories.add(optionalCategory.get());

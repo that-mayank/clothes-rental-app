@@ -93,6 +93,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
             productRepository.save(product);
         }
         newOrder.setOrderItems(orderItemList);
+        newOrder.setAuditColumnsCreate(user);
+        newOrder.setAuditColumnsUpdate(user.getId());
         orderRepository.save(newOrder);
         //delete cart items after placing order
         cartService.deleteUserCartItems(user);

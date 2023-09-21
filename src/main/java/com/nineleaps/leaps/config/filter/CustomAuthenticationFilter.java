@@ -114,7 +114,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         securityUtility.initializeUserLoginInfo(email);
 
         // Save Refresh Token to the Database
-        if (securityUtility.saveTokens(refreshToken, email)) {
+        if (securityUtility.saveTokens(refreshToken, email,refreshTokenExpirationTime)) {
             response.getWriter().write("RefreshTokens added successfully!");
         } else {
             response.getWriter().write("Token not added");

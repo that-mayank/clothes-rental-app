@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "Tokens")
@@ -15,9 +17,24 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 public class RefreshToken {
+
+    // Audit Columns
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+
+    @Column(name = "end_at")
+    private LocalDateTime endingAt;
+
     @Id
     private String email;
 
     @Column(name = "refresh_token")
     private String token;
+
+    public void setAuditColumns( LocalDateTime time) {
+
+        this.createdAt = LocalDateTime.now();
+        this.endingAt = time;
+    }
 }

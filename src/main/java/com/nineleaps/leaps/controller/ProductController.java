@@ -286,7 +286,7 @@ public class ProductController {
         }
 
         // Soft delete the product
-        productService.deleteProduct(optionalProduct.get().getId(), user.getId());
+        productService.deleteProduct(optionalProduct.get().getId(), user);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been deleted successfully."), HttpStatus.OK);
     }
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "address")
@@ -15,6 +16,21 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 public class Address {
+
+
+    // Audit Columns
+    @Column(name = "created_at")
+    private LocalDateTime addressCreatedAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime addressUpdatedAt;
+
+    @Column(name = "created_by")
+    private Long addressCreatedBy;
+
+    @Column(name = "updated_by")
+    private Long addressUpdatedBy;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,17 +51,6 @@ public class Address {
     @JsonIgnore
     private User user;
 
-    public Address(Address address, User user) {
-        this.addressType = address.getAddressType();
-        this.addressLine1 = address.getAddressLine1();
-        this.addressLine2 = address.getAddressLine2();
-        this.city = address.getCity();
-        this.state = address.getState();
-        this.postalCode = address.getPostalCode();
-        this.country = address.getCountry();
-        this.user = user;
-        this.defaultAddress = address.isDefaultAddress();
-    }
 
     public Address(AddressDto addressDto, User user) {
         this.id = addressDto.getId();
@@ -60,8 +65,14 @@ public class Address {
         this.defaultAddress = addressDto.isDefaultAddress();
     }
 
-    public Address(Long addressId, User user) {
-        this.id = addressId;
-        this.user = user;
+
+    public void setAuditColumnsCreate(User user) {
+        this.addressCreatedAt = user.getCreatedAt();
+        this.addressCreatedBy = user.getCreatedBy();
+    }
+
+    public void setAuditColumnsUpdate(Long userId){
+        this.addressUpdatedAt = LocalDateTime.now();
+        this.addressUpdatedBy = userId;
     }
 }

@@ -2,6 +2,7 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,13 +48,16 @@ public class SubCategoryController {
 
     // Subcategory service for subcategory-related operations
     private final SubCategoryServiceInterface subCategoryService;
-
+    private final Helper helper;
 
 
     // API to create a new subcategory
     @PostMapping(value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ApiResponse> createSubCategory(@Valid @RequestBody SubCategoryDto subCategoryDto) {
+    public ResponseEntity<ApiResponse> createSubCategory(@Valid @RequestBody SubCategoryDto subCategoryDto, HttpServletRequest request) {
+
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
         // Check if the parent category exists
         Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
         if (optionalCategory.isEmpty()) {
@@ -65,7 +71,7 @@ public class SubCategoryController {
         }
 
         // Create the subcategory
-        subCategoryService.createSubCategory(subCategoryDto, category);
+        subCategoryService.createSubCategory(subCategoryDto, category,user);
         return new ResponseEntity<>(new ApiResponse(true, "Category is created"), HttpStatus.CREATED);
     }
 
@@ -96,7 +102,11 @@ public class SubCategoryController {
     // API to update a subcategory
     @PutMapping(value = "/update/{subcategoryId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<ApiResponse> updateSubCategory(@PathVariable("subcategoryId") Long subcategoryId, @Valid @RequestBody SubCategoryDto subCategoryDto) {
+    public ResponseEntity<ApiResponse> updateSubCategory(@PathVariable("subcategoryId") Long subcategoryId, @Valid @RequestBody SubCategoryDto subCategoryDto,HttpServletRequest request) {
+
+        // Extract User from the token
+        User user = helper.getUserFromToken(request);
+
         // Check if the category is valid
         Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
         if (optionalCategory.isEmpty()) {
@@ -111,7 +121,7 @@ public class SubCategoryController {
         Category category = optionalCategory.get();
 
         // Update the subcategory
-        subCategoryService.updateSubCategory(subcategoryId, subCategoryDto, category);
+        subCategoryService.updateSubCategory(subcategoryId, subCategoryDto, category,user);
 
         return new ResponseEntity<>(new ApiResponse(true, "Subcategory updated successfully"), HttpStatus.OK);
     }

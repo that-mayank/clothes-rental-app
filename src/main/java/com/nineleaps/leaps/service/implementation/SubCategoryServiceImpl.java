@@ -2,6 +2,7 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
@@ -22,8 +23,10 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
     private final SubCategoryRepository categoryRepository;
 
     @Override
-    public void createSubCategory(SubCategoryDto subCategoryDto, Category category) {
+    public void createSubCategory(SubCategoryDto subCategoryDto, Category category, User user) {
         SubCategory subCategory = getSubCategoryFromDto(subCategoryDto, category);
+        subCategory.setAuditColumnsCreate(user);
+        subCategory.setAuditColumnsUpdate(user.getId());
         categoryRepository.save(subCategory);
     }
 
@@ -58,10 +61,12 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
     }
 
     @Override
-    public void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category) {
+    public void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category,User user) {
         SubCategory updatedSubCategory = getSubCategoryFromDto(subCategoryDto, category);
         if (Helper.notNull(updatedSubCategory)) {
             updatedSubCategory.setId(subcategoryId);
+            updatedSubCategory.setAuditColumnsCreate(user);
+            updatedSubCategory.setAuditColumnsUpdate(user.getId());
             categoryRepository.save(updatedSubCategory);
         }
     }
@@ -71,7 +76,7 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
         List<SubCategory> subCategories = new ArrayList<>();
         for (Long subcategoryId : subcategoryIds) {
             Optional<SubCategory> optionalSubCategory = readSubCategory(subcategoryId);
-            if (!optionalSubCategory.isPresent()) {
+            if (optionalSubCategory.isEmpty()) {
                 throw new CategoryNotExistException("Subcategory is invalid: " + subcategoryId);
             }
             subCategories.add(optionalSubCategory.get());

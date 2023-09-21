@@ -17,6 +17,21 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class Order {
+
+    // Audit Columns
+    @Column(name = "created_at")
+    private LocalDateTime orderCreatedAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime orderUpdatedAt;
+
+    @Column(name = "created_by")
+    private Long orderCreatedBy;
+
+    @Column(name = "updated_by")
+    private Long orderUpdatedBy;
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,6 +47,15 @@ public class Order {
     @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-    //TODO -- shipping address
+
+    public void setAuditColumnsCreate(User user) {
+        this.orderCreatedAt = user.getCreatedAt();
+        this.orderCreatedBy = user.getCreatedBy();
+    }
+
+    public void setAuditColumnsUpdate(Long userId){
+        this.orderUpdatedAt = LocalDateTime.now();
+        this.orderUpdatedBy = userId;
+    }
 
 }

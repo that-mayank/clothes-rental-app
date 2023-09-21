@@ -40,6 +40,5 @@ public class OrderItem {
     private @NotNull double securityDeposit;
     @Column(name = "owner_id")
     private Long ownerId;
-    //TODO -- confirm status
-    //TODO -- shipped status
+
 }

@@ -9,6 +9,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.ProductRepository;
+
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
 
+
     public static ProductDto getDtoFromProduct(Product product) {
         return new ProductDto(product);
     }
@@ -49,7 +51,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
         productRepository.save(product);
         //setting image url
         setImageUrl(product, productDto);
-        product.setAuditColumns(user.getId());
+        product.setAuditColumnsCreate(user);
+        product.setAuditColumnsUpdate(user.getId());
         productRepository.save(product);
     }
 
@@ -82,7 +85,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
         product.setId(productId);
         //setting image url
         setImageUrl(product, productDto);
-        product.setAuditColumns(user.getId());
+        product.setAuditColumnsCreate(user);
+        product.setAuditColumnsUpdate(user.getId());
         productRepository.save(product);
     }
 
@@ -144,7 +148,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public ProductDto listProductByid(Long productId) throws ProductNotExistException {
         Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (!optionalProduct.isPresent()) {
+        if (optionalProduct.isEmpty()) {
             throw new ProductNotExistException("Product is invalid: " + productId);
         }
         return getDtoFromProduct(optionalProduct.get());
@@ -215,8 +219,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
         deletedProductFilter.setParameter(DELETED, false);
         disabledProductFilter.setParameter(DISABLED, false);
-        String[] stringArray = query.split(" ");
-        String[] stringList = stringArray;
+        String[] stringList = query.split(" ");
 
         List<ProductDto> productDtos = new ArrayList<>();
 
@@ -262,13 +265,14 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public void deleteProduct(Long productId, Long userId) {
-        Product product = productRepository.findByUserIdAndId(userId, productId);
+    public void deleteProduct(Long productId, User user) {
+        Product product = productRepository.findByUserIdAndId(user.getId(), productId);
         if (!Helper.notNull(product)) {
             throw new ProductNotExistException("Product does not belong to current user.");
         }
         product.setDeleted(true);
-        product.setAuditColumns(userId);
+        product.setAuditColumnsCreate(user);
+        product.setAuditColumnsUpdate(user.getId());
         productRepository.save(product);
     }
 
@@ -287,7 +291,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
         if (product.getAvailableQuantities() == 0) {
             product.setDisabled(true);
         }
-        product.setAuditColumns(user.getId());
+        product.setAuditColumnsCreate(user);
+        product.setAuditColumnsUpdate(user.getId());
         productRepository.save(product);
     }
 
@@ -301,7 +306,8 @@ public class ProductServiceImpl implements ProductServiceInterface {
         if (product.isDisabled()) {
             product.setDisabled(false);
         }
-        product.setAuditColumns(user.getId());
+        product.setAuditColumnsCreate(user);
+        product.setAuditColumnsUpdate(user.getId());
         productRepository.save(product);
     }
 

@@ -114,14 +114,13 @@ public class Product {
         this.user = user;
     }
 
-    public void setAuditColumns(Long userId) {
-        LocalDateTime now = LocalDateTime.now();
+    public void setAuditColumnsCreate(User user) {
+        this.createdAt = user.getCreatedAt();
+        this.createdBy = user.getCreatedBy();
+    }
 
-        if (this.createdAt == null) {
-            this.createdAt = now;
-            this.createdBy = userId;
-        }
-        this.updatedAt = now;
+    public void setAuditColumnsUpdate(Long userId){
+        this.updatedAt = LocalDateTime.now();
         this.updatedBy = userId;
     }
 }

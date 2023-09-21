@@ -27,6 +27,8 @@ public class AddressServiceImpl implements AddressServiceInterface {
             }
         }
         Address newAddress = new Address(addressDto, user);
+        newAddress.setAuditColumnsCreate(user);
+        newAddress.setAuditColumnsUpdate(user.getId());
         addressRepository.save(newAddress);
     }
 
@@ -56,6 +58,8 @@ public class AddressServiceImpl implements AddressServiceInterface {
     public void updateAddress(AddressDto addressDto, Long addressId, User user) {
         addressDto.setId(addressId);
         Address address = new Address(addressDto, user);
+        address.setAuditColumnsCreate(user);
+        address.setAuditColumnsUpdate(user.getId());
         addressRepository.save(address);
     }
 

@@ -36,7 +36,7 @@ public interface ProductServiceInterface {
 
     List<ProductDto> filterProducts(String size, Long subcategoryId, double minPrice, double maxPrice);
 
-    void deleteProduct(Long productId, Long userId);
+    void deleteProduct(Long productId, User user);
 
     Product getProduct(Long productId, Long userId);
 

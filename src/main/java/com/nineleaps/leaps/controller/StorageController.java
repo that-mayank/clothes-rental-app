@@ -44,7 +44,7 @@ public class StorageController {
 
     // API to upload an image to Amazon S3
     @ApiOperation(value = "Upload image to Amazon S3")
-    @PostMapping(value = "/uploadProductImage",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/uploadProductImage")
     @PreAuthorize("hasAnyAuthority('OWNER')")
     public ResponseEntity<UrlResponse> uploadFileToSpecificBucket(
             @RequestParam("file") MultipartFile[] files,
@@ -71,7 +71,7 @@ public class StorageController {
 
     // API to upload a profile image to Amazon S3
     @ApiOperation(value = "Upload profile image to Amazon S3")
-    @PostMapping(value = "/uploadProfileImage",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/uploadProfileImage")
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<String> uploadProfileImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         // Extract User from the token
@@ -107,7 +107,7 @@ public class StorageController {
 
     // API to view an uploaded image
     @ApiOperation(value = "View an uploaded image")
-    @GetMapping(value = "/view",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/view")
     public ResponseEntity<String> viewFile(@RequestParam("image") String fileName, HttpServletResponse response) {
         try {
             // View the file in the response

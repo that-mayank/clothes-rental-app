@@ -67,8 +67,10 @@ public class SubCategoryController {
 
         // Check if subcategory with the same name exists in the same category
         if (Helper.notNull(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category))) {
-            return new ResponseEntity<>(new ApiResponse(false, "Sub Category already exists"), HttpStatus.CONFLICT);
+            // Return conflict status if the subcategory already exists
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, "Sub Category already exists"));
         }
+
 
         // Create the subcategory
         subCategoryService.createSubCategory(subCategoryDto, category,user);

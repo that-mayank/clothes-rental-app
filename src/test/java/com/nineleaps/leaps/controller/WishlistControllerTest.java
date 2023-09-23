@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -71,6 +68,51 @@ class WishlistControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("Product is invalid"));
     }
+
+    @Test
+    void addWishlist_ProductAlreadyInWishlist_ReturnsConflict() {
+        Long productId = 1L; // Assuming a valid product ID
+        HttpServletRequest request = mock(HttpServletRequest.class); // Mock HttpServletRequest
+
+        User user = new User(); // Assuming a valid user
+
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        when(productService.readProduct(productId)).thenReturn(Optional.of(new Product())); // Assuming product exists
+
+        // Mocking the wishlist to contain the product
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        Wishlist wishlist = new Wishlist(existingProduct, user);  // Product already in the wishlist
+        List<Wishlist> wishlistList = Collections.singletonList(wishlist);
+        when(wishlistService.readWishlist(user.getId())).thenReturn(wishlistList);
+
+        ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Product already in wishlist", Objects.requireNonNull(response.getBody()).getMessage());
+    }
+
+    @Test
+    void addWishlist_ProductNotInWishlist_ReturnsCreated() {
+        Long productId = 1L; // Assuming a valid product ID
+        HttpServletRequest request = mock(HttpServletRequest.class); // Mock HttpServletRequest
+
+        User user = new User(); // Assuming a valid user
+
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        when(productService.readProduct(productId)).thenReturn(Optional.of(new Product())); // Assuming product exists
+
+        // Mocking an empty wishlist
+        when(wishlistService.readWishlist(user.getId())).thenReturn(Collections.emptyList());
+
+        ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Added to wishlist", Objects.requireNonNull(response.getBody()).getMessage());
+    }
+
+
+
 
     @Test
     void addWishlist_productAlreadyInWishlist_shouldReturnConflictResponse() {

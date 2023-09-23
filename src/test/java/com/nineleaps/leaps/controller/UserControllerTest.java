@@ -72,6 +72,18 @@ class UserControllerTest {
         assertResponseEquals(expectedResponse, response);
     }
 
+    @Test
+    void updateProfile_UserNotFound_ReturnsNotFound() throws AuthenticationFailException {
+        ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto(); // Assuming valid DTO
+        HttpServletRequest request = mock(HttpServletRequest.class); // Mock HttpServletRequest
+
+        when(helper.getUserFromToken(request)).thenReturn(null);
+
+        ResponseEntity<ApiResponse> response = userController.updateProfile(profileUpdateDto, request);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("User not found", response.getBody().getMessage());
+    }
 
 
     @Test

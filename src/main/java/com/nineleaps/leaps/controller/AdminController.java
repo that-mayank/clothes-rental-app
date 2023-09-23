@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;import javax.validation.Valid;
 public class AdminController {
 
     // Linking layers using constructor injection
-    private final UserServiceInterface userServiceInterface;
+    private final UserServiceInterface userService;
     private final UserLoginInfoRepository userLoginInfoRepository;
 
 
@@ -36,7 +36,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse> getAllUsers() {
 
         // Calling service layer to fetch all users from the database
-        userServiceInterface.getUsers();
+        userService.getUsers();
 
         // Status Code : 200 - HttpStatus.OK
         return new ResponseEntity<>(new ApiResponse(true,"Fetched All Users From The Database"),HttpStatus.OK);
@@ -50,7 +50,7 @@ public class AdminController {
     public ResponseEntity<String> activateAccount(@RequestParam(name = "user-email") @Valid String email) {
         try {
             // Calling service layer to fetch user by email
-            User user = userServiceInterface.getUser(email);
+            User user = userService.getUser(email);
 
             // check if the user is null
             if (user == null) {
@@ -62,15 +62,14 @@ public class AdminController {
             // Calling service layer to fetch user-login-info details
             UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(user.getId());
 
-            // check if the user-login-info is null
-            if(userLoginInfo != null){
+
 
                 // Reset the user-login-info details for the user
                 userLoginInfo.resetLoginAttempts();
 
                 // Save the user-login-info details
                 userLoginInfoRepository.save(userLoginInfo);
-            }
+
 
             // Status Code : 202 - HttpStatus.ACCEPTED
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("User account Re-Activated successfully.");

@@ -74,10 +74,12 @@ public class WishlistController {
 
         // Check if the same product is already in the wishlist
         for (Wishlist wishlist : wishlistService.readWishlist(user.getId())) {
-            if (wishlist.getProduct().getId().equals(productId)) {
+            Long wishlistProductId = wishlist.getProduct().getId();
+            if (wishlistProductId.equals(productId)) {
                 return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
             }
         }
+
 
         // Add the product to the wishlist
         Wishlist wishlist = new Wishlist(optionalProduct.get(), user);

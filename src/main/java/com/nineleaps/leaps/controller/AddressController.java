@@ -117,8 +117,8 @@ public class AddressController {
         // Check if the address is not null
         if (!Helper.notNull(checkAddress)) {
 
-            // Status Code: 204-HttpStatus.NOT_FOUND
-            return new ResponseEntity<>(new ApiResponse(false, "Address not found"), HttpStatus.NO_CONTENT);
+            // Status Code: 200-HttpStatus.OK
+            return new ResponseEntity<>(new ApiResponse(false, "Address not found"), HttpStatus.OK);
         }
         // Calling the service layer to delete address
         addressService.deleteAddress(addressId);

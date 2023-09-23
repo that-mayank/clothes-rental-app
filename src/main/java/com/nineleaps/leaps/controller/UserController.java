@@ -8,7 +8,6 @@ import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.UserNotExistException;
-import com.nineleaps.leaps.model.Guest;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.RefreshTokenServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
@@ -69,18 +68,8 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
-        User user;
-
-        // Check if the user is a guest. If not, then switch profile for the user
-        if (profile == Role.GUEST) {
-            user = userServiceInterface.getGuest();
-            if (!Helper.notNull(user)) {
-                user = new Guest();
-                userServiceInterface.saveProfile(user);
-            }
-        } else {
             // Extract User from the token
-            user = helper.getUserFromToken(request);
+            User user = helper.getUserFromToken(request);
 
             if (!Helper.notNull(user)) {
                 throw new UserNotExistException("User is invalid");
@@ -92,7 +81,7 @@ public class UserController {
 
             //  Calling switch profile utility file to Generate new AccessTokens for the newly Switched Profile.
             switchprofile.generateTokenForSwitchProfile(response, profile, request);
-        }
+
         // Status code - 200-HttpStatus.OK
         return new ResponseEntity<>(new ApiResponse(true, "Role switch to: " + user.getRole()), HttpStatus.OK);
     }

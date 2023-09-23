@@ -26,3 +26,7 @@ twilio:
 
 #ngrok:
 #  link: https://98a8-106-51-70-135.ngrok-free.app
+
+#retry:
+#  maxAttempts: 2
+#  maxDelay: 100

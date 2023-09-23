@@ -26,9 +26,12 @@ import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -57,47 +60,50 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final PushNotificationServiceImpl pushNotificationService;
 
     @Override
-    public void placeOrder(User user, String sessionId) {
-        //retrieve the cart items for the user
-        CartDto cartDto = cartService.listCartItems(user);
-        List<CartItemDto> cartItemDtos = cartDto.getCartItems();
-        //create order and save it
-        Order newOrder = new Order();
-        newOrder.setCreateDate(LocalDateTime.now());
-        newOrder.setTotalPrice(cartDto.getTotalCost());
-        newOrder.setSessionId(sessionId);
-        newOrder.setUser(user);
 
+    public void placeOrder(User user, String sessionId) {
+        Order newOrder = new Order();
         List<OrderItem> orderItemList = new ArrayList<>();
-        for (CartItemDto cartItemDto : cartItemDtos) {
-            //create cartItem and save each
-            OrderItem orderItem = new OrderItem();
-            orderItem.setName(cartItemDto.getProduct().getName());
-            orderItem.setQuantity(cartItemDto.getQuantity());
-            orderItem.setPrice(cartItemDto.getProduct().getPrice());
-            orderItem.setCreatedDate(LocalDateTime.now());
-            orderItem.setProduct(cartItemDto.getProduct());
-            orderItem.setOrder(newOrder);
-            orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
-            orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
-            orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
-            orderItem.setStatus("Order placed");
-            orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
-            //add to orderItem table
-            orderItemRepository.save(orderItem);
-            orderItemList.add(orderItem);
-            //Reduce quantity from product after placing order
-            Product product = orderItem.getProduct();
-            product.setRentedQuantities(product.getRentedQuantities() + cartItemDto.getQuantity());
-            product.setAvailableQuantities(product.getAvailableQuantities() - cartItemDto.getQuantity());
-            productRepository.save(product);
-        }
-        newOrder.setOrderItems(orderItemList);
-        newOrder.setAuditColumnsCreate(user);
-        newOrder.setAuditColumnsUpdate(user.getId());
-        orderRepository.save(newOrder);
-        //delete cart items after placing order
-        cartService.deleteUserCartItems(user);
+            //retrieve the cart items for the user
+            CartDto cartDto = cartService.listCartItems(user);
+            List<CartItemDto> cartItemDtos = cartDto.getCartItems();
+            //create order and save it
+
+            newOrder.setCreateDate(LocalDateTime.now());
+            newOrder.setTotalPrice(cartDto.getTotalCost());
+            newOrder.setSessionId(sessionId);
+            newOrder.setUser(user);
+
+
+            for (CartItemDto cartItemDto : cartItemDtos) {
+                //create cartItem and save each
+                OrderItem orderItem = new OrderItem();
+                orderItem.setName(cartItemDto.getProduct().getName());
+                orderItem.setQuantity(cartItemDto.getQuantity());
+                orderItem.setPrice(cartItemDto.getProduct().getPrice());
+                orderItem.setCreatedDate(LocalDateTime.now());
+                orderItem.setProduct(cartItemDto.getProduct());
+                orderItem.setOrder(newOrder);
+                orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
+                orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
+                orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
+                orderItem.setStatus("Order placed");
+                orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
+                //add to orderItem table
+                orderItemRepository.save(orderItem);
+                orderItemList.add(orderItem);
+                //Reduce quantity from product after placing order
+                Product product = orderItem.getProduct();
+                product.setRentedQuantities(product.getRentedQuantities() + cartItemDto.getQuantity());
+                product.setAvailableQuantities(product.getAvailableQuantities() - cartItemDto.getQuantity());
+                productRepository.save(product);
+            }
+            newOrder.setOrderItems(orderItemList);
+            newOrder.setAuditColumnsCreate(user);
+            newOrder.setAuditColumnsUpdate(user.getId());
+            orderRepository.save(newOrder);
+            //delete cart items after placing order
+            cartService.deleteUserCartItems(user);
 
         // function to send email
         String email = user.getEmail();

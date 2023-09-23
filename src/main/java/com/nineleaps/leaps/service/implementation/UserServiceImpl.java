@@ -43,7 +43,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("user not found in the database");
+            throw new UsernameNotFoundException("Bad Credentials");
         } else {
             log.info("user found in the database: {}", email);
         }
@@ -56,7 +56,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     public void saveDeviceTokenToUser(String email, String deviceToken) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found in the database");
+            throw new UsernameNotFoundException("Bad Credentials");
         } else {
             User existingDeviceToken = userRepository.findDeviceTokenByEmail(email);
 

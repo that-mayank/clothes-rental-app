@@ -3,7 +3,6 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.StorageUtility;
-import io.github.resilience4j.retry.Retry;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
@@ -25,7 +24,6 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
     private final S3Client s3Client;
     private final StorageUtility storageUtility;
-    private final Retry retry;
 
 
     public String uploadProfileImage(MultipartFile file, User user){

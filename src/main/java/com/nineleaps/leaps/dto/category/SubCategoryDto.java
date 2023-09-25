@@ -1,7 +1,5 @@
 package com.nineleaps.leaps.dto.category;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +9,21 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class SubCategoryDto {
     private Long id;
-    private @NotNull String subcategoryName;
-    private @NotNull String imageURL;
-    private @NotNull String description;
-    private @NotNull Long categoryId;
-}
+    @NotNull
+    private String subcategoryName;
+    @NotNull
+    private String imageURL;
+    @NotNull
+    private String description;
+    @NotNull
+    private Long categoryId;
 
+    public SubCategoryDto(String subcategoryName, String imageURL, String description, Long categoryId) {
+        this.subcategoryName = subcategoryName;
+        this.imageURL = imageURL;
+        this.description = description;
+        this.categoryId = categoryId;
+    }
+}

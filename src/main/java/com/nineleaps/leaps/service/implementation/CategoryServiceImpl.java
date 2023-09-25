@@ -43,17 +43,13 @@ public class CategoryServiceImpl implements CategoryServiceInterface {
         if (optionalCategory.isEmpty()) {
             throw new IllegalArgumentException("Category not found with ID: " + id);
         }
-        if (optionalCategory.isPresent()) {
-            category = optionalCategory.get();
-            if (category != null) {
-                category.setCategoryName(updateCategory.getCategoryName());
-                category.setDescription(updateCategory.getDescription());
-                category.setImageUrl(updateCategory.getImageUrl());
-                category.setAuditColumnsCreate(user);
-                category.setAuditColumnsUpdate(user.getId());
-                categoryRepository.save(category);
-            }
-        }
+        category = optionalCategory.get();
+        category.setCategoryName(updateCategory.getCategoryName());
+        category.setDescription(updateCategory.getDescription());
+        category.setImageUrl(updateCategory.getImageUrl());
+        category.setAuditColumnsCreate(user);
+        category.setAuditColumnsUpdate(user.getId());
+        categoryRepository.save(category);
     }
 
     @Override

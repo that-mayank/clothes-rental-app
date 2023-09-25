@@ -21,15 +21,16 @@ import java.util.Optional;
 @AllArgsConstructor
 @Transactional
 public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
-    private final SubCategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
 
     @Override
-    public void createSubCategory(SubCategoryDto subCategoryDto, Category category, User user) {
+    public SubCategory createSubCategory(SubCategoryDto subCategoryDto, Category category, User user) {
         SubCategory subCategory = getSubCategoryFromDto(subCategoryDto, category);
         subCategory.setSubCategoryCreatedAt(LocalDateTime.now());
         subCategory.setSubCategoryCreatedBy(user.getId());
         subCategory.setAuditColumnsUpdate(user.getId());
-        categoryRepository.save(subCategory);
+        subCategoryRepository.save(subCategory);
+        return subCategory;
     }
 
     @Override
@@ -43,23 +44,24 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
         return null;
     }
 
-    private SubCategory getSubCategoryFromDto(SubCategoryDto subCategoryDto, Category category) {
+
+    SubCategory getSubCategoryFromDto(SubCategoryDto subCategoryDto, Category category) {
         return new SubCategory(subCategoryDto, category);
     }
 
     @Override
     public Optional<SubCategory> readSubCategory(Long subcategoryId) {
-        return categoryRepository.findById(subcategoryId);
+        return subCategoryRepository.findById(subcategoryId);
     }
 
     @Override
     public List<SubCategory> listSubCategory() {
-        return categoryRepository.findAll();
+        return subCategoryRepository.findAll();
     }
 
     @Override
     public List<SubCategory> listSubCategory(Long categoryId) {
-        return categoryRepository.findByCategoryId(categoryId);
+        return subCategoryRepository.findByCategoryId(categoryId);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
             updatedSubCategory.setId(subcategoryId);
             updatedSubCategory.setAuditColumnsCreate(user);
             updatedSubCategory.setAuditColumnsUpdate(user.getId());
-            categoryRepository.save(updatedSubCategory);
+            subCategoryRepository.save(updatedSubCategory);
         }
     }
 

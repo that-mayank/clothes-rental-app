@@ -26,6 +26,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
@@ -162,8 +163,8 @@ private final UserLoginInfoRepository userLoginInfoRepository;
     }
 
     @Override
-    public void getUsers() {
+    public List<User> getUsers() {
         log.info("getting all user from the database");
-        userRepository.findAll();
+        return userRepository.findAll();
     }
 }

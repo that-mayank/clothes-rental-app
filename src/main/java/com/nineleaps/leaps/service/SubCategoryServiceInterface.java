@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubCategoryServiceInterface {
-    void createSubCategory(SubCategoryDto subCategoryDto, Category category, User user);
+    SubCategory createSubCategory(SubCategoryDto subCategoryDto, Category category, User user);
 
     SubCategory readSubCategory(String subcategoryName, Category category);
 

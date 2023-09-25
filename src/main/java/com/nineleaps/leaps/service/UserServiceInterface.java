@@ -5,10 +5,12 @@ import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.model.User;
 
+import java.util.List;
+
 public interface UserServiceInterface {
     void signUp(SignupDto signupDto);
 
-    void getUsers();
+    List<User> getUsers();
 
     void saveProfile(User user);
 

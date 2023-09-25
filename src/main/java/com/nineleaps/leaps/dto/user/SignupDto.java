@@ -1,13 +1,17 @@
 package com.nineleaps.leaps.dto.user;
 
 import com.nineleaps.leaps.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignupDto {
     private @NotBlank String firstName;
     private @NotBlank String lastName;

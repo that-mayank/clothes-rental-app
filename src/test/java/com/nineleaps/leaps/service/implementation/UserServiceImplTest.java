@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -358,13 +359,13 @@ class UserServiceImplTest {
     void updateProfileImage_UrlContainsNgrok_ShouldRemoveNgrokFromImageUrl() {
         // Arrange
         User user = new User();
-        String profileImageUrl = "https://c540-180-151-122-199.ngrok-free.app/profile-image";
+        String profileImageUrl = NGROK+"/profile-image";
 
         // Act
         userService.updateProfileImage(profileImageUrl, user);
 
         // Assert
-        assertEquals("https://c540-180-151-122-199.ngrok-free.app/profile-image", profileImageUrl); // profileImageUrl should not be changed
+        assertEquals(NGROK+"/profile-image", profileImageUrl); // profileImageUrl should not be changed
         assertEquals("/profile-image", user.getProfileImageUrl());
     }
 

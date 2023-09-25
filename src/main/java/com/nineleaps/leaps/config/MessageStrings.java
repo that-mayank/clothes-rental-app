@@ -16,6 +16,8 @@ public class MessageStrings {
     public static final String DEAR_PREFIX = "Dear ";
     public static final String TOTAL_NUMBER = "totalNumberOfItems";
     public static final String TOTAL_INCOME = "totalEarnings";
+    private static final String PRODUCT_ALREADY_IN_CART = "Product is already in the Cart";
+    private static final String CART_ITEM_INVALID_MESSAGE = "Invalid Cart Item ID";
 
     private MessageStrings() {
         // Private constructor to prevent instantiation

@@ -92,6 +92,8 @@ private final UserLoginInfoRepository userLoginInfoRepository;
         //encrypting the password
         String encryptedPassword = passwordEncoder.encode(signupDto.getPassword());
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
+
+        System.out.println(user.getRole()+"keishore checking the signup");
         try {
             user.setCreatedAt(LocalDateTime.now());
             user.setCreatedBy(user.getId());

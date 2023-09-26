@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.nineleaps.leaps.config.MessageStrings.TOTAL_INCOME;
+import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -100,8 +102,8 @@ class PdfServiceImplTest {
     void addDashboardData_shouldAddTableToDocument() throws Exception {
         // Mock dashboard data for non-empty case
         Map<String, Object> monthData = new HashMap<>();
-        monthData.put("Total Earnings", 1000.0);
-        monthData.put("Number of Items Sold", 10);
+        monthData.put(TOTAL_INCOME, 1000.0);  // Use the constant TOTAL_INCOME
+        monthData.put(TOTAL_NUMBER, 10);  // Use the constant TOTAL_NUMBER
 
         Map<YearMonth, Map<String, Object>> dashboardData = new HashMap<>();
         dashboardData.put(YearMonth.now(), monthData);
@@ -119,7 +121,7 @@ class PdfServiceImplTest {
         privateMethod.setAccessible(true);
 
         // Call the private method
-        privateMethod.invoke(pdfService,document, new User());
+        privateMethod.invoke(pdfService, document, new User());
 
         // Capture the PdfPTable added to the document
         ArgumentCaptor<PdfPTable> captor = ArgumentCaptor.forClass(PdfPTable.class);
@@ -139,6 +141,7 @@ class PdfServiceImplTest {
         assertEquals("1000.0", capturedTable.getRow(1).getCells()[1].getPhrase().getContent());
         assertEquals("10", capturedTable.getRow(1).getCells()[2].getPhrase().getContent());
     }
+
 
     @Test
     void addBarChart_shouldAddChartImageToDocument() throws Exception {
@@ -203,8 +206,8 @@ class PdfServiceImplTest {
     void addContent_shouldCallExpectedMethods() throws Exception {
         // Mock dashboard data
         Map<String, Object> monthData = new HashMap<>();
-        monthData.put("Total Earnings", 1000.0);
-        monthData.put("Number of Items Sold", 10);
+        monthData.put(TOTAL_INCOME, 1000.0);
+        monthData.put(TOTAL_NUMBER, 10);
 
         Map<YearMonth, Map<String, Object>> dashboardData = new HashMap<>();
         dashboardData.put(YearMonth.now(), monthData);

@@ -37,8 +37,9 @@ import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 @Transactional
 public class UserServiceImpl implements UserServiceInterface, UserDetailsService {
     private final UserRepository userRepository;
-private final UserLoginInfoRepository userLoginInfoRepository;
+    private final UserLoginInfoRepository userLoginInfoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailServiceImpl emailService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -93,7 +94,6 @@ private final UserLoginInfoRepository userLoginInfoRepository;
         String encryptedPassword = passwordEncoder.encode(signupDto.getPassword());
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
 
-        System.out.println(user.getRole()+"keishore checking the signup");
         try {
             user.setCreatedAt(LocalDateTime.now());
             user.setCreatedBy(user.getId());
@@ -102,6 +102,7 @@ private final UserLoginInfoRepository userLoginInfoRepository;
             UserLoginInfo userLoginInfo = new UserLoginInfo();
             userLoginInfo.initializeLoginInfo(user);
             userLoginInfoRepository.save(userLoginInfo);
+
             new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
         } catch (Exception e) {
             //handle signup error
@@ -169,4 +170,17 @@ private final UserLoginInfoRepository userLoginInfoRepository;
         log.info("getting all user from the database");
         return userRepository.findAll();
     }
+
+//    public void sendTestEmail() {
+//        String subject = "Test Subject";
+//        String message = "This is a test email message.";
+//        String to = "19euee158@skcet.ac.in";  // Replace with the actual recipient email address
+//
+//        try {
+//            emailService.sendEmail(subject, message, to);
+//            System.out.println("Test email sent successfully.");
+//        } catch (Exception e) {
+//            System.err.println("Failed to send test email: " + e.getMessage());
+//        }
+//    }
 }

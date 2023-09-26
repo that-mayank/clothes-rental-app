@@ -29,7 +29,14 @@ public class OrderReceivedDto {
         this.quantity = orderItem.getQuantity();
         this.rentalStartDate = orderItem.getRentalStartDate();
         this.rentalEndDate = orderItem.getRentalEndDate();
-        this.rentalCost = Math.round(orderItem.getPrice() * orderItem.getQuantity() * (ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate())));
+
+        if (this.rentalStartDate != null && this.rentalEndDate != null) {
+            long rentalDays = ChronoUnit.DAYS.between(this.rentalStartDate, this.rentalEndDate);
+            this.rentalCost = Math.round(orderItem.getPrice() * this.quantity * rentalDays);
+        } else {
+            this.rentalCost = 0.0;  // Or any default value you prefer
+        }
+
         int i = orderItem.getImageUrl().indexOf("/api");
         this.imageUrl = NGROK + orderItem.getImageUrl().substring(i);
         this.productId = orderItem.getProduct().getId();
@@ -38,4 +45,5 @@ public class OrderReceivedDto {
         this.borrowerEmail = orderItem.getOrder().getUser().getEmail();
         this.borrowerPhoneNumber = orderItem.getOrder().getUser().getPhoneNumber();
     }
+
 }

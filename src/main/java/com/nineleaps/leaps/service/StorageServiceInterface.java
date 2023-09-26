@@ -11,7 +11,6 @@ public interface StorageServiceInterface {
 
     String uploadFileToBucket(MultipartFile file, Long categoryId, Long subcategoryId) throws IOException;
 
-    byte[] downloadFile(String fileName) throws IOException;
 
     void deleteFile(String fileName) throws IOException;
 

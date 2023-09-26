@@ -41,13 +41,13 @@ public class PdfServiceImpl implements PdfServiceInterface {
 
     @Override
     public void addContent(Document document, User user) throws DocumentException, IOException {
-    document.open();
+
         addHeader(document);
         addSubheading(document, user);
         addEmptyLine(document);
         addDashboardData(document,user);
         addBarChart(document,user);
-    document.close();
+
     }
 
     protected void addHeader(Document document) throws DocumentException {
@@ -70,36 +70,36 @@ public class PdfServiceImpl implements PdfServiceInterface {
         document.add(new Paragraph(" "));
     }
 
-    protected void addDashboardData(Document document, User user) throws DocumentException {
-        Map<YearMonth, Map<String, Object>> dashboardData = dashboardService.analytics(user);
-        int numColumns = dashboardData.isEmpty() ? 0 : dashboardData.values().iterator().next().size();
-        PdfPTable table = new PdfPTable(numColumns + 1);
-        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+//
+protected void addDashboardData(Document document,User user) throws DocumentException {
+    Map<YearMonth, Map<String, Object>> dashboardData = dashboardService.analytics(user);
+    int numColumns = dashboardData.isEmpty() ? 0 : dashboardData.values().iterator().next().size();
+    PdfPTable table = new PdfPTable(numColumns + 1);
+    table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 
-        Font tableHeaderFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, BaseColor.BLACK);
-        PdfPCell cell1 = new PdfPCell(new Phrase("Month", tableHeaderFont));
-        PdfPCell cell2 = new PdfPCell(new Phrase("Total Earnings", tableHeaderFont));
-        PdfPCell cell3 = new PdfPCell(new Phrase("Number of Items Sold", tableHeaderFont));
-        setCellPadding(cell1);
-        setCellPadding(cell2);
-        setCellPadding(cell3);
-        table.addCell(cell1);
-        table.addCell(cell2);
-        table.addCell(cell3);
+    Font tableHeaderFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 12, BaseColor.BLACK);
+    PdfPCell cell1 = new PdfPCell(new Phrase("Month", tableHeaderFont));
+    PdfPCell cell2 = new PdfPCell(new Phrase("Total Earnings", tableHeaderFont));
+    PdfPCell cell3 = new PdfPCell(new Phrase("Number of Items Sold", tableHeaderFont));
+    setCellPadding(cell1);
+    setCellPadding(cell2);
+    setCellPadding(cell3);
+    table.addCell(cell1);
+    table.addCell(cell2);
+    table.addCell(cell3);
 
-        for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
-            YearMonth month = entry.getKey();
-            Map<String, Object> monthData = entry.getValue();
-            String monthString = month.toString();
-            String earnings = monthData.get("Total Earnings") != null ? monthData.get("Total Earnings").toString() : "";
-            String numberOfItems = monthData.get("Number of Items Sold") != null ? monthData.get("Number of Items Sold").toString() : "";
-            table.addCell(monthString);
-            table.addCell(earnings);
-            table.addCell(numberOfItems);
-        }
-        document.add(table);
+    for (Map.Entry<YearMonth, Map<String, Object>> entry : dashboardData.entrySet()) {
+        YearMonth month = entry.getKey();
+        Map<String, Object> monthData = entry.getValue();
+        String monthString = month.toString();
+        String earnings = monthData.get(TOTAL_INCOME).toString() !=null ? monthData.get(TOTAL_INCOME).toString() : "";
+        String numberOfItems = monthData.get(TOTAL_NUMBER).toString() != null ? monthData.get(TOTAL_NUMBER).toString():"";
+        table.addCell(monthString);
+        table.addCell(earnings);
+        table.addCell(numberOfItems);
     }
-
+    document.add(table);
+}
 
     protected void addBarChart(Document document, User user) throws DocumentException, IOException {
         Map<YearMonth, Map<String, Object>> dashboardData = dashboardService.analytics(user);

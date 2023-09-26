@@ -5,7 +5,6 @@ import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.RefreshTokenServiceInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 
 @Service

@@ -88,20 +88,8 @@ public class StorageController {
         }
     }
 
-    // API to download an image from S3
-    @ApiOperation(value = "Download an image from S3")
-    @GetMapping(value = "/download/{fileName}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) throws IOException {
-        // Download the file data as a byte array
-        byte[] data = storageServiceInterface.downloadFile(fileName);
-        ByteArrayResource resource = new ByteArrayResource(data);
-        return ResponseEntity
-                .ok()  // Return 200 OK with the UrlResponse
-                .contentLength(data.length)
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
-                .body(resource);
-    }
+
+
 
 
 

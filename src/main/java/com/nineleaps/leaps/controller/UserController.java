@@ -78,7 +78,7 @@ public class UserController {
 
             // Calling the service layer to save profile of the user
             userServiceInterface.saveProfile(user);
-
+//            userServiceInterface.sendTestEmail();
             //  Calling switch profile utility file to Generate new AccessTokens for the newly Switched Profile.
             switchprofile.generateTokenForSwitchProfile(response, profile, request);
 

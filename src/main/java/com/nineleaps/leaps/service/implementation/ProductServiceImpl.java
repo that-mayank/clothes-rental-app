@@ -49,8 +49,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
     @Override
     public void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
         Product product = getProductFromDto(productDto, subCategories, categories, user);
-        productRepository.save(product);
-        //setting image url
         setImageUrl(product, productDto);
         product.setCreatedAt(LocalDateTime.now());
         product.setCreatedBy(user.getId());
@@ -325,7 +323,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
             productUrls.add(productUrl);
         }
         product.setImageURL(productUrls);
-        productRepository.save(product);
     }
 
     private String ngrokLinkRemove(String imageurl) {

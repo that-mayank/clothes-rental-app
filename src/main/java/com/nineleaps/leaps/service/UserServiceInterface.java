@@ -28,5 +28,5 @@ public interface UserServiceInterface {
 
     void saveDeviceTokenToUser(String email,String deviceToken);
 
-
+//    void sendTestEmail();
 }

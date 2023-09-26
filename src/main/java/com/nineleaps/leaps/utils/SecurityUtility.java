@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -181,8 +182,44 @@ public class SecurityUtility {
     }
 
 
+    public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
+        String secretFilePath = "Desktop/leaps/secret/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+        String secret = readSecretFromFile(absolutePath);
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        User user = userRepository.findByPhoneNumber(phoneNumber);
+        String role = user.getRole().toString();
+        String[] roles = new String[]{role};
+        String email = user.getEmail();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time
+        Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
+        LocalDateTime refreshTokenExpirationTime = now.plusMinutes(43200); // Update to desired expiration time 30 days
+        Date refreshTokenExpirationDate = Date.from(refreshTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
+        String accessToken = JWT.create()
+                .withSubject(email)
+                .withExpiresAt(accessTokenExpirationDate)
+                .withClaim("roles", Arrays.asList(roles))
+                .withIssuer(request.getRequestURL().toString())
+                .sign(algorithm);
+        String refreshToken = JWT.create()
+                .withSubject(user.getEmail())
+                .withExpiresAt(refreshTokenExpirationDate)
+                .withIssuer(request.getRequestURL().toString())
+                .sign(algorithm);
 
+        // Set the Time of Last Successful Login Attempt
+        setLastLoginAttempt(email);
 
+        // Initialize the UserLoginInfo Table for the Successfully Logged-In User
+        initializeUserLoginInfo(email);
+
+        response.setHeader("access_token", accessToken);
+        response.setHeader("refresh_token", refreshToken);
+
+        saveTokens(refreshToken, email, refreshTokenExpirationTime);
+
+    }
 }
 
 

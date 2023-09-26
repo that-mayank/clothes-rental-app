@@ -26,17 +26,12 @@ import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.TransientDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -44,7 +39,6 @@ import java.util.List;
 import java.util.*;
 
 import static com.nineleaps.leaps.config.MessageStrings.*;
-import static com.nineleaps.leaps.service.implementation.ProductServiceImpl.getDtoFromProduct;
 
 
 @Service
@@ -60,7 +54,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final PushNotificationServiceImpl pushNotificationService;
 
     @Override
-
     public void placeOrder(User user, String sessionId) {
         Order newOrder = new Order();
         List<OrderItem> orderItemList = new ArrayList<>();
@@ -102,45 +95,62 @@ public class OrderServiceImpl implements OrderServiceInterface {
             newOrder.setAuditColumnsCreate(user);
             newOrder.setAuditColumnsUpdate(user.getId());
             orderRepository.save(newOrder);
+
             //delete cart items after placing order
             cartService.deleteUserCartItems(user);
 
-        // function to send email
-        String email = user.getEmail();
-        String subject = "Order placed";
+            // send order confirmation email
+            sendOrderConfirmationEmail(user,newOrder);
+
+            // send push notification for order
+            sendPushNotifications(orderItemList);
+
+    }
+
+    private String generateOrderConfirmationEmailMessage(User user, Order order) {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
         messageBuilder.append("Here are the details of your order:\n");
-        Order latestOrder = newOrder;
-        messageBuilder.append("Order ID: ").append(latestOrder.getId()).append("\n");
-        List<OrderItem> orderItems = latestOrder.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
+        messageBuilder.append("Order ID: ").append(order.getId()).append("\n");
+
+        for (OrderItem orderItem : order.getOrderItems()) {
             String productName = orderItem.getName();
             int quantity = orderItem.getQuantity();
             long rentalPeriod = ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
-            double price = orderItem.getPrice() * orderItem.getQuantity() * rentalPeriod;
+            double price = orderItem.getPrice() * quantity * rentalPeriod;
 
             messageBuilder.append("Product: ").append(productName).append("\n");
             messageBuilder.append("Quantity: ").append(quantity).append("\n");
             messageBuilder.append("Price: ").append(price).append("\n");
         }
-        messageBuilder.append("Total Price of order: ").append(latestOrder.getTotalPrice()).append("\n\n");
-        String message = messageBuilder.toString();
+
+        messageBuilder.append("Total Price of order: ").append(order.getTotalPrice()).append("\n\n");
+        return messageBuilder.toString();
+    }
+
+    private void sendOrderConfirmationEmail(User user, Order order) {
+        String email = user.getEmail();
+        String subject = "Order placed";
+        String message = generateOrderConfirmationEmailMessage(user, order);
         emailServiceImpl.sendEmail(subject, message, email);
+    }
 
-
-        for(OrderItem orderItem:orderItemList){
+    private void sendPushNotifications(List<OrderItem> orderItems) {
+        for (OrderItem orderItem : orderItems) {
             String deviceToken = orderItem.getProduct().getUser().getDeviceToken();
-            log.debug("Device token of owner from oder service is: {}",deviceToken);
+            log.debug("Device token of owner from order service is: {}", deviceToken);
+
             var request = PushNotificationRequest.builder()
                     .title("Order info")
-                    .message("Order placed")
+                    .topic("Order placed")
                     .token(deviceToken)
                     .build();
+
             pushNotificationService.sendPushNotificationToToken(request);
         }
     }
+
 
     @Override
     public List<OrderDto> listOrders(User user) {
@@ -430,7 +440,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
     }
 
-    public byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException {
+    public byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws  DocumentException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document();

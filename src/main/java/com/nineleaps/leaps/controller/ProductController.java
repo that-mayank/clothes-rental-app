@@ -17,13 +17,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -274,7 +271,7 @@ public class ProductController {
 
         // Check if the user is valid
         if (!Helper.notNull(user)) {
-            return new ResponseEntity<>(new ApiResponse(false, "User is invalid!"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApiResponse(false, "User is invalid!"), HttpStatus.BAD_REQUEST);
         }
 
         // Retrieve the product based on the provided product ID
@@ -282,13 +279,14 @@ public class ProductController {
 
         // Check if the product exists and is valid
         if (optionalProduct.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponse(false, "Product is invalid!"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApiResponse(false, "Product is invalid!"), HttpStatus.BAD_REQUEST);
         }
 
         // Soft delete the product
         productService.deleteProduct(optionalProduct.get().getId(), user);
         return new ResponseEntity<>(new ApiResponse(true, "Product has been deleted successfully."), HttpStatus.OK);
     }
+
 
     // API to disable a product
     @GetMapping(value="/disableProduct",produces = MediaType.APPLICATION_JSON_VALUE)

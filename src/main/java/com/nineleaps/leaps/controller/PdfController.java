@@ -45,7 +45,7 @@ public class PdfController {
         User user = helper.getUser(token);
 
         // Create a new PDF document
-        Document document = pdfService.getPdf(user);
+        Document document = new Document();
 
         // Convert the Document into a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

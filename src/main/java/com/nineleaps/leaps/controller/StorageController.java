@@ -90,9 +90,6 @@ public class StorageController {
 
 
 
-
-
-
     // API to view an uploaded image
     @ApiOperation(value = "View an uploaded image")
     @GetMapping(value = "/view")

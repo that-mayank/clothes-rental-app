@@ -2,6 +2,7 @@ package com.nineleaps.leaps.dto.orders;
 
 import com.nineleaps.leaps.model.orders.OrderItem;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OrderReceivedDto {
     private String name;
     private int quantity;

@@ -67,8 +67,8 @@ public class Address {
 
 
     public void setAuditColumnsCreate(User user) {
-        this.addressCreatedAt = user.getCreatedAt();
-        this.addressCreatedBy = user.getCreatedBy();
+        this.addressCreatedAt = LocalDateTime.now();
+        this.addressCreatedBy = user.getId();
     }
 
     public void setAuditColumnsUpdate(Long userId){

@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.utils;
 
+import com.nineleaps.leaps.exceptions.UnableToConvertMultipartFileException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.CategoryRepository;
@@ -11,18 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
-
 import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.LeapsApplication.bucketName;
 
@@ -49,8 +44,9 @@ public class StorageUtility {
                 try {
                     fileObj = convertMultiPartFileToFile(f);
                 } catch (IOException e) {
-                    throw new S3UploadException("Error converting multipart file to file", e);
+                    throw new UnableToConvertMultipartFileException("Unable to convert multipart file to file"+e.getMessage());
                 }
+
 
                 try {
                     UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
@@ -63,10 +59,7 @@ public class StorageUtility {
 
                     Files.delete(fileObj.toPath());
 
-                    return UriComponentsBuilder.fromHttpUrl(NGROK)
-                            .path("/api/v1/file/view")
-                            .queryParam("image", folderPath + "/" + fileName)
-                            .toUriString();
+                    return buildUriString(folderPath, fileName);
 
                 } catch (Exception e) {
                     log.error("Error during file upload: {}", e.getMessage(), e);
@@ -109,6 +102,13 @@ public class StorageUtility {
     public String getCategoryNameById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         return (category != null) ? category.getCategoryName() : null;
+    }
+
+    public String buildUriString(String folderPath, String fileName) {
+        return UriComponentsBuilder.fromHttpUrl(NGROK)
+                .path("/api/v1/file/view")
+                .queryParam("image", folderPath + "/" + fileName)
+                .toUriString();
     }
 
 

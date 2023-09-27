@@ -162,24 +162,46 @@ public class SecurityUtility {
 
 
 
-    public void setLastLoginAttempt(String email){
+    public void setLastLoginAttempt(String email) {
         User user = userRepository.findByEmail(email);
-        Long userId = user.getId();
-        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
-        if (userLoginInfo != null) {
-            userLoginInfo.setLastLoginAttempt(LocalDateTime.now());
-            userLoginInfoRepository.save(userLoginInfo);
+
+        // Check if the user is found
+        if (user != null) {
+            Long userId = user.getId();
+
+            // Check if userId is not null
+            if (userId != null) {
+                UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
+
+                // Check if userLoginInfo is not null
+                if (userLoginInfo != null) {
+                    userLoginInfo.setLastLoginAttempt(LocalDateTime.now());
+                    userLoginInfoRepository.save(userLoginInfo);
+                }
+            }
         }
     }
 
-    public void initializeUserLoginInfo(String email){
+
+    public void initializeUserLoginInfo(String email) {
         User user = userRepository.findByEmail(email);
-        Long userId = user.getId();
-        UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
-        if(userLoginInfo != null){
-            userLoginInfo.initializeLoginInfo(user);
+
+        // Check if the user is found
+        if (user != null) {
+            Long userId = user.getId();
+
+            // Check if userId is not null
+            if (userId != null) {
+                UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
+
+                // Check if userLoginInfo is not null
+                if (userLoginInfo != null) {
+                    userLoginInfo.initializeLoginInfo(user);
+                }
+            }
         }
     }
+
 
 
     public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {

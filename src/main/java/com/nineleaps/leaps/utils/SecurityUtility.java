@@ -202,6 +202,7 @@ public class SecurityUtility {
                 .withClaim("roles", Arrays.asList(roles))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
+
         String refreshToken = JWT.create()
                 .withSubject(user.getEmail())
                 .withExpiresAt(refreshTokenExpirationDate)

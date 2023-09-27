@@ -7,11 +7,14 @@ import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.product.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -62,6 +65,7 @@ public class User {
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserLoginInfo userLoginInfo;
+
 
 
     public void setAuditColumnsCreate(User user) {

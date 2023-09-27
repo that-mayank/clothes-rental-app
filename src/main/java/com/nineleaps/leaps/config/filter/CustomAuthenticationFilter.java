@@ -82,7 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // Fetch the local time and set the Access Token Expiry Time
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(10); // Update to desired expiration time 24hrs
+        LocalDateTime accessTokenExpirationTime = now.plusMinutes(100000); // Update to desired expiration time 24hrs
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
 
         // Generate Token
@@ -127,25 +127,25 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     // API - Handles Unsuccessful Authentication
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         try {
             super.unsuccessfulAuthentication(request, response, failed);
 
             // Fetch Email From the Request Parameter
             String email = request.getParameter("email");
 
-            // Update login attempts and check for account lockout . Interacts with Security Utility
+            // Update login attempts and check for account lockout. Interacts with Security Utility
             securityUtility.updateLoginAttempts(email);
 
             // Set HTTP status to UNAUTHORIZED (401) since authentication was unsuccessful
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed: " + failed.getMessage());
-        } catch (IOException | ServletException e) {
+        } catch (IOException e) {
 
             // Handle any IO or servlet-related exceptions
-            // set  specific HTTP status for these exceptions
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred during unsuccessful authentication");
-            // log the exception
-            logger.error("An error occurred during unsuccessful authentication", e);
+            // set specific HTTP status for these exceptions
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "An error occurred during unsuccessful authentication");
+
+
         }
     }
 

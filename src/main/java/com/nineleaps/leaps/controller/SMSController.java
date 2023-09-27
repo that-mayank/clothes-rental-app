@@ -6,6 +6,7 @@ import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+
 @Api(tags = "Notifications Api", description = "Contains APIs for sending SMS")
 @SuppressWarnings("deprecation")
 public class SMSController {
@@ -50,7 +52,7 @@ public class SMSController {
 
     // API to send an SMS to a phone number
     @ApiOperation(value = "Send SMS to phone number")
-    @PostMapping(value = "/phoneNo",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/phoneNo", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
         // Check if the phone number is in the database
         if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
@@ -64,11 +66,17 @@ public class SMSController {
         }
 
         // Send a WebSocket message about the sent SMS
+        sendSmsWebSocketMessage(phoneNumber);
+        return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
+    }
+
+    // Private method to send a WebSocket message about the sent SMS
+    private void sendSmsWebSocketMessage(String phoneNumber) {
         // Destination for web socket
         String topicDestination = "/lesson/sms";
         webSocket.convertAndSend(topicDestination, getTimeStamp() + ": SMS has been sent to " + phoneNumber);
-        return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
     }
+
 
     // API to verify OTP
     @ApiOperation(value = "Verify OTP")

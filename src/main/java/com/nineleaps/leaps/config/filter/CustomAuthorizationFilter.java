@@ -24,7 +24,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
 @Slf4j
-
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final SecurityUtility securityUtility;
     String bearerHeader = "Bearer ";
@@ -59,10 +58,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 if (servletPath.startsWith("/api/v1/")) {
                     handleAccessToken(token, response, filterChain, request);
                 } else {
-                    handleUnauthorized(response, "Unauthorized Request");
+                    handleUnauthorized(response);
                 }
             } catch (Exception exception) {
-                handleUnauthorized(response, exception.getMessage());
+                handleUnauthorized(response);
             }
         } else {
             // No authorization header, allow the request to proceed
@@ -117,11 +116,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     }
 
-    private void handleUnauthorized(HttpServletResponse response, String errorMessage) throws IOException {
+    private void handleUnauthorized(HttpServletResponse response){
         response.setStatus(FORBIDDEN.value());
-        Map<String, String> error = new HashMap<>();
-        error.put("error_message", errorMessage);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), error);
     }
 }

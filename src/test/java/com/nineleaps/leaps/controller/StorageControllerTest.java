@@ -1,7 +1,10 @@
 package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.UrlResponse;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,21 +12,24 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class StorageControllerTest {
     @Mock
     private StorageServiceInterface storageServiceInterface;
     @InjectMocks
     private StorageController storageController;
+    @Mock
+    private Helper helper;
 
     @BeforeEach
     void setUp() {
@@ -65,5 +71,115 @@ class StorageControllerTest {
 
         // Verify the response
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+
+
     }
+
+    @Test
+    void testUploadProfileImage_Success() throws IOException {
+        // Mock the MultipartFile and HttpServletRequest
+        MultipartFile mockFile = mock(MultipartFile.class);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+
+        // Mock user
+        User user = new User();
+        user.setId(1L);  // Set appropriate user details
+
+        // Mock successful upload
+        String mockUrl = "https://example.com/profile.jpg";
+        when(helper.getUserFromToken(mockRequest)).thenReturn(user);
+        when(storageServiceInterface.uploadProfileImage(mockFile, user)).thenReturn(mockUrl);
+
+        ResponseEntity<String> response = storageController.uploadProfileImage(mockFile, mockRequest);
+
+        // Assert the response
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+
+
+    }
+
+    @Test
+    void testUploadProfileImage_Exception() throws IOException {
+        // Mock the MultipartFile and HttpServletRequest
+        MultipartFile mockFile = mock(MultipartFile.class);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+
+        // Mock user
+        User user = new User();
+        user.setId(1L);  // Set appropriate user details
+
+        // Mock an exception during upload
+        when(helper.getUserFromToken(mockRequest)).thenReturn(user);
+        doThrow(new RuntimeException("Upload failed")).when(storageServiceInterface).uploadProfileImage(mockFile, user);
+
+        ResponseEntity<String> response = storageController.uploadProfileImage(mockFile, mockRequest);
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void testViewFile_Success()  {
+        // Mock input parameters
+        String fileName = "mock-file.jpg";
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+        // Call the API
+        ResponseEntity<String> responseEntity = storageController.viewFile(fileName, mockResponse);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals("Image fetched from S3", responseEntity.getBody());
+    }
+
+    @Test
+    void testViewFile_Exception() throws IOException {
+        // Mock input parameters
+        String fileName = "mock-file.jpg";
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+        // Mock an exception during viewing file
+        doThrow(new IOException("Unable to view file")).when(storageServiceInterface).viewFile(fileName, mockResponse);
+
+        // Call the API
+        ResponseEntity<String> responseEntity = storageController.viewFile(fileName, mockResponse);
+
+        // Verify the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Error viewing file from S3", responseEntity.getBody());
+    }
+
+    @Test
+    void testDeleteFile_Success() throws IOException {
+        // Mock input parameters
+        String fileName = "mock-file.jpg";
+
+        // Call the API
+        ResponseEntity<String> responseEntity = storageController.deleteFile(fileName);
+
+        // Verify the response
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+        assertNull(responseEntity.getBody());  // Empty body for 204 No Content
+
+        // Verify that the storageServiceInterface.deleteFile was called with the correct argument
+        verify(storageServiceInterface).deleteFile(fileName);
+    }
+
+    @Test
+    void testDeleteFile_Exception() throws IOException {
+        // Mock input parameters
+        String fileName = "mock-file.jpg";
+
+        // Mock an exception during file deletion
+        doThrow(new IOException("Unable to delete file")).when(storageServiceInterface).deleteFile(fileName);
+
+        // Call the API
+        ResponseEntity<String> responseEntity = storageController.deleteFile(fileName);
+
+        // Verify the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Error deleting file from S3", responseEntity.getBody());
+    }
+
 }

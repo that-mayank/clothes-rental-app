@@ -197,7 +197,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) {
+    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId, HttpServletRequest request) throws OrderNotFoundException {
         try {
 
             // JWT : Extracting user info from token

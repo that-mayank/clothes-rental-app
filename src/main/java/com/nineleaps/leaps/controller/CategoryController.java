@@ -78,7 +78,6 @@ public class CategoryController {
     @ApiOperation(value = "API : To get list of categories")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ADMIN')")
 
     public ResponseEntity<List<Category>> listCategory() {
 

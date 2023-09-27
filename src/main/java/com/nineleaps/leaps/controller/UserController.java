@@ -190,7 +190,7 @@ public class UserController {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
 
-        // Checking if refresh token is valid
+        // Checking if refresh token is expired or not
 
         if (securityUtility.isRefreshTokenExpired(token)) {
             User user = helper.getUser(token);

@@ -60,7 +60,7 @@ public class CartController {
         User user = helper.getUser(token);
 
 
-        // Retrive product from id
+        // Retrieve product from id
 
         Product product = productService.getProductById(addToCartDto.getProductId());
 
@@ -77,7 +77,7 @@ public class CartController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 
@@ -98,7 +98,7 @@ public class CartController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 

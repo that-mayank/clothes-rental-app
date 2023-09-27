@@ -3,7 +3,6 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.exceptions.AddressOwnershipException;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
@@ -45,7 +44,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> addAddress(@RequestBody @Valid AddressDto addressDto, HttpServletRequest request){
 
         // JWT : Extracting user info from token
 
@@ -66,7 +65,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid AddressDto addressDto, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid AddressDto addressDto, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 
@@ -101,7 +100,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<List<Address>> listAddress(HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<List<Address>> listAddress(HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 
@@ -122,7 +121,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<ApiResponse> deleteAddress(@PathVariable("addressId") Long addressId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> deleteAddress(@PathVariable("addressId") Long addressId, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 
@@ -147,7 +146,7 @@ public class AddressController {
         // Calling service layer to delete address
 
         addressService.deleteAddress(addressId);
-        return new ResponseEntity<>(new ApiResponse(true, "Address deleted successfully"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ApiResponse(true, "Address deleted successfully"), HttpStatus.NO_CONTENT);
     }
 
     // API : To get address for particular user by address id

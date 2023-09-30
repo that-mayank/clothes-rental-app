@@ -60,7 +60,7 @@ public class WishlistController {
     private final Helper helper;
 
     // API to add a product to the wishlist
-    @PostMapping(value = "/add",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> addWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
         // Extract User from the token

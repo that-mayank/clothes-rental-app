@@ -19,16 +19,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -82,7 +78,7 @@ class UserControllerTest {
         ResponseEntity<ApiResponse> response = userController.updateProfile(profileUpdateDto, request);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("User not found", response.getBody().getMessage());
+        assertEquals("User not found", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
 
@@ -197,11 +193,11 @@ class UserControllerTest {
         // Assert
         assertNotNull(apiResponse);
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertEquals("Role switch to: " + profile, apiResponse.getBody().getMessage());
+        assertEquals("Role switch to: " + profile, Objects.requireNonNull(apiResponse.getBody()).getMessage());
     }
 
     @Test
-    void switchProfile_shouldThrowUserNotExistException_whenUserIsNull() throws AuthenticationFailException, UserNotExistException, IOException {
+    void switchProfile_shouldThrowUserNotExistException_whenUserIsNull() throws AuthenticationFailException, UserNotExistException{
         // Arrange
         Role profile = Role.OWNER;
         HttpServletResponse response = mock(HttpServletResponse.class);

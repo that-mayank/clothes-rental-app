@@ -50,7 +50,7 @@ public class PdfServiceImpl implements PdfServiceInterface {
 
     }
 
-    protected void addHeader(Document document) throws DocumentException {
+    public void addHeader(Document document) throws DocumentException {
         Font headingFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 30, BaseColor.BLACK);
         Chunk chunkHeading = new Chunk("Leaps", headingFont);
         Paragraph headingParagraph = new Paragraph(chunkHeading);
@@ -58,7 +58,7 @@ public class PdfServiceImpl implements PdfServiceInterface {
         document.add(headingParagraph);
     }
 
-    protected void addSubheading(Document document, User user) throws DocumentException {
+    public void addSubheading(Document document, User user) throws DocumentException {
         Font subheadingFont = FontFactory.getFont(FontFactory.COURIER_OBLIQUE, 18, BaseColor.BLACK);
         Chunk chunkSubheading = new Chunk("Report for " + user.getFirstName() + " " + user.getLastName(), subheadingFont);
         Paragraph subheadingParagraph = new Paragraph(chunkSubheading);
@@ -66,12 +66,12 @@ public class PdfServiceImpl implements PdfServiceInterface {
         document.add(subheadingParagraph);
     }
 
-    protected void addEmptyLine(Document document) throws DocumentException {
+    public void addEmptyLine(Document document) throws DocumentException {
         document.add(new Paragraph(" "));
     }
 
 //
-protected void addDashboardData(Document document,User user) throws DocumentException {
+public void addDashboardData(Document document,User user) throws DocumentException {
     Map<YearMonth, Map<String, Object>> dashboardData = dashboardService.analytics(user);
     int numColumns = dashboardData.isEmpty() ? 0 : dashboardData.values().iterator().next().size();
     PdfPTable table = new PdfPTable(numColumns + 1);
@@ -101,7 +101,7 @@ protected void addDashboardData(Document document,User user) throws DocumentExce
     document.add(table);
 }
 
-    protected void addBarChart(Document document, User user) throws DocumentException, IOException {
+    public void addBarChart(Document document, User user) throws DocumentException, IOException {
         Map<YearMonth, Map<String, Object>> dashboardData = dashboardService.analytics(user);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 

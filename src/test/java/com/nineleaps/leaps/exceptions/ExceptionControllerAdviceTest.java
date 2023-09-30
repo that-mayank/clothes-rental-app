@@ -23,7 +23,7 @@ class ExceptionControllerAdviceTest {
         AuthenticationFailException authenticationFailException = new AuthenticationFailException("Authentication failure");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(authenticationFailException);
         assertEquals("Authentication failure", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
 
@@ -32,7 +32,7 @@ class ExceptionControllerAdviceTest {
         CategoryNotExistException categoryNotExistException = new CategoryNotExistException("Category not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(categoryNotExistException);
         assertEquals("Category not found", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -40,7 +40,7 @@ class ExceptionControllerAdviceTest {
         ProductNotExistException productNotExistException = new ProductNotExistException("Product not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(productNotExistException);
         assertEquals("Product not found", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -48,7 +48,7 @@ class ExceptionControllerAdviceTest {
         CartItemNotExistException cartItemNotExistException = new CartItemNotExistException("Cart item not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(cartItemNotExistException);
         assertEquals("Cart item not found", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -64,7 +64,7 @@ class ExceptionControllerAdviceTest {
         UserNotExistException userNotExistException = new UserNotExistException("User not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(userNotExistException);
         assertEquals("User not found", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -72,7 +72,7 @@ class ExceptionControllerAdviceTest {
         OrderNotFoundException orderNotFoundException = new OrderNotFoundException("Order not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(orderNotFoundException);
         assertEquals("Order not found", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test

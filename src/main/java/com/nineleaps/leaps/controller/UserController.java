@@ -11,6 +11,7 @@ import com.nineleaps.leaps.exceptions.UserNotExistException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.RefreshTokenServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
+import com.nineleaps.leaps.utils.DatabaseHealthChecker;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.nineleaps.leaps.utils.SwitchProfile;

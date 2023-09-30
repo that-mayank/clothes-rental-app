@@ -1,8 +1,11 @@
 package com.nineleaps.leaps;
 
+import com.nineleaps.leaps.utils.DatabaseHealthChecker;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -16,9 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 public class LeapsApplication {
 
+
+
+
     public static void main(String[] args) {
         SpringApplication.run(LeapsApplication.class, args);
         log.info("Application is running...");
+
+
     }
 
     @Bean
@@ -26,7 +34,7 @@ public class LeapsApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static final String NGROK = "https://5143-180-151-122-199.ngrok-free.app";
+    public static final String NGROK = "https://52dd-180-151-122-199.ngrok-free.app";
     public static final String bucketName = "leapsimagebucket";
 
     public static final Integer ACCOUNT_LOCK_DURATION_MINUTES = 2;

@@ -1,13 +1,11 @@
 package com.nineleaps.leaps.config.filter;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.slf4j.Logger;
 import org.springframework.security.core.userdetails.User;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.repository.UserLoginInfoRepository;
 import com.nineleaps.leaps.utils.SecurityUtility;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("CustomAuthenticationFilter Test class")
 class CustomAuthenticationFilterTest {
 
     @Mock
@@ -68,7 +67,7 @@ class CustomAuthenticationFilterTest {
         MockitoAnnotations.openMocks(this);
 
     }
-
+@DisplayName("Constructor Injection Test")
     @Test
     void constructorInjection() {
         // Create a CustomAuthenticationFilter instance
@@ -85,7 +84,7 @@ class CustomAuthenticationFilterTest {
         Assertions.assertSame(refreshTokenRepository, customAuthenticationFilter.getRefreshTokenRepository());
         Assertions.assertSame(userLoginInfoRepository, customAuthenticationFilter.getUserLoginInfoRepository());
     }
-
+    @DisplayName("Attempt Authentication Test")
     @Test
     void attemptAuthentication_Success() throws AuthenticationException {
         String email = "test@example.com";
@@ -104,7 +103,7 @@ class CustomAuthenticationFilterTest {
         verify(request, times(1)).getParameter("deviceToken");
         verify(authenticationManager, times(1)).authenticate(any(Authentication.class));
     }
-
+    @DisplayName("Edge Case of Attempt Authentication Test")
     @Test
     void attemptAuthentication_UsernameNotFoundException() throws AuthenticationException {
         String email = "test@example.com";
@@ -130,9 +129,9 @@ class CustomAuthenticationFilterTest {
         verify(authenticationManager, times(1)).authenticate(any(Authentication.class));
         org.junit.jupiter.api.Assertions.assertEquals("User not found", exception.getMessage());
     }
-
+    @DisplayName("SuccessfulAuthentication Test")
     @Test
-    void successfulAuthentication() throws IOException,ServletException {
+    void successfulAuthentication() throws IOException {
         // Create a user
         Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
         User user = new User("test@example.com", "password", authorities);
@@ -169,6 +168,7 @@ class CustomAuthenticationFilterTest {
         verify(securityUtility).initializeUserLoginInfo(anyString());
     }
 
+    @DisplayName("UnSuccessfulAuthentication Test")
     @Test
     void unsuccessfulAuthentication() throws IOException, ServletException {
 
@@ -201,6 +201,7 @@ class CustomAuthenticationFilterTest {
 
 
     }
+    @DisplayName("UnSuccessfulAuthentication Test for IOException Handling")
     @Test
     void unsuccessfulAuthenticationIOExceptionHandling() throws IOException, ServletException {
         String email = "test@example.com";

@@ -1,14 +1,12 @@
 package com.nineleaps.leaps.common;
-
-
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-
-
 import static org.junit.jupiter.api.Assertions.*;
-
+@Tag("unit_tests")
+@DisplayName("Api Response Test Class")
 class ApiResponseTest {
-
+    @DisplayName("Api Response Test")
     @Test
     void testApiResponse() {
         boolean success = true;

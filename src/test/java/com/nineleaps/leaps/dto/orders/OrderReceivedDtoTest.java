@@ -94,7 +94,7 @@ class OrderReceivedDtoTest {
 
         OrderReceivedDto orderReceivedDto = new OrderReceivedDto(orderItem);
 
-        // Expected rental cost is 0.0 when rental dates are null
+        // The Expected rental cost is 0.0 when rental dates are null
         assertEquals(0.0, orderReceivedDto.getRentalCost());
         assertNull(orderReceivedDto.getRentalStartDate());
         assertNull(orderReceivedDto.getRentalEndDate());
@@ -131,5 +131,27 @@ class OrderReceivedDtoTest {
 
         // The image URL should start with "/api"
         assertEquals(NGROK+"/api/example-image.jpg", orderReceivedDto.getImageUrl());
+    }
+
+    @Test
+    void testGettersAndSetters() {
+        // Arrange
+        OrderReceivedDto orderReceivedDto = new OrderReceivedDto();
+        Long productId = 123L;
+        int quantity = 5;
+        double rentalCost = 50.0;
+        String imageUrl = "https://example.com/image.jpg";
+
+        // Act
+        orderReceivedDto.setProductId(productId);
+        orderReceivedDto.setQuantity(quantity);
+        orderReceivedDto.setRentalCost(rentalCost);
+        orderReceivedDto.setImageUrl(imageUrl);
+
+        // Assert
+        assertEquals(productId, orderReceivedDto.getProductId());
+        assertEquals(quantity, orderReceivedDto.getQuantity());
+        assertEquals(rentalCost, orderReceivedDto.getRentalCost());
+        assertEquals(imageUrl, orderReceivedDto.getImageUrl());
     }
 }

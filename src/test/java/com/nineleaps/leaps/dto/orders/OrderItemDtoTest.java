@@ -43,4 +43,23 @@ class OrderItemDtoTest {
     }
 
     // Add more test cases for different scenarios if needed
+
+    @Test
+    void testSetters() {
+        // Arrange
+        OrderItemDto orderItemDto = new OrderItemDto();
+        Long productId = 123L;
+        int quantity = 5;
+        double pricePerDay = 20.0;
+
+        // Act
+        orderItemDto.setProductId(productId);
+        orderItemDto.setQuantity(quantity);
+        orderItemDto.setPricePerDay(pricePerDay);
+
+        // Assert
+        assertEquals(productId, orderItemDto.getProductId());
+        assertEquals(quantity, orderItemDto.getQuantity());
+        assertEquals(pricePerDay, orderItemDto.getPricePerDay());
+    }
 }

@@ -128,9 +128,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     // API - Handles Unsuccessful Authentication
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        try {
             super.unsuccessfulAuthentication(request, response, failed);
-
             // Fetch Email From the Request Parameter
             String email = request.getParameter("email");
 
@@ -139,14 +137,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
             // Set HTTP status to UNAUTHORIZED (401) since authentication was unsuccessful
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed: " + failed.getMessage());
-        } catch (IOException e) {
 
-            // Handle any IO or servlet-related exceptions
-            // set specific HTTP status for these exceptions
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "An error occurred during unsuccessful authentication");
-
-
-        }
     }
 
 

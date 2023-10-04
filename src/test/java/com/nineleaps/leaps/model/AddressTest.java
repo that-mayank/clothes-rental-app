@@ -73,4 +73,29 @@ class AddressTest {
         assertEquals(updatedAt.toLocalDate(), address.getAddressUpdatedAt().toLocalDate());
         assertEquals(userId, address.getAddressUpdatedBy());
     }
+
+    @Test
+    void testAuditColumnsGettersAndSetters() {
+        // Create an Address instance
+        Address address = new Address();
+
+        // Set values for audit columns using setters
+        LocalDateTime createdAt = LocalDateTime.now();
+        address.setAddressCreatedAt(createdAt);
+
+        LocalDateTime updatedAt = LocalDateTime.now();
+        address.setAddressUpdatedAt(updatedAt);
+
+        Long createdBy = 1L;
+        address.setAddressCreatedBy(createdBy);
+
+        Long updatedBy = 2L;
+        address.setAddressUpdatedBy(updatedBy);
+
+        // Test the getters for audit columns
+        assertEquals(createdAt, address.getAddressCreatedAt());
+        assertEquals(updatedAt, address.getAddressUpdatedAt());
+        assertEquals(createdBy, address.getAddressCreatedBy());
+        assertEquals(updatedBy, address.getAddressUpdatedBy());
+    }
 }

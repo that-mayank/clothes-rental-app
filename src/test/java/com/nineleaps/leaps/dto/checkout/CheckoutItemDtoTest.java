@@ -25,4 +25,24 @@ class CheckoutItemDtoTest {
         assertEquals(quantity, checkoutItemDto.getQuantity());
         assertEquals(price, checkoutItemDto.getPrice());
     }
+
+    @Test
+    public void testSetters() {
+        // Arrange
+        CheckoutItemDto checkoutItemDto = new CheckoutItemDto();
+
+        // Act
+        checkoutItemDto.setUserId(1L);
+        checkoutItemDto.setProductId(101L);
+        checkoutItemDto.setProductName("Sample Product");
+        checkoutItemDto.setQuantity(5);
+        checkoutItemDto.setPrice(20.0);
+
+        // Assert
+        assertEquals(1L, checkoutItemDto.getUserId().longValue());
+        assertEquals(101L, checkoutItemDto.getProductId().longValue());
+        assertEquals("Sample Product", checkoutItemDto.getProductName());
+        assertEquals(5, checkoutItemDto.getQuantity());
+        assertEquals(20.0, checkoutItemDto.getPrice(), 0.001); // Allow a small tolerance for double comparisons
+    }
 }

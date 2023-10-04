@@ -29,7 +29,7 @@ public class DatabaseHealthChecker implements ApplicationRunner {
         checkDatabaseHealth();
     }
 
-    private void checkDatabaseHealth() {
+    public void checkDatabaseHealth() {
         try (Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
 
             DatabaseMetaData metaData = connection.getMetaData();

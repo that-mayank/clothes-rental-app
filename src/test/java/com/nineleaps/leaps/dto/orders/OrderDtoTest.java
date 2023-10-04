@@ -69,4 +69,23 @@ class OrderDtoTest {
             // Add more assertions as needed for OrderItemDto
         }
     }
+
+    @Test
+    void testSetters() {
+        // Arrange
+        OrderDto orderDto = new OrderDto();
+        Long orderId = 123L;
+        LocalDateTime createDate = LocalDateTime.now();
+        double totalPrice = 100.0;
+
+        // Act
+        orderDto.setId(orderId);
+        orderDto.setCreatedDate(createDate);
+        orderDto.setTotalPrice(totalPrice);
+
+        // Assert
+        assertEquals(orderId, orderDto.getId());
+        assertEquals(createDate, orderDto.getCreatedDate());
+        assertEquals(totalPrice, orderDto.getTotalPrice());
+    }
 }

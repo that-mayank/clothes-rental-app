@@ -169,16 +169,12 @@ public class SecurityUtility {
         if (user != null) {
             Long userId = user.getId();
 
-            // Check if userId is not null
-            if (userId != null) {
                 UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
-
                 // Check if userLoginInfo is not null
                 if (userLoginInfo != null) {
                     userLoginInfo.setLastLoginAttempt(LocalDateTime.now());
                     userLoginInfoRepository.save(userLoginInfo);
                 }
-            }
         }
     }
 
@@ -190,15 +186,12 @@ public class SecurityUtility {
         if (user != null) {
             Long userId = user.getId();
 
-            // Check if userId is not null
-            if (userId != null) {
                 UserLoginInfo userLoginInfo = userLoginInfoRepository.findByUserId(userId);
 
                 // Check if userLoginInfo is not null
                 if (userLoginInfo != null) {
                     userLoginInfo.initializeLoginInfo(user);
                 }
-            }
         }
     }
 

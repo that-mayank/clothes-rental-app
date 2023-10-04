@@ -21,7 +21,7 @@ public class AmazonS3HealthChecker implements ApplicationRunner {
         checkS3BucketHealth();
     }
 
-    private void checkS3Health() {
+    public void checkS3Health() {
         try {
             // Perform a simple operation to check S3 connectivity
             s3Client.listBuckets();
@@ -31,28 +31,30 @@ public class AmazonS3HealthChecker implements ApplicationRunner {
         }
     }
 
-    private void checkS3BucketHealth(){
+    public void checkS3BucketHealth(){
 
         s3Client.listBuckets();
         ListBucketsResponse listBucketsResponse = s3Client.listBuckets();
-        for (Bucket bucket : listBucketsResponse.buckets()) {
-            String bucketName = bucket.name();
-            log.info("Bucket: " + bucketName);
+        if(listBucketsResponse!= null) {
+            for (Bucket bucket : listBucketsResponse.buckets()) {
+                String bucketName = bucket.name();
+                log.info("Bucket: " + bucketName);
 
-            // Check bucket accessibility
-            try {
-                GetBucketLocationResponse locationResponse = s3Client.getBucketLocation(GetBucketLocationRequest.builder()
-                        .bucket(bucketName)
-                        .build());
+                // Check bucket accessibility
+                try {
+                    GetBucketLocationResponse locationResponse = s3Client.getBucketLocation(GetBucketLocationRequest.builder()
+                            .bucket(bucketName)
+                            .build());
 
-                log.info("Location: " + locationResponse.locationConstraintAsString());
+                    log.info("Location: " + locationResponse.locationConstraintAsString());
 
-            } catch (S3Exception e) {
+                } catch (S3Exception e) {
 
-                log.error("Failed to access bucket: " + e.getMessage());
+                    log.error("Failed to access bucket: " + e.getMessage());
+
+                }
 
             }
-
         }
 
     }

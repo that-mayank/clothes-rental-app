@@ -44,18 +44,10 @@ public class UserLoginInfo {
         this.lockTime = null;
     }
 
-    public void incrementLoginAttempts() {
-        if (this.loginAttempts == null) {
-            this.loginAttempts = 1;
-        } else {
-            this.loginAttempts++;
-        }
-        this.lastLoginAttempt = LocalDateTime.now();
-    }
+
 
     public boolean isAccountLocked() {
-        return this.locked != null && this.locked &&
-                this.lockTime != null &&
+        return this.locked &&
                 ChronoUnit.MINUTES.between(this.lockTime, LocalDateTime.now()) <= ACCOUNT_LOCK_DURATION_MINUTES;
     }
 

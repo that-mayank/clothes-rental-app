@@ -1,4 +1,5 @@
 package com.nineleaps.leaps.dto.pushNotification;
+
 import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor

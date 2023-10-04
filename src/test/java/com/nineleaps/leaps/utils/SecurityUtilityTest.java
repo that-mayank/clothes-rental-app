@@ -560,6 +560,24 @@ class SecurityUtilityTest {
         // Assert
         assertEquals("Invalid Refresh token", result);
     }
+    @Test
+    void testAccountLockAndLoginAttempts_AccountLockedBeforeUnlockTime() {
+        // Mock data
+        User user = new User();
+        user.setId(1L);
+
+        UserLoginInfo userLoginInfo = new UserLoginInfo();
+        userLoginInfo.setLocked(true);
+        userLoginInfo.setLockTime(LocalDateTime.now().plusMinutes(10));
+
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(userLoginInfoRepository.findByUserId(anyLong())).thenReturn(userLoginInfo);
+
+        // Test the method
+        assertThrows(LockedException.class, () -> securityUtility.checkAccountLockAndLoginAttempts("test@example.com"));
+    }
+
+
 }
 
 

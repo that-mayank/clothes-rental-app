@@ -16,7 +16,7 @@ public class AmazonS3HealthChecker implements ApplicationRunner {
     private S3Client s3Client;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args){
         checkS3Health();
         checkS3BucketHealth();
     }
@@ -41,18 +41,13 @@ public class AmazonS3HealthChecker implements ApplicationRunner {
                 log.info("Bucket: " + bucketName);
 
                 // Check bucket accessibility
-                try {
-                    GetBucketLocationResponse locationResponse = s3Client.getBucketLocation(GetBucketLocationRequest.builder()
-                            .bucket(bucketName)
-                            .build());
 
-                    log.info("Location: " + locationResponse.locationConstraintAsString());
+                GetBucketLocationResponse locationResponse = s3Client.getBucketLocation(GetBucketLocationRequest.builder()
+                        .bucket(bucketName)
+                        .build());
 
-                } catch (S3Exception e) {
+                log.info("Location: " + locationResponse.locationConstraintAsString());
 
-                    log.error("Failed to access bucket: " + e.getMessage());
-
-                }
 
             }
         }

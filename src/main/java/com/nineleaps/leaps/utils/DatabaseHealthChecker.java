@@ -25,24 +25,22 @@ public class DatabaseHealthChecker implements ApplicationRunner {
     private String jdbcPassword;
 
     @Override
-    public void run(ApplicationArguments args){
+    public void run(ApplicationArguments args) throws SQLException {
         checkDatabaseHealth();
     }
 
-    public void checkDatabaseHealth() {
-        try (Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+    public void checkDatabaseHealth() throws SQLException {
+       Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword);
 
             DatabaseMetaData metaData = connection.getMetaData();
             log.info("Database Product Name: " + metaData.getDatabaseProductName());
             log.info("Database Product Version: " + metaData.getDatabaseProductVersion());
-            log.info("DataBase URL :"+metaData.getURL());
-            log.info("Database UserName :"+metaData.getUserName());
+            log.info("DataBase URL :" + metaData.getURL());
+            log.info("Database UserName :" + metaData.getUserName());
 
             // If we successfully connect to the database, log the success message
             log.info("Database is healthy");
-        } catch (SQLException e) {
-            // If there's an exception, log an error message
-            log.error("Database connection failed: " + e.getMessage());
-        }
+
+
     }
 }

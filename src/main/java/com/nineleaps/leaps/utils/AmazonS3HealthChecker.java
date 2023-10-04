@@ -35,7 +35,7 @@ public class AmazonS3HealthChecker implements ApplicationRunner {
 
         s3Client.listBuckets();
         ListBucketsResponse listBucketsResponse = s3Client.listBuckets();
-        if(listBucketsResponse!= null) {
+
             for (Bucket bucket : listBucketsResponse.buckets()) {
                 String bucketName = bucket.name();
                 log.info("Bucket: " + bucketName);
@@ -50,7 +50,7 @@ public class AmazonS3HealthChecker implements ApplicationRunner {
 
 
             }
-        }
+
 
     }
 }

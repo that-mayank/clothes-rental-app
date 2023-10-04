@@ -1,12 +1,13 @@
 package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.common.ApiResponse;
+import com.nineleaps.leaps.exceptions.InvalidOtpException;
 import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,30 +45,41 @@ public class SMSController {
     // SimpMessagingTemplate for sending WebSocket messages
     private final SimpMessagingTemplate webSocket;
 
+    private final SecurityUtility securityUtility;
+
 
     // Method to get the timestamp
     private String getTimeStamp() {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
     }
 
-    // API to send an SMS to a phone number
     @ApiOperation(value = "Send SMS to phone number")
     @PostMapping(value = "/phoneNo", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
         // Check if the phone number is in the database
-        if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
+        if (!isPhoneNumberPresent(phoneNumber)) {
             return new ResponseEntity<>(new ApiResponse(false, "Phone number not present in the database"), HttpStatus.NOT_FOUND);
         }
+
         try {
-            // Send the SMS
+            sendSms(phoneNumber);
+            sendSmsWebSocketMessage(phoneNumber);
+            return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
+        } catch (InvalidOtpException e) {
+            return new ResponseEntity<>(new ApiResponse(false, "Invalid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private boolean isPhoneNumberPresent(String phoneNumber) {
+        return Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber));
+    }
+
+    private void sendSms(String phoneNumber) throws InvalidOtpException {
+        try {
             smsService.send(phoneNumber);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(false, "Enter a valid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InvalidOtpException("Failed to send SMS.");
         }
-
-        // Send a WebSocket message about the sent SMS
-        sendSmsWebSocketMessage(phoneNumber);
-        return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
     }
 
     // Private method to send a WebSocket message about the sent SMS
@@ -83,7 +95,9 @@ public class SMSController {
     @PostMapping(value = "/otp",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
         // Verify the OTP
-        smsService.verifyOtp(phoneNumber, otp, response, request);
+        if(smsService.verifyOtp(phoneNumber, otp)){
+            securityUtility.generateToken(response, request, phoneNumber);
+        };
         return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
     }
 }

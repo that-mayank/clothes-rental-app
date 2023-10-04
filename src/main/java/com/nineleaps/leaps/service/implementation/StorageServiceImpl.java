@@ -4,16 +4,12 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.StorageUtility;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
@@ -26,15 +22,15 @@ import java.io.OutputStream;
 
 import static com.nineleaps.leaps.LeapsApplication.bucketName;
 
-@Slf4j
+
 @Service
 @AllArgsConstructor
 public class StorageServiceImpl implements StorageServiceInterface {
 
     private final S3Client s3Client;
     private final StorageUtility storageUtility;
-    // Create a logger for this class
-    private static final Logger logger = LoggerFactory.getLogger(StorageServiceImpl.class);
+
+
 
     @Override
     public String uploadProfileImage(MultipartFile file, User user) {
@@ -64,7 +60,6 @@ public class StorageServiceImpl implements StorageServiceInterface {
                     .key(fileName)
                     .build());
         } catch (S3Exception e) {
-            log.error("Error deleting file from S3: {}", e.getMessage(), e);
             throw new IOException("Error deleting file from S3", e);
         }
     }
@@ -92,38 +87,27 @@ public class StorageServiceImpl implements StorageServiceInterface {
             StreamUtils.copy(inputStream, outputStream);
 
         } catch (ClientAbortException e) {
-            handleClientAbortException(e);
-        } catch (S3Exception e) {
-            handleS3Exception(e);
-        } finally {
+            handleClientAbortException();
+        }
+         finally {
             closeStreams(inputStream,outputStream);
         }
     }
 
-    void handleClientAbortException(ClientAbortException e) throws ClientAbortException {
+    void handleClientAbortException() throws ClientAbortException {
         throw  new ClientAbortException("client left the pool");
 
     }
-    void handleS3Exception(S3Exception e) throws IOException {
-        throw new IOException("Error viewing file from S3", e);
-    }
 
-    void closeStreams(InputStream inputStream, OutputStream outputStream) {
-        if (inputStream != null) {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                log.error("Error closing input stream: {}", e.getMessage(), e);
-            }
+    void closeStreams(InputStream inputStream, OutputStream outputStream) throws IOException {
+        if(inputStream!=null){
+            inputStream.close();
+        }
+        if(outputStream!=null){
+            outputStream.flush();
+            outputStream.close();
         }
 
-        if (outputStream != null) {
-            try {
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                log.error("Error closing output stream: {}", e.getMessage(), e);
-            }
-        }
+
     }
 }

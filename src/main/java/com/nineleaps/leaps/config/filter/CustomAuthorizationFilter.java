@@ -69,7 +69,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    void handleRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null) {
             try {
@@ -116,8 +116,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     }
 
-    private void handleUnauthorized(HttpServletResponse response){
+    void handleUnauthorized(HttpServletResponse response){
         response.setStatus(FORBIDDEN.value());
         response.setContentType(APPLICATION_JSON_VALUE);
     }
+
+
 }

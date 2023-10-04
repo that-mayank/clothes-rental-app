@@ -1,100 +1,106 @@
 package com.nineleaps.leaps.service.implementation;
-
-import com.nineleaps.leaps.exceptions.OtpValidationException;
-import com.nineleaps.leaps.utils.SecurityUtility;
+import com.nineleaps.leaps.service.SmsSender;
+import com.nineleaps.leaps.utils.Helper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.TestPropertySource;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.*;
+import java.util.Map;
 import static org.mockito.Mockito.*;
 
 
-class SmsServiceImplTest {
+ class SmsServiceImplTest {
 
     @Mock
-    private SecurityUtility securityUtility;
+    private SmsSender smsSender;
 
+    @Mock
+    private Helper helper;
+
+    @InjectMocks
     private SmsServiceImpl smsService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        smsService = new SmsServiceImpl(securityUtility);
     }
 
-//    @Test
-//    void send() {
-//        // Mocking Twilio API call, assuming Twilio API calls are successful
-//        // We're not testing Twilio API here, so we just check if the method doesn't throw exceptions.
-//        smsService.send("1234567890");
-//    }
-//
-//    @Test
-//    void verifyOtp_ValidOtp_Success() throws OtpValidationException, IOException {
-//        // Setup
-//        MockHttpServletRequest request = new MockHttpServletRequest();
-//        MockHttpServletResponse response = new MockHttpServletResponse();
-//        Integer otp = 123456;
-//        String phoneNumber = "1234567890";
-//        smsService.send(phoneNumber);
-//
-//        // Mock behavior
-//        doNothing().when(securityUtility).generateToken(any(), any(), eq(phoneNumber));
-//
-//        // Test
-//        smsService.verifyOtp(phoneNumber, otp, response, request);
-//
-//        // Verify
-//        verify(securityUtility, times(1)).generateToken(any(), any(), eq(phoneNumber));
-//    }
-//
-//    @Test
-//    void verifyOtp_InvalidOtp_ThrowsOtpValidationException() {
-//        // Setup
-//        Integer invalidOtp = 999999;
-//        String phoneNumber = "1234567890";
-//        smsService.send(phoneNumber);
-//
-//        // Test and verify
-//        try {
-//            smsService.verifyOtp(phoneNumber, invalidOtp, new MockHttpServletResponse(), new MockHttpServletRequest());
-//        } catch (OtpValidationException | IOException e) {
-//            // Verify the exception message or any other assertions if needed
-//            return;
-//        }
-//
-//        // If no exception is thrown, fail the test
-//        fail("Expected OtpValidationException but no exception was thrown.");
-//    }
+     @Test
+      void testSend() {
+         // Stubbing generateOtp to return a fixed OTP
+         when(smsService.helper.generateOtp()).thenReturn(1234);
 
-    // Add this test to set the test credentials
-    @Test
-    void setTestCredentials_ShouldSetTestCredentials() {
-        // Use reflection to set the test credentials
-        try {
-            Field testAccountSidField = SmsServiceImpl.class.getDeclaredField("accountSid");
-            testAccountSidField.setAccessible(true);
-            testAccountSidField.set(smsService, "your_test_account_sid");
+         // Mock the smsSender to capture the arguments passed to sendSms
+         doNothing().when(smsService.smsSender).sendSms(anyString(), anyString());
 
-            Field testAuthTokenField = SmsServiceImpl.class.getDeclaredField("authToken");
-            testAuthTokenField.setAccessible(true);
-            testAuthTokenField.set(smsService, "your_test_auth_token");
+         // Call the send method
+         smsService.send("1234567890");
 
-            // Now you can proceed with your test using these test credentials
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            fail("Failed to set test credentials: " + e.getMessage());
-        }
-    }
+         // Verify that generateOtp was called
+         verify(smsService.helper).generateOtp();
+
+         // Verify that smsSender.sendSms was called with the correct arguments
+         verify(smsService.smsSender).sendSms("+911234567890", "Your OTP - 1234 please verify this otp");
+
+         // Access and verify otpMap directly
+         Map<String, Integer> otpMap = smsService.otpMap;
+         Assertions.assertEquals(Integer.valueOf(1234), otpMap.get("1234567890"));
+     }
+
+     @Test
+      void testVerifyOtpValid() {
+         // Set up test data
+         String phoneNumber = "1234567890";
+         int storedOtp = 1234;
+         int enteredOtp = 1234;
+
+         // Set the stored OTP in otpMap
+         Map<String, Integer> otpMap = smsService.otpMap;
+         otpMap.put(phoneNumber, storedOtp);
+
+
+         // Call the method to be tested
+         boolean result = smsService.verifyOtp(phoneNumber, enteredOtp);
+
+         // Verify the result
+         Assertions.assertTrue(result);
+     }
+
+     @Test
+      void testVerifyOtpInvalid() {
+// Set up test data
+         String phoneNumber = "1234567890";
+         int storedOtp = 1234;
+         int enteredOtp = 4321; // Different from storedOtp
+
+         // Set the stored OTP in otpMap
+         Map<String, Integer> otpMap = smsService.otpMap;
+         otpMap.put(phoneNumber, storedOtp);
+
+
+         // Call the method to be tested
+         boolean result = smsService.verifyOtp(phoneNumber, enteredOtp);
+
+         // Verify the result
+         Assertions.assertFalse(result);
+     }
+
+     @Test
+      void testVerifyOtpNullStoredOtp() {
+         // Set up test data
+         String phoneNumber = "1234567890";
+         int enteredOtp = 1234;
+
+         // Call the method to be tested with null stored OTP
+         boolean result = smsService.verifyOtp(phoneNumber, enteredOtp);
+
+         // Verify the result
+         Assertions.assertFalse(result);
+     }
+
+
+
+
 }
-
-

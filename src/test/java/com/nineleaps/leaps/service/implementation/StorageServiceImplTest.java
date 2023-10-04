@@ -156,7 +156,7 @@ class StorageServiceImplTest {
         ClientAbortException clientAbortException = new ClientAbortException("Client disconnected");
 
         try {
-            storageService.handleClientAbortException(clientAbortException);
+            storageService.handleClientAbortException();
         } catch (ClientAbortException e) {
             // Ensure that the correct exception was thrown
             assertEquals("client left the pool", e.getMessage());
@@ -164,21 +164,7 @@ class StorageServiceImplTest {
 
 
     }
-    @Test
-    void testHandleS3Exception() {
-        // Create a mock S3Exception and IOException
-        S3Exception s3Exception = mock(S3Exception.class);
 
-        try {
-            storageService.handleS3Exception(s3Exception);
-        } catch (IOException e) {
-            // Ensure that the correct exception was thrown
-            assertEquals("Error viewing file from S3", e.getMessage());
-            assertEquals(s3Exception, e.getCause());
-        }
-
-
-    }
     @Test
     void testCloseStreams() throws IOException {
         InputStream mockInputStream = mock(InputStream.class);

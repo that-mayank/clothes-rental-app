@@ -111,4 +111,15 @@ class HelperTest {
         assertSame(expectedUser, result);
     }
 
+    @Test
+     void testGenerateOtp() {
+        int generatedOtp = helper.generateOtp();
+
+        int min = 100000;
+        int max = 999999;
+
+        assertTrue( generatedOtp >= min);
+        assertTrue( generatedOtp <= max);
+    }
+
 }

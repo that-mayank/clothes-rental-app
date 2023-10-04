@@ -22,7 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 
 @RestController
 @RequestMapping("/api/v1/pdf")
@@ -34,44 +34,39 @@ public class PdfController {
     private final PdfServiceInterface pdfService;
     private final Helper helper;
 
-    @GetMapping(value = "/export",produces = MediaType.APPLICATION_JSON_VALUE) // Handler method to export PDF
-    @PreAuthorize("hasAuthority('OWNER')") // Requires 'OWNER' authority to access
-    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
-        // Extracting the token from the Authorization header
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
+    @GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('OWNER')")
+    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws DocumentException, IOException {
+        User user = helper.getUserFromToken(request);
 
-        // Retrieve user information from the token
-        User user = helper.getUser(token);
+        Document document = pdfService.getPdf(user);
 
-        // Create a new PDF document
-        Document document = new Document();
+        byte[] pdfBytes = generatePdfBytes(document,user);
 
-        // Convert the Document into a byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, baos);
-
-        // Open the document
-        document.open();
-
-        // Add content to the document
-        pdfService.addContent(document, user);
-
-        // Close the document
-        document.close();
-
-        // Convert the PDF content to a byte array
-        byte[] pdfBytes = baos.toByteArray();
-
-        // Create the InputStreamResource from the byte array
         InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
 
-        // Set the Content-Disposition header to force download the PDF
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "report.pdf");
 
-        // Return the ResponseEntity with the PDF content and headers
         return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
     }
+
+    private byte[] generatePdfBytes(Document document, User user) throws DocumentException, IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+
+            PdfWriter.getInstance(document, baos);
+            document.open();
+            // Call PdfService to add content to the document
+            pdfService.addContent(document, user);
+            document.close();
+
+
+        return baos.toByteArray();
+    }
+
+
+
+
 }

@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.SecureRandom;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -37,6 +38,14 @@ public class Helper {
         String token = authorizationHeader.substring(7);
         return getUser(token);
     }
+
+    public int generateOtp() {
+        int min = 100000;
+        int max = 999999;
+        SecureRandom secureRandom = new SecureRandom();
+        return secureRandom.nextInt(max - min + 1) + min;
+    }
+
 
 
 

@@ -7,6 +7,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SpringBootApplication
 @EnableScheduling
 public class LeapsApplication {
@@ -22,10 +25,11 @@ public class LeapsApplication {
         return new BCryptPasswordEncoder();
     }
 
-    public static final String NGROK = "https://69ea-106-51-70-135.ngrok-free.app";
+    public static final String NGROK = "https://06c9-106-51-70-135.ngrok-free.app";
     public static final String bucketName = "leapsimagebucket";
 
     public static final Integer ACCOUNT_LOCK_DURATION_MINUTES = 2;
     public static final Integer MAX_LOGIN_ATTEMPTS = 3;
+
 
 }

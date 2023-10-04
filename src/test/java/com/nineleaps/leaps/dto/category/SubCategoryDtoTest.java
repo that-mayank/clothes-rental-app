@@ -1,22 +1,20 @@
 package com.nineleaps.leaps.dto.category;
 
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class SubCategoryDtoTest {
 
     @Test
-    public void testIdGetter() {
-        // Arrange
+    public void testId() {
+        long expectedId = 123L; // Set the expected ID
+
         SubCategoryDto subCategoryDto = new SubCategoryDto();
-        Long id = 1L;
+        subCategoryDto.setId(expectedId);
 
-        // Act
-        subCategoryDto.setId(id);
+        long actualId = subCategoryDto.getId();
 
-        // Assert
-        assertEquals(id, subCategoryDto.getId());
+        assertEquals(expectedId, actualId);
     }
 
     @Test
@@ -25,7 +23,7 @@ public class SubCategoryDtoTest {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         Long id = 1L;
         String subcategoryName = "Test Subcategory";
-        String imageURL = "http://example.com/image.jpg";
+        String imageURL = "https://example.com/image.jpg";
         String description = "Test description";
         Long categoryId = 100L;
 

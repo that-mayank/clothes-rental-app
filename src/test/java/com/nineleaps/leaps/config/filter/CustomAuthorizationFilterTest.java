@@ -5,9 +5,7 @@ import com.nineleaps.leaps.utils.SecurityUtility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -237,7 +235,6 @@ class CustomAuthorizationFilterTest {
         Assertions.assertEquals(403, response.getStatus());
         Assertions.assertEquals("application/json", response.getContentType());
     }
-
 
 
 

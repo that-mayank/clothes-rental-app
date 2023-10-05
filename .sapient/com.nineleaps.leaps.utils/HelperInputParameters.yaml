@@ -1,0 +1,607 @@
+---
+modelFingerprint: "0AF2CC6FF34A3BC2B578C30735274644"
+methods:
+- method:
+    name: "notNull"
+    returnType: "boolean"
+    signature: "notNull(java.lang.Object) : boolean"
+    instructionFingerprint: "3AFC6959102D5A40D933C7189208C68F"
+    parametersTypes:
+    - "java.lang.Object"
+  paths:
+  - pathId: "path1"
+    pathIdForUser: "path1"
+    testPathName: "notNullWhenObjIsNotNull"
+    nameDefinedByUser: false
+    priorityDefinedByUser: false
+    filledByUser: false
+    priority: "LOW"
+    modelFingerprint: "956A98FFA08AB65ABE937D78995A7491"
+    problemWasSolvedByProver: true
+    truncated: false
+    inputParameters:
+    - type: "INPUT"
+      name: "obj"
+      modelFingerprint: "18E45705BEED2862EDC355C097F90342"
+      index: 1
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        valueType: "java.lang.Object"
+        uuid: "notNull_object1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "RESULT"
+      name: "result"
+      modelFingerprint: "8383DF6F1D02800B0E90FD4143032B37"
+      index: 2
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "BASIC"
+        content: !<regular>
+          value: true
+        valueType: "boolean"
+        fixed: true
+        equalsMethodPresent: true
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    uuid: "9cadb69f-42bc-32a7-af94-2047c8add31e"
+    deleted: false
+    disabled: false
+    ignoredBySystem: false
+    disabledStatusUpdatedByUser: false
+  - pathId: "path2"
+    pathIdForUser: "path2"
+    testPathName: "notNullWhenObjIsNull"
+    nameDefinedByUser: false
+    priorityDefinedByUser: false
+    filledByUser: false
+    priority: "LOW"
+    modelFingerprint: "08495556367022C0976069C742EE6A0F"
+    problemWasSolvedByProver: true
+    truncated: false
+    inputParameters:
+    - type: "INPUT"
+      name: "obj"
+      modelFingerprint: "08195E7EEE04F32A1E44F9CD112EB4C3"
+      index: 1
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "NULL"
+        valueType: "java.lang.Object"
+        uuid: "notNull_object1"
+        fixed: true
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "RESULT"
+      name: "result"
+      modelFingerprint: "5633A2B0C967879105766C98D64A3959"
+      index: 2
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "BASIC"
+        content: !<regular>
+          value: false
+        valueType: "boolean"
+        fixed: true
+        equalsMethodPresent: true
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    uuid: "62eff7f6-32fe-3c82-bf15-878789d5bd1a"
+    deleted: false
+    disabled: false
+    ignoredBySystem: false
+    disabledStatusUpdatedByUser: false
+- method:
+    name: "getUser"
+    returnType: "com.nineleaps.leaps.model.User"
+    signature: "getUser(java.lang.String) : com.nineleaps.leaps.model.User"
+    instructionFingerprint: "D31709668E3259B372BFE4F580EBA541"
+    parametersTypes:
+    - "java.lang.String"
+  paths:
+  - pathId: "path1"
+    pathIdForUser: "path1"
+    testPathName: "getUserTest"
+    nameDefinedByUser: false
+    constructorSignature: "<init>(com.nineleaps.leaps.repository.UserRepository) :\
+      \ void"
+    priorityDefinedByUser: false
+    filledByUser: false
+    priority: "LOW"
+    modelFingerprint: "97F67A397B7ED858C1F43F0465C2D024"
+    problemWasSolvedByProver: true
+    truncated: false
+    inputParameters:
+    - type: "CONSTRUCTOR"
+      modelFingerprint: "7B54782A7ABC1E7DD662016253E17FA5"
+      index: 1
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "OBJECT"
+        content: !<new>
+          target: "com.nineleaps.leaps.utils.Helper"
+          parameters:
+          - name: "userRepository"
+            value:
+              sapientType: "MOCK"
+              suggestedContent: !<unknown_object>
+                target: "com.nineleaps.leaps.repository.UserRepository"
+                onlyPojoFunctions: false
+              valueType: "com.nineleaps.leaps.repository.UserRepository"
+              uuid: "<init>_userRepository1"
+              fixed: false
+              equalsMethodPresent: false
+              explicitCastNeeded: false
+          privateConstructor: false
+          createdByTargetCode: false
+        valueType: "com.nineleaps.leaps.utils.Helper"
+        uuid: "target"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "INPUT"
+      name: "token"
+      modelFingerprint: "3A97C58233E33A76C7B0C49F596C43C2"
+      index: 2
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "BASIC"
+        content: !<regular>
+          value: "token1"
+        valueType: "java.lang.String"
+        uuid: "getUser_string1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "STATIC"
+      name: "JWT"
+      modelFingerprint: "D4E4D9A3450EB5651119A38565A42A25"
+      index: 3
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        valueType: "com.auth0.jwt.JWT"
+        uuid: "com.auth0.jwt.JWT"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      methodExercised:
+        target: "com.auth0.jwt.JWT"
+        name: "decode"
+        parameters:
+        - name: "token"
+          value:
+            sapientType: "BASIC"
+            content: !<regular>
+              value: "token1"
+            valueType: "java.lang.String"
+            uuid: "getUser_string1"
+            fixed: false
+            equalsMethodPresent: false
+            explicitCastNeeded: false
+        throwsExceptions:
+        - "com.auth0.jwt.exceptions.JWTDecodeException"
+        signature: "decode(String): DecodedJWT throws com.auth0.jwt.exceptions.JWTDecodeException"
+        returnValue:
+          sapientType: "MOCK"
+          suggestedContent: !<unknown_object>
+            target: "com.auth0.jwt.interfaces.DecodedJWT"
+            onlyPojoFunctions: false
+          valueType: "com.auth0.jwt.interfaces.DecodedJWT"
+          uuid: "getUser_decodedJWT1"
+          fixed: false
+          equalsMethodPresent: false
+          explicitCastNeeded: false
+        access: 9
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "LOCAL_VARIABLE"
+      name: "decodedAccessToken"
+      modelFingerprint: "CF95EFE1FA7229A2AE613E16F51F0FB7"
+      index: 4
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        suggestedContent: !<unknown_object>
+          target: "com.auth0.jwt.interfaces.DecodedJWT"
+          onlyPojoFunctions: false
+        valueType: "com.auth0.jwt.interfaces.DecodedJWT"
+        uuid: "getUser_decodedJWT1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      methodExercised:
+        target: "decodedAccessToken"
+        name: "getSubject"
+        parameters: []
+        signature: "getSubject(): String"
+        returnValue:
+          sapientType: "BASIC"
+          content: !<regular>
+            value: "return_of_getSubject1"
+          valueType: "java.lang.String"
+          uuid: "getUser_string2"
+          fixed: false
+          equalsMethodPresent: false
+          explicitCastNeeded: false
+        access: 1025
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "FIELD"
+      name: "userRepository"
+      modelFingerprint: "CB79734E8FAD3960E39C1B1ED6D1CF99"
+      index: 5
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        suggestedContent: !<unknown_object>
+          target: "com.nineleaps.leaps.repository.UserRepository"
+          onlyPojoFunctions: false
+        valueType: "com.nineleaps.leaps.repository.UserRepository"
+        uuid: "<init>_userRepository1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      methodExercised:
+        target: "this.userRepository"
+        name: "findByEmail"
+        parameters:
+        - name: "arg0"
+          value:
+            sapientType: "BASIC"
+            content: !<regular>
+              value: "return_of_getSubject1"
+            valueType: "java.lang.String"
+            uuid: "getUser_string2"
+            fixed: false
+            equalsMethodPresent: false
+            explicitCastNeeded: false
+        signature: "findByEmail(String): User"
+        returnValue:
+          sapientType: "MOCK"
+          valueType: "com.nineleaps.leaps.model.User"
+          uuid: "getUser_user1"
+          fixed: false
+          equalsMethodPresent: false
+          explicitCastNeeded: false
+        access: 1025
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "RESULT"
+      name: "result"
+      modelFingerprint: "2F0B6D8BADA30E895F158D35F229981D"
+      index: 6
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        valueType: "com.nineleaps.leaps.model.User"
+        uuid: "getUser_user1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    uuid: "44f00673-e6a8-39d4-849c-3bc2696304ce"
+    deleted: false
+    disabled: false
+    ignoredBySystem: false
+    disabledStatusUpdatedByUser: false
+- method:
+    name: "getUserFromToken"
+    returnType: "com.nineleaps.leaps.model.User"
+    signature: "getUserFromToken(javax.servlet.http.HttpServletRequest) : com.nineleaps.leaps.model.User"
+    instructionFingerprint: "30C032D742A72E97D086CABAC74A7C88"
+    parametersTypes:
+    - "javax.servlet.http.HttpServletRequest"
+  paths:
+  - pathId: "path1"
+    pathIdForUser: "path1"
+    testPathName: "getUserFromTokenTest"
+    nameDefinedByUser: false
+    constructorSignature: "<init>(com.nineleaps.leaps.repository.UserRepository) :\
+      \ void"
+    priorityDefinedByUser: false
+    filledByUser: false
+    priority: "LOW"
+    modelFingerprint: "7FA8FF8DA3CE9A441A4484D06678CA30"
+    problemWasSolvedByProver: false
+    truncated: false
+    inputParameters:
+    - type: "CONSTRUCTOR"
+      modelFingerprint: "7B54782A7ABC1E7DD662016253E17FA5"
+      index: 1
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "OBJECT"
+        content: !<new>
+          target: "com.nineleaps.leaps.utils.Helper"
+          parameters:
+          - name: "userRepository"
+            value:
+              sapientType: "MOCK"
+              suggestedContent: !<unknown_object>
+                target: "com.nineleaps.leaps.repository.UserRepository"
+                onlyPojoFunctions: false
+              valueType: "com.nineleaps.leaps.repository.UserRepository"
+              uuid: "<init>_userRepository1"
+              fixed: false
+              equalsMethodPresent: false
+              explicitCastNeeded: false
+          privateConstructor: false
+          createdByTargetCode: false
+        valueType: "com.nineleaps.leaps.utils.Helper"
+        uuid: "target"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "INPUT"
+      name: "request"
+      modelFingerprint: "BBE7880EE0D2F81F1FBFB6DFD63A4418"
+      index: 2
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        suggestedContent: !<unknown_object>
+          target: "javax.servlet.http.HttpServletRequest"
+          onlyPojoFunctions: false
+        valueType: "javax.servlet.http.HttpServletRequest"
+        uuid: "getUserFromToken_httpServletRequest1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "STATIC"
+      name: "JWT"
+      modelFingerprint: "D4E4D9A3450EB5651119A38565A42A25"
+      index: 3
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        valueType: "com.auth0.jwt.JWT"
+        uuid: "com.auth0.jwt.JWT"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      methodExercised:
+        target: "com.auth0.jwt.JWT"
+        name: "decode"
+        parameters:
+        - name: "token"
+          value:
+            sapientType: "BASIC"
+            content: !<regular>
+              value: "H"
+            suggestedContent: !<regular>
+              value: "H"
+            valueType: "java.lang.String"
+            uuid: "getUserFromToken_string2"
+            fixed: false
+            equalsMethodPresent: false
+            explicitCastNeeded: false
+        throwsExceptions:
+        - "com.auth0.jwt.exceptions.JWTDecodeException"
+        signature: "decode(String): DecodedJWT throws com.auth0.jwt.exceptions.JWTDecodeException"
+        returnValue:
+          sapientType: "MOCK"
+          suggestedContent: !<unknown_object>
+            target: "com.auth0.jwt.interfaces.DecodedJWT"
+            onlyPojoFunctions: false
+          valueType: "com.auth0.jwt.interfaces.DecodedJWT"
+          uuid: "getUser_decodedJWT1"
+          fixed: false
+          equalsMethodPresent: false
+          explicitCastNeeded: false
+        access: 9
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "LOCAL_VARIABLE"
+      name: "decodedAccessToken"
+      modelFingerprint: "CF95EFE1FA7229A2AE613E16F51F0FB7"
+      index: 4
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        suggestedContent: !<unknown_object>
+          target: "com.auth0.jwt.interfaces.DecodedJWT"
+          onlyPojoFunctions: false
+        valueType: "com.auth0.jwt.interfaces.DecodedJWT"
+        uuid: "getUser_decodedJWT1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      methodExercised:
+        target: "decodedAccessToken"
+        name: "getSubject"
+        parameters: []
+        signature: "getSubject(): String"
+        returnValue:
+          sapientType: "BASIC"
+          content: !<regular>
+            value: "return_of_getSubject1"
+          valueType: "java.lang.String"
+          uuid: "getUser_string1"
+          fixed: false
+          equalsMethodPresent: false
+          explicitCastNeeded: false
+        access: 1025
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "FIELD"
+      name: "userRepository"
+      modelFingerprint: "CB79734E8FAD3960E39C1B1ED6D1CF99"
+      index: 5
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        suggestedContent: !<unknown_object>
+          target: "com.nineleaps.leaps.repository.UserRepository"
+          onlyPojoFunctions: false
+        valueType: "com.nineleaps.leaps.repository.UserRepository"
+        uuid: "<init>_userRepository1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      methodExercised:
+        target: "this.userRepository"
+        name: "findByEmail"
+        parameters:
+        - name: "arg0"
+          value:
+            sapientType: "BASIC"
+            content: !<regular>
+              value: "return_of_getSubject1"
+            valueType: "java.lang.String"
+            uuid: "getUser_string1"
+            fixed: false
+            equalsMethodPresent: false
+            explicitCastNeeded: false
+        signature: "findByEmail(String): User"
+        returnValue:
+          sapientType: "MOCK"
+          valueType: "com.nineleaps.leaps.model.User"
+          uuid: "getUser_user1"
+          fixed: false
+          equalsMethodPresent: false
+          explicitCastNeeded: false
+        access: 1025
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "RESULT"
+      name: "result"
+      modelFingerprint: "2F0B6D8BADA30E895F158D35F229981D"
+      index: 6
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "MOCK"
+        valueType: "com.nineleaps.leaps.model.User"
+        uuid: "getUser_user1"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    uuid: "88ff32ae-40ee-3e57-979c-a0a06b596c45"
+    deleted: false
+    disabled: true
+    ignoredBySystem: false
+    disabledStatusUpdatedByUser: false
+- method:
+    name: "generateOtp"
+    returnType: "int"
+    signature: "generateOtp() : int"
+    instructionFingerprint: "2A41CC6DA3437BAC06F4537E85B7867C"
+    parametersTypes: []
+  paths:
+  - pathId: "path1"
+    pathIdForUser: "path1"
+    testPathName: "generateOtpTest"
+    nameDefinedByUser: false
+    constructorSignature: "<init>(com.nineleaps.leaps.repository.UserRepository) :\
+      \ void"
+    priorityDefinedByUser: false
+    filledByUser: false
+    priority: "LOW"
+    modelFingerprint: "8A5F328E6E6D7E0F54D200895849B9C3"
+    problemWasSolvedByProver: false
+    truncated: false
+    inputParameters:
+    - type: "CONSTRUCTOR"
+      modelFingerprint: "7B54782A7ABC1E7DD662016253E17FA5"
+      index: 1
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "OBJECT"
+        content: !<new>
+          target: "com.nineleaps.leaps.utils.Helper"
+          parameters:
+          - name: "userRepository"
+            value:
+              sapientType: "MOCK"
+              valueType: "com.nineleaps.leaps.repository.UserRepository"
+              uuid: "<init>_userRepository1"
+              fixed: false
+              equalsMethodPresent: false
+              explicitCastNeeded: false
+          privateConstructor: false
+          createdByTargetCode: false
+        valueType: "com.nineleaps.leaps.utils.Helper"
+        uuid: "target"
+        fixed: false
+        equalsMethodPresent: false
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    - type: "RESULT"
+      name: "result"
+      modelFingerprint: "23EE149739108BE38025FFF108664BF9"
+      index: 2
+      ignored: false
+      nestedInLoop: false
+      nestedInRecursion: false
+      value:
+        sapientType: "BASIC"
+        content: !<regular>
+          value: 1
+        suggestedContent: !<regular>
+          value: 1
+        valueType: "int"
+        uuid: "generateOtp_int6"
+        fixed: false
+        equalsMethodPresent: true
+        explicitCastNeeded: false
+      staticReadMethodForField: false
+      filledByUser: false
+    uuid: "13b2b200-c87a-3a99-8fe4-a08abd054e54"
+    deleted: false
+    disabled: true
+    ignoredBySystem: false
+    disabledStatusUpdatedByUser: false

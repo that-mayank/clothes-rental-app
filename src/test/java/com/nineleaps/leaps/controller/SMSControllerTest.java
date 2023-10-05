@@ -3,11 +3,11 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.exceptions.InvalidOtpException;
-import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -104,7 +105,7 @@ class SMSControllerTest {
     }
 
     @Test
-     void testVerifyOTP() throws OtpValidationException, IOException {
+     void testVerifyOTP() throws  IOException {
         String phoneNumber = "1234567890";
         int otp = 1234;
 
@@ -197,5 +198,60 @@ class SMSControllerTest {
         assertEquals("Phone number not present in the database", response2.getMessage());
 
 
+    }
+
+    @Test
+     void testSmsSubmitInvalidOtpException() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        String phoneNumber = "1234567890";
+
+        // Mock isPhoneNumberPresent to return true (assuming the phone number is present)
+        when(userServiceInterface.getUserViaPhoneNumber(phoneNumber)).thenReturn(new User());
+
+        // Mock sendSms to throw InvalidOtpException
+        doThrow(new InvalidOtpException("Invalid OTP")).when(smsServiceInterface).send(phoneNumber);
+
+        // Access private method isPhoneNumberPresent using reflection
+        Method isPhoneNumberPresentMethod = SMSController.class.getDeclaredMethod("isPhoneNumberPresent", String.class);
+        isPhoneNumberPresentMethod.setAccessible(true);
+
+        // Access private method sendSms using reflection
+        Method sendSmsMethod = SMSController.class.getDeclaredMethod("sendSms", String.class);
+        sendSmsMethod.setAccessible(true);
+
+        // Call the smsSubmit method
+        ResponseEntity<ApiResponse> responseEntity = smsController.smsSubmit(phoneNumber);
+
+        // Verify the response and status
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("Invalid OTP", Objects.requireNonNull(responseEntity.getBody()).getMessage());
+        Assertions.assertFalse(responseEntity.getBody().isSuccess());
+    }
+
+    // Helper method to set a private field in a class using reflection
+    private void setPrivateField(Object targetObject, String fieldName, Object value)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = targetObject.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(targetObject, value);
+    }
+
+    @Test
+     void testVerifyOTP2() throws IOException {
+        String phoneNumber = "1234567890";
+        int otp = 1234;
+
+        // Mock smsService.verifyOtp to return true
+        when(smsServiceInterface.verifyOtp(phoneNumber, otp)).thenReturn(true);
+
+        // Call the verifyOTP method
+        ResponseEntity<ApiResponse> responseEntity = smsController.verifyOTP(null, null, phoneNumber, otp);
+
+        // Verify that securityUtility.generateToken is called
+        verify(securityUtility, times(1)).generateToken(null, null, phoneNumber);
+
+        // Verify the response and status
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertTrue(Objects.requireNonNull(responseEntity.getBody()).isSuccess());
+        assertEquals("OTP is verified", responseEntity.getBody().getMessage());
     }
 }

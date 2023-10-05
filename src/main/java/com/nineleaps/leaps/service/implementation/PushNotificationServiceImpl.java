@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
+import com.nineleaps.leaps.exceptions.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,22 +20,29 @@ public class PushNotificationServiceImpl {
 
 
 
-    public void sendPushNotificationToToken(PushNotificationRequest request) {
-        Message message = Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle(request.getTitle())
-                        .setBody(request.getTopic())
-                        .build())
-                .setToken(request.getToken())
-                .build();
+
+
+    public void sendPushNotificationToToken(PushNotificationRequest request) throws CustomException {
+        Message message = createMessage(request.getTitle(), request.getTopic(), request.getToken());
 
         try {
             String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-            log.info("Sent message to token. Device token: {} , response: {}", request.getToken() , response);
+            log.info("Sent message to token. Device token: {} , response: {}. Title: {}, Topic: {}", request.getToken() , response, request.getTitle(), request.getTopic());
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            log.error("Error sending FCM message: {}", e.getMessage());
+            log.error("Error sending FCM message. Title: {}, Topic: {}. Error: {}", request.getTitle(), request.getTopic(), e.getMessage());
+            throw new CustomException("Error sending FCM message");
         }
+    }
+
+    private Message createMessage(String title, String body, String token) {
+        return Message.builder()
+                .setNotification(Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build())
+                .setToken(token)
+                .build();
     }
 
     public void sendNotification(String token) {
@@ -58,4 +66,6 @@ public class PushNotificationServiceImpl {
         }
     }
 
+
 }
+

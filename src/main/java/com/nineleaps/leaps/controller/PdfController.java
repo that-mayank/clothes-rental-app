@@ -6,8 +6,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.PdfServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import lombok.AllArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,55 +19,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
+import java.io.*;
 
 
 @RestController
 @RequestMapping("/api/v1/pdf")
-@AllArgsConstructor
 public class PdfController {
 
-
-    // linking service layers
     private final PdfServiceInterface pdfService;
     private final Helper helper;
 
+    public PdfController(PdfServiceInterface pdfService, Helper helper) {
+        this.pdfService = pdfService;
+        this.helper = helper;
+    }
+
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
-    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws DocumentException, IOException {
-        User user = helper.getUserFromToken(request);
+    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) {
+        try {
+            User user = helper.getUserFromToken(request);
 
-        Document document = pdfService.getPdf(user);
+            Document document = pdfService.getPdf(user);
 
-        byte[] pdfBytes = generatePdfBytes(document,user);
+            Resource pdfResource = generatePdfResource(document, user);
 
-        InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "report.pdf");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "report.pdf");
-
-        return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
+            return new ResponseEntity<>(new InputStreamResource(pdfResource.getInputStream()), headers, HttpStatus.OK);
+        } catch (DocumentException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    private byte[] generatePdfBytes(Document document, User user) throws DocumentException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private Resource generatePdfResource(Document document, User user) throws DocumentException, IOException {
+        File file = File.createTempFile("report", ".pdf");
+        PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(file));
+        document.open();
+        pdfService.addContent(document, user);
+        document.close();
+        pdfWriter.close();
 
-
-            PdfWriter.getInstance(document, baos);
-            document.open();
-            // Call PdfService to add content to the document
-            pdfService.addContent(document, user);
-            document.close();
-
-
-        return baos.toByteArray();
+        return new FileSystemResource(file);
     }
-
-
-
-
 }

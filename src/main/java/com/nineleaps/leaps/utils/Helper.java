@@ -3,6 +3,7 @@ package com.nineleaps.leaps.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.itextpdf.text.Document;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -45,7 +46,6 @@ public class Helper {
         SecureRandom secureRandom = new SecureRandom();
         return secureRandom.nextInt(max - min + 1) + min;
     }
-
 
 
 

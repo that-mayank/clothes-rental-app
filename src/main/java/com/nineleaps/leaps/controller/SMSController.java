@@ -1,7 +1,7 @@
 package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.exceptions.InvalidOtpException;
-import com.nineleaps.leaps.exceptions.OtpValidationException;
+
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -93,7 +93,7 @@ public class SMSController {
     // API to verify OTP
     @ApiOperation(value = "Verify OTP")
     @PostMapping(value = "/otp",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
+    public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws IOException {
         // Verify the OTP
         if(smsService.verifyOtp(phoneNumber, otp)){
             securityUtility.generateToken(response, request, phoneNumber);

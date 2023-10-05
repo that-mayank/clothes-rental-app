@@ -565,8 +565,6 @@ import static org.junit.jupiter.api.Assertions.*;
          assertNotNull(result);
          assertFalse(result.isEmpty());
 
-         // TODO: Add further assertions to validate the generated result
-
          // Verify that orderRepository.findAll() was called
          verify(orderRepository, times(1)).findAll();
      }

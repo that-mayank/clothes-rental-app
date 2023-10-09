@@ -6,6 +6,8 @@ import com.nineleaps.leaps.model.UserLoginInfo;
 import com.nineleaps.leaps.repository.UserLoginInfoRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -18,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-
+@Tag("unit_tests")
+@DisplayName("Test case file for admin controller")
 class AdminControllerTest {
 
     @Mock
@@ -36,6 +39,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("get all users")
     void getAllUsers() {
         // Call the method
         ResponseEntity<ApiResponse> response = adminController.getAllUsers();
@@ -51,6 +55,7 @@ class AdminControllerTest {
 
 
     @Test
+    @DisplayName("Activate account")
     void activateAccount_UserExists_AccountActivated() {
         // Mock data
         String userEmail = "test@example.com";
@@ -82,6 +87,7 @@ class AdminControllerTest {
 
 
     @Test
+    @DisplayName("Activate account - user not found ")
     void activateAccount_UserNotFound_ReturnsNotFound() {
         // Mock data
         String userEmail = "notfound@example.com";
@@ -98,6 +104,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("Activate account - failed Internal server error")
     void activateAccount_InternalError_ReturnsInternalServerError() {
         // Mock data
         String userEmail = "test@example.com";

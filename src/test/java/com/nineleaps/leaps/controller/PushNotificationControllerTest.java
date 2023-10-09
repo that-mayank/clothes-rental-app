@@ -3,16 +3,19 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.dto.pushnotification.PushNotificationResponse;
 import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit_tests")
+@DisplayName("Test case file for Push Notification Controller")
 class PushNotificationControllerTest {
     @Mock
     private PushNotificationServiceImpl pushNotificationService;
@@ -25,6 +28,7 @@ class PushNotificationControllerTest {
         MockitoAnnotations.openMocks(this);}
 
     @Test
+    @DisplayName("send Notification")
     void sendTokenNotification() {
         // Mock the FCM token
         String token = "sampleFCMToken";
@@ -50,6 +54,7 @@ class PushNotificationControllerTest {
 
 
     @Test
+    @DisplayName("Send token get 200 OK")
      void test_api_call_with_valid_token_returns_http_status_ok() {
         // Mock the pushNotificationService
         PushNotificationServiceImpl pushNotificationService = mock(PushNotificationServiceImpl.class);
@@ -71,6 +76,7 @@ class PushNotificationControllerTest {
     }
 
     @Test
+    @DisplayName("send successful notification")
      void test_push_notification_service_successfully_sends_notification() {
         // Mock the pushNotificationService
         PushNotificationServiceImpl pushNotificationService = mock(PushNotificationServiceImpl.class);

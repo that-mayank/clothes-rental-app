@@ -11,9 +11,7 @@ import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Test case file for Order Controller ")
 class OrderControllerTest {
 
     @Mock
@@ -52,6 +51,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Place order")
     void testPlaceOrder() {
         User user = new User();
         String razorpayId = "sampleRazorpayId";
@@ -74,6 +74,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("get all orders")
     void testGetAllOrders() {
         User user = new User();
         List<OrderDto> orders = new ArrayList<>(); // Replace with a list of orders
@@ -93,6 +94,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Get order by id")
     void testGetOrderById() throws AuthenticationFailException {
         Long orderId = 123L; // Replace with a valid order ID
         Order order = new Order(); // Replace with a valid order object
@@ -113,6 +115,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Get order in Transit")
     void testOrderInTransit() throws AuthenticationFailException {
         Long orderItemId = 123L;
         String orderStatus = "IN_TRANSIT";
@@ -136,6 +139,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Get rented out products")
     void testGetRentedOutProducts() {
         // Arrange
         int pageNumber = 0;
@@ -155,6 +159,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Get shipping status")
     void testGetShippingStatus() {
         // Arrange
         String shippingStatus = "SHIPPED";
@@ -173,6 +178,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Generate Invoice")
     void testGenerateInvoice() throws IOException, DocumentException {
         // Arrange
         Long orderId = 123L;
@@ -197,6 +203,7 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("Order in transit")
     void testOrderInTransit_UnauthorizedAccess() {
         // Mock valid user
         User user = new User();
@@ -221,6 +228,7 @@ class OrderControllerTest {
         assertEquals("OrderItem does not belong to current user", Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
     @Test
+    @DisplayName("Generate invoice - Causes Internal server error")
     void testGenerateInvoice_InternalServerError() throws IOException, DocumentException {
         // Mock valid user
         User user = new User();

@@ -9,22 +9,24 @@ import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@Tag("unit_tests")
+@DisplayName("test case file for Sub Category Controller")
 class SubCategoryControllerTest {
 
     @Mock
@@ -46,6 +48,7 @@ class SubCategoryControllerTest {
 
 
     @Test
+    @DisplayName("Create Subcategory - Category Does Not Exist (Returns Created)")
     void createSubCategory_CategoryDoesNotExist_ReturnsCreated() {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L); // Assuming valid category ID
@@ -63,6 +66,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Subcategory - Category Exists (Returns Conflict)")
     void createSubCategory_CategoryExists_ReturnsConflict() {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L); // Assuming valid category ID
@@ -85,6 +89,7 @@ class SubCategoryControllerTest {
 
 
     @Test
+    @DisplayName("List Subcategories (Returns List of Subcategories)")
     void listSubCategories_ReturnsListOfSubCategories() {
         List<SubCategory> subCategoryList = new ArrayList<>();
         subCategoryList.add(new SubCategory());
@@ -99,6 +104,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("List Subcategories by Category ID (Valid Category ID)")
     void listSubCategoriesByCategoriesId_ValidCategoryId_ReturnsListOfSubCategories() {
         Long categoryId = 1L; // Assuming valid category ID
         List<SubCategory> subCategoryList = new ArrayList<>();
@@ -115,6 +121,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Subcategory - Parent Category Not Found (Returns Not Found)")
     void createSubCategory_ParentCategoryNotFound_ReturnsNotFound() {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L); // Assuming invalid category ID
@@ -133,6 +140,7 @@ class SubCategoryControllerTest {
 
 
     @Test
+    @DisplayName("List Subcategories by Category ID (Invalid Category ID - Returns Not Found)")
     void listSubCategoriesByCategoriesId_InvalidCategoryId_ReturnsNotFound() {
         Long categoryId = 1L; // Assuming invalid category ID
 
@@ -145,6 +153,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory (Valid Data - Returns OK)")
     void updateSubCategory_ValidData_ReturnsOk() {
         Long subcategoryId = 1L; // Assuming valid subcategory ID
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -163,6 +172,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory (Invalid Category ID - Returns Not Found)")
     void updateSubCategory_InvalidCategoryId_ReturnsNotFound() {
         Long subcategoryId = 1L; // Assuming valid subcategory ID
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -180,6 +190,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory (Invalid Subcategory ID - Returns Not Found)")
     void updateSubCategory_InvalidSubcategoryId_ReturnsNotFound() {
         Long subcategoryId = 1L; // Assuming invalid subcategory ID
         SubCategoryDto subCategoryDto = new SubCategoryDto();

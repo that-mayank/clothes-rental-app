@@ -11,9 +11,7 @@ import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -25,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Test case file for Product Controller")
 class ProductControllerTest {
     @Mock
     private ProductServiceInterface productService;
@@ -50,6 +49,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Add product")
     void testAddProduct() {
         // Prepare a ProductDto
         ProductDto productDto = new ProductDto();
@@ -88,6 +88,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Add product with invalid quantity")
     void testAddProduct_InvalidQuantity() {
         // Mock data with invalid quantity
         ProductDto productDto = new ProductDto();
@@ -103,6 +104,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("add product with invalid price")
     void testAddProduct_InvalidPrice() {
         // Mock data with invalid price
         ProductDto productDto = new ProductDto();
@@ -118,6 +120,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list products")
      void testListProducts() {
         // Mock the User
         User user = new User();
@@ -136,6 +139,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("update product")
      void testUpdateProduct() {
         // Mock the User
         User user = new User();
@@ -163,6 +167,7 @@ class ProductControllerTest {
         assertEquals("Product has been updated", responseEntity.getBody().getMessage());
     }
     @Test
+    @DisplayName("Update product with invalid product ID")
     void testUpdateProduct_InvalidProductId() {
         // Mock invalid product ID
         Long invalidProductId = 999L;
@@ -182,6 +187,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list products by subcategory id")
      void testListBySubcategoryId() {
         // Mock the User
         User user = new User();
@@ -205,6 +211,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list products with invalid subcategory ID")
      void testListBySubcategoryId_InvalidSubCategory() {
         // Mock the SubCategoryService response for an invalid subcategory ID
         when(subCategoryService.readSubCategory(anyLong())).thenReturn(Optional.empty());
@@ -218,6 +225,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list products by category ID")
      void testListByCategoryId() {
         // Mock the User
         User user = new User();
@@ -241,6 +249,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List products by invalid category ID")
      void testListByCategoryId_InvalidCategory() {
         // Mock the CategoryService response for an invalid category ID
         when(categoryService.readCategory(anyLong())).thenReturn(Optional.empty());
@@ -254,6 +263,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list by product ID")
      void testListByProductId() {
         // Mock the ProductService response
         ProductDto productDto = new ProductDto();
@@ -268,6 +278,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list product by invalid product ID")
      void testListByProductId_InvalidProduct() {
         // Mock the ProductService response for an invalid product ID
         when(productService.listProductByid(anyLong())).thenReturn(null);
@@ -281,6 +292,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("get products by price range")
      void testGetProductsByPriceRange() {
         // Mock ProductService response
         List<ProductDto> productDtoList = new ArrayList<>();
@@ -295,6 +307,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("search products")
      void testSearchProducts() {
         String query = "example query";
 
@@ -313,6 +326,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list products desc")
      void testListProductsDesc() {
         // Mock User and ProductService response
         User user = new User();
@@ -329,6 +343,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("list owner products")
      void testListOwnerProducts() {
         // Mock User and ProductService response
         User user = new User();
@@ -345,6 +360,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("filter products")
      void testFilterProducts() {
         // Mock ProductService response
         List<ProductDto> productDtoList = new ArrayList<>();
@@ -359,6 +375,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("delete product")
      void testDeleteProduct() {
         // Sample product ID
         User user = new User();
@@ -379,6 +396,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("soft delete")
     void testDeleteProduct_SuccessfulSoftDelete() {
         // Mock valid user
         User user = new User();
@@ -400,6 +418,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("delete product with invalid product ID")
      void testDeleteProductInvalidProductId() {
         Long productId = 1L; // Sample product ID
 
@@ -416,6 +435,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Delete product by Invalid user ID")
     void testDeleteProduct_UserInvalid() {
         // Mock invalid user
         when(helper.getUserFromToken(any())).thenReturn(null);
@@ -429,6 +449,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Delete product - Product not found")
     void testDeleteProduct_ProductNotFound() {
         // Mock valid user
         User user = new User();
@@ -446,6 +467,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Disable product")
     void testDisableProducts() {
         // Mock data
         long productId = 1L;
@@ -472,6 +494,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("disabling products that doesnt belong to user")
     void testDisableProduct_ProductNotBelongsToUser() {
         // Mock valid user
         User user = new User();
@@ -492,6 +515,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Enable product")
     void testEnableProducts() {
         // Mock data
         long productId = 1L;
@@ -518,6 +542,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Enable product with invalid user ")
     void testEnableProduct_ProductNotBelongsToUser() {
         // Mock valid user
         User user = new User();

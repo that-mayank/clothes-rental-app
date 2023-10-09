@@ -6,6 +6,8 @@ import com.nineleaps.leaps.service.StorageServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -22,7 +24,8 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("test case file for Storage Controller")
 class StorageControllerTest {
     @Mock
     private StorageServiceInterface storageServiceInterface;
@@ -37,6 +40,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test successful file upload to specific bucket")
     void testUploadFileToSpecificBucket_Success() throws IOException {
         // Mock input parameters
         MultipartFile[] files = new MultipartFile[1]; // Mock a file
@@ -57,6 +61,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test file upload to specific bucket with exception")
     void testUploadFileToSpecificBucket_Exception() throws IOException {
         // Mock input parameters
         MultipartFile[] files = new MultipartFile[1]; // Mock a file
@@ -76,6 +81,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test successful profile image upload")
     void testUploadProfileImage_Success() throws IOException {
         // Mock the MultipartFile and HttpServletRequest
         MultipartFile mockFile = mock(MultipartFile.class);
@@ -100,6 +106,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test profile image upload with exception")
     void testUploadProfileImage_Exception() throws IOException {
         // Mock the MultipartFile and HttpServletRequest
         MultipartFile mockFile = mock(MultipartFile.class);
@@ -120,6 +127,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test successful view file operation")
     void testViewFile_Success()  {
         // Mock input parameters
         String fileName = "mock-file.jpg";
@@ -134,6 +142,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test view file operation with exception")
     void testViewFile_Exception() throws IOException {
         // Mock input parameters
         String fileName = "mock-file.jpg";
@@ -151,6 +160,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test successful file deletion")
     void testDeleteFile_Success() throws IOException {
         // Mock input parameters
         String fileName = "mock-file.jpg";
@@ -167,6 +177,7 @@ class StorageControllerTest {
     }
 
     @Test
+    @DisplayName("Test file deletion with exception")
     void testDeleteFile_Exception() throws IOException {
         // Mock input parameters
         String fileName = "mock-file.jpg";

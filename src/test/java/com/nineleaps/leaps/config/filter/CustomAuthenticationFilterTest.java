@@ -67,7 +67,7 @@ class CustomAuthenticationFilterTest {
         MockitoAnnotations.openMocks(this);
 
     }
-@DisplayName("Constructor Injection Test")
+    @DisplayName("Constructor Injection Test")
     @Test
     void constructorInjection() {
         // Create a CustomAuthenticationFilter instance

@@ -9,6 +9,8 @@ import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.WishlistServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,7 +23,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("test case file for Wishlist Controller")
 class WishlistControllerTest {
 
     @Mock
@@ -50,6 +53,7 @@ class WishlistControllerTest {
     }
 
     @Test
+    @DisplayName("Add Wishlist - Product Not Found (Returns Not Found)")
     void addWishlist_productNotFound_shouldReturnNotFoundResponse() {
         // Arrange
         Long productId = 1L;
@@ -70,6 +74,7 @@ class WishlistControllerTest {
     }
 
     @Test
+    @DisplayName("Add Wishlist - Product Already In Wishlist (Returns Conflict)")
     void addWishlist_ProductAlreadyInWishlist_ReturnsConflict() {
         Long productId = 1L; // Assuming a valid product ID
         HttpServletRequest request = mock(HttpServletRequest.class); // Mock HttpServletRequest
@@ -93,6 +98,7 @@ class WishlistControllerTest {
     }
 
     @Test
+    @DisplayName("Add Wishlist - Product Not In Wishlist (Returns Created)")
     void addWishlist_ProductNotInWishlist_ReturnsCreated() {
         Long productId = 1L; // Assuming a valid product ID
         HttpServletRequest request = mock(HttpServletRequest.class); // Mock HttpServletRequest
@@ -115,6 +121,7 @@ class WishlistControllerTest {
 
 
     @Test
+    @DisplayName("Add Wishlist - Product Already In Wishlist (Returns Conflict)")
     void addWishlist_productAlreadyInWishlist_shouldReturnConflictResponse() {
         // Arrange
         Long productId = 1L;
@@ -140,7 +147,9 @@ class WishlistControllerTest {
         assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("Product already in wishlist"));
     }
 
+
     @Test
+    @DisplayName("Add Wishlist - Product Added To Wishlist (Returns Created)")
     void addWishlist_productAddedToWishlist_shouldReturnCreatedResponse() {
         // Arrange
         Long productId = 1L;
@@ -166,6 +175,7 @@ class WishlistControllerTest {
     // Add more tests for positive and negative scenarios for addWishlist, getWishlist, and removeFromWishlist
 
     @Test
+    @DisplayName("Get Wishlist - Should Return Wishlist Items")
     void getWishlist_shouldReturnWishlistItems() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -193,6 +203,7 @@ class WishlistControllerTest {
     }
 
     @Test
+    @DisplayName("Remove From Wishlist - Should Remove Wishlist Item")
     void removeFromWishlist_shouldRemoveItem() {
         // Arrange
         Long productId = 1L;

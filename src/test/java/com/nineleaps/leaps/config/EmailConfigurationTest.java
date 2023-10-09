@@ -1,17 +1,16 @@
 package com.nineleaps.leaps.config;
 
-import com.nineleaps.leaps.config.EmailConfiguration;
+
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mail.javamail.JavaMailSender;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
-
+@Tag("unit_tests")
 class EmailConfigurationTest {
 
     @Test
+    @DisplayName("Test case for setting email configuration")
     void javaMailSender() {
         EmailConfiguration emailConfiguration = new EmailConfiguration();
         emailConfiguration.setHost("smtp.example.com");

@@ -7,9 +7,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,7 +29,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("test case file for SMS Controller")
 class SMSControllerTest {
     @InjectMocks
     private SMSController smsController;
@@ -62,6 +61,7 @@ class SMSControllerTest {
 
 
     @Test
+    @DisplayName("get time stamp")
     void testGetTimeStamp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // Use reflection to access the private method
@@ -82,6 +82,7 @@ class SMSControllerTest {
 
 
     @Test
+    @DisplayName("Send Sms")
     void testSendSmsWebSocketMessage() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Mock data
         String phoneNumber = "1234567890";
@@ -105,6 +106,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("Verify OTP")
      void testVerifyOTP() throws  IOException {
         String phoneNumber = "1234567890";
         int otp = 1234;
@@ -125,6 +127,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("Send SMS")
      void testSendSms() throws InvalidOtpException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         String phoneNumber = "1234567890";
 
@@ -144,6 +147,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("Check if phone number is present")
      void testIsPhoneNumberPresent() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String existingPhoneNumber = "1234567890";
         String nonExistingPhoneNumber = "9876543210";
@@ -168,6 +172,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("SMS Submit")
      void testSmsSubmit() throws InvalidOtpException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         String existingPhoneNumber = "1234567890";
         String nonExistingPhoneNumber = "9876543210";
@@ -201,6 +206,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("Invalid OTP")
      void testSmsSubmitInvalidOtpException() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String phoneNumber = "1234567890";
 
@@ -236,6 +242,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("Verify OTP - 2")
      void testVerifyOTP2() throws IOException {
         String phoneNumber = "1234567890";
         int otp = 1234;

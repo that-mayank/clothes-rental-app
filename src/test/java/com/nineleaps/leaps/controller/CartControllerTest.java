@@ -11,6 +11,8 @@ import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Test case file for cart controller")
 class CartControllerTest {
 
     @Mock
@@ -49,6 +52,7 @@ class CartControllerTest {
 
 
     @Test
+    @DisplayName("add to cart")
     void testAddToCart()  {
         // Prepare the AddToCartDto
         AddToCartDto addToCartDto = new AddToCartDto();
@@ -76,6 +80,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("get cart items")
     void testGetCartItems() throws AuthenticationFailException {
         // Mock user and cartDto
         CartDto cartDto = new CartDto();
@@ -97,6 +102,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("Delete Cart items")
     void testDeleteCartItem() throws AuthenticationFailException {
         long productId = 1L; // valid product ID
         User user = new User();
@@ -119,6 +125,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("Update Cart Item")
     void testUpdateCartItem() throws AuthenticationFailException {
         AddToCartDto addToCartDto = new AddToCartDto(); // Replace with a valid DTO
         User user = new User(); // Replace with a valid user
@@ -141,6 +148,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("Update Quantity")
     void testUpdateQuantity() throws AuthenticationFailException {
         UpdateProductQuantityDto updateProductQuantityDto = new UpdateProductQuantityDto(); // Replace with a valid DTO
         User user = new User(); // Replace with a valid user

@@ -2,9 +2,7 @@ package com.nineleaps.leaps.config.filter;
 
 
 import com.nineleaps.leaps.utils.SecurityUtility;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.*;
@@ -15,6 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.mockito.Mockito.*;
+
+@Tag("Custom Authorization Filter")
+@DisplayName("Test cases for Custom Authorization filter")
 class CustomAuthorizationFilterTest {
 
     @Mock
@@ -30,6 +31,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for login url")
     void doFilterInternal_ExemptedUrls() throws ServletException, IOException {
         // Setup: Mock the HttpServletRequest and HttpServletResponse
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -45,6 +47,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for refresh token url")
     void doFilterInternal_RefreshTokenUrl() throws ServletException, IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Setup: Mock the HttpServletRequest and HttpServletResponse
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -68,6 +71,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for other urls starting by api/v1")
     void doFilterInternal_ApiUrls() throws ServletException, IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Setup: Mock the HttpServletRequest and HttpServletResponse
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -91,6 +95,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test for null authorization header")
     void doFilterInternal_NullAuthorizationHeader() throws ServletException, IOException {
         // Setup: Mock the HttpServletRequest and HttpServletResponse
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -112,6 +117,7 @@ class CustomAuthorizationFilterTest {
 
 
     @Test
+    @DisplayName("test case for handle access token")
     void handleAccessToken() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -132,6 +138,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test for access token expired")
     void handleAccessToken_AccessTokenExpired() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -151,6 +158,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for valid refresh token")
     void handleRefreshToken_ValidToken() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -172,6 +180,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for expired refresh token")
     void handleRefreshToken_ExpiredToken() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -193,6 +202,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for throwing exception on handling refresh token")
     void handleRefreshToken_Exception() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -220,6 +230,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("test case for handling unauthorized")
     void handleUnauthorized() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Create a MockHttpServletResponse
         MockHttpServletResponse response = new MockHttpServletResponse();

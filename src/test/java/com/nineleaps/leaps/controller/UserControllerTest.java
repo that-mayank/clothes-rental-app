@@ -16,6 +16,8 @@ import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.nineleaps.leaps.utils.SwitchProfile;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -27,7 +29,8 @@ import java.io.IOException;
 import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("test case file for User Controller")
 class UserControllerTest {
 
     private UserController userController;
@@ -54,6 +57,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Signup - Should Return Created Response")
     void signup_shouldReturnCreatedResponse() throws CustomException {
         // Arrange
         SignupDto signupDto = new SignupDto();
@@ -69,6 +73,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Update Profile - User Not Found (Returns Not Found)")
     void updateProfile_UserNotFound_ReturnsNotFound() throws AuthenticationFailException {
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto(); // Assuming valid DTO
         HttpServletRequest request = mock(HttpServletRequest.class); // Mock HttpServletRequest
@@ -83,6 +88,7 @@ class UserControllerTest {
 
 
     @Test
+    @DisplayName("Update Profile - Should Return OK Response")
     void updateProfile_shouldReturnOkResponse() throws AuthenticationFailException {
         // Arrange
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
@@ -100,6 +106,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Get User - Should Return OK Response")
     void getUser_shouldReturnOkResponse() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -117,6 +124,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Profile Image - Should Return Created Response")
     void profileImage_shouldReturnCreatedResponse() throws AuthenticationFailException {
         // Arrange
         String profileImageUrl = "https://example.com/image.jpg";
@@ -133,6 +141,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
     @Test
+    @DisplayName("Profile Image - Should Return Not Found When User Not Found")
     void profileImage_shouldReturnNotFound_whenUserNotFound() throws AuthenticationFailException {
         // Arrange
         String profileImageUrl = "https://example.com/image.jpg";
@@ -156,6 +165,7 @@ class UserControllerTest {
 
 
     @Test
+    @DisplayName("Update Token Using Refresh Token - Should Return Created Response")
     void updateTokenUsingRefreshToken_shouldReturnCreatedResponse() throws AuthenticationFailException, IOException {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -178,6 +188,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Switch Profile - Should Return Role Switched Response")
     void switchProfile_shouldReturnRoleSwitchedResponse() throws AuthenticationFailException, UserNotExistException, IOException {
         // Arrange
         Role profile = Role.OWNER;
@@ -197,6 +208,7 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Switch Profile - Should Throw User Not Exist Exception When User Is Null")
     void switchProfile_shouldThrowUserNotExistException_whenUserIsNull() throws AuthenticationFailException, UserNotExistException{
         // Arrange
         Role profile = Role.OWNER;
@@ -216,6 +228,7 @@ class UserControllerTest {
 
 
     @Test
+    @DisplayName("Logout - Should Return OK Response")
     void logout_shouldReturnOkResponse() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);

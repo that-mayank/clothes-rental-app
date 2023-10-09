@@ -6,9 +6,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,12 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Test case file for Category Controller ")
 class CategoryControllerTest {
 
     @Mock
@@ -41,6 +38,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create category")
     void createCategory() {
         // Mock data
         CategoryDto categoryDto = new CategoryDto();
@@ -60,6 +58,7 @@ class CategoryControllerTest {
         assertEquals("Created a new Category", response.getBody().getMessage());
     }
     @Test
+    @DisplayName("Create category - category doesnt exist")
     void createCategory_CategoryDoesNotExist_ReturnsCreated() {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setCategoryName("TestCategory");
@@ -76,6 +75,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Category already exists")
     void createCategory_CategoryExists_ReturnsConflict() {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setCategoryName("TestCategory");
@@ -91,6 +91,7 @@ class CategoryControllerTest {
         assertEquals("Category already exists", Objects.requireNonNull(response.getBody()).getMessage());
     }
     @Test
+    @DisplayName("List Category")
     void listCategory() {
         // Mock data
         List<Category> categories = new ArrayList<>();
@@ -107,6 +108,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Category")
     void updateCategory_CategoryExists_Success() {
         // Mock data
         long categoryId = 1L;
@@ -128,6 +130,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update category - category doesnt exist")
     void updateCategory_CategoryDoesNotExist_NotFound() {
         // Mock data
         long categoryId = 1L;

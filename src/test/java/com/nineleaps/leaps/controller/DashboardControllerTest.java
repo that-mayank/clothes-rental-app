@@ -8,25 +8,27 @@ import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
+import org.apache.http.annotation.Obsolete;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+@Tag("unit_tests")
+@DisplayName("Test case file for dashboardController test")
 class DashboardControllerTest {
 
     @Mock
@@ -47,6 +49,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Get dashboard")
     void testDashboard() throws AuthenticationFailException {
         User user = new User();
 
@@ -69,6 +72,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("On click dashboard get details")
     void testOnClickDashboard() {
         User user = new User();
 
@@ -95,6 +99,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Get year wise data")
     void testOnClickDashboardYearWiseData() {
         User user = new User();
 
@@ -124,6 +129,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("get order items")
     void testGetOrderItemsDashboard() {
         User user = new User();
 
@@ -151,6 +157,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("get order items by sub categories")
     void testGetOrderItemsBySubCategories() {
         User user = new User();
 
@@ -178,6 +185,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("get order items by categories")
     void testGetOrderItemsByCategories() {
         User user = new User();
 
@@ -205,6 +213,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("get order items between dates")
     void testGetOrderItemsDashboardBwDates() {
         User user = new User(); // Replace with a valid user
 

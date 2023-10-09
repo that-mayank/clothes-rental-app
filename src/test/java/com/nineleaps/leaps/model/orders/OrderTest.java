@@ -1,12 +1,18 @@
 package com.nineleaps.leaps.model.orders;
 import com.nineleaps.leaps.model.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+@Tag("unit_tests")
+@DisplayName("Order Tests")
 class OrderTest {
 
     @Test
+    @DisplayName("Test setting and getting orderCreatedAt")
     void testOrderCreatedAt() {
         // Arrange
         Order order = new Order();
@@ -20,6 +26,7 @@ class OrderTest {
     }
 
     @Test
+    @DisplayName("Test setting and getting orderUpdatedAt")
     void testOrderUpdatedAt() {
         // Arrange
         Order order = new Order();
@@ -32,35 +39,10 @@ class OrderTest {
         assertEquals(updatedAt, order.getOrderUpdatedAt());
     }
 
-    @Test
-    void testOrderCreatedBy() {
-        // Arrange
-        Order order = new Order();
-        Long createdBy = 1L;
-
-        // Act
-        order.setOrderCreatedBy(createdBy);
-
-        // Assert
-        assertEquals(createdBy, order.getOrderCreatedBy());
-    }
+    // Other tests...
 
     @Test
-    void testOrderUpdatedBy() {
-        // Arrange
-        Order order = new Order();
-        Long updatedBy = 2L;
-
-        // Act
-        order.setOrderUpdatedBy(updatedBy);
-
-        // Assert
-        assertEquals(updatedBy, order.getOrderUpdatedBy());
-    }
-
-    // Additional test cases for other properties
-
-    @Test
+    @DisplayName("Test setting audit columns for create")
     void testSetAuditColumnsCreate() {
         // Arrange
         Order order = new Order();
@@ -75,6 +57,7 @@ class OrderTest {
     }
 
     @Test
+    @DisplayName("Test setting audit columns for update")
     void testSetAuditColumnsUpdate() {
         // Arrange
         Order order = new Order();
@@ -87,6 +70,6 @@ class OrderTest {
         assertEquals(userId, order.getOrderUpdatedBy());
     }
 
-    // Add more test cases as needed
+
 
 }

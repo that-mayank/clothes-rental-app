@@ -6,6 +6,8 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -14,11 +16,12 @@ import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
+@Tag("unit_tests")
+@DisplayName("Product Tests")
 class ProductTest {
 
     @Test
+    @DisplayName("Test audit columns and relationships")
     void testAuditColumnsAndRelationships() {
         // Mock a user for audit columns
         User user = new User();

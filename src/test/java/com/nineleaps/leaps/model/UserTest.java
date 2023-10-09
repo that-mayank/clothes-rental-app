@@ -4,6 +4,8 @@ package com.nineleaps.leaps.model;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.product.Product;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -11,10 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@Tag("unit_tests")
+@DisplayName("User Tests")
 class UserTest {
 
     @Test
+    @DisplayName("Test Updated At")
     void testUpdatedAt() {
         LocalDateTime updatedAt = LocalDateTime.now();
         User user = new User();
@@ -23,6 +27,7 @@ class UserTest {
     }
 
     @Test
+    @DisplayName("Test Created By")
     void testCreatedBy() {
         Long createdBy = 12345L;
         User user = new User();
@@ -31,6 +36,7 @@ class UserTest {
     }
 
     @Test
+    @DisplayName("Test Updated By")
     void testUpdatedBy() {
         Long updatedBy = 67890L;
         User user = new User();
@@ -39,6 +45,7 @@ class UserTest {
     }
 
     @Test
+    @DisplayName("Test Orders")
     void testOrders() {
         User user = new User();
         List<Order> orders = new ArrayList<>();
@@ -48,6 +55,7 @@ class UserTest {
     }
 
     @Test
+    @DisplayName("Test Products")
     void testProducts() {
         User user = new User();
         List<Product> products = new ArrayList<>();
@@ -57,6 +65,7 @@ class UserTest {
     }
 
     @Test
+    @DisplayName("Test User Login Info")
     void testUserLoginInfo() {
         User user = new User();
         UserLoginInfo userLoginInfo = new UserLoginInfo();
@@ -66,6 +75,7 @@ class UserTest {
     }
 
     @Test
+    @DisplayName("Test Profile Update DTO Constructor")
     void testProfileUpdateDtoConstructor() {
         // Create a profile update DTO
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();

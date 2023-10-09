@@ -3,16 +3,20 @@ package com.nineleaps.leaps.model;
 import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.enums.AddressType;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-
+@Tag("unit_tests")
+@DisplayName("Address Tests")
 class AddressTest {
 
     @Test
+    @DisplayName("Test Address Constructor with DTO and User")
     void addressConstructorWithDtoAndUser() {
         // Create a mock User
         User user = mock(User.class);
@@ -44,6 +48,7 @@ class AddressTest {
     }
 
     @Test
+    @DisplayName("Test setAuditColumnsCreate")
     void setAuditColumnsCreate() {
         // Create a mock User
         User user = mock(User.class);
@@ -62,6 +67,7 @@ class AddressTest {
     }
 
     @Test
+    @DisplayName("Test setAuditColumnsUpdate")
     void setAuditColumnsUpdate() {
         Long userId = 1L;
         LocalDateTime updatedAt = LocalDateTime.now();
@@ -75,6 +81,7 @@ class AddressTest {
     }
 
     @Test
+    @DisplayName("Test Audit Columns Getters and Setters")
     void testAuditColumnsGettersAndSetters() {
         // Create an Address instance
         Address address = new Address();

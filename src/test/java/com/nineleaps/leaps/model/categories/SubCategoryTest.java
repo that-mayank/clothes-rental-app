@@ -3,16 +3,20 @@ package com.nineleaps.leaps.model.categories;
 
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
 import com.nineleaps.leaps.model.product.Product;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@Tag("unit_tests")
+@DisplayName("SubCategory Tests")
 class SubCategoryTest {
 
     @Test
+    @DisplayName("Test setting and getting subCategoryUpdatedAt")
     void testSubCategoryUpdatedAt() {
         // Arrange
         SubCategory subCategory = new SubCategory();
@@ -26,6 +30,7 @@ class SubCategoryTest {
     }
 
     @Test
+    @DisplayName("Test setting and getting products property")
     void testProductsProperty() {
         // Arrange
         SubCategory subCategory = new SubCategory();
@@ -39,6 +44,7 @@ class SubCategoryTest {
     }
 
     @Test
+    @DisplayName("Test SubCategoryDto constructor")
     void testSubCategoryDtoConstructor() {
         // Arrange
         Category category = new Category();  // Create a category instance if needed
@@ -55,7 +61,5 @@ class SubCategoryTest {
         assertEquals(subCategoryDto.getImageURL(), subCategory.getImageUrl());
         assertEquals(subCategoryDto.getDescription(), subCategory.getDescription());
     }
-
-    // Add more test cases as needed
-
 }
+

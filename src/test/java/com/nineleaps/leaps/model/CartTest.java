@@ -2,6 +2,8 @@ package com.nineleaps.leaps.model;
 
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.product.ProductUrl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -10,11 +12,12 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
+@Tag("unit_tests")
+@DisplayName("Cart Tests")
 class CartTest {
 
     @Test
+    @DisplayName("Test Create Date")
     void testCreateDate() {
         Cart cart = new Cart();
         Date createDate = new Date();
@@ -24,6 +27,7 @@ class CartTest {
     }
 
     @Test
+    @DisplayName("Test User ID Not Null")
     void testUserIdNotNull() {
         Cart cart = new Cart();
         User user = new User();
@@ -35,6 +39,7 @@ class CartTest {
     }
 
     @Test
+    @DisplayName("Test Image URL Not Null")
     void testImageUrlNonNull() {
         Cart cart = new Cart();
 
@@ -47,6 +52,7 @@ class CartTest {
     }
 
     @Test
+    @DisplayName("Test Image URL Null")
     void testImageUrlNull() {
         Cart cart = new Cart();
 
@@ -58,7 +64,9 @@ class CartTest {
         assertEquals(null, cart.getImageUrl());
     }
 
+
     @Test
+    @DisplayName("Test Image URL Assignment")
     void testImageUrlAssignment() {
         // Create a product
         Product product = new Product();

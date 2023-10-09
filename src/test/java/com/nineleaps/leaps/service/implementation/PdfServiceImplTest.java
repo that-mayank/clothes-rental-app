@@ -7,6 +7,8 @@ import com.nineleaps.leaps.model.User;
 
 import com.nineleaps.leaps.service.DashboardServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
@@ -22,7 +24,8 @@ import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("PDF Service Tests")
 class PdfServiceImplTest {
 
     @Mock
@@ -40,6 +43,7 @@ class PdfServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get PDF should return Document")
     void getPdf_shouldReturnDocument() {
         User user = new User(); // Create a sample user
         when(dashboardService.analytics(user)).thenReturn(null); // Mock analytics service
@@ -51,6 +55,7 @@ class PdfServiceImplTest {
 
 
     @Test
+    @DisplayName("Add header should add heading paragraph to document")
     void addHeader_shouldAddHeadingParagraphToDocument() throws Exception {
         // Mock the Document
         Document document = mock(Document.class);
@@ -72,6 +77,7 @@ class PdfServiceImplTest {
     }
 
     @Test
+    @DisplayName("Add subheading should add subheading paragraph to document")
     void addSubheading_shouldAddSubheadingParagraphToDocument() throws Exception {
         // Mock the Document
         Document document = mock(Document.class);
@@ -99,6 +105,7 @@ class PdfServiceImplTest {
 
 
     @Test
+    @DisplayName("Add dashboard data should add table to document")
     void addDashboardData_shouldAddTableToDocument() throws Exception {
         // Mock dashboard data for non-empty case
         Map<String, Object> monthData = new HashMap<>();
@@ -144,6 +151,7 @@ class PdfServiceImplTest {
 
 
     @Test
+    @DisplayName("Add bar chart should add chart image to document")
     void addBarChart_shouldAddChartImageToDocument() throws Exception {
         // Mock dashboard data
         Map<YearMonth, Map<String, Object>> dashboardData = new HashMap<>();
@@ -180,6 +188,7 @@ class PdfServiceImplTest {
     }
 
     @Test
+    @DisplayName("Add empty line should add empty line to document")
     void addEmptyLine_shouldAddEmptyLineToDocument() throws Exception {
         // Mock the Document
         Document document = mock(Document.class);
@@ -203,6 +212,7 @@ class PdfServiceImplTest {
     }
 
     @Test
+    @DisplayName("Add content should call expected methods")
     void addContent_shouldCallExpectedMethods() throws Exception {
         // Mock dashboard data
         Map<String, Object> monthData = new HashMap<>();

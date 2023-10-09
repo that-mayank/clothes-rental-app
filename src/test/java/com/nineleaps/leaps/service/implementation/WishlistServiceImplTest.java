@@ -5,6 +5,8 @@ import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.WishlistRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,7 +18,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Wishlist Service Tests")
 class WishlistServiceImplTest {
 
     @InjectMocks
@@ -31,6 +34,7 @@ class WishlistServiceImplTest {
     }
 
     @Test
+    @DisplayName("Create Wishlist - Wishlist Created Successfully")
     void createWishlist_WishlistCreatedSuccessfully() {
         // Arrange
         Wishlist wishlist = new Wishlist();
@@ -43,6 +47,7 @@ class WishlistServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Wishlist - Return Wishlist For User Id")
     void readWishlist_ReturnWishlistForUserId() {
         // Arrange
         Long userId = 123L;
@@ -74,6 +79,7 @@ class WishlistServiceImplTest {
 
 
     @Test
+    @DisplayName("Remove From Wishlist - Item Removed Successfully")
     void removeFromWishlist_ItemRemovedSuccessfully() throws CustomException {
         // Arrange
         Long userId = 123L;
@@ -92,6 +98,7 @@ class WishlistServiceImplTest {
     }
 
     @Test
+    @DisplayName("Remove From Wishlist - Wishlist Item Not Found - Throws CustomException")
     void removeFromWishlist_WishlistItemNotFound_ThrowsCustomException() {
         // Arrange
         Long userId = 123L;

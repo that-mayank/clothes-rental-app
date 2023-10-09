@@ -7,6 +7,8 @@ import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,8 +27,8 @@ import org.mockito.ArgumentCaptor;
 
 
 
-
-
+@Tag("unit_tests")
+@DisplayName("Category Service Tests")
 class CategoryServiceImplTest {
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -41,6 +43,7 @@ class CategoryServiceImplTest {
 
 
     @Test
+    @DisplayName("Create Category: Category Created Successfully")
      void createCategory_CategoryCreatedSuccessfully() {
         // Arrange
         Category category = new Category();
@@ -64,6 +67,7 @@ class CategoryServiceImplTest {
         assertTrue(savedCategory.getCategoryCreatedAt().isAfter(beforeCall));
     }
     @Test
+    @DisplayName("Create Category: Category Created Successfully 2")
     void createCategory_CategoryCreatedSuccessfully2() {
         // Arrange
         Category category = new Category();
@@ -82,6 +86,7 @@ class CategoryServiceImplTest {
 
 
     @Test
+    @DisplayName("List Category: Return List Of Categories")
     void listCategory_ReturnListOfCategories() {
         // Arrange
         List<Category> expectedCategories = new ArrayList<>();
@@ -99,6 +104,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Category: Category Updated Successfully")
     void updateCategory_CategoryUpdatedSuccessfully() {
         // Arrange
         Long id = 1L;
@@ -126,6 +132,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Category: Category Not Found")
     void updateCategory_CategoryNotFound() {
         // Arrange
         Long id = 1L;
@@ -141,6 +148,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Category: Category Found")
     void readCategory_CategoryFound() {
         // Arrange
         String categoryName = "Test Category";
@@ -155,6 +163,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Category: Category Not Found")
     void readCategory_CategoryNotFound() {
         // Arrange
         String categoryName = "Nonexistent Category";
@@ -168,6 +177,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Category By Id: Category Found")
     void readCategoryById_CategoryFound() {
         // Arrange
         Long categoryId = 1L;
@@ -183,6 +193,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Category By Id: Category Not Found")
     void readCategoryById_CategoryNotFound() {
         // Arrange
         Long categoryId = 2L;  // Assuming this ID does not exist in the repository
@@ -196,6 +207,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get Categories From Ids: Categories Found")
     void getCategoriesFromIds_CategoriesFound() throws CategoryNotExistException {
         // Arrange
         List<Long> categoryIds = Arrays.asList(1L, 2L);
@@ -214,6 +226,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get Categories From Ids: Category Not Found")
     void getCategoriesFromIds_CategoryNotFound() {
         // Arrange
         List<Long> categoryIds = Collections.singletonList(1L);

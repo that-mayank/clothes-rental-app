@@ -12,6 +12,8 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.CartRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -27,7 +29,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("CartService Tests")
 class CartServiceImplTest {
     @Mock
     private CartRepository cartRepository;
@@ -42,6 +45,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Add To Cart: Product Already In Cart - Exception Thrown")
     void addToCart_ProductAlreadyInCart_ExceptionThrown() {
         // Arrange
         AddToCartDto addToCartDto = new AddToCartDto(1L, 1L,10, null, null);
@@ -58,6 +62,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Add To Cart: Quantity Out Of Bound - Exception Thrown")
     void addToCart_QuantityOutOfBound_ExceptionThrown() {
         // Arrange
         AddToCartDto addToCartDto = new AddToCartDto(1L, 1L, 0, null, null);  // Assuming 0 is an invalid quantity
@@ -73,6 +78,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Add To Cart: Successful Addition To Cart")
     void addToCart_SuccessfulAdditionToCart() throws CartItemAlreadyExistException, QuantityOutOfBoundException {
         // Arrange
         AddToCartDto addToCartDto = new AddToCartDto(1L,1L, 5, null, null);
@@ -91,6 +97,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("List Cart Items: Calculate Total Cost - Returns Correct Total Cost")
     void listCartItems_CalculateTotalCost_ReturnsCorrectTotalCost()
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         // Arrange
@@ -150,6 +157,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("List Cart Items: Calculate Tax - Returns Correct Tax")
     void listCartItems_CalculateTax_ReturnsCorrectTax() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         User user = new User();
         user.setId(1L);  // Set the user ID
@@ -208,6 +216,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("List Cart Items: Calculate Final Price - Returns Correct Final Price")
     void listCartItems_CalculateFinalPrice_ReturnsCorrectFinalPrice() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         User user = new User();
         user.setId(2L);  // Set the user ID
@@ -270,6 +279,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Update Cart Item: Successful Update")
     void testUpdateCartItem() throws CartItemNotExistException, QuantityOutOfBoundException {
         // Create a sample AddToCartDto
         AddToCartDto addToCartDto = new AddToCartDto();
@@ -303,6 +313,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Delete Cart Item: Successful Deletion")
     void testDeleteCartItem_SuccessfulDeletion() throws CartItemNotExistException {
         // Create a sample product ID and user
         Long productId = 1L;
@@ -323,6 +334,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Delete Cart Item: Cart Item Not Exist - CartItemNotExistException")
     void testDeleteCartItem_CartItemNotExistException() {
         // Create a sample non-existing product ID and user
         Long nonExistingProductId = 99L;
@@ -340,6 +352,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Delete User Cart Items: Successful Deletion")
     void testDeleteUserCartItems_SuccessfulDeletion() {
         // Create a sample user
         User user = new User();
@@ -354,6 +367,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Update Product Quantity: Successful Update")
     void testUpdateProductQuantity_SuccessfulUpdate() throws CartItemNotExistException {
         // Create a sample product ID, user, and update DTO
         Long productId = 1L;
@@ -383,6 +397,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Update Product Quantity: Quantity Zero - Deletes Cart Item")
     void testUpdateProductQuantity_QuantityZero_DeletesCartItem() throws CartItemNotExistException {
         // Create a sample product ID, user, and update DTO with zero quantity
         Long productId = 1L;
@@ -407,6 +422,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Product Quantity: Cart Item Not Exist - CartItemNotExistException")
     void testUpdateProductQuantity_CartItemNotExistException() {
         // Create a sample non-existing product ID, user, and update DTO
         Long nonExistingProductId = 99L;
@@ -428,6 +444,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Calculate Total Cost Wrapper: Null Rental Dates")
     void testCalculateTotalCostWrapper_NullRentalDates() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Mock a CartItemDto with null rental start and end dates
         CartItemDto cartItemDto = new CartItemDto();
@@ -452,6 +469,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Calculate Total Cost: Number Of Hours Zero - Set To 1")
     void testCalculateTotalCost_NumberOfHoursZero_SetTo1() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Mock a CartItemDto with rental start and end dates, but with 0 hours
         LocalDateTime startDate = LocalDateTime.now();
@@ -480,6 +498,7 @@ class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Update Cart Item: Cart Item Not Exist - CartItemNotExistException")
     void testUpdateCartItem_CartItemNotExistException() throws CartItemNotExistException, QuantityOutOfBoundException {
         // Create a sample AddToCartDto
         AddToCartDto addToCartDto = new AddToCartDto();
@@ -503,6 +522,7 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Cart Item: Quantity Zero - Deletes Cart Item")
     void testUpdateCartItem_QuantityZero_DeletesCartItem() throws CartItemNotExistException, QuantityOutOfBoundException {
         // Create a sample AddToCartDto with quantity zero
         AddToCartDto addToCartDto = new AddToCartDto();

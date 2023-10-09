@@ -10,6 +10,8 @@ import com.nineleaps.leaps.model.UserLoginInfo;
 import com.nineleaps.leaps.repository.UserLoginInfoRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,7 +30,8 @@ import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-
+@Tag("unit_tests")
+@DisplayName("User Service Tests")
 class UserServiceImplTest {
 
     @InjectMocks
@@ -48,6 +51,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Load User By Username - User Exists - Returns UserDetails")
     void loadUserByUsername_UserExists_ReturnsUserDetails() {
         // Arrange
         String email = "test@example.com";
@@ -68,6 +72,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Load User By Username - User Does Not Exist - Throws UsernameNotFoundException")
     void loadUserByUsername_UserDoesNotExist_ThrowsUsernameNotFoundException() {
         // Arrange
         String email = "nonexistent@example.com";
@@ -77,7 +82,7 @@ class UserServiceImplTest {
         assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(email));
     }
 
-    @Test
+   @Test
     void loadUserByUsername_ExceptionThrownByRepository_ThrowsUsernameNotFoundException() {
         // Arrange
         String email = "test@example.com";
@@ -88,6 +93,7 @@ class UserServiceImplTest {
     }
 
     @Test
+
     void loadUserByUsername_RoleAdmin_AssignsAdminAuthority() {
         // Arrange
         String email = "admin@example.com";
@@ -108,6 +114,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Device Token To User - User Exists With Existing Device Token - Updates Device Token")
     void saveDeviceTokenToUser_UserExistsWithExistingDeviceToken_UpdatesDeviceToken() {
         // Arrange
         String email = "test@example.com";
@@ -127,6 +134,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Device Token To User - User Exists Without Existing Device Token - Saves Device Token")
     void saveDeviceTokenToUser_UserExistsWithoutExistingDeviceToken_SavesDeviceToken() {
         // Arrange
         String email = "test@example.com";
@@ -146,6 +154,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Device Token To User - User Does Not Exist - Throws UsernameNotFoundException")
     void saveDeviceTokenToUser_UserDoesNotExist_ThrowsUsernameNotFoundException() {
         // Arrange
         String email = "nonexistent@example.com";
@@ -169,6 +178,7 @@ class UserServiceImplTest {
 
 
     @Test
+    @DisplayName("Sign Up - Successful Sign Up - User Created")
     void signUp_SuccessfulSignUp_UserCreated() throws CustomException {
         // Arrange
         SignupDto signupDto = new SignupDto("John", "Doe", "john.doe@example.com", "1234567890", "password", Role.BORROWER);
@@ -185,6 +195,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Sign Up - Email Already Associated With Other User - Throws CustomException")
     void signUp_EmailAlreadyAssociatedWithOtherUser_ThrowsCustomException() {
         // Arrange
         SignupDto signupDto = new SignupDto("John", "Doe", "john.doe@example.com", "1234567890", "password", Role.BORROWER);
@@ -195,6 +206,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Sign Up - Phone Number Already Associated With Other User - Throws CustomException")
     void signUp_PhoneNumberAlreadyAssociatedWithOtherUser_ThrowsCustomException() {
         // Arrange
         SignupDto signupDto = new SignupDto("John", "Doe", "john.doe@example.com", "1234567890", "password", Role.BORROWER);
@@ -219,6 +231,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Profile - Save User Profile - User Saved")
     void saveProfile_SaveUserProfile_UserSaved() {
         // Arrange
         User user = new User(); // create a User object with necessary data
@@ -232,6 +245,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get user by email")
     void getUser_GetUserByEmail_ReturnsUser() {
         // Arrange
         String email = "test@example.com";
@@ -246,6 +260,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get userDto")
     void getUserDto_CreateUserDtoFromUser_ReturnsUserDto() {
         // Arrange
         User user = new User(); // create a User object with necessary data
@@ -259,6 +274,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get guest user")
     void getGuest_UserWithRoleGuest_ReturnsGuestUser() {
         // Arrange
         User guestUser = new User();
@@ -272,6 +288,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get guest user")
     void getGuest_NoGuestUser_ReturnsNull() {
         // Arrange
         when(userRepository.findByRole(Role.GUEST)).thenReturn(null);
@@ -284,6 +301,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Profile - Update User Profile - User Profile Updated")
     void updateProfile_UpdateUserProfile_UserProfileUpdated() {
         // Arrange
         User oldUser = new User(); // create a User object with necessary data
@@ -301,6 +319,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Profile Image - Update User Profile Image - User Profile Image Updated")
     void updateProfileImage_UpdateUserProfileImage_UserProfileImageUpdated() {
         // Arrange
         User user = new User(); // create a User object with necessary data
@@ -314,6 +333,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get User Via Phone Number - Valid Phone Number - Returns User")
     void getUserViaPhoneNumber_ValidPhoneNumber_ReturnsUser() {
         // Arrange
         String phoneNumber = "1234567890";
@@ -328,6 +348,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get  user via phonenumber - return null")
     void getUserViaPhoneNumber_InvalidPhoneNumber_ReturnsNull() {
         // Arrange
         String phoneNumber = "invalidPhoneNumber";
@@ -356,6 +377,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Profile Image - URL Contains Ngrok - Should Remove Ngrok From Image URL")
     void updateProfileImage_UrlContainsNgrok_ShouldRemoveNgrokFromImageUrl() {
         // Arrange
         User user = new User();
@@ -370,6 +392,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update Profile Image - URL Does Not Contain Ngrok - Should Keep Original Image URL")
     void updateProfileImage_UrlDoesNotContainNgrok_ShouldKeepOriginalImageUrl() {
         // Arrange
         User user = new User();

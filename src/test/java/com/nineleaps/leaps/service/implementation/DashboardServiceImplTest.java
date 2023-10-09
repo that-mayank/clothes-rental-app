@@ -6,6 +6,8 @@ import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,7 +23,8 @@ import static com.nineleaps.leaps.config.MessageStrings.TOTAL_INCOME;
 import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-
+@Tag("unit_tests")
+@DisplayName("Dashboard Service Tests")
 class DashboardServiceImplTest {
 
 
@@ -37,6 +40,7 @@ class DashboardServiceImplTest {
     }
 
     @Test
+    @DisplayName("Dashboard Owner View: Empty Order List - Returns Zero Total Earnings and Items")
     void dashboardOwnerView_EmptyOrderList_ReturnsZeroTotalEarningsAndItems() {
         // Arrange
         User user = new User();
@@ -51,6 +55,7 @@ class DashboardServiceImplTest {
     }
 
     @Test
+    @DisplayName("Analytics: Empty Order List - Returns Empty Result")
     void analytics_EmptyOrderList_ReturnsEmptyResult() {
         // Arrange
         User user = new User();
@@ -64,6 +69,7 @@ class DashboardServiceImplTest {
     }
 
     @Test
+    @DisplayName("Analytics: Processes Orders - Returns Correct Result")
     void analytics_ProcessesOrders_ReturnsCorrectResult() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         User user = new User();
@@ -101,6 +107,7 @@ class DashboardServiceImplTest {
 
 
     @Test
+    @DisplayName("Calculate Total Earnings: Single Order With Single Item - Returns Correct Earnings")
     void calculateTotalEarnings_SingleOrderWithSingleItem_ReturnsCorrectEarnings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         User user = new User();
@@ -132,6 +139,7 @@ class DashboardServiceImplTest {
 
 
     @Test
+    @DisplayName("Calculate Total Number of Items: Single Order With Single Item - Returns Correct Number of Items")
     void calculateTotalNumberOfItems_SingleOrderWithSingleItem_ReturnsCorrectNumberOfItems()
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
@@ -158,6 +166,7 @@ class DashboardServiceImplTest {
     }
 
     @Test
+    @DisplayName("Process Order Items: Single Order With Single Item - Correctly Processes Items")
     void processOrderItems_SingleOrderWithSingleItem_CorrectlyProcessesItems()
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange

@@ -22,6 +22,8 @@ import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.repository.OrderRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.domain.Page;
@@ -36,7 +38,8 @@ import static com.nineleaps.leaps.config.MessageStrings.TOTAL_INCOME;
 import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-
+@Tag("unit_tests")
+@DisplayName("Order Service Tests")
  class OrderServiceTest {
 
     @Mock
@@ -69,6 +72,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Placing an Order")
      void testPlaceOrder() {
         User user = new User();
         user.setId(1L);
@@ -158,6 +162,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
     @Test
+    @DisplayName("Test Listing Orders")
      void testListOrders() {
         // Mock necessary data
         User user = new User();
@@ -208,6 +213,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Getting an Order - Order Found")
      void testGetOrder_OrderFound() throws OrderNotFoundException {
         // Mock necessary data
         User user = new User();
@@ -231,6 +237,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Getting an Order - Order Not Found")
      void testGetOrder_OrderNotFound() {
         // Mock necessary data
         User user = new User();
@@ -245,6 +252,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Order Status - Status Returned")
      void testOrderStatus_StatusReturned() {
         // Mock necessary data
         OrderItem orderItem = new OrderItem();
@@ -285,6 +293,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Order Status - Status Not Returned")
      void testOrderStatus_StatusNotReturned() {
         // Mock necessary data
         OrderItem orderItem = new OrderItem();
@@ -308,6 +317,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Send Delay Charge Email")
      void testSendDelayChargeEmail() {
         // Mock necessary data
         OrderItem orderItem = new OrderItem();
@@ -343,6 +353,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Calculate Delay Charge - Delay Days Greater Than Zero")
      void testCalculateDelayCharge_DelayDaysGreaterThanZero() {
         // Mock necessary data
         LocalDateTime rentalEndDate = LocalDateTime.now().minusDays(5);  // Set a date 5 days in the past
@@ -357,6 +368,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Calculate Delay Charge - Delay Days Zero")
      void testCalculateDelayCharge_DelayDaysZero() {
         // Mock necessary data
         LocalDateTime rentalEndDate = LocalDateTime.now();  // Set rentalEndDate to current date
@@ -370,6 +382,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Calculate Remaining Deposit - Delay Days Greater Than Zero")
      void testCalculateRemainingDeposit_DelayDaysGreaterThanZero() {
         // Mock necessary data
         LocalDateTime rentalEndDate = LocalDateTime.now().minusDays(5);  // Set a date 5 days in the past
@@ -395,6 +408,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
+    @DisplayName("Test Calculate Remaining Deposit - Delay Days Zero")
      void testCalculateRemainingDeposit_DelayDaysZero() {
         // Mock necessary data
         LocalDateTime rentalEndDate = LocalDateTime.now();  // Set rentalEndDate to current date
@@ -410,7 +424,8 @@ import static org.junit.jupiter.api.Assertions.*;
         assertEquals(securityDeposit, remainingDeposit, 0.001);  // Use a delta for double comparison
     }
 
-     @Test
+    @Test
+    @DisplayName("Test Calculate Remaining Deposit - Negative Remaining Amount")
       void testCalculateRemainingDeposit_NegativeRemainingAmount() {
          // Mock necessary data
          LocalDateTime rentalEndDate = LocalDateTime.now().minusDays(10);  // Set a date 10 days in the past
@@ -442,7 +457,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderItemRepository, times(1)).save(any(OrderItem.class));
      }
 
-     @Test
+    @Test
+    @DisplayName("Test On Click Dashboard Year Wise Data")
       void testOnClickDashboardYearWiseData() {
          // Mock necessary data
          User user = new User();
@@ -511,7 +527,8 @@ import static org.junit.jupiter.api.Assertions.*;
      }
 
 
-     @Test
+    @Test
+    @DisplayName("Test Get Ordered Items by Month Between Dates")
       void testGetOrderedItemsByMonthBwDates() {
          // Mock necessary data
          User user = new User();
@@ -569,7 +586,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderRepository, times(1)).findAll();
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Ordered Items by Month")
       void testGetOrderedItemsByMonth() {
          // Mock necessary data
          User user = new User();
@@ -622,7 +640,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderRepository, times(1)).findAll();
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Order Items by Subcategories")
      void testGetOrderItemsBySubCategories() {
          // Mock necessary data
          User user = new User();
@@ -692,7 +711,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderRepository, times(1)).findAll();
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Order Items by Categories")
      void testGetOrderItemsByCategories() {
          // Mock necessary data
          User user = new User();
@@ -747,7 +767,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderRepository, times(1)).findAll();
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Rented Out Products")
       void testGetRentedOutProducts() {
          // Mock necessary data
          User user = new User();
@@ -780,7 +801,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderItemRepository, times(1)).findByOwnerId(pageable, user.getId());
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Order Item")
       void testGetOrderItem() {
          // Mock necessary data
          User user = new User();
@@ -821,7 +843,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderItemRepository, times(3)).findById(anyLong());
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Rental Periods")
       void testGetRentalPeriods() {
          // Mock necessary data
          User user = new User();
@@ -853,7 +876,8 @@ import static org.junit.jupiter.api.Assertions.*;
          verify(orderItemRepository, times(1)).findAll();
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Generate Invoice PDF")
       void testGenerateInvoicePDF() throws DocumentException {
          // Mock necessary data
          User user = new User();
@@ -904,7 +928,8 @@ import static org.junit.jupiter.api.Assertions.*;
          return orderItem;
      }
 
-     @Test
+    @Test
+    @DisplayName("Test Get Orders Item by Status")
      void testGetOrdersItemByStatus() {
          // Mock necessary data
          User user = new User();

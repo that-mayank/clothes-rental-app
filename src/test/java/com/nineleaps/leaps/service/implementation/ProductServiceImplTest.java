@@ -13,6 +13,8 @@ import com.nineleaps.leaps.repository.ProductRepository;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
@@ -35,7 +37,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import javax.persistence.EntityManager;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Product Service Tests")
 class ProductServiceImplTest {
 
     @Mock
@@ -61,6 +64,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Add product should save product with image URL")
     void addProduct_shouldSaveProductWithImageUrl() {
         // Create a sample ProductDto
         ProductDto productDto = new ProductDto();
@@ -114,6 +118,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("Update product should update product")
     void updateProduct_shouldUpdateProduct() {
         // Create a sample ProductDto
         ProductDto productDto = new ProductDto();
@@ -154,6 +159,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("Read product should return product")
     void readProduct_shouldReturnProduct() {
         // Create a sample product
         Product product = new Product();
@@ -174,6 +180,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read product should return empty optional for nonexistent product")
     void readProduct_shouldReturnEmptyOptionalForNonexistentProduct() {
         // Mock the behavior of productRepository.findById for a nonexistent product
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -186,6 +193,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("List product by ID should return product DTO")
     void listProductByid_shouldReturnProductDto() throws ProductNotExistException {
         // Create a sample product and productDto
         Product product = new Product();
@@ -205,6 +213,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("List product by ID should throw ProductNotExistException for nonexistent product")
     void listProductByid_shouldThrowProductNotExistExceptionForNonexistentProduct() {
         // Mock the behavior of productRepository.findById for a nonexistent product
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -213,7 +222,9 @@ class ProductServiceImplTest {
         assertThrows(ProductNotExistException.class, () -> productService.listProductByid(100L)); // Assuming product with ID 100 doesn't exist
     }
 
+
     @Test
+    @DisplayName("Get product by ID should return product")
     void getProductById_shouldReturnProduct() throws ProductNotExistException {
         // Create a sample product
         Product product = new Product();
@@ -233,6 +244,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get product by ID should throw ProductNotExistException for nonexistent product")
     void getProductById_shouldThrowProductNotExistExceptionForNonexistentProduct() {
         // Mock the behavior of productRepository.findById for a nonexistent product
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -242,6 +254,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Delete product should mark product as deleted")
     void deleteProduct_shouldMarkProductAsDeleted() {
         // Create a sample User and Product
         User user = new User();
@@ -261,6 +274,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Delete product should throw ProductNotExistException for nonexistent product")
     void deleteProduct_shouldThrowProductNotExistExceptionForNonexistentProduct() {
         // Mock the behavior of productRepository.findByUserIdAndId for a nonexistent product
         when(productRepository.findByUserIdAndId(anyLong(), anyLong())).thenReturn(null);
@@ -272,6 +286,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("Get product should return product")
     void getProduct_shouldReturnProduct() {
         // Create a sample User and Product
         User user = new User();
@@ -291,6 +306,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get product should return null for nonexistent product")
     void getProduct_shouldReturnNullForNonexistentProduct() {
         // Mock the behavior of productRepository.findByUserIdAndId for a nonexistent product
         when(productRepository.findByUserIdAndId(anyLong(), anyLong())).thenReturn(null);
@@ -303,6 +319,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Disable product should disable product and update quantities")
     void disableProduct_shouldDisableProductAndUpdateQuantities() {
         // Create a sample User and Product
         User user = new User();
@@ -327,6 +344,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Disable product should throw exception for invalid quantity")
     void disableProduct_shouldThrowExceptionForInvalidQuantity() {
         // Create a sample User and Product
         User user = new User();
@@ -347,6 +365,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Enable product should enable product and update quantities")
     void enableProduct_shouldEnableProductAndUpdateQuantities() {
         // Create a sample User and Product
         User user = new User();
@@ -373,6 +392,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Enable product should throw exception for invalid quantity")
     void enableProduct_shouldThrowExceptionForInvalidQuantity() {
         // Create a sample User and Product
         User user = new User();
@@ -394,6 +414,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should remove ngrok prefix from image URL")
     void ngrokLinkRemove_shouldRemoveNgrokPrefix() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Input image URL with ngrok prefix
         String imageUrl = NGROK+"/image.jpg";
@@ -410,6 +431,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should not remove prefix if not present in image URL")
     void ngrokLinkRemove_shouldNotRemovePrefixIfNotPresent() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException{
         // Input image URL without ngrok prefix
         String imageUrl = NGROK+"/image.jpg";
@@ -466,6 +488,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("Should list products")
     void listProducts() {
 
         int pageNumber = 0;
@@ -499,6 +522,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("Should list products by specific subcategory ID")
     void listProductsById_specificSubcategoryId() {
         // Given
 
@@ -546,6 +570,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should list products by category ID")
     void listProductsByCategoryId() {
         // Given
         List<Product> products = createDummyProducts();
@@ -576,6 +601,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should list products in descending order")
     void testListProductsDesc() {
 
         User user = new User();
@@ -607,6 +633,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should list owner products")
     void testListOwnerProducts() {
         // Create a user
         User user = new User();
@@ -641,6 +668,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("Should get products by price range")
     void testGetProductsByPriceRange() {
 
         List<Product> products = createDummyProducts();
@@ -675,6 +703,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should search products")
     void testSearchProducts() {
 
         User user1 = new User();
@@ -709,6 +738,7 @@ class ProductServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should filter products")
     void testFilterProducts() {
         List<Product> products = createDummyProducts();
 

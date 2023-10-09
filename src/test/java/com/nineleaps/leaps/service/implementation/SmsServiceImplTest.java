@@ -1,16 +1,15 @@
 package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.service.SmsSender;
 import com.nineleaps.leaps.utils.Helper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import java.util.Map;
 import static org.mockito.Mockito.*;
 
-
+@Tag("unit_tests")
+@DisplayName("SMS Service Tests")
  class SmsServiceImplTest {
 
     @Mock
@@ -27,7 +26,8 @@ import static org.mockito.Mockito.*;
         MockitoAnnotations.openMocks(this);
     }
 
-     @Test
+    @Test
+    @DisplayName("Should send SMS and generate OTP")
       void testSend() {
          // Stubbing generateOtp to return a fixed OTP
          when(smsService.helper.generateOtp()).thenReturn(1234);
@@ -49,7 +49,8 @@ import static org.mockito.Mockito.*;
          Assertions.assertEquals(Integer.valueOf(1234), otpMap.get("1234567890"));
      }
 
-     @Test
+    @Test
+    @DisplayName("Should verify valid OTP")
       void testVerifyOtpValid() {
          // Set up test data
          String phoneNumber = "1234567890";
@@ -68,7 +69,8 @@ import static org.mockito.Mockito.*;
          Assertions.assertTrue(result);
      }
 
-     @Test
+    @Test
+    @DisplayName("Should verify invalid OTP")
       void testVerifyOtpInvalid() {
 // Set up test data
          String phoneNumber = "1234567890";
@@ -87,7 +89,8 @@ import static org.mockito.Mockito.*;
          Assertions.assertFalse(result);
      }
 
-     @Test
+    @Test
+    @DisplayName("Should handle null stored OTP during verification")
       void testVerifyOtpNullStoredOtp() {
          // Set up test data
          String phoneNumber = "1234567890";

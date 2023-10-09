@@ -5,6 +5,8 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.utils.StorageUtility;
 import org.apache.catalina.connector.ClientAbortException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
-
+@Tag("unit_tests")
+@DisplayName("Storage Service Tests")
 class StorageServiceImplTest {
 
     @Mock
@@ -40,6 +43,7 @@ class StorageServiceImplTest {
     }
 
     @Test
+    @DisplayName("Test uploadProfileImage method")
     void testUploadProfileImage() {
         // Mock necessary data
         User user = new User();
@@ -67,7 +71,9 @@ class StorageServiceImplTest {
 
     }
 
+
     @Test
+    @DisplayName("Test uploadFileToBucket method")
     void testUploadFileToBucket() {
         // Mock necessary data
         Long categoryId = 1L;
@@ -94,6 +100,7 @@ class StorageServiceImplTest {
     }
 
     @Test
+    @DisplayName("Test deleteFile method")
     void testDeleteFile() throws IOException {
         String fileName = "test-file.jpg";
 
@@ -112,6 +119,7 @@ class StorageServiceImplTest {
         assertEquals(fileName, deleteObjectRequest.key());
     }
     @Test
+    @DisplayName("Test deleteFile method with S3Exception")
     void testDeleteFileS3Exception() {
         String fileName = "test-file.jpg";
 
@@ -126,6 +134,7 @@ class StorageServiceImplTest {
     }
 
     @Test
+    @DisplayName("Test viewFile method")
     void testViewFile() throws IOException {
         // Create a mock S3Client and StorageUtility
         S3Client s3Client = mock(S3Client.class);
@@ -151,6 +160,7 @@ class StorageServiceImplTest {
     }
 
     @Test
+    @DisplayName("Test handleClientAbortException method")
     void testHandleClientAbortException() {
 
         ClientAbortException clientAbortException = new ClientAbortException("Client disconnected");

@@ -5,6 +5,8 @@ import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.AddressRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,7 +19,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("AddressServiceImpl Tests")
 class AddressServiceImplTest {
 
     @Mock
@@ -32,6 +35,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Address: Default Address Set - Old Default Addresses Updated")
     void saveAddress_DefaultAddressSet_OldDefaultAddressesUpdated() {
         // Arrange
         AddressDto addressDto = new AddressDto();
@@ -55,6 +59,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Address: Non-Default Address - No Update to Old Default Addresses")
     void saveAddress_NonDefaultAddress_NoUpdateToOldDefaultAddresses() {
         // Arrange
         AddressDto addressDto = new AddressDto();
@@ -75,6 +80,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Save Address: Save New Address - Address Saved Correctly")
     void saveAddress_SaveNewAddress_AddressSavedCorrectly() {
         // Arrange
         AddressDto addressDto = new AddressDto();
@@ -93,6 +99,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("List Address: Returns List of Addresses for User")
     void listAddress_ReturnsListOfAddressesForUser() {
         // Arrange
         User user = new User();
@@ -112,6 +119,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Address: Address Exists - Returns Address")
     void readAddress_AddressExists_ReturnsAddress() {
         // Arrange
         Long addressId = 1L;
@@ -127,6 +135,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read Address: Address Does not  Exists - Returns Address")
     void readAddress_AddressDoesNotExist_ReturnsEmptyOptional() {
         // Arrange
         Long addressId = 1L;
@@ -140,6 +149,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("read address")
     void readAddress_AddressExistsForUser_ReturnsAddress() {
         // Arrange
         Long addressId = 1L;
@@ -159,6 +169,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("read address does not exist")
     void readAddress_AddressDoesNotExistForUser_ReturnsNull() {
         // Arrange
         Long addressId = 1L;
@@ -175,6 +186,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read address via ID")
     void readAddress_AddressIdMatches_ReturnsAddress() {
         // Arrange
         Long addressId = 1L;
@@ -193,6 +205,7 @@ class AddressServiceImplTest {
     }
 
     @Test
+    @DisplayName("Address ID Doesa not match")
     void readAddress_AddressIdDoesNotMatch_ReturnsNull() {
         // Arrange
         Long addressId = 1L;
@@ -214,6 +227,7 @@ class AddressServiceImplTest {
 
 
     @Test
+    @DisplayName("Update address ")
     void updateAddress_ExistingAddressUpdated() {
         // Arrange
         Long addressId = 1L;
@@ -234,6 +248,7 @@ class AddressServiceImplTest {
 
 
     @Test
+    @DisplayName("Delete address")
     void deleteAddress_ValidAddressId_AddressDeleted() {
         // Arrange
         Long addressId = 1L;

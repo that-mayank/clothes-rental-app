@@ -9,6 +9,8 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 
 import com.nineleaps.leaps.repository.SubCategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -20,7 +22,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName("Subcategory Service Tests")
 class SubCategoryServiceImplTest {
 
     @InjectMocks
@@ -36,6 +39,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Create SubCategory - SubCategory Created Successfully")
     void createSubCategory_SubCategoryCreatedSuccessfully() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -51,6 +55,7 @@ class SubCategoryServiceImplTest {
         verify(subCategoryRepository, times(1)).save(any());
     }
     @Test
+    @DisplayName("Create SubCategory - Correct Attributes Set")
     void createSubCategory_CorrectAttributesSet() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -76,6 +81,7 @@ class SubCategoryServiceImplTest {
 
 
     @Test
+    @DisplayName("Read SubCategory - SubCategory Found")
     void readSubCategory_SubCategoryFound() {
         // Arrange
         Category category = new Category();
@@ -98,6 +104,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read SubCategory - SubCategory Not Found")
     void readSubCategory_SubCategoryNotFound() {
         // Arrange
         Category category = new Category();
@@ -152,6 +159,7 @@ class SubCategoryServiceImplTest {
 //    }
 
     @Test
+    @DisplayName("Read SubCategory - Subcategory Name Matches - Returns SubCategory")
     void readSubCategory_SubcategoryNameMatches_ReturnsSubCategory() {
         // Arrange
         String subcategoryName = "TestSubcategory";
@@ -172,6 +180,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get SubCategory from DTO - Correct SubCategory Returned")
     void getSubCategoryFromDto_CorrectSubCategoryReturned() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -196,6 +205,7 @@ class SubCategoryServiceImplTest {
 
 
     @Test
+    @DisplayName("Read SubCategory by SubCategoryId - SubCategory Found")
     void readSubCategoryBySubCategoryId_SubCategoryFound() {
         // Arrange
         Long subcategoryId = 1L;
@@ -211,6 +221,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Read SubCategory by SubCategoryId - SubCategory Not Found")
     void  readSubCategoryBySubCategoryId_SubCategoryNotFound() {
         // Arrange
         Long subcategoryId = 1L;
@@ -224,6 +235,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("List SubCategory - Return List of SubCategories")
     void listSubCategory_ReturnListOfSubCategories() {
         // Arrange
         List<SubCategory> expectedSubCategories = new ArrayList<>();
@@ -240,6 +252,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("List SubCategory for Category - Return List of SubCategories")
     void listSubCategoryForCategory_ReturnListOfSubCategories() {
         // Arrange
         Long categoryId = 1L;
@@ -257,6 +270,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("List SubCategory for Category - Category Not Found - Return Empty List")
     void listSubCategoryForCategory_CategoryNotFound_ReturnEmptyList() {
         // Arrange
         Long categoryId = 1L;
@@ -271,6 +285,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update SubCategory - SubCategory Updated Successfully")
     void updateSubCategory_SubCategoryUpdatedSuccessfully() {
         // Arrange
         Long subcategoryId = 1L;
@@ -298,6 +313,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update SubCategory - SubCategory Not Found")
     void updateSubCategory_SubCategoryNotFound() {
         // Arrange
         Long subcategoryId = 1L;
@@ -317,6 +333,7 @@ class SubCategoryServiceImplTest {
 
 
     @Test
+    @DisplayName("Get SubCategories from Ids - Valid Ids - Returns SubCategories")
     void getSubCategoriesFromIds_ValidIds_ReturnsSubCategories() {
         // Arrange
         List<Long> subcategoryIds = Arrays.asList(1L, 2L, 3L);
@@ -334,6 +351,7 @@ class SubCategoryServiceImplTest {
     }
 
     @Test
+    @DisplayName("Get SubCategories from Ids - Invalid Ids - Throws Exception")
     void getSubCategoriesFromIds_InvalidIds_ThrowsException() {
         // Arrange
         List<Long> subcategoryIds = Arrays.asList(1L, 2L, 3L);

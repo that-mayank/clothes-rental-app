@@ -3,9 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.config.EmailConfiguration;
 import com.nineleaps.leaps.exceptions.EmailSendingException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.mockito.Mockito.when;
+@Tag("unit_tests")
+@DisplayName("Email Service Tests")
 @Slf4j
 class EmailServiceImplTest {
 
@@ -38,6 +38,7 @@ class EmailServiceImplTest {
     }
 
     @Test
+    @DisplayName("Sending Email with Valid Arguments")
     void sendEmail_shouldSendEmail_whenValidArguments() throws Exception {
         String subject = "Test Subject";
         String message = "Test Message";
@@ -57,6 +58,7 @@ class EmailServiceImplTest {
     }
 
     @Test
+    @DisplayName("Creating Mime Message")
     void createMimeMessage_shouldCreateMimeMessage() throws MessagingException {
         String subject = "Test Subject";
         String message = "Test Message";
@@ -79,6 +81,7 @@ class EmailServiceImplTest {
     }
 
     @Test
+    @DisplayName("Handling Email Sending Exception")
     void sendEmail_shouldHandleException() {
         String subject = "Test Subject";
         String message = "Test Message";

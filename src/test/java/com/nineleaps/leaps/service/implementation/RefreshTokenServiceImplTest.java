@@ -5,11 +5,15 @@ import static org.mockito.Mockito.*;
 
 import com.nineleaps.leaps.model.RefreshToken;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+@Tag("unit_tests")
+@DisplayName("RefreshToken Service Tests")
 class RefreshTokenServiceImplTest {
 
     @Test
+    @DisplayName("Should get refresh token")
     void testGetRefreshToken() {
         // Mock necessary data
         String email = "test@example.com";
@@ -35,6 +39,7 @@ class RefreshTokenServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should delete refresh token by email and token")
     void testDeleteRefreshTokenByEmailAndToken() {
         // Mock necessary data
         String email = "test@example.com";

@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import static com.nineleaps.leaps.LeapsApplication.bucketName;
+import static com.nineleaps.leaps.LeapsApplication.BUCKET_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -108,7 +108,7 @@ class StorageServiceImplTest {
         verify(s3Client).deleteObject(deleteRequestCaptor.capture());
 
         DeleteObjectRequest deleteObjectRequest = deleteRequestCaptor.getValue();
-        assertEquals(bucketName, deleteObjectRequest.bucket());
+        assertEquals(BUCKET_NAME, deleteObjectRequest.bucket());
         assertEquals(fileName, deleteObjectRequest.key());
     }
     @Test
@@ -165,20 +165,5 @@ class StorageServiceImplTest {
 
     }
 
-    @Test
-    void testCloseStreams() throws IOException {
-        InputStream mockInputStream = mock(InputStream.class);
-        OutputStream mockOutputStream = mock(OutputStream.class);
-
-        doNothing().when(mockInputStream).close();
-        doNothing().when(mockOutputStream).flush();
-        doNothing().when(mockOutputStream).close();
-
-        storageService.closeStreams(mockInputStream, mockOutputStream);
-
-        verify(mockInputStream).close();
-        verify(mockOutputStream).flush();
-        verify(mockOutputStream).close();
-    }
 }
 

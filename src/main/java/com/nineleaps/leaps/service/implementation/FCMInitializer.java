@@ -14,6 +14,7 @@ import com.google.firebase.FirebaseOptions;
 @Service
 @Transactional
 @Slf4j
+@SuppressWarnings("deprecation")
 public class FCMInitializer {
 
     @Value("${app.firebase-configuration-file}")

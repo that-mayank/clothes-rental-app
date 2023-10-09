@@ -110,7 +110,7 @@ class SMSControllerTest {
         int otp = 1234;
 
         // Stub the verifyOtp method to return true (OTP verification successful)
-        when(smsServiceInterface.verifyOtp(eq(phoneNumber), eq(otp))).thenReturn(true);
+        when(smsServiceInterface.verifyOtp(phoneNumber, otp)).thenReturn(true);
 
         // Mock the generateToken method to do nothing
         doNothing().when(securityUtility).generateToken(any(HttpServletResponse.class), any(HttpServletRequest.class), eq(phoneNumber));
@@ -129,7 +129,7 @@ class SMSControllerTest {
         String phoneNumber = "1234567890";
 
         // Stub the send method to do nothing (as it's void)
-        doNothing().when(smsServiceInterface).send(eq(phoneNumber));
+        doNothing().when(smsServiceInterface).send(phoneNumber);
         // Get the private method using reflection
         Method privateMethod = SMSController.class.getDeclaredMethod("sendSms", String.class);
         privateMethod.setAccessible(true);
@@ -140,7 +140,7 @@ class SMSControllerTest {
 
 
         // Verify that smsService.send was called with the correct argument
-        verify(smsServiceInterface).send(eq(phoneNumber));
+        verify(smsServiceInterface).send(phoneNumber);
     }
 
     @Test
@@ -185,7 +185,7 @@ class SMSControllerTest {
         when(userServiceInterface.getUserViaPhoneNumber(existingPhoneNumber)).thenReturn(user);
 
         // Stub the sendSms method to do nothing (as it's void)
-        doNothing().when(smsServiceInterface).send(eq(existingPhoneNumber));
+        doNothing().when(smsServiceInterface).send(existingPhoneNumber);
 
 
         // Call the smsSubmit method

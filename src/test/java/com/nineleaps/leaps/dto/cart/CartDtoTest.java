@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class CartDtoTest {
+ class CartDtoTest {
 
     @Test
-    public void testUserId() {
+     void testUserId() {
         // Sample data for the test
         List<CartItemDto> cartItems = new ArrayList<>();
         double totalCost = 100.0;

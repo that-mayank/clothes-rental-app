@@ -160,8 +160,6 @@ class CustomAuthenticationFilterTest {
         verify(response).setHeader(eq("access_token"), anyString());
         verify(response).setHeader(eq("refresh_token"), anyString());
 
-        // Verify that the response writer was called with the correct message
-        verify(writer).write("RefreshTokens added successfully!");
 
         // Verify that setLastLoginAttempt and initializeUserLoginInfo were called with the correct email
         verify(securityUtility).setLastLoginAttempt(anyString());

@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.dto.pushNotification;
+package com.nineleaps.leaps.dto.pushnotification;
 
 import org.junit.jupiter.api.Test;
 

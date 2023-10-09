@@ -14,6 +14,7 @@ import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,7 +23,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -110,9 +110,7 @@ class ProductServiceImplTest {
         return List.of(category1);
     }
 
-    private  ProductDto getDtoFromProduct(Product product) {
-        return new ProductDto(product);
-    }
+
 
 
     @Test
@@ -268,8 +266,10 @@ class ProductServiceImplTest {
         when(productRepository.findByUserIdAndId(anyLong(), anyLong())).thenReturn(null);
 
         // Execute the method and verify that it throws ProductNotExistException
-        assertThrows(ProductNotExistException.class, () -> productService.deleteProduct(100L, new User())); // Assuming product with ID 100 doesn't exist
+        Executable executable = () -> productService.deleteProduct(100L, new User()); // Assuming product with ID 100 doesn't exist
+        assertThrows(ProductNotExistException.class, executable);
     }
+
 
     @Test
     void getProduct_shouldReturnProduct() {
@@ -540,8 +540,6 @@ class ProductServiceImplTest {
         } else {
 
 
-            // Verify that the expected behavior is executed in the else block
-            List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
            assertFalse(productDtos.isEmpty());
         }
 

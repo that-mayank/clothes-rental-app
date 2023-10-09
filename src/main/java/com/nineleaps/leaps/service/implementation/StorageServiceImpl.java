@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
@@ -20,7 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
-import static com.nineleaps.leaps.LeapsApplication.bucketName;
+import static com.nineleaps.leaps.LeapsApplication.BUCKET_NAME;
 
 
 @Service
@@ -46,7 +45,8 @@ public class StorageServiceImpl implements StorageServiceInterface {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         String categoryName = storageUtility.getCategoryNameById(categoryId);
         String subCategoryName = storageUtility.getSubCategoryNameById(subcategoryId);
-        String folderPath = categoryName + "/" + subCategoryName;
+        String slash = "/";
+        String folderPath = categoryName + slash + subCategoryName;
         return storageUtility.uploadFile(file, folderPath, fileName);
     }
 
@@ -56,7 +56,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
     public void deleteFile(String fileName) throws IOException {
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(bucketName)
+                    .bucket(BUCKET_NAME)
                     .key(fileName)
                     .build());
         } catch (S3Exception e) {
@@ -66,22 +66,18 @@ public class StorageServiceImpl implements StorageServiceInterface {
 
     @Override
     public void viewFile(String fileName, HttpServletResponse response) throws IOException {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-
-        try {
-            ResponseBytes<GetObjectResponse> responseBytes = s3Client.getObjectAsBytes(GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(fileName)
-                    .build());
+        try (InputStream inputStream = new ByteArrayInputStream(
+                s3Client.getObjectAsBytes(GetObjectRequest.builder()
+                                .bucket(BUCKET_NAME)
+                                .key(fileName)
+                                .build())
+                        .asByteArray());
+             OutputStream outputStream = response.getOutputStream()) {
 
             String contentType = storageUtility.determineContentType(fileName);
             response.setHeader(HttpHeaders.CONTENT_TYPE, contentType);
-            response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(responseBytes.asByteArray().length));
+            response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(inputStream.available()));
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"");
-
-            inputStream = new ByteArrayInputStream(responseBytes.asByteArray());
-            outputStream = response.getOutputStream();
 
             // Copy the input stream to the output stream using Spring's utility
             StreamUtils.copy(inputStream, outputStream);
@@ -89,25 +85,13 @@ public class StorageServiceImpl implements StorageServiceInterface {
         } catch (ClientAbortException e) {
             handleClientAbortException();
         }
-         finally {
-            closeStreams(inputStream,outputStream);
-        }
     }
+
 
     void handleClientAbortException() throws ClientAbortException {
         throw  new ClientAbortException("client left the pool");
 
     }
 
-    void closeStreams(InputStream inputStream, OutputStream outputStream) throws IOException {
-        if(inputStream!=null){
-            inputStream.close();
-        }
-        if(outputStream!=null){
-            outputStream.flush();
-            outputStream.close();
-        }
 
-
-    }
 }

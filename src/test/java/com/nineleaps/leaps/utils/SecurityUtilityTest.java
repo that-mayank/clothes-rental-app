@@ -468,6 +468,7 @@ class SecurityUtilityTest {
         userLoginInfo.setUser(user);
         userLoginInfo.setLockTime(LocalDateTime.now().minusMinutes(30));  // Set lock time 30 minutes ago (account is locked)
         userLoginInfo.setLoginAttempts(4);
+        userLoginInfo.setLocked(true);
         when(userRepository.findByEmail(email)).thenReturn(user);
         when(userLoginInfoRepository.findByUserId(user.getId())).thenReturn(userLoginInfo);
 

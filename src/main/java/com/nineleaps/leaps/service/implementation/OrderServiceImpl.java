@@ -12,7 +12,7 @@ import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
-import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
+import com.nineleaps.leaps.dto.pushnotification.PushNotificationRequest;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
                 orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
                 orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
-                orderItem.setStatus("Order placed");
+                orderItem.setStatus(ORDER_PLACED);
                 orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
                 //add to orderItem table
                 orderItemRepository.save(orderItem);
@@ -112,7 +112,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
         messageBuilder.append("Here are the details of your order:\n");
-        messageBuilder.append("Order ID: ").append(order.getId()).append("\n");
+        messageBuilder.append(ORDER_ID).append(order.getId()).append("\n");
 
         for (OrderItem orderItem : order.getOrderItems()) {
             String productName = orderItem.getName();
@@ -131,9 +131,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
     private void sendOrderConfirmationEmail(User user, Order order) {
         String email = user.getEmail();
-        String subject = "Order placed";
         String message = generateOrderConfirmationEmailMessage(user, order);
-        emailServiceImpl.sendEmail(subject, message, email);
+        emailServiceImpl.sendEmail(ORDER_PLACED, message, email);
     }
 
     private void sendPushNotifications(List<OrderItem> orderItems) {
@@ -143,7 +142,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
             var request = PushNotificationRequest.builder()
                     .title("Order info")
-                    .topic("Order placed")
+                    .topic(ORDER_PLACED)
                     .token(deviceToken)
                     .build();
 
@@ -449,7 +448,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
 
-            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             // Display overall order details (summary)

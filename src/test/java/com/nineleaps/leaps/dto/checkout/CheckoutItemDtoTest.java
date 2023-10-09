@@ -27,7 +27,7 @@ class CheckoutItemDtoTest {
     }
 
     @Test
-    public void testSetters() {
+     void testSetters() {
         // Arrange
         CheckoutItemDto checkoutItemDto = new CheckoutItemDto();
 

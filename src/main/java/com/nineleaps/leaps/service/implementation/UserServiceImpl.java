@@ -171,16 +171,4 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         return userRepository.findAll();
     }
 
-//    public void sendTestEmail() {
-//        String subject = "Test Subject";
-//        String message = "This is a test email message.";
-//        String to = "19euee158@skcet.ac.in";  // Replace with the actual recipient email address
-//
-//        try {
-//            emailService.sendEmail(subject, message, to);
-//            System.out.println("Test email sent successfully.");
-//        } catch (Exception e) {
-//            System.err.println("Failed to send test email: " + e.getMessage());
-//        }
-//    }
 }

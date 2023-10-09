@@ -1,6 +1,6 @@
 package com.nineleaps.leaps.controller;
 
-import com.nineleaps.leaps.dto.pushNotification.PushNotificationResponse;
+import com.nineleaps.leaps.dto.pushnotification.PushNotificationResponse;
 import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

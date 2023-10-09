@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
-import static com.nineleaps.leaps.LeapsApplication.bucketName;
+import static com.nineleaps.leaps.LeapsApplication.BUCKET_NAME;
 
 @Component
 @AllArgsConstructor
@@ -50,7 +50,7 @@ public class StorageUtility {
 
                 try {
                     UploadFileRequest uploadFileRequest = UploadFileRequest.builder()
-                            .putObjectRequest(b -> b.bucket(bucketName).key(folderPath + "/" + fileName))
+                            .putObjectRequest(b -> b.bucket(BUCKET_NAME).key(folderPath + "/" + fileName))
                             .addTransferListener(LoggingTransferListener.create())
                             .source(fileObj.toPath())
                             .build();

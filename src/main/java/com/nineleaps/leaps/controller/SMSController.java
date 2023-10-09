@@ -97,7 +97,7 @@ public class SMSController {
         // Verify the OTP
         if(smsService.verifyOtp(phoneNumber, otp)){
             securityUtility.generateToken(response, request, phoneNumber);
-        };
+        }
         return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
     }
 }

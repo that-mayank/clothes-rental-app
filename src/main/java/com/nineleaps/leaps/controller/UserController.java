@@ -11,7 +11,7 @@ import com.nineleaps.leaps.exceptions.UserNotExistException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.RefreshTokenServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
-import com.nineleaps.leaps.utils.DatabaseHealthChecker;
+
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.nineleaps.leaps.utils.SwitchProfile;
@@ -79,7 +79,6 @@ public class UserController {
 
             // Calling the service layer to save profile of the user
             userServiceInterface.saveProfile(user);
-//            userServiceInterface.sendTestEmail();
             //  Calling switch profile utility file to Generate new AccessTokens for the newly Switched Profile.
             switchprofile.generateTokenForSwitchProfile(response, profile, request);
 

@@ -1,17 +1,16 @@
 package com.nineleaps.leaps.dto.cart;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDateTime;
 
 import com.nineleaps.leaps.model.product.Product;
 import org.junit.jupiter.api.Test;
 
-public class CartItemDtoTest {
+ class CartItemDtoTest {
 
     @Test
-    public void testIdAndImageUrl() {
+     void testIdAndImageUrl() {
         // Sample data for the test
         Long id = 123L;
         int quantity = 2;
@@ -35,7 +34,7 @@ public class CartItemDtoTest {
     }
 
     @Test
-    public void testToString() {
+     void testToString() {
         // Sample data for the test
         Long id = 123L;
         int quantity = 2;

@@ -22,7 +22,7 @@ class StripeResponseTest {
     }
 
     @Test
-    public void testSetters() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+     void testSetters() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         StripeResponse stripeResponse = new StripeResponse();
         String sessionId = "testSessionId";

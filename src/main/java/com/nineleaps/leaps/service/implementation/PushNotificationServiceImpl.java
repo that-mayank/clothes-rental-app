@@ -3,7 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.nineleaps.leaps.dto.pushNotification.PushNotificationRequest;
+import com.nineleaps.leaps.dto.pushnotification.PushNotificationRequest;
 import com.nineleaps.leaps.exceptions.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

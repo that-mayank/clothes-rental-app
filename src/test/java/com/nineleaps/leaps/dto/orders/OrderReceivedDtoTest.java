@@ -4,6 +4,8 @@ import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -12,10 +14,12 @@ import java.time.temporal.ChronoUnit;
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
+@Tag("unit_tests")
+@DisplayName("OrderReceivedDto Tests")
 class OrderReceivedDtoTest {
 
     @Test
+    @DisplayName("OrderReceivedDto Creation Test")
     void orderReceivedDtoCreation() {
         // Create a sample order item
         Product product = new Product();
@@ -64,6 +68,7 @@ class OrderReceivedDtoTest {
     }
 
     @Test
+    @DisplayName("OrderReceivedDto Creation Test with Null Dates")
     void orderReceivedDtoCreationNullDates() {
         // Create a sample order item with null rental dates
         Product product = new Product();
@@ -101,6 +106,7 @@ class OrderReceivedDtoTest {
     }
 
     @Test
+    @DisplayName("OrderReceivedDto Creation Test without /api in Image URL")
     void orderReceivedDtoCreationNoApiInImageUrl() {
         // Create a sample order item with no "/api" in the image URL
         Product product = new Product();
@@ -134,6 +140,7 @@ class OrderReceivedDtoTest {
     }
 
     @Test
+    @DisplayName("OrderReceivedDto Getters and Setters Test")
     void testGettersAndSetters() {
         // Arrange
         OrderReceivedDto orderReceivedDto = new OrderReceivedDto();

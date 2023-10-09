@@ -5,6 +5,8 @@ import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.product.ProductUrl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,11 +14,12 @@ import java.util.List;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
+@Tag("unit_tests")
+@DisplayName("ProductDto Tests")
 class ProductDtoTest {
 
     @Test
+    @DisplayName("ProductDto Constructor Test")
     void testConstructor() {
 
         Product product = new Product();
@@ -95,6 +98,7 @@ class ProductDtoTest {
     }
 
     @Test
+    @DisplayName("ProductDto Setters Test")
     void testSetters() {
         // Arrange
         ProductDto productDto = new ProductDto();

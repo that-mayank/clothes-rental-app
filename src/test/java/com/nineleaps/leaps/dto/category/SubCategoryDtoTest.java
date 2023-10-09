@@ -1,11 +1,16 @@
 package com.nineleaps.leaps.dto.category;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 
+import static org.junit.Assert.*;
+@DisplayName("SubCategoryDto Tests")
+@Tag("unit_tests")
 public class SubCategoryDtoTest {
 
     @Test
+    @DisplayName("Test Id")
     public void testId() {
         long expectedId = 123L; // Set the expected ID
 
@@ -18,6 +23,7 @@ public class SubCategoryDtoTest {
     }
 
     @Test
+    @DisplayName("Test Setters and Getters")
     public void testSettersAndGetters() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();

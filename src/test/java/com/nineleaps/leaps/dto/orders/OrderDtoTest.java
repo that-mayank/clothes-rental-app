@@ -4,6 +4,8 @@ import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
 
 import com.nineleaps.leaps.model.product.Product;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,10 +15,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+@Tag("unit_tests")
+@DisplayName("OrderDto Tests")
 class OrderDtoTest {
 
     @Test
+    @DisplayName("OrderDto Creation Test")
     void orderDtoCreation() {
         // Create a sample order
         Order order = new Order();
@@ -70,7 +74,9 @@ class OrderDtoTest {
         }
     }
 
+
     @Test
+    @DisplayName("OrderDto Setters Test")
     void testSetters() {
         // Arrange
         OrderDto orderDto = new OrderDto();

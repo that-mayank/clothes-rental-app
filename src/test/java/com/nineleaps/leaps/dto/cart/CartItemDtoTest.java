@@ -5,11 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 
 import com.nineleaps.leaps.model.product.Product;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+@Tag("unit_tests")
+@DisplayName("CartItemDto Tests")
  class CartItemDtoTest {
 
-    @Test
+   @Test
+   @DisplayName("Test Id and ImageUrl")
      void testIdAndImageUrl() {
         // Sample data for the test
         Long id = 123L;
@@ -33,7 +37,8 @@ import org.junit.jupiter.api.Test;
         assertEquals(imageUrl, cartItemDto.getImageUrl());
     }
 
-    @Test
+   @Test
+   @DisplayName("Test toString()")
      void testToString() {
         // Sample data for the test
         Long id = 123L;

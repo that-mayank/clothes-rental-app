@@ -1,13 +1,18 @@
 package com.nineleaps.leaps.dto.user;
 
 import com.nineleaps.leaps.enums.Role;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisplayName("SignupDto Setters Test")
+@Tag("unit_tests")
 class SignupDtoTest {
 
     @Test
+    @DisplayName("Test Setters for SignupDto")
     void testSetters() {
         // Arrange
         SignupDto signupDto = new SignupDto();

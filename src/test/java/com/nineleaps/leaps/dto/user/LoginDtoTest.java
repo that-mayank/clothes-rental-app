@@ -1,14 +1,18 @@
 package com.nineleaps.leaps.dto.user;
 
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+@Tag("unit_tests")
+@DisplayName("LoginDTO Tests")
 class LoginDtoTest {
 
     @Test
+    @DisplayName("Get Email - Valid Email")
     void getEmail_validEmail_shouldReturnEmail() {
         // Arrange
         LoginDto loginDto = new LoginDto();
@@ -23,6 +27,7 @@ class LoginDtoTest {
     }
 
     @Test
+    @DisplayName("Get Password - Valid Password")
     void getPassword_validPassword_shouldReturnPassword() {
         // Arrange
         LoginDto loginDto = new LoginDto();
@@ -37,6 +42,7 @@ class LoginDtoTest {
     }
 
     @Test
+    @DisplayName("Set Email - Valid Email")
     void setEmail_validEmail_shouldSetEmail() {
         // Arrange
         LoginDto loginDto = new LoginDto();
@@ -50,6 +56,7 @@ class LoginDtoTest {
     }
 
     @Test
+    @DisplayName("Set Password - Valid Password")
     void setPassword_validPassword_shouldSetPassword() {
         // Arrange
         LoginDto loginDto = new LoginDto();
@@ -63,6 +70,7 @@ class LoginDtoTest {
     }
 
     @Test
+    @DisplayName("All Args Constructor")
     void testAllArgsConstructor() {
         // Arrange
         String email = "test@example.com";

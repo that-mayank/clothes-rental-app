@@ -1,12 +1,16 @@
 package com.nineleaps.leaps.dto.checkout;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@Tag("unit_tests")
+@DisplayName("CheckoutItemDto Tests")
 class CheckoutItemDtoTest {
 
     @Test
+    @DisplayName("CheckoutItemDto Creation Test")
     void checkoutItemDtoCreation() {
         // Sample data
         Long userId = 1L;
@@ -27,6 +31,7 @@ class CheckoutItemDtoTest {
     }
 
     @Test
+    @DisplayName("CheckoutItemDto Setters Test")
      void testSetters() {
         // Arrange
         CheckoutItemDto checkoutItemDto = new CheckoutItemDto();

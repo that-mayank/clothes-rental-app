@@ -3,15 +3,19 @@ package com.nineleaps.leaps.dto.user;
 
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
+@DisplayName("UserDto Tests")
+@Tag("unit_tests")
 class UserDtoTest {
 
     @Test
+    @DisplayName("Test constructor with valid data")
     void testConstructor() {
         // Arrange
         User user = new User();
@@ -37,6 +41,7 @@ class UserDtoTest {
     }
 
     @Test
+    @DisplayName("Test constructor with null profile image URL")
     void testConstructorWithNullImageUrl() {
         // Arrange
         User user = new User();
@@ -50,6 +55,7 @@ class UserDtoTest {
     }
 
     @Test
+    @DisplayName("Test setters")
     void testSetters() {
         // Arrange
         UserDto userDto = new UserDto();

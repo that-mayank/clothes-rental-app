@@ -4,13 +4,16 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName(" Helper Tests")
 class HelperTest {
 
 
@@ -24,6 +27,7 @@ class HelperTest {
     }
 
     @Test
+    @DisplayName("Test Not Null with Non-Null Object")
     void testNotNull_withNonNullObject() {
 
         // Call the notNull() method and assert that it returns true
@@ -31,6 +35,7 @@ class HelperTest {
     }
 
     @Test
+    @DisplayName("Test Not Null with Null Object")
     void testNotNull_withNullObject() {
 
         // Call the notNull() method and assert that it returns false
@@ -38,6 +43,7 @@ class HelperTest {
     }
 
     @Test
+    @DisplayName("Test Get User with Valid Token")
     void testGetUser_withValidToken() {
         // Create a valid token
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwLnByYW5heXJlZGR5Njk5QGdtYWlsLmNvbSIsInJvbGVzIjpbIkJPUlJPV0VSIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9hcGkvdjEvbG9naW4iLCJleHAiOjE2ODkwNjE1NzV9.oAJoRhVJk7mZWZV8D4Ge-6Z2AogBnt8htOORWZaJS2k";
@@ -61,6 +67,7 @@ class HelperTest {
     }
 
     @Test
+    @DisplayName("Test Get User with Invalid Token")
     void testGetUser_withInvalidToken() {
         // Create an invalid token
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqeW9zaG5hdmlAbmluZWxlYXBzLmNvbSIsInJvbGVzIjpbIk9XTkVSIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9hcGkvdjEvbG9naW4iLCJleHAiOjE2ODg1NTM3Njh9.WQgHnTj2J6REgDGraAMrOzzpp-iz2VjejiYlniQP-Kg";
@@ -86,12 +93,14 @@ class HelperTest {
 
 
     @Test
+    @DisplayName("Test Get User Repository")
     void testGetUserRepository() {
         // Call the getUserRepository() method and assert that it returns the same instance of UserRepository
         assertSame(userRepository, helper.getUserRepository());
     }
 
     @Test
+    @DisplayName("Test Get User from Token")
     void testGetUserFromToken() {
         // Create a mock HttpServletRequest
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -112,6 +121,7 @@ class HelperTest {
     }
 
     @Test
+    @DisplayName("Test Generate OTP")
      void testGenerateOtp() {
         int generatedOtp = helper.generateOtp();
 

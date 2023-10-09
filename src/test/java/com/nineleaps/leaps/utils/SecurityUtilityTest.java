@@ -12,6 +12,8 @@ import com.nineleaps.leaps.repository.UserLoginInfoRepository;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import org.mockito.ArgumentCaptor;
@@ -35,7 +37,8 @@ import java.util.List;
 import static com.nineleaps.leaps.LeapsApplication.MAX_LOGIN_ATTEMPTS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName(" SecurityUtility Tests")
 class SecurityUtilityTest {
     private SecurityUtility securityUtility;
 
@@ -59,6 +62,7 @@ class SecurityUtilityTest {
         securityUtility = new SecurityUtility(userServiceInterface, refreshTokenRepository,userLoginInfoRepository,userRepository);
     }
 
+    @DisplayName("Tests for AccessToken and RefreshToken validation")
     @Test
     void isAccessTokenExpired_ValidToken_ReturnsFalse() {
         // Arrange
@@ -72,6 +76,7 @@ class SecurityUtilityTest {
     }
 
     @Test
+    @DisplayName("Tests for RefreshToken validation")
     void isRefreshTokenExpired_ValidToken_ReturnsFalse() {
         // Arrange
         String refreshToken = generateRefreshToken(60); // Generate an access token with 60 minutes expiration time
@@ -83,7 +88,9 @@ class SecurityUtilityTest {
         assertFalse(isExpired);
     }
 
+
     @Test
+    @DisplayName("Tests for AccessToken validation with an expired token")
     void isAccessTokenExpired_ExpiredToken_ReturnsTrue() {
         // Arrange
         String accessToken = generateAccessToken(-60); // Generate an expired access token (60 minutes ago)
@@ -96,6 +103,7 @@ class SecurityUtilityTest {
     }
 
     @Test
+    @DisplayName("Tests for RefreshToken validation with an expired token")
     void isRefreshTokenExpired_ExpiredToken_ReturnsTrue() {
         // Arrange
         String refreshToken = generateRefreshToken(-60); // Generate an expired access token (60 minutes ago)
@@ -108,6 +116,7 @@ class SecurityUtilityTest {
     }
 
     @Test
+    @DisplayName("Tests for saving tokens")
     void saveTokens_ValidInput_ReturnsTrue() {
         // Arrange
         String refreshToken = "validRefreshToken";
@@ -123,6 +132,7 @@ class SecurityUtilityTest {
     }
 
     @Test
+    @DisplayName("Tests for updating AccessToken using a RefreshToken")
     void updateAccessToken_ValidInput_ReturnsNewAccessToken() throws IOException {
         // Create a valid token
         String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJyb2xlcyI6WyJPV05FUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNzAxODE4Mjc5fQ.XuDMsvq6290oyS4hN5aNda879Gy2yoJzWCmJHEGn_Bs";
@@ -158,6 +168,7 @@ class SecurityUtilityTest {
     }
 
     @Test
+    @DisplayName("Tests for reading secret from a file")
     void testReadSecretFromFile() throws IOException {
         // Arrange
         String secret = "meinhuchotadon";
@@ -202,6 +213,7 @@ class SecurityUtilityTest {
     }
 
 
+    @DisplayName("Tests for getting device token when an existing device token is provided")
     @Test
     void testGetDeviceToken_ExistingDeviceToken() {
         // Arrange
@@ -223,6 +235,7 @@ class SecurityUtilityTest {
         // Add more assertions as needed to achieve 100% coverage
     }
 
+    @DisplayName("Tests for getting device token when no existing device token is provided")
     @Test
     void testGetDeviceToken_NoExistingDeviceToken() {
         // Arrange
@@ -241,6 +254,7 @@ class SecurityUtilityTest {
         // Add more assertions as needed to achieve 100% coverage
     }
 
+    @DisplayName("Tests for updating login attempts")
     @Test
     void testUpdateLoginAttempts() {
         // Mock dependencies
@@ -278,6 +292,7 @@ class SecurityUtilityTest {
         // Add more assertions based on your logic
     }
 
+    @DisplayName("Tests for checking account lock and login attempts")
     @Test
     void testCheckAccountLockAndLoginAttempts() {
         // Mock dependencies
@@ -309,6 +324,7 @@ class SecurityUtilityTest {
     }
 
 
+    @DisplayName("Tests for setting the last login attempt")
     @Test
     void testSetLastLoginAttempt() {
         // Mock dependencies
@@ -337,6 +353,7 @@ class SecurityUtilityTest {
         assertNotNull(loginInfo.getLastLoginAttempt());
     }
 
+    @DisplayName("Tests for initializing user login info")
     @Test
     void testInitializeUserLoginInfo() {
         // Mock dependencies
@@ -364,6 +381,7 @@ class SecurityUtilityTest {
         assertFalse(loginInfo.isAccountLocked());
     }
 
+    @DisplayName("Tests for updating login attempts and locking the account when exceeding maximum login attempts")
     @Test
     void updateLoginAttempts_ExceedMaxLoginAttempts_LockAccount() {
         // Arrange
@@ -388,6 +406,7 @@ class SecurityUtilityTest {
         assertNotNull(loginInfo.getLockTime());
     }
 
+    @DisplayName("Tests for updating login attempts when login info is null (initialize and set login attempts)")
     @Test
     void updateLoginAttempts_LoginInfoIsNull_InitializeAndSetLoginAttempts() {
         // Arrange
@@ -414,6 +433,7 @@ class SecurityUtilityTest {
         assertEquals(1, savedLoginInfo.getLoginAttempts());
     }
 
+    @DisplayName("Tests for checking account lock and login attempts when login info is null (initialize and save login info)")
     @Test
     void checkAccountLockAndLoginAttempts_UserLoginInfoIsNull_InitializeAndSaveLoginInfo() {
         // Arrange
@@ -435,6 +455,7 @@ class SecurityUtilityTest {
         assertEquals(user, savedLoginInfo.getUser());
     }
 
+    @DisplayName("Tests for checking account lock and login attempts with correct logic when login info is not null")
     @Test
     void checkAccountLockAndLoginAttempts_UserLoginInfoNotNull_CorrectLogicFollowed() {
         // Arrange
@@ -458,6 +479,7 @@ class SecurityUtilityTest {
         assertEquals(1, userLoginInfo.getLoginAttempts());
     }
 
+    @DisplayName("Tests for checking account lock and login attempts, unlocking the account when previously locked")
     @Test
     void checkAccountLockAndLoginAttempts_AccountLocked_UnlockAccount() {
         // Arrange
@@ -482,6 +504,7 @@ class SecurityUtilityTest {
     }
 
 
+    @DisplayName("Tests for generating access and refresh tokens")
     @Test
     void testGenerateToken() throws IOException {
         // Mock dependencies
@@ -528,6 +551,7 @@ class SecurityUtilityTest {
         assertNotNull(headerValues.get(1));
     }
 
+    @DisplayName("Tests for updating access token via refresh token with an invalid refresh token (expired)")
     @Test
     void updateAccessTokenViaRefreshToken_InvalidRefreshToken_ReturnsInvalidTokenMessage() throws IOException {
         // Arrange
@@ -545,6 +569,7 @@ class SecurityUtilityTest {
         assertEquals("Refresh Token In Database Expired , Login Again !", result);
     }
 
+    @DisplayName("Tests for updating access token via refresh token with an invalid refresh token (not found in the database)")
     @Test
     void updateAccessTokenViaRefreshToken_InvalidRefreshToken_ReturnsInvalidTokenMessageFromDb() throws IOException {
         // Arrange
@@ -561,6 +586,7 @@ class SecurityUtilityTest {
         // Assert
         assertEquals("Invalid Refresh token", result);
     }
+    @DisplayName("Tests for account lock and login attempts when the account is locked before the unlock time")
     @Test
     void testAccountLockAndLoginAttempts_AccountLockedBeforeUnlockTime() {
         // Mock data

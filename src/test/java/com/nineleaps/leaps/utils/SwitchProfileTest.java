@@ -3,6 +3,8 @@ package com.nineleaps.leaps.utils;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,7 +21,8 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName(" SwitchProfile Tests")
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 class SwitchProfileTest {
@@ -35,6 +38,7 @@ class SwitchProfileTest {
     }
 
     @Test
+    @DisplayName("Generate Token for Switch Profile with Valid Token")
     void generateTokenForSwitchProfile_ValidToken_Success() throws IOException {
         // Arrange
         String token = "validToken";
@@ -59,6 +63,7 @@ class SwitchProfileTest {
     }
 
     @Test
+    @DisplayName("Generate Token for Switch Profile with Invalid Token")
     void generateTokenForSwitchProfile_InvalidToken_ThrowsException() {
         // Arrange
         String invalidToken = "invalidToken";

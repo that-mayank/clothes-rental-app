@@ -1,5 +1,6 @@
 package com.nineleaps.leaps;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 
 @SpringBootTest(classes = LeapsApplication.class)
-
+@Tag("unit_tests")
 class LeapsApplicationTest {
 
     @Autowired

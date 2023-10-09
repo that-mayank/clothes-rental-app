@@ -1,6 +1,8 @@
 package com.nineleaps.leaps.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -11,7 +13,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import static org.mockito.Mockito.*;
 
 @Slf4j
-
+@Tag("unit_tests")
+@DisplayName("Amazon Health Checker Tests")
 class AmazonS3HealthCheckerTest {
 
     @Mock
@@ -27,6 +30,7 @@ class AmazonS3HealthCheckerTest {
     }
 
     @Test
+    @DisplayName("Test Check S3 Health - Simulated S3 Exception")
     void testCheckS3Health() {
         // Mock S3Client to throw an exception when listBuckets is called
         doThrow(new RuntimeException("Simulated S3 exception")).when(s3Client).listBuckets();

@@ -7,6 +7,8 @@ import com.nineleaps.leaps.repository.CategoryRepository;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
 import io.github.resilience4j.retry.Retry;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,7 +20,8 @@ import java.io.IOException;
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+@Tag("unit_tests")
+@DisplayName(" StorageUtility Tests")
 class StorageUtilityTest {
 
     @Mock
@@ -41,6 +44,7 @@ class StorageUtilityTest {
         storageUtility = new StorageUtility(categoryRepository, subCategoryRepository, retry, transferManager);
     }
 
+    @DisplayName("Test determineContentType for .pdf extension")
     @Test
     void determineContentType() {
         // Test for .pdf extension
@@ -56,6 +60,7 @@ class StorageUtilityTest {
         assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, storageUtility.determineContentType("test.txt"));
     }
 
+    @DisplayName("Test convertMultiPartFileToFile")
     @Test
     void convertMultiPartFileToFile() throws IOException {
         // Mock MultipartFile
@@ -66,6 +71,7 @@ class StorageUtilityTest {
         assertNotNull(storageUtility.convertMultiPartFileToFile(mockMultipartFile));
     }
 
+    @DisplayName("Test getSubCategoryNameById")
     @Test
     void getSubCategoryNameById() {
         // Mock SubCategory
@@ -79,6 +85,7 @@ class StorageUtilityTest {
         assertEquals("Test Subcategory", storageUtility.getSubCategoryNameById(1L));
     }
 
+    @DisplayName("Test getCategoryNameById")
     @Test
     void getCategoryNameById() {
         // Mock Category
@@ -92,6 +99,7 @@ class StorageUtilityTest {
         assertEquals("Test Category", storageUtility.getCategoryNameById(1L));
     }
 
+    @DisplayName("Test constructor and getters for S3UploadException")
     @Test
     void constructorAndGetters() {
         // Given
@@ -108,6 +116,7 @@ class StorageUtilityTest {
 
 
 
+    @DisplayName("Test uploadFile with upload failure, expects S3UploadException")
     @Test
     void uploadFile_UploadFailure_ThrowsS3UploadException() throws IOException {
         // Mocking necessary dependencies
@@ -136,6 +145,7 @@ class StorageUtilityTest {
     }
 
 
+    @DisplayName("Test buildUriString for successful URI creation")
     @Test
     void uploadFile_BuildUriString_Success() {
         // Given

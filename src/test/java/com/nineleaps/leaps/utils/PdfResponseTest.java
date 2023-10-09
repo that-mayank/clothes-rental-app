@@ -1,12 +1,16 @@
 package com.nineleaps.leaps.utils;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Tag("unit_tests")
+@DisplayName(" PdfResponse Tests")
 class PdfResponseTest {
 
     @Test
+    @DisplayName(" get PDF Bytes")
     void testGetPdfBytes() {
         // Create a sample byte array for testing
         byte[] sampleBytes = {1, 2, 3, 4, 5};
@@ -19,6 +23,7 @@ class PdfResponseTest {
     }
 
     @Test
+    @DisplayName(" set PDF Bytes")
     void testSetPdfBytes() {
         // Create a sample byte array for testing
         byte[] sampleBytes = {1, 2, 3, 4, 5};

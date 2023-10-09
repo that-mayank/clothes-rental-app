@@ -1,15 +1,19 @@
 package com.nineleaps.leaps.exceptions;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+@DisplayName("Exception Controller Advice Tests")
+@Tag("unit_tests")
 class ExceptionControllerAdviceTest {
 
     private final ExceptionControllerAdvice exceptionControllerAdvice = new ExceptionControllerAdvice();
 
     @Test
+    @DisplayName("Handle CustomException")
     void handleUpdateFailException_CustomException() {
         CustomException customException = new CustomException("Custom exception message");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(customException);
@@ -18,6 +22,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("Handle AuthenticationFailException")
     void handleUpdateFailException_AuthenticationFailException() {
         AuthenticationFailException authenticationFailException = new AuthenticationFailException("Authentication failure");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(authenticationFailException);
@@ -27,6 +32,7 @@ class ExceptionControllerAdviceTest {
 
 
     @Test
+    @DisplayName("AuthenticationFailException Handling")
     void handleUpdateFailException_CategoryNotExistException() {
         CategoryNotExistException categoryNotExistException = new CategoryNotExistException("Category not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(categoryNotExistException);
@@ -35,6 +41,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("Handle CategoryNotExistException")
     void handleUpdateFailException_ProductNotExistException() {
         ProductNotExistException productNotExistException = new ProductNotExistException("Product not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(productNotExistException);
@@ -43,6 +50,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("CategoryNotExistException Handling")
     void handleUpdateFailException_CartItemNotExistException() {
         CartItemNotExistException cartItemNotExistException = new CartItemNotExistException("Cart item not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(cartItemNotExistException);
@@ -51,6 +59,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("CategoryIteAlreadyExists Handling")
     void handleUpdateFailException_CartItemAlreadyExistException() {
         CartItemAlreadyExistException cartItemAlreadyExistException = new CartItemAlreadyExistException("Cart item already exists");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(cartItemAlreadyExistException);
@@ -59,6 +68,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("HandleUpdateException Handling")
     void handleUpdateFailException_UserNotExistException() {
         UserNotExistException userNotExistException = new UserNotExistException("User not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(userNotExistException);
@@ -67,6 +77,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("OrderNotFoundException Handling")
     void handleUpdateFailException_OrderNotFoundException() {
         OrderNotFoundException orderNotFoundException = new OrderNotFoundException("Order not found");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(orderNotFoundException);
@@ -75,6 +86,7 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("QuantityOutOfBoundException Handling")
     void handleUpdateFailException_QuantityOutOfBoundException() {
         QuantityOutOfBoundException quantityOutOfBoundException = new QuantityOutOfBoundException("Quantity out of bounds");
         ResponseEntity<String> response = exceptionControllerAdvice.handleUpdateFailException(quantityOutOfBoundException);

@@ -1,12 +1,16 @@
 package com.nineleaps.leaps.exceptions;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+@Tag("unit_tests")
+@DisplayName("UnableToConvertMultipartFileException Tests")
 class UnableToConvertMultipartFileExceptionTest {
 
     @Test
+    @DisplayName("Constructor should throw exception with message")
     void constructorShouldThrowExceptionWithMessage() {
         String message = "Test exception message";
 
@@ -18,6 +22,7 @@ class UnableToConvertMultipartFileExceptionTest {
     }
 
     @Test
+    @DisplayName("Constructor should throw exception with message and cause")
     void constructorShouldThrowExceptionWithMessageAndCause() {
         String message = "Test exception message";
         Throwable cause = new RuntimeException("Test cause");

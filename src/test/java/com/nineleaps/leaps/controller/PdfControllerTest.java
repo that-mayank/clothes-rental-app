@@ -1,103 +1,153 @@
-//package com.nineleaps.leaps.controller;
+package com.nineleaps.leaps.controller;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.service.PdfServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import java.io.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+class PdfControllerTest {
+
+    @Mock
+    private Helper helper;
+
+    @Mock
+    private PdfServiceInterface pdfService;
+
+    @InjectMocks
+    private PdfController pdfController;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        pdfController = new PdfController(pdfService, helper);
+    }
+
+    @Test
+    void generatePdfResource_shouldReturnPdfResource() throws Exception {
+        // Mocking behavior for dependencies
+        Document mockDocument = new Document();
+        User mockUser = new User();
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PdfWriter pdfWriter = PdfWriter.getInstance(mockDocument, byteArrayOutputStream);
+
+        doAnswer(invocation -> {
+            Document document = invocation.getArgument(0);
+            document.open();
+            document.add(new Paragraph("Mocked content for the PDF"));
+            document.close();
+            return null;
+        }).when(pdfService).addContent(any(Document.class), any(User.class));
+
+        // Call the method to be tested
+        Resource generatedPdfResource = pdfController.generatePdfResource(mockDocument, mockUser);
+
+        // Close the PdfWriter
+        pdfWriter.close();
+
+        // Validate the content of the generated PDF
+        byte[] generatedContent = byteArrayOutputStream.toByteArray();
+        ByteArrayResource expectedResource = new ByteArrayResource(generatedContent);
+
+        // Assert the generated PDF resource by comparing their content
+        assertEquals(expectedResource.contentLength(), generatedPdfResource.contentLength());
+
+    }
+
+//    @Test
+//    void getPdf_shouldReturnPdf() throws IOException, DocumentException {
+//        // Mocking behavior for dependencies
+//        User mockUser = new User();
+//        Document mockDocument = Mockito.mock(Document.class);  // Mock a Document instance
+//        InputStreamResource mockPdfResource = createMockPdfResource();
 //
-//import com.itextpdf.text.Document;
-//import com.itextpdf.text.DocumentException;
-//import com.nineleaps.leaps.controller.PdfController;
-//import com.nineleaps.leaps.model.User;
-//import com.nineleaps.leaps.service.PdfServiceInterface;
-//import com.nineleaps.leaps.utils.Helper;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//import org.springframework.http.MediaType;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.mock.web.MockHttpServletRequest;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.MvcResult;
-//import org.springframework.test.web.servlet.RequestBuilder;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+//        HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
 //
-//import java.io.IOException;
+//        when(helper.getUserFromToken(any(HttpServletRequest.class))).thenReturn(mockUser);
+//        when(pdfService.getPdf(any(User.class))).thenReturn(mockDocument);
+//        when(generatePdfResource(any(User.class))).thenReturn(mockPdfResource);
 //
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.mockito.Mockito.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
-//class PdfControllerTest {
+//        ResponseEntity<InputStreamResource> responseEntity = yourController.getPdf(mockRequest);
 //
-//    private PdfController pdfController;
-//
-//    @Mock
-//    private PdfServiceInterface pdfServiceInterface;
-//
-//    @Mock
-//    private Helper helper;
-//
-//    @Mock
-//    private MockHttpServletRequest mockHttpServletRequest;
-//
-//    private MockMvc mockMvc;
-//
-//    private User user;
-//
-//    @BeforeEach
-//    void setUp() throws DocumentException, IOException {
-//        MockitoAnnotations.openMocks(this);
-//        pdfController = new PdfController(pdfServiceInterface, helper);
-//        mockMvc = MockMvcBuilders.standaloneSetup(pdfController).build();
-//
-//        user = new User();
-//        user.setId(1L);
-//        user.setEmail("test@nineleaps.com");
-//
-//        when(helper.getUserFromToken(mockHttpServletRequest)).thenReturn(user);
-//        Document document = new Document();
-//        when(pdfServiceInterface.getPdf(user)).thenReturn(document);
+//        // Assert the response
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//        assertEquals("application/pdf", responseEntity.getHeaders().getContentType().toString());
 //    }
+//
+//
+//
+//    private Resource generatePdfResource(User user) throws DocumentException, IOException {
+//        // Create a new Document instance
+//        Document document = new Document();
+//        User user1 = new User();
+//        user1.setEmail("yokes.e@nineleaps.com");
+//
+//        // Add content to the document
+//
+//
+//        // Create a temporary file to store the PDF
+//        File file = File.createTempFile("report", ".pdf");
+//
+//        // Write the content to the PDF file
+//        PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(file));
+//        pdfWriter.setCloseStream(false);
+//
+//        // Open the document and add content
+//        document.open();
+//        document.add(new Paragraph("This is the content of the PDF for user: " + user1.getEmail()));
+//        document.close();
+//
+//        // Return the PDF file as a resource
+//        return new FileSystemResource(file);
+//    }
+//
+//
+//
+//    private InputStreamResource createMockPdfResource() {
+//        // Create a sample PDF content
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        Document document = new Document();
+//
+//        try {
+//            PdfWriter.getInstance(document, byteArrayOutputStream);
+//            document.open();
+//            document.add(new com.itextpdf.text.Paragraph("Mock PDF content"));
+//            document.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+//        return new InputStreamResource(byteArrayInputStream);
+//    }
+//
+//
+//
 //
 //    @Test
-//    void generatePdf_shouldReturnOkResponse() throws Exception {
-//        // Arrange
-//        when(helper.getUserFromToken(mockHttpServletRequest)).thenReturn(user);
-//        Document document = new Document();
-//        when(pdfServiceInterface.getPdf(user)).thenReturn(document);
+//    void getPdf_shouldHandleException() throws Exception {
+//        // Mock behavior to throw a RuntimeException
+//        HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
 //
-//        // Act
-//        assert get("/api/v1/pdf/export") != null;
-//        MvcResult result = mockMvc.perform((RequestBuilder) get("/api/v1/pdf/export")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andReturn();
+//        when(helper.getUserFromToken(any(HttpServletRequest.class))).thenThrow(new RuntimeException("Test error"));
 //
-//        // Assert
-//        assertEquals(MediaType.APPLICATION_PDF_VALUE, result.getResponse().getContentType());
-//        verify(helper, times(1)).getUserFromToken(mockHttpServletRequest);
-//        verify(pdfServiceInterface, times(1)).getPdf(user);
+//        ResponseEntity<InputStreamResource> responseEntity = yourController.getPdf(mockRequest);
+//
+//        // Assert the response for an error scenario
+//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
 //    }
-//
-//    private ResponseEntity.BodyBuilder get(String path) {
-//        return null;
-//    }
-//
-//    @Test
-//    void generatePdf_shouldReturnErrorResponse() throws Exception {
-//        // Arrange
-//        when(helper.getUserFromToken(mockHttpServletRequest)).thenReturn(user);
-//        when(pdfServiceInterface.getPdf(user)).thenThrow(new DocumentException());
-//
-//        // Act
-//        MvcResult result = mockMvc.perform((RequestBuilder) get("/api/v1/pdf/export")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isInternalServerError())
-//                .andReturn();
-//
-//        // Assert
-//        // TODO: Assert the response status code and any other relevant assertions
-//        verify(helper, times(1)).getUserFromToken(mockHttpServletRequest);
-//        verify(pdfServiceInterface, times(1)).getPdf(user);
-//    }
-//
-//    // TODO: Add more test methods for other public methods in PdfController
-//
-//}
+
+}

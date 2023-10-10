@@ -54,7 +54,7 @@ public class PdfController {
         }
     }
 
-    private Resource generatePdfResource(Document document, User user) throws DocumentException, IOException {
+    Resource generatePdfResource(Document document, User user) throws DocumentException, IOException {
         File file = File.createTempFile("report", ".pdf");
         PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(file));
         document.open();

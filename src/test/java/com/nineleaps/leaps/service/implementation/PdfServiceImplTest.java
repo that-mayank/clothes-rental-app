@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.model.User;
 
 import com.nineleaps.leaps.service.DashboardServiceInterface;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 
 
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("PDF Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class PdfServiceImplTest {
 
     @Mock

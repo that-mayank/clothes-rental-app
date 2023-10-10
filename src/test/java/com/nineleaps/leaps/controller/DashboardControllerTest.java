@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.controller;
 
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.model.User;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 @Tag("unit_tests")
 @DisplayName("Test case file for dashboardController test")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class DashboardControllerTest {
 
     @Mock

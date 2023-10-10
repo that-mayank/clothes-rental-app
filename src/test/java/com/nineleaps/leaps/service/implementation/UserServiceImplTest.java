@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.dto.user.UserDto;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,6 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 @Tag("unit_tests")
 @DisplayName("User Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class UserServiceImplTest {
 
     @InjectMocks

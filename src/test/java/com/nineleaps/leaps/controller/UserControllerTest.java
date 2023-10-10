@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.controller;
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("test case file for User Controller")
+@ExtendWith(RuntimeBenchmarkExtension.class)
+
 class UserControllerTest {
 
     private UserController userController;

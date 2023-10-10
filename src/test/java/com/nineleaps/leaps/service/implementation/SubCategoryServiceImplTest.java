@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.User;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("Subcategory Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
+
 class SubCategoryServiceImplTest {
 
     @InjectMocks

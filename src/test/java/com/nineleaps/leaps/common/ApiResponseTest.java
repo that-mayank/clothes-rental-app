@@ -1,10 +1,14 @@
 package com.nineleaps.leaps.common;
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import static org.junit.jupiter.api.Assertions.*;
 @Tag("unit_tests")
 @DisplayName("Api Response Test Class")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class ApiResponseTest {
     @DisplayName("Api Response Test")
     @Test

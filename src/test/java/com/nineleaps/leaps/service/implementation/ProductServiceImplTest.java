@@ -1,5 +1,6 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.dto.category.SubCategoryDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,6 +41,7 @@ import javax.persistence.EntityManager;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("Product Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class ProductServiceImplTest {
 
     @Mock

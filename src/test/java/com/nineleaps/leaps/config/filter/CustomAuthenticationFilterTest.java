@@ -1,5 +1,7 @@
 package com.nineleaps.leaps.config.filter;
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.slf4j.Logger;
 import org.springframework.security.core.userdetails.User;
@@ -27,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("CustomAuthenticationFilter Test class")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class CustomAuthenticationFilterTest {
 
     @Mock

@@ -1,8 +1,10 @@
 package com.nineleaps.leaps.config.filter;
 
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.*;
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 @Tag("Custom Authorization Filter")
 @DisplayName("Test cases for Custom Authorization filter")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class CustomAuthorizationFilterTest {
 
     @Mock

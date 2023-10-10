@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.controller;
 
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.model.User;
@@ -12,6 +13,7 @@ import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -25,6 +27,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("Test case file for Product Controller")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class ProductControllerTest {
     @Mock
     private ProductServiceInterface productService;

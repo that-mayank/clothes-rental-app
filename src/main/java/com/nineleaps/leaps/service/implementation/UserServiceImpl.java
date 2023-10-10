@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     private final UserRepository userRepository;
     private final UserLoginInfoRepository userLoginInfoRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailServiceImpl emailService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

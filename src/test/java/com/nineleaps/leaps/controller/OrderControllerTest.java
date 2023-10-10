@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.controller;
 
 import com.itextpdf.text.DocumentException;
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
@@ -12,6 +13,7 @@ import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,6 +34,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
 @DisplayName("Test case file for Order Controller ")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class OrderControllerTest {
 
     @Mock

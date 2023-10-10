@@ -1,12 +1,15 @@
 package com.nineleaps.leaps.config;
 
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.mail.javamail.JavaMailSender;
 @Tag("unit_tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class EmailConfigurationTest {
 
     @Test

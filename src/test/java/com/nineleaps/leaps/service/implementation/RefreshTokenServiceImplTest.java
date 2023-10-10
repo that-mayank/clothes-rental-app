@@ -3,13 +3,17 @@ package com.nineleaps.leaps.service.implementation;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.model.RefreshToken;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 @Tag("unit_tests")
 @DisplayName("RefreshToken Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
 class RefreshTokenServiceImplTest {
 
     @Test

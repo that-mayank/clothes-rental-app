@@ -2,6 +2,7 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.itextpdf.text.DocumentException;
 
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.orders.OrderDto;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 @Tag("unit_tests")
 @DisplayName("Order Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
  class OrderServiceTest {
 
     @Mock
@@ -134,12 +137,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
         // Call the method to be tested
         orderService.placeOrder(user, sessionId);
+        String message = "Dear null null,\n" +
+                "Your Order has been successfully placed.\n" +
+                "Here are the details of your order:\n" +
+                "Order Id: null\n" +
+                "Product: Test Product\n" +
+                "Quantity: 10\n" +
+                "Price: 7000.0\n" +
+                "Total Price of order: 0.0\n\n";
+
+
 
         // Verify method invocations
         verify(cartService).listCartItems(user);
         verify(orderRepository).save(orderCaptor.capture());
         verify(cartService).deleteUserCartItems(user);
-        verify(emailServiceImpl).sendEmail(eq("Order placed"), anyString(), eq(user.getEmail()));
+        verify(emailServiceImpl).sendEmail(eq("Order Placed"), eq(message), eq(user.getEmail()));
         verify(pushNotificationService, times(cartItemDtos.size())).sendPushNotificationToToken(any());
 
         // Add assertions to ensure correctness of order and order items

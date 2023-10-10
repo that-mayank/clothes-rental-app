@@ -1,7 +1,9 @@
 package com.nineleaps.leaps.service.implementation;
+import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.service.SmsSender;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.*;
 
 @Tag("unit_tests")
 @DisplayName("SMS Service Tests")
+@ExtendWith(RuntimeBenchmarkExtension.class)
  class SmsServiceImplTest {
 
     @Mock

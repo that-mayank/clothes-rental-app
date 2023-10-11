@@ -22,11 +22,11 @@ public class EmailServiceImpl {
 
 
     // Method to send an email
-    public void sendEmail(String subject, String message, String to) {
+    public boolean sendEmail(String subject, String message, String to) {
         // Check if the 'to' address is null
         if (to == null) {
             // Handle the null value here, such as throwing an exception or returning false
-            return;
+            return false;
         }
 
         String host = "smtp.gmail.com";
@@ -60,8 +60,10 @@ public class EmailServiceImpl {
             // Step 3: Send the email using the Transport class
             Transport.send(m);
             log.info("Email sent successfully"); // Log a success message if the email is sent
+            return true;
         } catch (Exception e) {
             log.error("Email notification sending failed"); // Log an error message if email sending fails
         }
+        return false;
     }
 }

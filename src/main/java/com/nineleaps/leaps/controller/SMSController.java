@@ -1,4 +1,5 @@
 package com.nineleaps.leaps.controller;
+
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.service.SmsServiceInterface;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

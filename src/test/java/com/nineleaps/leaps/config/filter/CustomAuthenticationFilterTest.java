@@ -1,61 +1,35 @@
 package com.nineleaps.leaps.config.filter;
 
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
-
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
-
 import com.nineleaps.leaps.utils.SecurityUtility;
-
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
-
 import org.mockito.ArgumentMatcher;
-
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.mock.web.DelegatingServletInputStream;
-
 import org.springframework.security.authentication.AuthenticationManager;
-
 import org.springframework.security.core.Authentication;
-
 import org.springframework.security.core.GrantedAuthority;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 import org.springframework.security.core.userdetails.User;
 
 import javax.servlet.FilterChain;
-
-import javax.servlet.ServletContext;
-
 import javax.servlet.http.HttpServletRequest;
-
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.*;
-
-import java.util.ArrayList;
-
-import java.util.Collection;
-
-import java.util.List;
-
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.PrintWriter;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import static org.mockito.ArgumentMatchers.any;
-
 import static org.mockito.Mockito.*;
 
 class CustomAuthenticationFilterTest {

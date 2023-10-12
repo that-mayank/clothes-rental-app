@@ -26,8 +26,6 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 @RestController
 @RequestMapping("/api/v1/dashboard")
 @RequiredArgsConstructor

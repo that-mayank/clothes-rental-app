@@ -2,10 +2,10 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.ProductRepository;
 import org.hibernate.Filter;
 import org.hibernate.Session;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

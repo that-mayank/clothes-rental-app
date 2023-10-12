@@ -6,7 +6,6 @@ import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

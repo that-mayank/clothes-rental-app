@@ -3,8 +3,8 @@ package com.nineleaps.leaps.service;
 import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.product.Product;
 
 public interface CartServiceInterface {
 

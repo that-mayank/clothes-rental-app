@@ -1,41 +1,24 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.enums.Role;
-
 import com.nineleaps.leaps.exceptions.OtpValidationException;
-
 import com.nineleaps.leaps.model.User;
-
 import com.nineleaps.leaps.repository.UserRepository;
-
-import com.nineleaps.leaps.service.SmsServiceInterface;
-
 import com.nineleaps.leaps.service.UserServiceInterface;
-
 import com.nineleaps.leaps.utils.SecurityUtility;
-
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
-
 import org.mockito.InjectMocks;
-
 import org.mockito.Mock;
-
 import org.mockito.Mockito;
-
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.Mockito.*;
 
 class SmsServiceImplTest {

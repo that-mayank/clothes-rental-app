@@ -4,11 +4,9 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
-import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
@@ -24,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @RestController

@@ -1,36 +1,22 @@
 package com.nineleaps.leaps.utils;
 
 import com.nineleaps.leaps.enums.Role;
-
 import com.nineleaps.leaps.model.User;
-
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
-
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.mockito.junit.jupiter.MockitoSettings;
-
 import org.mockito.quality.Strictness;
-
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
-
 import javax.servlet.http.HttpServletResponse;
 
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.Mockito.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)

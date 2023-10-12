@@ -1,17 +1,17 @@
 package com.nineleaps.leaps.service.implementation;
 
-import java.io.IOException;
-import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
-
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
+
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+import java.io.IOException;
 
 @Service // Marks this class as a Spring service component
 @Transactional // Marks this class as transactional for database operations

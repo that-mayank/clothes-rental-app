@@ -2,14 +2,12 @@ package com.nineleaps.leaps.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nineleaps.leaps.model.RefreshToken;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import lombok.AllArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

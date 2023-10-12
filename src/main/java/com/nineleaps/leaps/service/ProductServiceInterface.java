@@ -1,10 +1,10 @@
 package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
+import com.nineleaps.leaps.model.product.Product;
 
 import java.util.List;
 import java.util.Optional;

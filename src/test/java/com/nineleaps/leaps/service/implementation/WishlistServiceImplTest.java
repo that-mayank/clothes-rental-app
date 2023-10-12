@@ -1,8 +1,8 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.exceptions.CustomException;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.Wishlist;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.WishlistRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

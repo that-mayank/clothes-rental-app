@@ -1,34 +1,22 @@
 package com.nineleaps.leaps.service.implementation;
 
-import com.nineleaps.leaps.dto.dashboard.DashboardDto;
-
 import com.nineleaps.leaps.dto.dashboard.DashboardAnalyticsDto;
-
+import com.nineleaps.leaps.dto.dashboard.DashboardDto;
 import com.nineleaps.leaps.model.User;
-
 import com.nineleaps.leaps.model.orders.OrderItem;
-
 import com.nineleaps.leaps.repository.OrderItemRepository;
-
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
-
 import org.mockito.InjectMocks;
-
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
-
 import java.util.ArrayList;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 class DashboardServiceImplTest {
 

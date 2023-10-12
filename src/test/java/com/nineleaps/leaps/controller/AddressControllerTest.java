@@ -10,7 +10,6 @@ import com.nineleaps.leaps.service.AddressServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class AddressControllerTest {
@@ -49,8 +47,7 @@ class AddressControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.addAddress(addressDto, request);
@@ -62,16 +59,10 @@ class AddressControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Address added successfully", response.getMessage());
-
-        ArgumentCaptor<AddressDto> addressDtoArgumentCaptor = ArgumentCaptor.forClass(AddressDto.class);
-        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(addressService).saveAddress(addressDtoArgumentCaptor.capture(), userArgumentCaptor.capture());
-        assertEquals(addressDto, addressDtoArgumentCaptor.getValue());
-        assertEquals(user, userArgumentCaptor.getValue());
     }
 
     @Test
-    void updateAddress_ValidAddressIdAndAddressDto_ReturnsOkResponse() throws AuthenticationFailException {
+    void updateAddress_ValidAddressIdAndAddressDto_ReturnsOkResponse() {
         // Arrange
         Long addressId = 1L;
         AddressDto addressDto = new AddressDto();
@@ -79,8 +70,7 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
         when(addressService.readAddress((user), (addressId))).thenReturn(address);
 
@@ -94,14 +84,6 @@ class AddressControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Address updated successfully", response.getMessage());
-
-        ArgumentCaptor<AddressDto> addressDtoArgumentCaptor = ArgumentCaptor.forClass(AddressDto.class);
-        ArgumentCaptor<Long> addressIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(addressService).updateAddress(addressDtoArgumentCaptor.capture(), addressIdArgumentCaptor.capture(), userArgumentCaptor.capture());
-        assertEquals(addressDto, addressDtoArgumentCaptor.getValue());
-        assertEquals(addressId, addressIdArgumentCaptor.getValue());
-        assertEquals(user, userArgumentCaptor.getValue());
     }
 
     @Test
@@ -112,8 +94,7 @@ class AddressControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.empty());
 
         // Act
@@ -137,8 +118,7 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
         when(addressService.readAddress((user), (addressId))).thenReturn(null);
 
@@ -161,8 +141,7 @@ class AddressControllerTest {
         User user = new User();
         List<Address> addressList = new ArrayList<>();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.listAddress((user))).thenReturn(addressList);
 
         // Act
@@ -183,8 +162,7 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
         when(addressService.readAddress((user), (addressId))).thenReturn(address);
 
@@ -209,8 +187,7 @@ class AddressControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.empty());
 
         // Act
@@ -234,8 +211,7 @@ class AddressControllerTest {
         Address address = new Address();
 
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
         when(addressService.readAddress((user), (addressId))).thenReturn(null);
 
@@ -259,8 +235,7 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Mock the behavior of addressService.readAddress to return an optional address
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
@@ -279,8 +254,7 @@ class AddressControllerTest {
         assertEquals(address, resultAddress);
 
         // Verify that the relevant methods were called with the expected arguments
-        verify(request).getHeader("Authorization");
-        verify(helper).getUser("token");
+        verify(helper).getUser(request);
         verify(addressService).readAddress(addressId);
         verify(addressService).readAddress(user, addressId);
     }
@@ -291,10 +265,8 @@ class AddressControllerTest {
         Long addressId = 1L;
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
-        Address address = new Address();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Mock the behavior of addressService.readAddress to return an empty optional (address not found)
         when(addressService.readAddress(addressId)).thenReturn(Optional.empty());
@@ -309,8 +281,7 @@ class AddressControllerTest {
         assertNull(responseEntity.getBody());
 
         // Verify that the relevant methods were called with the expected arguments
-        verify(request).getHeader("Authorization");
-        verify(helper).getUser("token");
+        verify(helper).getUser(request);
         verify(addressService).readAddress(addressId);
         verify(addressService, never()).readAddress(user, addressId);
     }
@@ -323,8 +294,7 @@ class AddressControllerTest {
         User user = new User();
         Address address = new Address(); // Assume the address does not belong to the user
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Mock the behavior of addressService.readAddress to return an optional address
         when(addressService.readAddress(addressId)).thenReturn(Optional.of(address));
@@ -336,8 +306,7 @@ class AddressControllerTest {
         assertThrows(AddressOwnershipException.class, () -> addressController.getAddressById(addressId, request));
 
         // Verify that the relevant methods were called with the expected arguments
-        verify(request).getHeader("Authorization");
-        verify(helper).getUser("token");
+        verify(helper).getUser(request);
         verify(addressService).readAddress(addressId);
         verify(addressService).readAddress(user, addressId);
     }

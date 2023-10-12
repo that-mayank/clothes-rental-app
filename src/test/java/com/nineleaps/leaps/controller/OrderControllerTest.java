@@ -6,7 +6,6 @@ import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
-import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -14,7 +13,6 @@ import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -53,8 +51,7 @@ class OrderControllerTest {
         User user = new User();
         String razorpayId = "razorpay123";
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = orderController.placeOrder(razorpayId, request);
@@ -100,8 +97,7 @@ class OrderControllerTest {
         User user = new User();
         List<OrderDto> orderDtoList = Collections.singletonList(new OrderDto());
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.listOrders(user)).thenReturn(orderDtoList);
 
         // Act
@@ -126,8 +122,7 @@ class OrderControllerTest {
         Long orderId = 1L;
         Order order = new Order();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getOrder(orderId, user)).thenReturn(order);
 
         // Act
@@ -152,8 +147,7 @@ class OrderControllerTest {
         Long orderItemId = 1L;
         String orderStatus = "IN TRANSIT";
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(new OrderItem());
 
         // Act
@@ -179,8 +173,7 @@ class OrderControllerTest {
         Long orderItemId = 1L;
         String orderStatus = "IN TRANSIT";
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
 
         // Act
@@ -203,8 +196,7 @@ class OrderControllerTest {
         User user = new User();
         List<ProductDto> productDtoList = Collections.singletonList(new ProductDto());
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getRentedOutProducts(user, 0, 100)).thenReturn(productDtoList);
 
         // Act
@@ -229,8 +221,7 @@ class OrderControllerTest {
         String shippingStatus = "SHIPPED";
         List<OrderItemDto> orderItemDtoList = Collections.singletonList(new OrderItemDto());
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getOrdersItemByStatus(shippingStatus, user)).thenReturn(orderItemDtoList);
 
         // Act
@@ -256,8 +247,7 @@ class OrderControllerTest {
         Order order = new Order();
         byte[] pdfBytes = new byte[1024]; // Mock PDF bytes
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getOrder(orderId, user)).thenReturn(order);
         when(orderService.generateInvoicePDF(anyList(), eq(user), eq(order))).thenReturn(pdfBytes);
 
@@ -285,8 +275,7 @@ class OrderControllerTest {
         Long orderId = 1L;
         Order order = new Order();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(orderService.getOrder(orderId, user)).thenReturn(order);
         when(orderService.generateInvoicePDF(anyList(), eq(user), eq(order)))
                 .thenThrow(new DocumentException("PDF generation failed"));

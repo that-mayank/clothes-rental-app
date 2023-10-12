@@ -34,30 +34,37 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "email")
     private String email;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @JsonIgnore
+    @Column(name = "password")
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
+    @Column(name = "profile_image_url")
     private String profileImageUrl;
 
     @JsonIgnore
+    @Column(name = "device_token")
     private String deviceToken;
 
-    // Relationships
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Address> addresses;
 
     // Lazy maintained here because user mostly lands on borrower flow and here products represents products added in owner flow
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> products;
 

@@ -64,9 +64,7 @@ public class OrderController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to place order
 
@@ -85,9 +83,7 @@ public class OrderController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to get orders
 
@@ -106,9 +102,7 @@ public class OrderController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         //Calling service layer to get order items
 
@@ -130,9 +124,7 @@ public class OrderController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         //Guard Statement : Check if order item belongs to the current user
 
@@ -157,9 +149,7 @@ public class OrderController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         //Calling service layer to get owner order received history
 
@@ -180,9 +170,7 @@ public class OrderController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         //Calling service layer to get orders by shipping/order status
 
@@ -202,9 +190,7 @@ public class OrderController {
 
             // JWT : Extracting user info from token
 
-            String authorizationHeader = request.getHeader("Authorization");
-            String token = authorizationHeader.substring(7);
-            User user = helper.getUser(token);
+            User user = helper.getUser(request);
 
             //Guard Statement : Check if order item belongs to the current user
 

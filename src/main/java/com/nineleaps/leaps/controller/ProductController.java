@@ -55,9 +55,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard Statement : Validating quantity should not be zero
 
@@ -94,9 +92,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service to get list of products
 
@@ -115,9 +111,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard Statement : Check if product is present in DB or not
 
@@ -154,9 +148,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         //Calling service layer to fetch the products accordingly
 
@@ -181,9 +173,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to fetch the products accordingly
 
@@ -232,9 +222,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to get products
 
@@ -255,9 +243,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to list products in descending order
 
@@ -276,9 +262,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to list products
 
@@ -311,9 +295,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard statement : To check user is valid
 
@@ -345,9 +327,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard Statement : To check product belongs to current user
 
@@ -373,9 +353,7 @@ public class ProductController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard Statement : To check product belongs to current user
 

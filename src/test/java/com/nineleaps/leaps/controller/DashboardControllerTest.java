@@ -53,8 +53,7 @@ class DashboardControllerTest {
         User user = new User();
         DashboardDto dashboardDto = new DashboardDto();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(dashboardService.dashboardOwnerView(user)).thenReturn(dashboardDto);
 
         // Act
@@ -75,8 +74,7 @@ class DashboardControllerTest {
         User user = new User();
         List<DashboardAnalyticsDto> dashboardAnalyticsDtoList = Collections.singletonList(new DashboardAnalyticsDto());
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(dashboardService.analytics(user)).thenReturn(dashboardAnalyticsDtoList);
 
         // Act
@@ -97,8 +95,7 @@ class DashboardControllerTest {
         User user = new User();
         Map<Year, Map<YearMonth, Map<String, Object>>> yearlyDataMap = Collections.singletonMap(Year.of(2023), Collections.emptyMap());
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(orderService.onClickDashboardYearWiseData(user)).thenReturn(yearlyDataMap);
 
         // Act
@@ -119,8 +116,7 @@ class DashboardControllerTest {
         User user = new User();
         Map<YearMonth, List<OrderReceivedDto>> monthlyOrderItemsMap = Collections.singletonMap(YearMonth.of(2023, 9), Collections.emptyList());
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(orderService.getOrderedItemsByMonth(user)).thenReturn(monthlyOrderItemsMap);
 
         // Act
@@ -144,8 +140,7 @@ class DashboardControllerTest {
                 Collections.singletonMap("CategoryName", new OrderItemsData())
         );
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(orderService.getOrderItemsBySubCategories(user)).thenReturn(orderItemsBySubCategoriesMap);
 
         // Act
@@ -169,8 +164,7 @@ class DashboardControllerTest {
                 Collections.singletonMap("CategoryName", new OrderItemsData())
         );
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(orderService.getOrderItemsByCategories(user)).thenReturn(orderItemsByCategoriesMap);
 
         // Act
@@ -196,8 +190,7 @@ class DashboardControllerTest {
                 Collections.emptyList()
         );
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate)).thenReturn(orderItemsByDateRangeMap);
 
         // Act

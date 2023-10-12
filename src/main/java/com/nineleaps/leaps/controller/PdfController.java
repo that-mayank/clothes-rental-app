@@ -48,9 +48,7 @@ public class PdfController {
     @PreAuthorize("hasAuthority('OWNER')")
 
     public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         Document document = pdfService.getPdf(user);
 

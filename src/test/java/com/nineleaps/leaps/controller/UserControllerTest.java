@@ -26,7 +26,7 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -77,11 +77,11 @@ class UserControllerTest {
     @Test
     void getAllUsers_ShouldReturnListOfUsers() {
         // Arrange
-        List<User> expectedUsers = Arrays.asList(new User(), new User());
+        List<UserDto> expectedUsers = List.of(new UserDto(new User()), new UserDto(new User()));
         when(userServiceInterface.getUsers()).thenReturn(expectedUsers);
 
         // Act
-        ResponseEntity<List<User>> response = userController.getAllUsers();
+        ResponseEntity<List<UserDto>> response = userController.getAllUsers();
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -92,13 +92,11 @@ class UserControllerTest {
     void switchProfile_WithNonGuestRole_ShouldReturnApiResponse() throws AuthenticationFailException, UserNotExistException, IOException {
         // Arrange
         Role profile = Role.OWNER;
-        String token = "token";
         User user = new User();
         user.setRole(Role.BORROWER);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.switchProfile(profile, response, request);
@@ -114,11 +112,9 @@ class UserControllerTest {
     void switchProfile_WithNonGuestRoleAndInvalidUser_ShouldThrowUserNotExistException() throws AuthenticationFailException, UserNotExistException, IOException {
         // Arrange
         Role profile = Role.OWNER;
-        String token = "token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(null);
+        when(helper.getUser((request))).thenReturn(null);
 
         // Act & Assert
         assertThrows(UserNotExistException.class, () -> userController.switchProfile(profile, response, request));
@@ -131,10 +127,8 @@ class UserControllerTest {
         // Arrange
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User oldUser = new User();
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(oldUser);
+        when(helper.getUser((request))).thenReturn(oldUser);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateProfile(profileUpdateDto, request);
@@ -150,9 +144,7 @@ class UserControllerTest {
         // Arrange
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(null);
+        when(helper.getUser((request))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateProfile(profileUpdateDto, request);
@@ -167,11 +159,9 @@ class UserControllerTest {
     void getUser_ShouldReturnUserDto() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
         UserDto expectedUserDto = new UserDto(user);
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(userServiceInterface.getUser((user))).thenReturn(expectedUserDto);
 
         // Act
@@ -187,10 +177,8 @@ class UserControllerTest {
         // Arrange
         String profileImageUrl = "profileImageUrl";
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.profileImage(profileImageUrl, request);
@@ -206,9 +194,7 @@ class UserControllerTest {
         // Arrange
         String profileImageUrl = "profileImageUrl";
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer " + token);
-        when(helper.getUser((token))).thenReturn(null);
+        when(helper.getUser((request))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.profileImage(profileImageUrl, request);
@@ -229,20 +215,19 @@ class UserControllerTest {
         user.setEmail("user@example.com");
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(securityUtility.isRefreshTokenExpired(token)).thenReturn(true);
-        when(helper.getUser(token)).thenReturn(user);
+        when(securityUtility.isTokenExpired(token)).thenReturn(true);
+        when(helper.getUser(request)).thenReturn(user);
         when(securityUtility.updateAccessTokenViaRefreshToken(user.getEmail(), request, token)).thenReturn("new_access_token");
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateTokenUsingRefreshToken(request, response);
 
         // Assert
-        verify(helper, times(1)).getUser(token);
-        verify(securityUtility, times(1)).isRefreshTokenExpired(token);
+        verify(securityUtility, times(1)).isTokenExpired(token);
         verify(securityUtility, times(1)).updateAccessTokenViaRefreshToken(user.getEmail(), request, token);
         verify(response, times(1)).setHeader("access_token", "new_access_token");
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
-        assertTrue(apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -255,18 +240,17 @@ class UserControllerTest {
         user.setEmail("user@example.com");
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(securityUtility.isRefreshTokenExpired(token)).thenReturn(false);
+        when(securityUtility.isTokenExpired(token)).thenReturn(false);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateTokenUsingRefreshToken(request, response);
 
         // Assert
-        verify(helper, times(0)).getUser(token);
-        verify(securityUtility, times(1)).isRefreshTokenExpired(token);
+        verify(securityUtility, times(1)).isTokenExpired(token);
         verify(securityUtility, times(0)).updateAccessTokenViaRefreshToken(user.getEmail(), request, token);
         verify(response, never()).setHeader(any(), any());
         assertEquals(HttpStatus.UNAUTHORIZED, apiResponse.getStatusCode());
-        assertFalse(apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -277,7 +261,7 @@ class UserControllerTest {
         User user = new User();
         user.setEmail("user@example.com");
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.logout(request);
@@ -285,7 +269,7 @@ class UserControllerTest {
         // Assert
         verify(refreshTokenService, times(1)).deleteRefreshTokenByEmailAndToken(user.getEmail(), token);
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
-        assertTrue(apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
 }

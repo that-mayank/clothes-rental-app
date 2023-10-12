@@ -76,11 +76,11 @@ class SecurityUtilityTest {
 
         // Act
 
-        boolean isExpired = securityUtility.isAccessTokenExpired(accessToken);
+        boolean isExpired = securityUtility.isTokenExpired(accessToken);
 
         // Assert
 
-        assertFalse(isExpired);
+        assertTrue(isExpired);
 
     }
 
@@ -94,11 +94,11 @@ class SecurityUtilityTest {
 
         // Act
 
-        boolean isExpired = securityUtility.isAccessTokenExpired(accessToken);
+        boolean isExpired = securityUtility.isTokenExpired(accessToken);
 
         // Assert
 
-        assertTrue(isExpired);
+        assertFalse(isExpired);
 
     }
 

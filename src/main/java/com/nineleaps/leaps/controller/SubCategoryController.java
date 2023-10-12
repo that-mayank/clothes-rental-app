@@ -50,9 +50,7 @@ public class SubCategoryController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard Statement : Check user role is admin or not
 
@@ -126,9 +124,7 @@ public class SubCategoryController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Guard Statement : Check user role is admin or not
 

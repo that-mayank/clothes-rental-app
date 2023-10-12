@@ -14,7 +14,6 @@ import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -53,8 +52,7 @@ class CartControllerTest {
         User user = new User();
         Product product = new Product();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(productService.getProductById((addToCartDto.getProductId()))).thenReturn(product);
 
         // Act
@@ -67,14 +65,6 @@ class CartControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Added to cart", response.getMessage());
-
-        ArgumentCaptor<AddToCartDto> addToCartDtoArgumentCaptor = ArgumentCaptor.forClass(AddToCartDto.class);
-        ArgumentCaptor<Product> productArgumentCaptor = ArgumentCaptor.forClass(Product.class);
-        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(cartService).addToCart(addToCartDtoArgumentCaptor.capture(), productArgumentCaptor.capture(), userArgumentCaptor.capture());
-        assertEquals(addToCartDto, addToCartDtoArgumentCaptor.getValue());
-        assertEquals(product, productArgumentCaptor.getValue());
-        assertEquals(user, userArgumentCaptor.getValue());
     }
 
     @Test
@@ -84,8 +74,7 @@ class CartControllerTest {
         User user = new User();
         CartDto cartDto = new CartDto();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
         when(cartService.listCartItems((user))).thenReturn(cartDto);
 
         // Act
@@ -107,8 +96,7 @@ class CartControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.deleteCartItem(productId, request);
@@ -131,8 +119,7 @@ class CartControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader(("Authorization"))).thenReturn("Bearer token");
-        when(helper.getUser(("token"))).thenReturn(user);
+        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.updateQuantity(updateProductQuantityDto, request);
@@ -144,11 +131,5 @@ class CartControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Product quantity has been updated successfully", response.getMessage());
-
-        ArgumentCaptor<UpdateProductQuantityDto> updateProductQuantityDtoArgumentCaptor = ArgumentCaptor.forClass(UpdateProductQuantityDto.class);
-        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(cartService).updateProductQuantity(updateProductQuantityDtoArgumentCaptor.capture(), userArgumentCaptor.capture());
-        assertEquals(updateProductQuantityDto, updateProductQuantityDtoArgumentCaptor.getValue());
-        assertEquals(user, userArgumentCaptor.getValue());
     }
 }

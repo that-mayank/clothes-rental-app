@@ -53,9 +53,7 @@ public class DashboardController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to get details
 
@@ -73,9 +71,7 @@ public class DashboardController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to get DashboardAnalyticsDto
 
@@ -94,9 +90,7 @@ public class DashboardController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to get data
 
@@ -115,9 +109,7 @@ public class DashboardController {
 
         // JWT: Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to retrieve monthly order items
 
@@ -136,9 +128,7 @@ public class DashboardController {
 
         // JWT: Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to retrieve order items by subcategories
 
@@ -157,9 +147,7 @@ public class DashboardController {
 
         // JWT: Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to retrieve order items by categories
 
@@ -175,9 +163,7 @@ public class DashboardController {
     @PreAuthorize("hasAuthority('OWNER')")
 
     public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboardBwDates(HttpServletRequest request, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
         Map<YearMonth, List<OrderReceivedDto>> body = orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate);
         return new ResponseEntity<>(body, HttpStatus.OK);
     }

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -66,7 +67,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // Set device token if available
         if (deviceToken != null) {
-            securityUtility.getDeviceToken(email, deviceToken);
+            securityUtility.setDeviceToken(email, deviceToken);
         }
         return authenticationManager.authenticate(authenticationToken);
 
@@ -81,8 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String secret = securityUtility.readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         // Update access token expiration time dynamically
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(2); // Update to desired expiration time 24hrs or one day
+        LocalDateTime accessTokenExpirationTime = LocalDateTime.now().plusHours(24); // Update to desired expiration time 24hrs or one day
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
@@ -92,7 +92,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 
         // Update refresh token expiration time dynamically
-        LocalDateTime refreshTokenExpirationTime = now.plusMinutes(43200); // Update to desired expiration time 30 days
+        LocalDateTime refreshTokenExpirationTime = LocalDateTime.now().plusDays(30); // Update to desired expiration time 30 days
         Date refreshTokenExpirationDate = Date.from(refreshTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())

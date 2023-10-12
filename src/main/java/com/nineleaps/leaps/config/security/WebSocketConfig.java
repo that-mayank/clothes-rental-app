@@ -14,15 +14,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        log.info("web socket configure");
         config.enableSimpleBroker("/lesson");
         config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-
-        log.info("stomp  endpoint config method");
-        registry.addEndpoint("/gs-guide-websocket").withSockJS();
+        registry
+                .addEndpoint("/gs-guide-websocket")
+                .withSockJS();
     }
 }

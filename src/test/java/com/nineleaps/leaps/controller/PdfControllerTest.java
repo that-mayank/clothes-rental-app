@@ -49,8 +49,7 @@ class PdfControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer Token");
-        when(helper.getUser("Token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         Document document = mock(Document.class);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

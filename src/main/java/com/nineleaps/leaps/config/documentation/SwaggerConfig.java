@@ -18,11 +18,11 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -31,28 +31,50 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.nineleaps.leaps"))
                 .build()
-                .securitySchemes(Arrays.asList(apiKey()))
-                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(List.of(apiKey()))
+                .securityContexts(List.of(securityContext()))
                 .pathMapping("/")
                 .useDefaultResponseMessages(false)
                 .directModelSubstitute(LocalDate.class, String.class)
                 .genericModelSubstitutes(ResponseEntity.class);
     }
+
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey(
+                "JWT",
+                "Authorization",
+                "header"
+        );
     }
+
     private SecurityContext securityContext() {
-        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+        return SecurityContext
+                .builder()
+                .securityReferences(defaultAuth())
+                .build();
     }
+
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope authorizationScope = new AuthorizationScope(
+                "global",
+                "accessEverything"
+        );
+
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+        return List.of(
+                new SecurityReference(
+                        "JWT",
+                        authorizationScopes
+                ));
     }
 
     private ApiInfo getApiInfo() {
-        Contact contact = new Contact("Leaps Dev Team", "https://github.com/that-mayank", "mayank.01@nineleaps.com");
+        Contact contact = new Contact(
+                "Leaps Dev Team",
+                "https://github.com/that-mayank/clothes-rental-app",
+                "mayank.01@nineleaps.com");
+
         return new ApiInfoBuilder()
                 .title("Leaps API")
                 .description("Clothes Rental Application")

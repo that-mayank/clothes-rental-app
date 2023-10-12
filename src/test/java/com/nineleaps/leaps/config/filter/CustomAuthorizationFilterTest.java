@@ -176,7 +176,7 @@ class CustomAuthorizationFilterTest {
 
         // Mock securityUtility methods
 
-        when(securityUtility.isAccessTokenExpired(token)).thenReturn(true);
+        when(securityUtility.isTokenExpired(token)).thenReturn(true);
 
         when(securityUtility.updateAccessToken(email, request)).thenReturn(newAccessToken);
 
@@ -216,7 +216,7 @@ class CustomAuthorizationFilterTest {
 
         // Mock securityUtility methods
 
-        when(securityUtility.isAccessTokenExpired(token)).thenReturn(false);
+        when(securityUtility.isTokenExpired(token)).thenReturn(false);
 
         // Set the authorization header
 

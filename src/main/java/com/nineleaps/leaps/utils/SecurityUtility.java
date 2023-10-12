@@ -31,27 +31,21 @@ public class SecurityUtility {
     private final UserServiceInterface userServiceInterface;
     private RefreshTokenRepository refreshTokenRepository;
 
-    public void getDeviceToken(String email,String deviceToken){
+    public void setDeviceToken(String email,String deviceToken){
         userServiceInterface.saveDeviceTokenToUser(email,deviceToken);
     }
 
-    public boolean isAccessTokenExpired(String accessToken) {
-        DecodedJWT decodedAccessToken = JWT.decode(accessToken);
-        Date expirationDate = decodedAccessToken.getExpiresAt();
-        return expirationDate.before(new Date());
-    }
-    public boolean isRefreshTokenExpired(String refreshToken) {
-        DecodedJWT decodedAccessToken = JWT.decode(refreshToken);
-        Date expirationDate = decodedAccessToken.getExpiresAt();
+    public boolean isTokenExpired(String token) {
+        DecodedJWT decodedToken = JWT.decode(token);
+        Date expirationDate = decodedToken.getExpiresAt();
         return !expirationDate.before(new Date());
     }
 
-
-    public boolean saveTokens(String rtoken, String email) {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(rtoken);
-        refreshToken.setEmail(email);
-        refreshTokenRepository.save(refreshToken);
+    public boolean saveTokens(String refreshToken, String email) {
+        RefreshToken token = new RefreshToken();
+        token.setToken(refreshToken);
+        token.setEmail(email);
+        refreshTokenRepository.save(token);
         return true;
     }
 
@@ -82,7 +76,7 @@ public class SecurityUtility {
 
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
-        if(isRefreshTokenExpired(token)){
+        if(isTokenExpired(token)){
             if(Objects.equals(token, tokenToCheck)){
                 String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
                 String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;

@@ -20,8 +20,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 
 @Component
 @AllArgsConstructor
@@ -30,17 +28,14 @@ public class SwitchProfile {
     private final Helper helper;
 
     public void generateTokenForSwitchProfile(HttpServletResponse response, Role profile, HttpServletRequest request) throws IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
         String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String role = profile.toString();
         String[] roles = new String[]{role};
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time
+        LocalDateTime accessTokenExpirationTime = LocalDateTime.now().plusHours(24); // Update to desired expiration time
         Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
         String accessToken = JWT.create()
                 .withSubject(user.getEmail())

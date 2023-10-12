@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserServiceInterface {
     ResponseDto signUp(SignupDto signupDto);
-    List<User> getUsers();
+    List<UserDto> getUsers();
     void saveProfile(User user);
     User getUser(String email);
     UserDto getUser(User user);

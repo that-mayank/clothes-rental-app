@@ -62,9 +62,7 @@ class ProductControllerTest {
         List<Category> categories = new ArrayList<>();
         List<SubCategory> subCategories = new ArrayList<>();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(categoryService.getCategoriesFromIds(anyList())).thenReturn(categories);
         when(subCategoryService.getSubCategoriesFromIds(anyList())).thenReturn(subCategories);
         doNothing().when(productService).addProduct(any(ProductDto.class), anyList(), anyList(), any(User.class));
@@ -89,9 +87,7 @@ class ProductControllerTest {
         User user = new User();
         ProductDto productDto = new ProductDto();
         productDto.setTotalQuantity(0);
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = productController.addProduct(productDto, request);
@@ -112,9 +108,7 @@ class ProductControllerTest {
         // Arrange
         User user = new User();
         List<ProductDto> productList = new ArrayList<>();
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.listProducts(anyInt(), anyInt(), any(User.class))).thenReturn(productList);
 
         // Act
@@ -140,9 +134,7 @@ class ProductControllerTest {
         List<SubCategory> subCategories = new ArrayList<>();
         Optional<Product> optionalProduct = Optional.of(new Product());
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
         when(categoryService.getCategoriesFromIds(anyList())).thenReturn(categories);
         when(subCategoryService.getSubCategoriesFromIds(anyList())).thenReturn(subCategories);
@@ -171,9 +163,7 @@ class ProductControllerTest {
 
         Optional<Product> optionalProduct = Optional.empty();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
 
         // Act
@@ -199,9 +189,7 @@ class ProductControllerTest {
         List<ProductDto> productList = new ArrayList<>();
 
         when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(optionalSubCategory);
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.listProductsById(subcategoryId, user)).thenReturn(productList);
 
         // Act
@@ -247,9 +235,7 @@ class ProductControllerTest {
         List<ProductDto> productList = new ArrayList<>();
 
         when(categoryService.readCategory(categoryId)).thenReturn(optionalCategory);
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.listProductsByCategoryId(categoryId, user)).thenReturn(productList);
 
         // Act
@@ -336,9 +322,7 @@ class ProductControllerTest {
         String query = "test";
         List<ProductDto> productList = new ArrayList<>();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.searchProducts(query, user)).thenReturn(productList);
 
         // Act
@@ -360,9 +344,7 @@ class ProductControllerTest {
         User user = new User();
         List<ProductDto> productList = new ArrayList<>();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.listProductsDesc(user)).thenReturn(productList);
 
         // Act
@@ -384,9 +366,7 @@ class ProductControllerTest {
         User user = new User();
         List<ProductDto> productList = new ArrayList<>();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.listOwnerProducts(user)).thenReturn(productList);
 
         // Act
@@ -436,9 +416,7 @@ class ProductControllerTest {
         user.setId(1L);
         Optional<Product> optionalProduct = Optional.of(product);
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
 
         // Act
@@ -466,9 +444,7 @@ class ProductControllerTest {
         product.setId(productId);
         Optional<Product> optionalProduct = Optional.empty();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
 
@@ -496,9 +472,7 @@ class ProductControllerTest {
         User user = new User();
         Product product = new Product();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.getProduct(productId, user.getId())).thenReturn(product);
 
         // Act
@@ -523,9 +497,7 @@ class ProductControllerTest {
         User user = new User();
         user.setId(1L);
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.getProduct(productId, user.getId())).thenReturn(null);
 
         // Act
@@ -553,9 +525,7 @@ class ProductControllerTest {
         User user = new User();
         Product product = new Product();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.getProduct(productId, user.getId())).thenReturn(product);
 
         // Act
@@ -579,9 +549,7 @@ class ProductControllerTest {
         int quantity = 10;
         User user = new User();
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-        when(request.getHeader("Authorization").substring(7)).thenReturn("numberstoken");
-        when(helper.getUser("token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.getProduct(productId, user.getId())).thenReturn(null);
 
         // Act

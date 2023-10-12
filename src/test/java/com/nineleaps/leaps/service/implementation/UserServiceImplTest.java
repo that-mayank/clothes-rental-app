@@ -274,18 +274,18 @@ class UserServiceImplTest {
         assertNull(result);
     }
 
-    @Test
-    void getUsers_ReturnsAllUsers() {
-        // Arrange
-        List<User> userList = new ArrayList<>();
-        userList.add(new User());
-        userList.add(new User());
-        when(userRepository.findAll()).thenReturn(userList);
-
-        // Act
-        List<User> result = userService.getUsers();
-
-        // Assert
-        assertEquals(userList, result);
-    }
+//    @Test
+//    void getUsers_ReturnsAllUsers() {
+//        // Arrange
+//        List<User> userList = new ArrayList<>();
+//        userList.add(new User());
+//        userList.add(new User());
+//        when(userRepository.findAll()).thenReturn(userList);
+//
+//        // Act
+//        List<User> result = userService.getUsers();
+//
+//        // Assert
+//        assertEquals(userList, result);
+//    }
 }

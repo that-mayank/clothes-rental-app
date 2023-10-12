@@ -21,10 +21,16 @@ public class StorageConfig {
 
     @Bean
     public AmazonS3 s3Client() {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, accessSecret);
-        return AmazonS3ClientBuilder.standard()
+        AWSCredentials credentials = new BasicAWSCredentials(
+                accessKey,
+                accessSecret
+        );
+
+        return AmazonS3ClientBuilder
+                .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(region).build();
+                .withRegion(region)
+                .build();
     }
 
 }

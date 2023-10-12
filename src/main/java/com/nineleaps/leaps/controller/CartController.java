@@ -55,9 +55,7 @@ public class CartController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
 
         // Retrieve product from id
@@ -81,9 +79,7 @@ public class CartController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to get all products from cart
 
@@ -102,9 +98,7 @@ public class CartController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to remove product from cart
 
@@ -125,9 +119,7 @@ public class CartController {
 
         // JWT : Extracting user info from token
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
-        User user = helper.getUser(token);
+        User user = helper.getUser(request);
 
         // Calling service layer to update product quantity in cart
 

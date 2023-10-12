@@ -36,22 +36,20 @@ class WishlistControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void addWishlist_WithValidProduct_ShouldReturnCreatedStatus() {
         // Arrange
         long productId = 1L;
-        String token = "valid_token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setId(1L);
         Product product = new Product();
         product.setId(productId);
         Optional<Product> optionalProduct = Optional.of(product);
-        when(helper.getUser(token)).thenReturn(user);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
         when(wishlistService.readWishlist(user.getId())).thenReturn(new ArrayList<>());
         doNothing().when(wishlistService).createWishlist(any(Wishlist.class));
@@ -60,7 +58,6 @@ class WishlistControllerTest {
         ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
 
         // Assert
-        verify(helper, times(1)).getUser(token);
         verify(productService, times(1)).readProduct(productId);
         verify(wishlistService, times(1)).readWishlist(user.getId());
         verify(wishlistService, times(1)).createWishlist(any(Wishlist.class));
@@ -72,19 +69,16 @@ class WishlistControllerTest {
     void addWishlist_WithInvalidProduct_ShouldReturnNotFoundStatus() {
         // Arrange
         long productId = 1L;
-        String token = "valid_token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setId(1L);
-        when(helper.getUser(token)).thenReturn(user);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
 
         // Assert
-        verify(helper, times(1)).getUser(token);
         verify(productService, times(1)).readProduct(productId);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
@@ -94,7 +88,6 @@ class WishlistControllerTest {
     void addWishlist_WithExistingProductInWishlist_ShouldReturnConflictStatus() {
         // Arrange
         long productId = 1L;
-        String token = "valid_token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setId(1L);
@@ -104,8 +97,7 @@ class WishlistControllerTest {
         Wishlist wishlistItem = new Wishlist(product, user);
         List<Wishlist> wishlistItems = new ArrayList<>();
         wishlistItems.add(wishlistItem);
-        when(helper.getUser(token)).thenReturn(user);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
         when(wishlistService.readWishlist(user.getId())).thenReturn(wishlistItems);
 
@@ -113,7 +105,6 @@ class WishlistControllerTest {
         ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
 
         // Assert
-        verify(helper, times(1)).getUser(token);
         verify(productService, times(1)).readProduct(productId);
         verify(wishlistService, times(1)).readWishlist(user.getId());
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
@@ -123,12 +114,10 @@ class WishlistControllerTest {
     @Test
     void getWishlist_WithValidToken_ShouldReturnWishlist() {
         // Arrange
-        String token = "valid_token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setId(1L);
-        when(helper.getUser(token)).thenReturn(user);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(helper.getUser(request)).thenReturn(user);
         List<Wishlist> wishlistItems = new ArrayList<>();
         Product product1 = new Product();
         product1.setId(1L);
@@ -142,7 +131,6 @@ class WishlistControllerTest {
         ResponseEntity<List<ProductDto>> response = wishlistController.getWishlist(request);
 
         // Assert
-        verify(helper, times(1)).getUser(token);
         verify(wishlistService, times(1)).readWishlist(user.getId());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, Objects.requireNonNull(response.getBody()).size());
@@ -152,19 +140,16 @@ class WishlistControllerTest {
     void removeFromWishlist_WithValidProductAndToken_ShouldReturnOkStatus() {
         // Arrange
         long productId = 1L;
-        String token = "valid_token";
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setId(1L);
-        when(helper.getUser(token)).thenReturn(user);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(helper.getUser(request)).thenReturn(user);
         doNothing().when(wishlistService).removeFromWishlist(user.getId(), productId);
 
         // Act
         ResponseEntity<ApiResponse> response = wishlistController.removeFromWishlist(productId, request);
 
         // Assert
-        verify(helper, times(1)).getUser(token);
         verify(wishlistService, times(1)).removeFromWishlist(user.getId(), productId);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());

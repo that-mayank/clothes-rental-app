@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,7 +57,7 @@ class SwitchProfileTest {
 
     @Test
 
-    void generateTokenForSwitchProfile_ValidToken_Success() throws IOException {
+    void generateTokenForSwitchProfile_ValidToken_Success() {
 
         // Arrange
 
@@ -78,7 +77,7 @@ class SwitchProfileTest {
 
         User user = new User();
 
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
 
@@ -100,8 +99,6 @@ class SwitchProfileTest {
 
         // Arrange
 
-        String invalidToken = "invalidToken";
-
         Role profile = Role.ADMIN;
 
         HttpServletRequest request = new MockHttpServletRequest();
@@ -110,7 +107,7 @@ class SwitchProfileTest {
 
         // Mock the behavior of the helper class to throw a RuntimeException
 
-        doThrow(new RuntimeException("Failed to get user")).when(helper).getUser(invalidToken);
+        doThrow(new RuntimeException("Failed to get user")).when(helper).getUser(request);
 
         // Act & Assert
 

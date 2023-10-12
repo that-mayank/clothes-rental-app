@@ -24,6 +24,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
@@ -179,8 +180,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
 
     // Get a list of all users from the database.
     @Override
-    public List<User> getUsers() {
-        log.info("getting all users from the database");
-        return userRepository.findAll();
+    public List<UserDto> getUsers() {
+        return userRepository.findAll().stream().map(UserDto::new).collect(Collectors.toList());
     }
 }

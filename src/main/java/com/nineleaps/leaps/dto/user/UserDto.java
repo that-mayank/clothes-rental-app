@@ -5,9 +5,6 @@ import com.nineleaps.leaps.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
-
-import java.util.Objects;
-
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
 
 @Getter
@@ -34,38 +31,4 @@ public class UserDto {
             this.profileImageUrl = NGROK + user.getProfileImageUrl();
         }
     }
-
-    @Override
-    public String toString() {
-        return "UserDto{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", role=" + role +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserDto userDto = (UserDto) o;
-        return Objects.equals(id, userDto.id) &&
-                Objects.equals(firstName, userDto.firstName) &&
-                Objects.equals(lastName, userDto.lastName) &&
-                Objects.equals(email, userDto.email) &&
-                Objects.equals(phoneNumber, userDto.phoneNumber) &&
-                role == userDto.role &&
-                Objects.equals(profileImageUrl, userDto.profileImageUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, phoneNumber, role, profileImageUrl);
-    }
-
-
-
-
 }

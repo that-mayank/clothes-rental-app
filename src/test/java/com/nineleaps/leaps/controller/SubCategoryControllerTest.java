@@ -55,8 +55,7 @@ class SubCategoryControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setRole(Role.ADMIN);
-        when(request.getHeader("Authorization")).thenReturn("Bearer Token");
-        when(helper.getUser("Token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.of(category));
         when(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category)).thenReturn(null);
 
@@ -80,11 +79,9 @@ class SubCategoryControllerTest {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
         user.setRole(Role.BORROWER); // Non-admin role
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto, request);
@@ -92,7 +89,7 @@ class SubCategoryControllerTest {
         // Assert
         verify(subCategoryService, never()).createSubCategory(any(), any());
         assertEquals(HttpStatus.FORBIDDEN, apiResponse.getStatusCode());
-        assertFalse(apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -101,11 +98,9 @@ class SubCategoryControllerTest {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
         user.setRole(Role.ADMIN);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.empty());
 
         // Act
@@ -114,7 +109,7 @@ class SubCategoryControllerTest {
         // Assert
         verify(subCategoryService, never()).createSubCategory(any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -128,8 +123,7 @@ class SubCategoryControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setRole(Role.ADMIN);
-        when(request.getHeader("Authorization")).thenReturn("Bearer Token");
-        when(helper.getUser("Token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.of(category));
         when(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category)).thenReturn(new SubCategory());
@@ -141,7 +135,7 @@ class SubCategoryControllerTest {
         verify(subCategoryService, never()).createSubCategory(any(), any());
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals("Sub Category already exists", response.getBody().getMessage());
+        assertEquals("Sub Category already exists", Objects.requireNonNull(response.getBody()).getMessage());
         assertFalse(response.getBody().isSuccess());
     }
 
@@ -186,7 +180,7 @@ class SubCategoryControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody().isEmpty());
+        assertTrue(Objects.requireNonNull(response.getBody()).isEmpty());
     }
 
     @Test
@@ -200,8 +194,7 @@ class SubCategoryControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
         user.setRole(Role.ADMIN);
-        when(request.getHeader("Authorization")).thenReturn("Bearer Token");
-        when(helper.getUser("Token")).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.of(category));
         when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(Optional.of(new SubCategory(subCategoryDto, category)));
@@ -212,7 +205,7 @@ class SubCategoryControllerTest {
         // Assert
         verify(subCategoryService, times(1)).updateSubCategory(subcategoryId, subCategoryDto, category);
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertTrue(apiResponse.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -222,11 +215,9 @@ class SubCategoryControllerTest {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
         user.setRole(Role.BORROWER); // Non-admin role
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto, request);
@@ -234,7 +225,7 @@ class SubCategoryControllerTest {
         // Assert
         verify(subCategoryService, never()).updateSubCategory(any(), any(), any());
         assertEquals(HttpStatus.FORBIDDEN, apiResponse.getStatusCode());
-        assertFalse(apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -244,11 +235,9 @@ class SubCategoryControllerTest {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
         user.setRole(Role.ADMIN);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.empty());
 
         // Act
@@ -257,7 +246,7 @@ class SubCategoryControllerTest {
         // Assert
         verify(subCategoryService, never()).updateSubCategory(any(), any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test
@@ -267,11 +256,9 @@ class SubCategoryControllerTest {
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setCategoryId(1L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        String token = "token";
         User user = new User();
         user.setRole(Role.ADMIN);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(helper.getUser(token)).thenReturn(user);
+        when(helper.getUser(request)).thenReturn(user);
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.of(new Category()));
         when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(Optional.empty());
 
@@ -281,6 +268,6 @@ class SubCategoryControllerTest {
         // Assert
         verify(subCategoryService, never()).updateSubCategory(any(), any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(apiResponse.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 }

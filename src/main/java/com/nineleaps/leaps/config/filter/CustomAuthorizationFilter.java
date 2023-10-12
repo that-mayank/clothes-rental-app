@@ -5,7 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.utils.SecurityUtility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,19 +25,19 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-
 @Slf4j
+@RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final SecurityUtility securityUtility;
     String bearerHeader = "Bearer ";
 
-    public CustomAuthorizationFilter(SecurityUtility securityUtility) {
-        this.securityUtility = securityUtility;
-
-    }
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String servletPath = request.getServletPath();
 
@@ -46,6 +48,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
         if (servletPath.equals("/api/v1/user/refreshToken") || servletPath.equals("/api/v1/user/logout")) {
             handleRefreshToken(request, response, filterChain);
             return;
@@ -70,15 +73,20 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    private void handleRefreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws IOException {
+
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null) {
             try {
-                String token = authorizationHeader.substring(bearerHeader.length());
-                if (securityUtility.isRefreshTokenExpired(token)) {
+                String token = authorizationHeader.substring(7);
+                if (securityUtility.isTokenExpired(token)) {
                     filterChain.doFilter(request, response);
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refreshtoken token expired");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token expired");
                 }
             } catch (Exception e) {
                 response.setStatus(FORBIDDEN.value());
@@ -90,8 +98,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleAccessToken(String token, HttpServletResponse response, FilterChain filterChain, HttpServletRequest request) throws IOException, ServletException {
-        if (!securityUtility.isAccessTokenExpired(token)) {
+    private void handleAccessToken(
+            String token,
+            HttpServletResponse response,
+            FilterChain filterChain,
+            HttpServletRequest request
+    ) throws IOException, ServletException {
+
+        if (securityUtility.isTokenExpired(token)) {
             String secretFilePath = "Desktop/leaps/secret/secret.txt";
             String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
             String secret = securityUtility.readSecretFromFile(absolutePath);
@@ -109,7 +123,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Token token expired");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access token expired");
 
         }
 

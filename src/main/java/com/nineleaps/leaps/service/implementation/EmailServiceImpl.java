@@ -21,7 +21,7 @@ public class EmailServiceImpl {
         try {
             MimeMessage mimeMessage = createMimeMessage(subject, message, to);
             javaMailSender.send(mimeMessage);
-//            log.info("Email sent successfully to: {}", to);
+            log.info("Email sent successfully to: {}", to);
 
         } catch (Exception e) {
             log.error("Failed to send email: " + e.getMessage(), e);

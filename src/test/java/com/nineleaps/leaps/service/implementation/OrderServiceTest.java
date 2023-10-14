@@ -152,7 +152,7 @@ import static org.junit.jupiter.api.Assertions.*;
         verify(cartService).listCartItems(user);
         verify(orderRepository).save(orderCaptor.capture());
         verify(cartService).deleteUserCartItems(user);
-        verify(emailServiceImpl).sendEmail(eq("Order Placed"), eq(message), eq(user.getEmail()));
+        verify(emailServiceImpl).sendEmail("Order Placed", message, user.getEmail());
         verify(pushNotificationService, times(cartItemDtos.size())).sendPushNotificationToToken(any());
 
         // Add assertions to ensure correctness of order and order items

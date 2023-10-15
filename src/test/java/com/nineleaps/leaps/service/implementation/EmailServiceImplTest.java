@@ -1,60 +1,32 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.nineleaps.leaps.service.implementation.EmailServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-class EmailServiceImplTest {
 
-    @Test
-    void sendEmail_Success() {
-        // Arrange
-        EmailServiceImpl emailService = new EmailServiceImpl();
-        String subject = "Test Subject";
-        String message = "Test Message";
-        String to = "recipient@example.com";
-        // Act
-        boolean result = emailService.sendEmail(subject, message, to);
-        // Assert
-        assertFalse(result);
-        // Additional assertions can be made to verify if the email was sent successfully.
+class EmailServiceImplTest {
+    private EmailServiceImpl emailService;
+
+    @BeforeEach
+    void setUp() {
+        emailService = new EmailServiceImpl();
     }
-    @Test
-    void sendEmail_NullRecipient() {
-        // Arrange
-        EmailServiceImpl emailService = new EmailServiceImpl();
-        String subject = "Test Subject";
-        String message = "Test Message";
-        String to = null;
+
+    @ParameterizedTest
+    @CsvSource({
+            "Test Subject, Test Message, recipient@example.com, false",
+            "Test Subject, Test Message, , false",
+            "Test Subject, Test Message, invalid_email_address, false",
+            ", Test Message, recipient@example.com, false"
+    })
+    void sendEmail_TestCases(
+            String subject, String message, String to, boolean expected) {
         // Act
         boolean result = emailService.sendEmail(subject, message, to);
         // Assert
         assertFalse(result);
-        // Additional assertions can be made to verify if the appropriate action was taken for a null recipient.
-    }
-    @Test
-    void sendEmail_InvalidRecipient() {
-        // Arrange
-        EmailServiceImpl emailService = new EmailServiceImpl();
-        String subject = "Test Subject";
-        String message = "Test Message";
-        String to = "invalid_email_address";
-        // Act
-        boolean result = emailService.sendEmail(subject, message, to);
-        // Assert
-        assertFalse(result);
-        // Additional assertions can be made to verify if the appropriate action was taken for an invalid recipient.
-    }
-    @Test
-    void sendEmail_EmptySubjectOrMessage() {
-        // Arrange
-        EmailServiceImpl emailService = new EmailServiceImpl();
-        String subject = "";
-        String message = "Test Message";
-        String to = "recipient@example.com";
-        // Act
-        boolean result = emailService.sendEmail(subject, message, to);
-        // Assert
-        assertFalse(result);
-        // Additional assertions can be made to verify if the email was sent successfully or if there was any validation on empty subject.
     }
 }

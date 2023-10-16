@@ -3,7 +3,6 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.exceptions.AddressOwnershipException;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
@@ -87,7 +86,7 @@ class AddressControllerTest {
     }
 
     @Test
-    void updateAddress_InvalidAddressId_ReturnsNotFoundResponse() throws AuthenticationFailException {
+    void updateAddress_InvalidAddressId_ReturnsNotFoundResponse() {
         // Arrange
         Long addressId = 1L;
         AddressDto addressDto = new AddressDto();
@@ -110,7 +109,7 @@ class AddressControllerTest {
     }
 
     @Test
-    void updateAddress_AddressNotBelongToCurrentUser_ReturnsForbiddenResponse() throws AuthenticationFailException {
+    void updateAddress_AddressNotBelongToCurrentUser_ReturnsForbiddenResponse() {
         // Arrange
         Long addressId = 1L;
         AddressDto addressDto = new AddressDto();
@@ -135,7 +134,7 @@ class AddressControllerTest {
     }
 
     @Test
-    void listAddress_ReturnsListOfAddresses() throws AuthenticationFailException {
+    void listAddress_ReturnsListOfAddresses() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -155,7 +154,7 @@ class AddressControllerTest {
     }
 
     @Test
-    void deleteAddress_ValidAddressId_ReturnsOkResponse() throws AuthenticationFailException {
+    void deleteAddress_ValidAddressId_ReturnsOkResponse()  {
         // Arrange
         Long addressId = 1L;
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -181,7 +180,7 @@ class AddressControllerTest {
     }
 
     @Test
-    void deleteAddress_InvalidAddressId_ReturnsNotFoundResponse() throws AuthenticationFailException {
+    void deleteAddress_InvalidAddressId_ReturnsNotFoundResponse()  {
         // Arrange
         Long addressId = 1L;
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -203,7 +202,7 @@ class AddressControllerTest {
     }
 
     @Test
-    void deleteAddress_AddressNotBelongToCurrentUser_ReturnsForbiddenResponse() throws AuthenticationFailException {
+    void deleteAddress_AddressNotBelongToCurrentUser_ReturnsForbiddenResponse() {
         // Arrange
         Long addressId = 1L;
         HttpServletRequest request = mock(HttpServletRequest.class);

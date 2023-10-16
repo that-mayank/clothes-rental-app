@@ -13,11 +13,6 @@ public class ExceptionControllerAdvice {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = AuthenticationFailException.class)
-    public final ResponseEntity<String> handleUpdateFailException(AuthenticationFailException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = CategoryNotExistException.class)
     public final ResponseEntity<String> handleUpdateFailException(CategoryNotExistException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);

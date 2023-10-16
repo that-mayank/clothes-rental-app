@@ -4,7 +4,6 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
 import com.nineleaps.leaps.model.User;
@@ -68,7 +67,7 @@ class CartControllerTest {
     }
 
     @Test
-    void getCartItems_ReturnsCartDto() throws AuthenticationFailException {
+    void getCartItems_ReturnsCartDto()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -90,7 +89,7 @@ class CartControllerTest {
 
 
     @Test
-    void deleteCartItem_ValidProductId_ReturnsOkResponse() throws AuthenticationFailException {
+    void deleteCartItem_ValidProductId_ReturnsOkResponse()  {
         // Arrange
         Long productId = 1L;
         HttpServletRequest request = mock(HttpServletRequest.class);

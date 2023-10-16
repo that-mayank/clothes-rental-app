@@ -5,7 +5,6 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -45,7 +44,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void placeOrder_ReturnsApiResponse() throws AuthenticationFailException {
+    void placeOrder_ReturnsApiResponse()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -69,7 +68,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void placeOrder_MissingRazorpayId_ReturnsBadRequest() throws AuthenticationFailException {
+    void placeOrder_MissingRazorpayId_ReturnsBadRequest()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
 
@@ -91,7 +90,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void getAllOrders_ReturnsOrderDtoList() throws AuthenticationFailException {
+    void getAllOrders_ReturnsOrderDtoList()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -115,7 +114,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void getOrderById_ReturnsOrder() throws AuthenticationFailException {
+    void getOrderById_ReturnsOrder() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -140,7 +139,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void orderInTransit_ReturnsApiResponse() throws AuthenticationFailException {
+    void orderInTransit_ReturnsApiResponse()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -166,7 +165,7 @@ class OrderControllerTest {
     }
 
     @Test
-    void orderInTransit_UnauthorizedAccess_ReturnsForbidden() throws AuthenticationFailException {
+    void orderInTransit_UnauthorizedAccess_ReturnsForbidden()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();

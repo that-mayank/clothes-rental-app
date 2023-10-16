@@ -2,7 +2,6 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
@@ -237,7 +236,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 
-    public ResponseEntity<List<ProductDto>> listProductsDesc(HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<List<ProductDto>> listProductsDesc(HttpServletRequest request)  {
 
         // JWT : Extracting user info from token
 
@@ -256,7 +255,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
 
-    public ResponseEntity<List<ProductDto>> listOwnerProducts(HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<List<ProductDto>> listOwnerProducts(HttpServletRequest request)  {
 
         // JWT : Extracting user info from token
 

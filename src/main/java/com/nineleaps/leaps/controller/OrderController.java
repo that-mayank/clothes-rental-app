@@ -5,7 +5,6 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
@@ -53,7 +52,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<ApiResponse> placeOrder(@RequestParam("razorpayId") String razorpayId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> placeOrder(@RequestParam("razorpayId") String razorpayId, HttpServletRequest request) {
 
         // Guard Statement : The required parameter razorpayId is missing or empty
 
@@ -78,7 +77,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<List<OrderDto>> getAllOrders(HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 
@@ -97,7 +96,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
 
-    public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 
@@ -119,7 +118,7 @@ public class OrderController {
 
     // Validating the orderStatus variable
 
-    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) throws AuthenticationFailException {
+    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 

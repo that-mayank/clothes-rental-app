@@ -6,7 +6,6 @@ import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.enums.Role;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.UserNotExistException;
 import com.nineleaps.leaps.model.User;
@@ -87,7 +86,7 @@ class UserControllerTest {
     }
 
     @Test
-    void switchProfile_WithNonGuestRole_ShouldReturnApiResponse() throws AuthenticationFailException, UserNotExistException, IOException {
+    void switchProfile_WithNonGuestRole_ShouldReturnApiResponse() throws  UserNotExistException, IOException {
         // Arrange
         Role profile = Role.OWNER;
         User user = new User();
@@ -107,7 +106,7 @@ class UserControllerTest {
     }
 
     @Test
-    void switchProfile_WithNonGuestRoleAndInvalidUser_ShouldThrowUserNotExistException() throws AuthenticationFailException, UserNotExistException, IOException {
+    void switchProfile_WithNonGuestRoleAndInvalidUser_ShouldThrowUserNotExistException() throws  UserNotExistException, IOException {
         // Arrange
         Role profile = Role.OWNER;
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -121,7 +120,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateProfile_ShouldReturnApiResponse() throws AuthenticationFailException {
+    void updateProfile_ShouldReturnApiResponse() {
         // Arrange
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -138,7 +137,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateProfile_WithInvalidUser_ShouldReturnApiResponseWithFailure() throws AuthenticationFailException {
+    void updateProfile_WithInvalidUser_ShouldReturnApiResponseWithFailure() {
         // Arrange
         ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -171,7 +170,7 @@ class UserControllerTest {
     }
 
     @Test
-    void profileImage_ShouldReturnApiResponse() throws AuthenticationFailException {
+    void profileImage_ShouldReturnApiResponse() {
         // Arrange
         String profileImageUrl = "profileImageUrl";
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -188,7 +187,7 @@ class UserControllerTest {
     }
 
     @Test
-    void profileImage_WithInvalidUser_ShouldReturnApiResponseWithFailure() throws AuthenticationFailException {
+    void profileImage_WithInvalidUser_ShouldReturnApiResponseWithFailure()  {
         // Arrange
         String profileImageUrl = "profileImageUrl";
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -204,7 +203,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateTokenUsingRefreshToken_ValidRefreshToken_ShouldReturnApiResponse() throws AuthenticationFailException, IOException {
+    void updateTokenUsingRefreshToken_ValidRefreshToken_ShouldReturnApiResponse() throws IOException {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -229,7 +228,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateTokenUsingRefreshToken_InvalidRefreshToken_ShouldReturnApiResponseWithFailure() throws AuthenticationFailException, IOException {
+    void updateTokenUsingRefreshToken_InvalidRefreshToken_ShouldReturnApiResponseWithFailure() throws  IOException {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -252,7 +251,7 @@ class UserControllerTest {
     }
 
     @Test
-    void logout_ShouldReturnApiResponse() throws AuthenticationFailException {
+    void logout_ShouldReturnApiResponse() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         String token = "token";

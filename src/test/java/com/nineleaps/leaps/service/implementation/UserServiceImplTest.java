@@ -23,8 +23,7 @@ import java.util.Collection;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
 
@@ -271,6 +270,38 @@ class UserServiceImplTest {
 
         // Assert
         assertNull(result);
+    }
+
+    @Test
+    void testSaveDeviceTokenToUser_UserExists() {
+        // Arrange
+        String email = "user@example.com";
+        String deviceToken = "deviceToken123";
+        User existingUser = new User();
+        when(userRepository.findByEmail(email)).thenReturn(existingUser);
+        when(userRepository.findDeviceTokenByEmail(email)).thenReturn(existingUser);
+
+        // Act
+        userService.saveDeviceTokenToUser(email, deviceToken);
+
+        // Assert
+        assertEquals(deviceToken, existingUser.getDeviceToken());
+        verify(userRepository, times(1)).save(existingUser);
+        verify(userRepository, times(1)).findDeviceTokenByEmail(email);
+    }
+
+    @Test
+    void testSaveDeviceTokenToUser_UserDoesNotExist() {
+        // Arrange
+        String email = "nonexistent@example.com";
+        String deviceToken = "deviceToken123";
+        when(userRepository.findByEmail(email)).thenReturn(null);
+
+        // Act and Assert
+        assertThrows(UsernameNotFoundException.class, () -> {
+            userService.saveDeviceTokenToUser(email, deviceToken);
+        });
+        verify(userRepository, never()).findDeviceTokenByEmail(email);
     }
 
 //    @Test

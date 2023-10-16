@@ -1,10 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,15 +9,20 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,6 +37,9 @@ class StorageServiceImplTest {
 
     @Mock
     private MultipartFile multipartFile;
+
+
+    private final String bucketName = "example-bucket";
 
     @BeforeEach
     void setUp() {
@@ -191,5 +196,49 @@ class StorageServiceImplTest {
         assertArrayEquals(fileBytes, response.getContentAsByteArray());
         verify(s3Client, times(1)).getObject(anyString(), anyString());
         inputStream.close(); // Close the input stream to release resources
+    }
+
+    @Test
+    void testUploadFile_Exception() {
+        // Arrange
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
+        String uniqueFileName = System.currentTimeMillis() + "_test.txt";
+        when(s3Client.putObject(bucketName, uniqueFileName, Path.of("test.txt").toFile()))
+                .thenThrow(new AmazonS3Exception("S3 Upload Error"));
+
+        // Act and Assert
+        assertThrows(Exception.class, () -> storageService.uploadFile(multipartFile));
+    }
+
+    @Test
+    void testViewFile_Exception() {
+        // Arrange
+        String fileName = "test.txt";
+        when(s3Client.getObject(bucketName, fileName)).thenThrow(new AmazonS3Exception("S3 Get Object Error"));
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // Act and Assert
+        assertThrows(Exception.class, () -> storageService.viewFile(fileName, response));
+    }
+
+    @Test
+    void testDownloadFile_Exception() {
+        // Arrange
+        String fileName = "test.txt";
+        when(s3Client.getObject(bucketName, fileName)).thenThrow(new AmazonS3Exception("S3 Get Object Error"));
+
+        // Act and Assert
+        assertThrows(Exception.class, () -> storageService.downloadFile(fileName));
+    }
+
+    @Test
+    void testDeleteFile_Exception() {
+        // Arrange
+        String fileName = "test.txt";
+        doThrow(new AmazonS3Exception("S3 Delete Object Error")).when(s3Client).deleteObject(bucketName, fileName);
+
+        // Act and Assert
+        assertThrows(Exception.class, () -> storageService.deleteFile(fileName));
+        verify(s3Client, times(1)).deleteObject(bucketName, fileName);
     }
 }

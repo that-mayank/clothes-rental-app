@@ -100,7 +100,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleAccessToken(
+    void handleAccessToken(
             String token,
             HttpServletResponse response,
             FilterChain filterChain,
@@ -138,4 +138,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), error);
     }
+
+
 }

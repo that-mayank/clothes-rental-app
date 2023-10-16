@@ -38,7 +38,7 @@ public class EmailServiceImpl {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 // Provide your email credentials here (username and password)
-                return new PasswordAuthentication("prathiksha.v@nineleaps.com", "rijzafoqaxoctaba");
+                return new PasswordAuthentication("ateamfour01@gmail.com", "hacikennxstdtkll");
             }
         });
 

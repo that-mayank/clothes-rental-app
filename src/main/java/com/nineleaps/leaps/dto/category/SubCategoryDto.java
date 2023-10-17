@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class SubCategoryDto {
     private Long id;
     private @NotNull String subcategoryName;

@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class CartTest {
 
@@ -148,5 +150,52 @@ class CartTest {
         assertEquals(rentalStartDate, cart.getRentalStartDate());
         assertEquals(rentalEndDate, cart.getRentalEndDate());
         assertEquals("https://example.com/image1.jpg", cart.getImageUrl());
+    }
+
+    @Test
+    void testImageUrlSetWhenImageUrlListNotEmpty() {
+        // Create mock objects for Product, User, and ProductUrl
+        Product product = mock(Product.class);
+        User user = mock(User.class);
+        ProductUrl productUrl = mock(ProductUrl.class);
+
+        // Define the input values
+        int quantity = 5;
+        LocalDateTime rentalStartDate = LocalDateTime.now();
+        LocalDateTime rentalEndDate = LocalDateTime.now().plusDays(7);
+
+        // Create a list of ProductUrl containing the mock ProductUrl
+        List<ProductUrl> imageUrlList = new ArrayList<>();
+        imageUrlList.add(productUrl);
+
+        // Mock the behavior of the ProductUrl to return a URL
+        when(productUrl.getUrl()).thenReturn("https://example.com/image.jpg");
+
+        // Create a Cart instance using the constructor
+        Cart cart = new Cart(product, user, quantity, rentalStartDate, rentalEndDate, imageUrlList);
+
+        // Assert that the imageUrl is set to the expected value
+        assertEquals("https://example.com/image.jpg", cart.getImageUrl());
+    }
+
+    @Test
+    void testImageUrlSetWhenImageUrlListEmpty() {
+        // Create mock objects for Product and User
+        Product product = mock(Product.class);
+        User user = mock(User.class);
+
+        // Define the input values
+        int quantity = 5;
+        LocalDateTime rentalStartDate = LocalDateTime.now();
+        LocalDateTime rentalEndDate = LocalDateTime.now().plusDays(7);
+
+        // Create an empty list of ProductUrl
+        List<ProductUrl> imageUrlList = new ArrayList<>();
+
+        // Create a Cart instance using the constructor with an empty imageUrlList
+        Cart cart = new Cart(product, user, quantity, rentalStartDate, rentalEndDate, imageUrlList);
+
+        // Assert that the imageUrl is set to null when the imageUrlList is empty
+        assertEquals(null, cart.getImageUrl());
     }
 }

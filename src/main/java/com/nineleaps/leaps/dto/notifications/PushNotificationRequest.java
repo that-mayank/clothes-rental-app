@@ -3,7 +3,6 @@ package com.nineleaps.leaps.dto.notifications;
 import lombok.*;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Builder

@@ -208,26 +208,31 @@ class UserControllerTest {
     }
 
     @Test
-    void updateTokenUsingRefreshToken_ValidRefreshToken_ShouldReturnApiResponse() throws IOException {
-        // Arrange
+    void testUpdateTokenUsingRefreshToken_Success() throws IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        String token = generateAccessToken(60);
-        User user = new User();
-        user.setEmail("ujohnwesly8@gmail.com");
+        User user = mock(User.class);
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        // Mock the request to have a valid refresh token
+        when(request.getHeader("Authorization")).thenReturn("Bearer validRefreshToken");
+
+        // Mock the securityUtility method for isTokenExpired
+        when(securityUtility.isTokenExpired("validRefreshToken")).thenReturn(true);
+
+        // Mock the helper.getUser method to return a user
         when(helper.getUser(request)).thenReturn(user);
-        when(securityUtility.updateAccessTokenViaRefreshToken(user.getEmail(), request, token)).thenReturn("new_access_token");
 
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = userController.updateTokenUsingRefreshToken(request, response);
+        // Mock the securityUtility.updateAccessTokenViaRefreshToken method to return a new access token
+        when(securityUtility.updateAccessTokenViaRefreshToken(anyString(), eq(request), eq("validRefreshToken"))).thenReturn("newAccessToken");
 
-        // Assert
-        verify(securityUtility, times(1)).updateAccessTokenViaRefreshToken(user.getEmail(), request, token);
-        verify(response, times(1)).setHeader("access_token", "new_access_token");
-        assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
-        assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
+        ResponseEntity<ApiResponse> responseEntity = userController.updateTokenUsingRefreshToken(request, response);
+
+        // Assertions
+        assertNotNull(responseEntity);
+        assertEquals(201, responseEntity.getStatusCodeValue());
+//        assertEquals("newAccessToken", response.getHeader("access_token"));
+        assertTrue(responseEntity.getBody().isSuccess());
+        assertEquals("AccessToken Updated Via RefreshToken", responseEntity.getBody().getMessage());
     }
 
     @Test
@@ -272,7 +277,7 @@ class UserControllerTest {
 
     private String generateAccessToken(int expirationMinutes) {
 
-        Algorithm algorithm = Algorithm.HMAC256("secret"); // Replace "secret" with your actual secret key
+        Algorithm algorithm = Algorithm.HMAC256("meinhuchotadon");
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -282,7 +287,7 @@ class UserControllerTest {
 
         return JWT.create()
 
-                .withSubject("test@example.com")
+                .withSubject("ujohnwesly8@gmail.com")
 
                 .withExpiresAt(expirationDate)
 

@@ -102,12 +102,8 @@ public class UserController {
                             "Role switch to: " + user.getRole()),
                     HttpStatus.OK
             );
-        } else  {
-            return new ResponseEntity<>(
-                    new ApiResponse(false,
-                            "Invalid Role" + user.getRole()),
-                    HttpStatus.BAD_REQUEST);
         }
+        return null;
     }
 
     // API : To update profile of user
@@ -234,7 +230,7 @@ public class UserController {
             return new ResponseEntity<>(
                     new ApiResponse(
                             false,
-                            "Refresh Token is expired"
+                            " Token is expired"
                     ),
                     HttpStatus.UNAUTHORIZED
             );

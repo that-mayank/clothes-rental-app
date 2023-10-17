@@ -33,7 +33,7 @@ public class SecurityUtility {
         userServiceInterface.saveDeviceTokenToUser(email,deviceToken);
     }
 
-    public static boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         DecodedJWT decodedToken = JWT.decode(token);
         Date expirationDate = decodedToken.getExpiresAt();
         return !expirationDate.before(new Date());

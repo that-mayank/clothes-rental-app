@@ -64,20 +64,20 @@ class CustomAuthorizationFilterTest {
     }
 
 
-//    @Test
-//    void testDoFilterInternal_HandleRefreshToken() throws Exception {
-//        HttpServletRequest request = mock(HttpServletRequest.class);
-//        HttpServletResponse response = mock(HttpServletResponse.class);
-//        FilterChain filterChain = mock(FilterChain.class);
-//
-//        when(request.getHeader("Authorization")).thenReturn("Bearer RefreshToken");
-//        when(request.getServletPath()).thenReturn("/api/v1/user/refreshToken");
-//        when(securityUtility.isTokenExpired("RefreshToken")).thenReturn(true);
-//
-//        authorizationFilter.doFilterInternal(request, response, filterChain);
-//
-//        verify(filterChain, times(1)).doFilter(request, response);
-//    }
+    @Test
+    void testDoFilterInternal_HandleRefreshToken() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
+
+        when(request.getHeader("Authorization")).thenReturn("Bearer RefreshToken");
+        when(request.getServletPath()).thenReturn("/api/v1/user/refreshToken");
+        when(securityUtility.isTokenExpired("RefreshToken")).thenReturn(true);
+
+        authorizationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
 
 //    @Test
 //    void testDoFilterInternal_RefreshTokenExpired() throws Exception {
@@ -94,20 +94,20 @@ class CustomAuthorizationFilterTest {
 //        verify(filterChain, times(1)).doFilter(request, response);
 //    }
 
-//    @Test
-//    void testDoFilterInternal_RefreshTokenValid() throws Exception {
-//        HttpServletRequest request = mock(HttpServletRequest.class);
-//        HttpServletResponse response = mock(HttpServletResponse.class);
-//        FilterChain filterChain = mock(FilterChain.class);
-//
-//        when(request.getHeader("Authorization")).thenReturn("Bearer RefreshToken");
-//        when(request.getServletPath()).thenReturn("/api/v1/user/refreshToken");
-//        when(securityUtility.isTokenExpired("RefreshToken")).thenReturn(false);
-//
-//        authorizationFilter.doFilterInternal(request, response, filterChain);
-//
-//        verify(response, times(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token expired");
-//    }
+    @Test
+    void testDoFilterInternal_RefreshTokenValid() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
+
+        when(request.getHeader("Authorization")).thenReturn("Bearer RefreshToken");
+        when(request.getServletPath()).thenReturn("/api/v1/user/refreshToken");
+        when(securityUtility.isTokenExpired(generateAccessToken(60))).thenReturn(false);
+
+        authorizationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(response, times(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token expired");
+    }
 
     private String generateAccessToken(int expirationMinutes) {
 

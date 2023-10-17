@@ -195,7 +195,7 @@ class SecurityUtilityTest {
         when(userServiceInterface.getUser("test@example.com")).thenReturn(user);
 
 
-        SecurityUtility.isTokenExpired(refreshToken.getToken());
+        System.out.println(securityUtility.isTokenExpired(refreshToken.getToken()));
 
         // Mocking the readSecretFromFile method to return a secret key
         securityUtility.readSecretFromFile(absolutePath);

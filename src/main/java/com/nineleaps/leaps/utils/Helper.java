@@ -3,6 +3,7 @@ package com.nineleaps.leaps.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,13 @@ public class Helper {
         int max = 999999;
         SecureRandom secureRandom = new SecureRandom();
         return secureRandom.nextInt(max - min + 1) + min;
+    }
+
+    public void setUserToBorrower(HttpServletRequest request){
+        User user = getUserFromToken(request);
+        if(user.getRole() == Role.OWNER){
+            user.setRole(Role.BORROWER);
+        }
     }
 
 

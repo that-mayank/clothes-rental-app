@@ -220,4 +220,7 @@ class CustomAuthenticationFilterTest {
         verify(response, times(1)).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed: " + authenticationException.getMessage());
     }
 
+
+
+
 }

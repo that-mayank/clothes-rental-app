@@ -1,6 +1,8 @@
 package com.nineleaps.leaps.config.filter;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import org.junit.jupiter.api.*;
@@ -10,9 +12,20 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.mockito.Mockito.*;
 
@@ -90,7 +103,7 @@ class CustomAuthorizationFilterTest {
         // Use reflection to call the private method
         Method method = CustomAuthorizationFilter.class.getDeclaredMethod("handleAccessToken", String.class, HttpServletResponse.class, FilterChain.class, HttpServletRequest.class);
         method.setAccessible(true);
-        method.invoke(customAuthorizationFilter, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJyb2xlcyI6WyJPV05FUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNzAxODA2OTUzfQ.yhjMCjdSH6gFJaVrrPl2cuywh7wDsY7vwcihRnF2Qic", response, filterChain, request);
+        method.invoke(customAuthorizationFilter, generateAccessToken(60), response, filterChain, request);
 
 
         verify(filterChain, times(1)).doFilter(request, response);  // handleAccessToken
@@ -134,7 +147,7 @@ class CustomAuthorizationFilterTest {
         // Use reflection to call the private method
         Method method = CustomAuthorizationFilter.class.getDeclaredMethod("handleAccessToken", String.class, HttpServletResponse.class, FilterChain.class, HttpServletRequest.class);
         method.setAccessible(true);
-        method.invoke(customAuthorizationFilter, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJyb2xlcyI6WyJPV05FUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNzAxODA2OTUzfQ.yhjMCjdSH6gFJaVrrPl2cuywh7wDsY7vwcihRnF2Qic", response, filterChain, request);
+        method.invoke(customAuthorizationFilter, generateAccessToken(60), response, filterChain, request);
 
         // Add your verification/assertion logic here based on the behavior of your handleAccessToken method
         verify(filterChain, times(1)).doFilter(request, response);
@@ -248,6 +261,33 @@ class CustomAuthorizationFilterTest {
         // Verify the response status and content type
         Assertions.assertEquals(403, response.getStatus());
         Assertions.assertEquals("application/json", response.getContentType());
+    }
+
+
+    private String generateAccessToken(int expirationMinutes) throws IOException {
+        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+        String secret = readSecretFromFile(absolutePath);
+        Algorithm algorithm = Algorithm.HMAC256(secret); // Replace "secret" with your actual secret key
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationTime = now.plusMinutes(expirationMinutes);
+        Date expirationDate = Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant());
+        List<String> roles = new ArrayList<>();
+        roles.add("OWNER");
+        return JWT.create()
+                .withSubject("ujohnwesly8@gmail.com")
+                .withExpiresAt(expirationDate)
+                .withIssuer("https://example.com")
+                .withClaim("roles",roles)
+                .sign(algorithm);
+    }
+
+
+    private String readSecretFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+            return reader.readLine();
+        }
     }
 
 

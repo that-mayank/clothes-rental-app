@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -79,10 +80,10 @@ class SecurityUtilityTest {
     @DisplayName("Tests for RefreshToken validation")
     void isRefreshTokenExpired_ValidToken_ReturnsFalse() {
         // Arrange
-        String refreshToken = generateRefreshToken(60); // Generate an access token with 60 minutes expiration time
+        String refreshToken = generateRefreshToken(60,""); // Generate an access token with 60 minutes expiration time
 
         // Act
-        boolean isExpired = securityUtility.isAccessTokenExpired(refreshToken);
+        boolean isExpired = securityUtility.isRefreshTokenExpired(refreshToken);
 
         // Assert
         assertFalse(isExpired);
@@ -106,7 +107,7 @@ class SecurityUtilityTest {
     @DisplayName("Tests for RefreshToken validation with an expired token")
     void isRefreshTokenExpired_ExpiredToken_ReturnsTrue() {
         // Arrange
-        String refreshToken = generateRefreshToken(-60); // Generate an expired access token (60 minutes ago)
+        String refreshToken = generateRefreshToken(-60,"ujohnwesly8@gmail.com"); // Generate an expired access token (60 minutes ago)
 
         // Act
         boolean isExpired = securityUtility.isRefreshTokenExpired(refreshToken);
@@ -135,11 +136,11 @@ class SecurityUtilityTest {
     @DisplayName("Tests for updating AccessToken using a RefreshToken")
     void updateAccessToken_ValidInput_ReturnsNewAccessToken() throws IOException {
         // Create a valid token
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJyb2xlcyI6WyJPV05FUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNzAxODE4Mjc5fQ.XuDMsvq6290oyS4hN5aNda879Gy2yoJzWCmJHEGn_Bs";
+        String Token = generateRefreshToken(60,"ujohnwesly8@gmail.com");
         // Arrange
         String email = "ujohnwesly8@gmail.com";
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(token); // Set a valid refresh token value
+        refreshToken.setToken(Token); // Set a valid refresh token value
         refreshToken.setEmail(email);
 
         when(refreshTokenRepository.findByEmail(email)).thenReturn(refreshToken);
@@ -154,7 +155,7 @@ class SecurityUtilityTest {
 
 
         // Act
-        String newAccessToken = securityUtility.updateAccessTokenViaRefreshToken(email, request,token);
+        String newAccessToken = securityUtility.updateAccessTokenViaRefreshToken(email, request,Token);
 
         // Assert
         assertNotNull(newAccessToken);
@@ -193,20 +194,23 @@ class SecurityUtilityTest {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expirationTime = now.plusMinutes(expirationMinutes);
         Date expirationDate = Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant());
+        List<String> roles = new ArrayList<>();
+        roles.add("OWNER");
         return JWT.create()
                 .withSubject("test@example.com")
                 .withExpiresAt(expirationDate)
                 .withIssuer("https://example.com")
+                .withClaim("roles",roles)
                 .sign(algorithm);
     }
 
-    private String generateRefreshToken(int expirationMinutes) {
+    private String generateRefreshToken(int expirationMinutes,String email) {
         Algorithm algorithm = Algorithm.HMAC256("secret"); // Replace "secret" with your actual secret key
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expirationTime = now.plusMinutes(expirationMinutes);
         Date expirationDate = Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant());
         return JWT.create()
-                .withSubject("test@example.com")
+                .withSubject(email)
                 .withExpiresAt(expirationDate)
                 .withIssuer("https://example.com")
                 .sign(algorithm);
@@ -555,11 +559,11 @@ class SecurityUtilityTest {
     @Test
     void updateAccessTokenViaRefreshToken_InvalidRefreshToken_ReturnsInvalidTokenMessage() throws IOException {
         // Arrange
-        String email = "test@example.com";
-        String invalidRefreshToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNjk1ODM2OTc4fQ.kUq1AtOjJjs_V0fGyfKPJ_5Z_dDr0QCUvNeR6WfvmaU";
+        String email = "ujohnwesly8@gmail.com";
+        String invalidRefreshToken = generateRefreshToken(-60,"ujohnwesly8@gmail.com");
 
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNjk1ODM2OTc4fQ.kUq1AtOjJjs_V0fGyfKPJ_5Z_dDr0QCUvNeR6WfvmaU");
+        refreshToken.setToken(generateRefreshToken(-60,"ujohnwesly8@gmail.com"));
         when(refreshTokenRepository.findByEmail(email)).thenReturn(refreshToken);
 
         // Act
@@ -573,11 +577,11 @@ class SecurityUtilityTest {
     @Test
     void updateAccessTokenViaRefreshToken_InvalidRefreshToken_ReturnsInvalidTokenMessageFromDb() throws IOException {
         // Arrange
-        String email = "test@example.com";
-        String invalidRefreshToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNjk1ODM2OTc4fQ.kUq1AtOjJjs_V0fGyfKPJ_5Z_dDr0QCUvNeR6WfvmaU";
+        String email = "ujohnwesly8@gmail.com";
+        String invalidRefreshToken = generateRefreshToken(-60,"ujohnwesly8@gmail.com");
 
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNjk4NDI5MzE5fQ.9_yQ8BMH0aWaBcRyJd_iTM8b5IRMChNyXukptEjxokc");
+        refreshToken.setToken(generateRefreshToken(60,"ujohnwesly8@gmail.com"));
         when(refreshTokenRepository.findByEmail(email)).thenReturn(refreshToken);
 
         // Act

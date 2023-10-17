@@ -193,6 +193,7 @@ public class UserController {
 
         // Calling the service layer to delete the refresh token in DB during logout.
         refreshTokenService.deleteRefreshTokenByEmailAndToken(email,token);
+        helper.setUserToBorrower(request);
 
         // Status Code : 200-HttpStatus.OK
         return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out "), HttpStatus.OK);

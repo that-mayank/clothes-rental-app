@@ -1,12 +1,14 @@
 package com.nineleaps.leaps.utils;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -130,6 +132,46 @@ class HelperTest {
 
         assertTrue( generatedOtp >= min);
         assertTrue( generatedOtp <= max);
+    }
+
+    @Test
+    void setUserToBorrower_ownerRole_shouldSetRoleToBorrower() {
+        // Arrange
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
+        User user = new User();
+        user.setRole(Role.OWNER);
+
+        when(request.getHeader("Authorization")).thenReturn("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJyb2xlcyI6WyJPV05FUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNzAxODE4Mjc5fQ.XuDMsvq6290oyS4hN5aNda879Gy2yoJzWCmJHEGn_Bs");
+
+
+
+        // Mock the behavior of getUserFromToken
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        // Act
+        helper.setUserToBorrower(request);
+
+        // Assert
+        assertEquals(Role.BORROWER, user.getRole());
+    }
+
+    @Test
+    void setUserToBorrower_nonOwnerRole_shouldNotChangeRole() {
+        // Arrange
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
+        User user = new User();
+        user.setRole(Role.BORROWER);
+        when(request.getHeader("Authorization")).thenReturn("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1am9obndlc2x5OEBnbWFpbC5jb20iLCJyb2xlcyI6WyJPV05FUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL3YxL2xvZ2luIiwiZXhwIjoxNzAxODE4Mjc5fQ.XuDMsvq6290oyS4hN5aNda879Gy2yoJzWCmJHEGn_Bs");
+        // Mock the behavior of getUserFromToken
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        // Act
+        helper.setUserToBorrower(request);
+
+        // Assert
+        assertEquals(Role.BORROWER, user.getRole());
     }
 
 }

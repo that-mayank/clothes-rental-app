@@ -1,5 +1,7 @@
 package com.nineleaps.leaps.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
@@ -25,6 +27,9 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -207,12 +212,11 @@ class UserControllerTest {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        String token = "valid_refresh_token";
+        String token = generateAccessToken(60);
         User user = new User();
-        user.setEmail("user@example.com");
+        user.setEmail("ujohnwesly8@gmail.com");
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(securityUtility.isTokenExpired(token)).thenReturn(true);
         when(helper.getUser(request)).thenReturn(user);
         when(securityUtility.updateAccessTokenViaRefreshToken(user.getEmail(), request, token)).thenReturn("new_access_token");
 
@@ -220,7 +224,6 @@ class UserControllerTest {
         ResponseEntity<ApiResponse> apiResponse = userController.updateTokenUsingRefreshToken(request, response);
 
         // Assert
-        verify(securityUtility, times(1)).isTokenExpired(token);
         verify(securityUtility, times(1)).updateAccessTokenViaRefreshToken(user.getEmail(), request, token);
         verify(response, times(1)).setHeader("access_token", "new_access_token");
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
@@ -232,18 +235,16 @@ class UserControllerTest {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        String token = "expired_refresh_token";
+        String token = generateAccessToken(-60);
         User user = new User();
-        user.setEmail("user@example.com");
+        user.setEmail("ujohnwesly8@gmail.com");
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(securityUtility.isTokenExpired(token)).thenReturn(false);
 
         // Act
         ResponseEntity<ApiResponse> apiResponse = userController.updateTokenUsingRefreshToken(request, response);
 
         // Assert
-        verify(securityUtility, times(1)).isTokenExpired(token);
         verify(securityUtility, times(0)).updateAccessTokenViaRefreshToken(user.getEmail(), request, token);
         verify(response, never()).setHeader(any(), any());
         assertEquals(HttpStatus.UNAUTHORIZED, apiResponse.getStatusCode());
@@ -267,6 +268,28 @@ class UserControllerTest {
         verify(refreshTokenService, times(1)).deleteRefreshTokenByEmailAndToken(user.getEmail(), token);
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
+    }
+
+    private String generateAccessToken(int expirationMinutes) {
+
+        Algorithm algorithm = Algorithm.HMAC256("secret"); // Replace "secret" with your actual secret key
+
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime expirationTime = now.plusMinutes(expirationMinutes);
+
+        Date expirationDate = Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        return JWT.create()
+
+                .withSubject("test@example.com")
+
+                .withExpiresAt(expirationDate)
+
+                .withIssuer("https://example.com")
+
+                .sign(algorithm);
+
     }
 
 }

@@ -10,11 +10,15 @@ import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,34 +26,32 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({SecurityUtility.class})
 class SecurityUtilityTest {
 
     @InjectMocks
-
     private SecurityUtility securityUtility;
 
     @Mock
-
     private UserServiceInterface userServiceInterface;
 
     @Mock
-
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Mock
+    private HttpServletRequest request;
+
+
     @BeforeEach
-
     void setUp() {
-
         MockitoAnnotations.openMocks(this);
-
-        securityUtility = new SecurityUtility(userServiceInterface, refreshTokenRepository);
-
     }
 
     @Test
-
     void isAccessTokenExpired_ValidToken_ReturnsFalse() {
 
         // Arrange
@@ -67,7 +69,6 @@ class SecurityUtilityTest {
     }
 
     @Test
-
     void isAccessTokenExpired_ExpiredToken_ReturnsTrue() {
 
         // Arrange
@@ -85,7 +86,6 @@ class SecurityUtilityTest {
     }
 
     @Test
-
     void saveTokens_ValidInput_ReturnsTrue() {
 
         // Arrange
@@ -107,7 +107,6 @@ class SecurityUtilityTest {
     }
 
     @Test
-
     void updateAccessToken_ValidInput_ReturnsNewAccessToken() throws IOException {
 
         // Arrange
@@ -132,7 +131,7 @@ class SecurityUtilityTest {
 
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURL()).thenReturn(new StringBuffer("http://example.com"));
+        when(request.getRequestURL()).thenReturn(new StringBuffer("https://example.com"));
 
         // Act
 
@@ -174,10 +173,84 @@ class SecurityUtilityTest {
 
                 .withExpiresAt(expirationDate)
 
-                .withIssuer("http://example.com")
+                .withIssuer("https://example.com")
 
                 .sign(algorithm);
 
     }
 
+    @Test
+    void testUpdateAccessTokenViaRefreshToken_ValidRefreshToken() throws IOException {
+        // Mocking the refreshToken object and its properties
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setEmail("ujohnwesly8@gmail.com");
+        refreshToken.setToken(generateAccessToken(60));
+        when(refreshTokenRepository.findByEmail("ujohnwesly8@gmail.com")).thenReturn(refreshToken);
+        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+
+        // Mocking the userServiceInterface to return a User object
+        User user = new User();
+        user.setRole(Role.ADMIN);
+        when(userServiceInterface.getUser("test@example.com")).thenReturn(user);
+
+
+        SecurityUtility.isTokenExpired(refreshToken.getToken());
+
+        // Mocking the readSecretFromFile method to return a secret key
+        securityUtility.readSecretFromFile(absolutePath);
+
+        // Mocking the request URL
+        when(request.getRequestURL()).thenReturn(new StringBuffer("https://example.com/api/v1"));
+
+        String updatedAccessToken = securityUtility.updateAccessTokenViaRefreshToken("ujohnwesly8@gmail.com", request, refreshToken.getToken());
+
+        // Assertions
+        assertNotNull(updatedAccessToken);
+        // Add more assertions as needed to validate the token and its properties
+    }
+
+    @Test
+    void testUpdateAccessTokenViaRefreshToken_ExpiredRefreshToken() throws IOException {
+        // Mocking the refreshToken object and its properties
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setEmail("test@example.com");
+        refreshToken.setToken(generateAccessToken(-60));
+        when(refreshTokenRepository.findByEmail("ujohnwesly8@gmail.com")).thenReturn(refreshToken);
+        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+
+        // Mocking the isTokenExpired method to return true for an expired token
+        securityUtility.isTokenExpired(refreshToken.getToken());
+
+        // Mocking the readSecretFromFile method to return a secret key
+        securityUtility.readSecretFromFile(absolutePath);
+
+        // Mocking the request URL
+        when(request.getRequestURL()).thenReturn(new StringBuffer("https://example.com/api/v1"));
+
+        String updatedAccessToken = securityUtility.updateAccessTokenViaRefreshToken("ujohnwesly8@gmail.com", request, refreshToken.getToken());
+
+        // Assertions
+        assertEquals("Refresh Token In Database Expired , Login Again !", updatedAccessToken);
+    }
+
+    @Test
+    void testUpdateAccessTokenViaRefreshToken_InvalidRefreshToken() throws IOException {
+        // Mocking the refreshToken object and its properties
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setEmail("test@example.com");
+        refreshToken.setToken(generateAccessToken(-60));
+        when(refreshTokenRepository.findByEmail("ujohnwesly8@gmail.com")).thenReturn(refreshToken);
+        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+
+        // Mocking an invalid refresh token
+        String invalidToken = generateAccessToken(-60);
+
+        String updatedAccessToken = securityUtility.updateAccessTokenViaRefreshToken("ujohnwesly8@gmail.com", request, invalidToken);
+
+        // Assertions
+        assertEquals("Refresh Token In Database Expired , Login Again !", updatedAccessToken);
+    }
 }

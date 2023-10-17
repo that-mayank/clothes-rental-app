@@ -14,13 +14,4 @@ public class AddToCartDto {
     private @NotNull int quantity;
     private @NotNull LocalDateTime rentalStartDate;
     private @NotNull LocalDateTime rentalEndDate;
-
-    @Override
-    public String toString() {
-        return "AddToCartDto{" +
-                "id=" + id +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
-    }
 }

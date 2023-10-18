@@ -25,7 +25,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Service // Marks this class as a Spring service component
-@RequiredArgsConstructor // Lombok annotation to generate a constructor with all required fields
+@RequiredArgsConstructor // Lombok's annotation to generate a constructor with all required fields
 @Transactional // Marks this class as transactional for database operations
 public class SmsServiceImpl implements SmsServiceInterface {
 
@@ -39,7 +39,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
 
     private final UserServiceInterface userServiceInterface;
     private final SecurityUtility securityUtility;
-    private Map<String, Integer> otpMap = new HashMap<>();
+    Map<String, Integer> otpMap = new HashMap<>();
     private static final int MIN = 100000;
     private static final int MAX = 999999;
 

@@ -5,6 +5,7 @@ import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,5 +39,17 @@ class RefreshTokenServiceImplTest {
         // Assert
         assertEquals("sampleToken", resultToken);
         verify(refreshTokenRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void testDeleteRefreshTokenByEmailAndToken() {
+        String email = "test@example.com";
+        String token = "your-token-value";
+
+        // Perform the delete operation
+        refreshTokenService.deleteRefreshTokenByEmailAndToken(email, token);
+
+        // Verify that the repository's delete method was called with the expected email and token
+        Mockito.verify(refreshTokenRepository, Mockito.times(1)).deleteByEmailAndToken(email, token);
     }
 }

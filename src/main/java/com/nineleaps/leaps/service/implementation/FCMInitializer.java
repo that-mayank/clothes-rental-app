@@ -20,28 +20,25 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class FCMInitializer {
 
+    Logger logger = LoggerFactory.getLogger(FCMInitializer.class); // Create a logger for this class
     @Value("${app.firebase-configuration-file}") // Reads the path to the Firebase configuration file from properties
     private String firebaseConfigPath;
 
-    Logger logger = LoggerFactory.getLogger(FCMInitializer.class); // Create a logger for this class
-
     @PostConstruct // Annotated method to be executed after bean initialization
-    public void initialize() {
-        try {
-            // Build FirebaseOptions using the Firebase configuration file
-            FirebaseOptions options = new FirebaseOptions
-                    .Builder()
-                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream()))
-                    .build();
+    public void initialize() throws IOException {
+        // Build FirebaseOptions using the Firebase configuration file
+        FirebaseOptions options = new FirebaseOptions
+                .Builder()
+                .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream()))
+                .build();
 
 
-            // Check if FirebaseApp is not already initialized
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options); // Initialize FirebaseApp with the provided options
-                logger.info("Firebase application has been initialized"); // Log a success message
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage()); // Log an error message if there is an exception
+        // Check if FirebaseApp is not already initialized
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options); // Initialize FirebaseApp with the provided options
+            logger.info("Firebase application has been initialized"); // Log a success message
         }
+
     }
 }
+

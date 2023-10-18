@@ -98,27 +98,19 @@ public class ProductServiceImpl implements ProductServiceInterface {
         Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
         deletedProductFilter.setParameter(DELETED, false);
         disabledProductFilter.setParameter(DISABLED, false);
-        if (subcategoryId == 19) {
-            return getProductsByPriceRange(0, 2000);
-        } else if (subcategoryId == 20) {
-            return getProductsByPriceRange(2001, 5000);
-        } else if (subcategoryId == 21) {
-            return getProductsByPriceRange(5001, 10000);
-        } else if (subcategoryId == 22) {
-            return getProductsByPriceRange(10000, Long.MAX_VALUE);
-        } else {
-            List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
-            List<ProductDto> productDtos = new ArrayList<>();
-            for (Product product : body) {
-                if (!product.getUser().equals(user)) {
-                    ProductDto productDto = getDtoFromProduct(product);
-                    productDtos.add(productDto);
-                }
+
+        List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
+        List<ProductDto> productDtos = new ArrayList<>();
+        for (Product product : body) {
+            if (!product.getUser().equals(user)) {
+                ProductDto productDto = getDtoFromProduct(product);
+                productDtos.add(productDto);
             }
-            session.disableFilter(DISABLED_PRODUCT_FILTER);
-            session.disableFilter(DELETED_PRODUCT_FILTER);
-            return productDtos;
         }
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        session.disableFilter(DELETED_PRODUCT_FILTER);
+        return productDtos;
+
     }
 
     @Override

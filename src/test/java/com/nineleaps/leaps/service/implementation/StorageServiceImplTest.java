@@ -9,8 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -102,7 +100,6 @@ class StorageServiceImplTest {
     void convertMultiPartFileToFile() throws IOException {
         // Prepare
         byte[] fileBytes = "Example file content".getBytes();
-        File tempFile = File.createTempFile("example", ".txt");
         when(multipartFile.getOriginalFilename()).thenReturn("example.txt");
         when(multipartFile.getBytes()).thenReturn(fileBytes);
 
@@ -204,7 +201,7 @@ class StorageServiceImplTest {
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
         String uniqueFileName = System.currentTimeMillis() + "_test.txt";
         when(s3Client.putObject(bucketName, uniqueFileName, Path.of("test.txt").toFile()))
-                .thenThrow(new AmazonS3Exception("S3 Upload Error"));
+                .thenThrow(new AmazonS3Exception("Error uploading file"));
 
         // Act and Assert
         assertThrows(Exception.class, () -> storageService.uploadFile(multipartFile));
@@ -214,7 +211,7 @@ class StorageServiceImplTest {
     void testViewFile_Exception() {
         // Arrange
         String fileName = "test.txt";
-        when(s3Client.getObject(bucketName, fileName)).thenThrow(new AmazonS3Exception("S3 Get Object Error"));
+        when(s3Client.getObject(bucketName, fileName)).thenThrow(new AmazonS3Exception("Amazon S3 Network Error"));
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         // Act and Assert
@@ -225,7 +222,7 @@ class StorageServiceImplTest {
     void testDownloadFile_Exception() {
         // Arrange
         String fileName = "test.txt";
-        when(s3Client.getObject(bucketName, fileName)).thenThrow(new AmazonS3Exception("S3 Get Object Error"));
+        when(s3Client.getObject(bucketName, fileName)).thenThrow(new AmazonS3Exception("Error downloading file"));
 
         // Act and Assert
         assertThrows(Exception.class, () -> storageService.downloadFile(fileName));

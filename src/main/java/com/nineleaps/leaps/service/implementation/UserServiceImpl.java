@@ -67,24 +67,13 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
 
         // Check if the user exists in the database.
         if (user == null) {
-            log.error(USER_NOT_FOUND);
             throw new UsernameNotFoundException(USER_NOT_FOUND);
         } else {
-            // Find the user's existing device token, if any.
-            User existingDeviceToken = userRepository.findDeviceTokenByEmail(email);
-
             // Set the new device token for the user.
             user.setDeviceToken(deviceToken);
 
             // Save the updated user profile to the database.
             userRepository.save(user);
-
-            // Log information about the device token update or save.
-            if (existingDeviceToken != null) {
-                log.info("Device token updated for user: {} and token is: {}", email, deviceToken);
-            } else {
-                log.info("Device token saved for user: {}", email);
-            }
         }
     }
 
@@ -110,14 +99,9 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
         User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(),
                 signupDto.getPhoneNumber(), encryptedPassword, signupDto.getRole());
 
-        try {
-            // Save the user to the database.
-            userRepository.save(user);
-            return new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
-        } catch (Exception e) {
-            // Handle signup error and throw a custom exception with the error message.
-            throw new CustomException(e.getMessage());
-        }
+        userRepository.save(user);
+        return new ResponseDto(ResponseStatus.SUCCESS.toString(), USER_CREATED);
+
     }
 
     // Save user profile information.
@@ -160,13 +144,8 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     // Update user profile image.
     @Override
     public void updateProfileImage(String profileImageUrl, User user) {
-        // If the URL does not contain the ngrok URL, save it directly.
-        String imageUrl = profileImageUrl;
-
         // Remove ngrok link from the image URL.
-        if (profileImageUrl.contains(NGROK)) {
-            imageUrl = profileImageUrl.substring(NGROK.length());
-        }
+            String imageUrl = profileImageUrl.substring(NGROK.length());
 
         user.setProfileImageUrl(imageUrl);
         userRepository.save(user);

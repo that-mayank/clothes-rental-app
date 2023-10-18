@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
+import com.nineleaps.leaps.dto.user.UserDto;
 import com.nineleaps.leaps.enums.ResponseStatus;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.exceptions.CustomException;
@@ -18,7 +19,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -275,11 +278,11 @@ class UserServiceImplTest {
     @Test
     void testSaveDeviceTokenToUser_UserExists() {
         // Arrange
-        String email = "user@example.com";
+        String email = "ujohnwesly8@gmail.com";
         String deviceToken = "deviceToken123";
         User existingUser = new User();
+        existingUser.setId(1L);
         when(userRepository.findByEmail(email)).thenReturn(existingUser);
-        when(userRepository.findDeviceTokenByEmail(email)).thenReturn(existingUser);
 
         // Act
         userService.saveDeviceTokenToUser(email, deviceToken);
@@ -287,7 +290,6 @@ class UserServiceImplTest {
         // Assert
         assertEquals(deviceToken, existingUser.getDeviceToken());
         verify(userRepository, times(1)).save(existingUser);
-        verify(userRepository, times(1)).findDeviceTokenByEmail(email);
     }
 
     @Test
@@ -298,24 +300,22 @@ class UserServiceImplTest {
         when(userRepository.findByEmail(email)).thenReturn(null);
 
         // Act and Assert
-        assertThrows(UsernameNotFoundException.class, () -> {
-            userService.saveDeviceTokenToUser(email, deviceToken);
-        });
+        assertThrows(UsernameNotFoundException.class, () -> userService.saveDeviceTokenToUser(email, deviceToken));
         verify(userRepository, never()).findDeviceTokenByEmail(email);
     }
 
-//    @Test
-//    void getUsers_ReturnsAllUsers() {
-//        // Arrange
-//        List<User> userList = new ArrayList<>();
-//        userList.add(new User());
-//        userList.add(new User());
-//        when(userRepository.findAll()).thenReturn(userList);
-//
-//        // Act
-//        List<User> result = userService.getUsers();
-//
-//        // Assert
-//        assertEquals(userList, result);
-//    }
+    @Test
+    void getUsers_ReturnsAllUsers() {
+        // Arrange
+        List<User> userList = new ArrayList<>();
+        userList.add(new User());
+        userList.add(new User());
+        when(userRepository.findAll()).thenReturn(userList);
+
+        // Act
+        List<UserDto> result = userService.getUsers();
+
+        // Assert
+        assertEquals(userList.size(), result.size());
+    }
 }

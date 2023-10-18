@@ -7,7 +7,6 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.nineleaps.leaps.service.StorageServiceInterface;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,7 +35,6 @@ public class StorageServiceImpl implements StorageServiceInterface {
     @Value("${application.bucket.name}") // The name of the AWS S3 bucket.
     String bucketName;
 
-    @Autowired
     AmazonS3 s3Client; // An interface for working with AWS S3.
 
     // Determine the type of content based on the file extension.
@@ -62,7 +60,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
             byte[] fileBytes = file.getBytes();
             fos.write(fileBytes);
         } catch (IOException e) {
-            log.error("Error converting multipartFile to file", e);
+            log.error("Error converting multipartFile to file");
         }
         return convertedFile;
     }
@@ -79,7 +77,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
             // Delete the temporary file created during the conversion.
             Files.delete(fileObj.toPath());
         } catch (IOException e) {
-            log.error(String.valueOf(e));
+            log.error("Error uploading file");
         }
         // Return the URL for accessing the uploaded file.
         return UriComponentsBuilder.fromHttpUrl(baseUrl).path("/api/v1/file/view/").path(fileName).toUriString();
@@ -94,7 +92,7 @@ public class StorageServiceImpl implements StorageServiceInterface {
             // Read the file content from the input stream and convert it to a byte array.
             return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
-            log.error(String.valueOf(e));
+            log.error("Error downloading file");
         }
         // Return an empty byte array if there's an error.
         return new byte[0];

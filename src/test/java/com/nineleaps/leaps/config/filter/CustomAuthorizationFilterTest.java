@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.utils.SecurityUtility;
@@ -123,6 +124,50 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    void testHandleRefreshTokenWhenAuthorizationHeaderIsPresentAndTokenIsExpired() throws Exception {
+        // Create mock request and response objects
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // Set the authorization header with an expired refresh token
+        request.addHeader("Authorization", "Bearer expired-refresh-token");
+
+        // Mock the behavior of securityUtility to indicate an expired token
+        when(securityUtility.isTokenExpired("expired-refresh-token")).thenReturn(true);
+
+        // Call the method to test
+        authorizationFilter.handleRefreshToken(request, response, filterChain);
+
+        // Verify that the response indicates an unauthorized access (HTTP status code 401)
+        assertEquals(401, response.getStatus());
+
+        // Verify that filterChain.doFilter is not called
+        verify(filterChain, never()).doFilter(request, response);
+    }
+
+    @Test
+    void testHandleRefreshTokenWhenExceptionIsCaught() throws Exception {
+        // Create mock request and response objects
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // Set the authorization header with a token (it doesn't matter if it's valid or not)
+        request.addHeader("Authorization", "Bearer Token");
+
+        // Mock the behavior of securityUtility to throw an exception
+        when(securityUtility.isTokenExpired(anyString())).thenThrow(new RuntimeException("Error with Header token"));
+
+        // Call the method to test
+        authorizationFilter.handleRefreshToken(request, response, filterChain);
+
+        // Verify that the response status code is 403 (or any appropriate error status code)
+        assertEquals(403, response.getStatus());
+
+        // Verify that filterChain.doFilter is not called
+        verify(filterChain, never()).doFilter(request, response);
+    }
+
+    @Test
     void testHandleAccessTokenValidToken() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -153,6 +198,51 @@ class CustomAuthorizationFilterTest {
         // You can check the response content or other details as well
          assertEquals(200, response.getStatus());
     }
+
+    @Test
+    void testHandleAccessTokenExpiredToken() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // Mock an expired JWT token
+        String expiredToken = "expired_jwt_token";
+        request.addHeader("Authorization", "Bearer " + expiredToken);
+
+        when(securityUtility.isTokenExpired(expiredToken)).thenReturn(true);
+
+        // Call the handleAccessToken method
+        authorizationFilter.handleAccessToken(expiredToken, response, null, request);
+
+        // Assert that the response indicates an unauthorized access (HTTP status code 401)
+        // You can check the response content or other details as well
+         assertEquals(401, response.getStatus());
+    }
+
+    @Test
+    void testHandleUnauthorized() throws Exception {
+        // Create mock request and response objects
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // Define an error message
+        String errorMessage = "Unauthorized Request";
+
+        // Call the handleUnauthorized method
+        authorizationFilter.handleUnauthorized(response, errorMessage);
+
+        // Verify that the response status code is 403 (or any appropriate error status code)
+        assertEquals(403, response.getStatus());
+
+        // Verify that the response content is in JSON format and contains the error message
+        assertEquals(APPLICATION_JSON_VALUE, response.getHeader(CONTENT_TYPE));
+
+        // Parse the JSON response content and check its content
+        String responseContent = response.getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> errorResponse = objectMapper.readValue(responseContent, new TypeReference<Map<String, String>>() {});
+        assertEquals(errorMessage, errorResponse.get("error_message"));
+    }
+
 
     private String generateAccessToken(int expirationMinutes) {
         Algorithm algorithm = Algorithm.HMAC256("meinhuchotadon");

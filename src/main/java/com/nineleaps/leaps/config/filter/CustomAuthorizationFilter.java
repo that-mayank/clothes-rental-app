@@ -131,7 +131,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     }
 
-    private void handleUnauthorized(HttpServletResponse response, String errorMessage) throws IOException {
+    void handleUnauthorized(HttpServletResponse response, String errorMessage) throws IOException {
         response.setStatus(FORBIDDEN.value());
         Map<String, String> error = new HashMap<>();
         error.put("error_message", errorMessage);

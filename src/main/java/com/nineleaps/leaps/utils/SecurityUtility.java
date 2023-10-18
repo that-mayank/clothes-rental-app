@@ -47,42 +47,14 @@ public class SecurityUtility {
         return true;
     }
 
-    public String updateAccessToken(String email2, HttpServletRequest request) throws IOException {
-        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
-        String token = refreshToken.getToken();
-
-        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
-        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
-        String secret = readSecretFromFile(absolutePath);
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-
-        DecodedJWT decodedRefreshToken = JWT.decode(token);
-        String email = decodedRefreshToken.getSubject();
-        User user = userServiceInterface.getUser(email);
-        String role = user.getRole().toString();
-        String[] roles = new String[]{role};
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime accessTokenExpirationTime = now.plusMinutes(1440); // Update to desired expiration time
-        Date accessTokenExpirationDate = Date.from(accessTokenExpirationTime.atZone(ZoneId.systemDefault()).toInstant());
-
-        return JWT.create()
-                .withSubject(email)
-                .withExpiresAt(accessTokenExpirationDate)
-                .withIssuer(request.getRequestURL().toString()) // Update to the appropriate issuer
-                .withClaim("roles", Arrays.asList(roles))
-                .sign(algorithm);
-
-    }
     public String updateAccessTokenViaRefreshToken(String email2, HttpServletRequest request, String tokenToCheck) throws IOException {
 
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email2);
         String token = refreshToken.getToken();
 
-        if(isTokenExpired(token)){
-            if(Objects.equals(token, tokenToCheck)){
+        if(isTokenExpired(token) && (Objects.equals(token, tokenToCheck))) {
 
-                String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+                String secretFilePath = "/Desktop" + "/leaps" + "/secret" + "/secret.txt";
                 String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
                 String secret = readSecretFromFile(absolutePath);
                 Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
@@ -103,9 +75,7 @@ public class SecurityUtility {
                         .withIssuer(request.getRequestURL().toString()) // Update to the appropriate issuer
                         .withClaim("roles", Arrays.asList(roles))
                         .sign(algorithm);
-            }else{
-                return "Invalid Refresh token";
-            }
+
         }
         return "Refresh Token In Database Expired , Login Again !";
     }

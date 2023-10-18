@@ -47,7 +47,6 @@ import static com.nineleaps.leaps.config.MessageStrings.*;
 @Transactional
 @AllArgsConstructor
 @Slf4j
-//todo - instead of returning hashmap, change to dtos
 public class OrderServiceImpl implements OrderServiceInterface {
     private final OrderRepository orderRepository;
     private final CartServiceInterface cartService;

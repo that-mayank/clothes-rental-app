@@ -63,7 +63,6 @@ public class CartServiceImpl implements CartServiceInterface {
         // Calculate the total cost, considering rental durations and quantities
         for (CartItemDto cartItemDto : cartItems) {
             long numberOfHours = 0;
-            if (Helper.notNull(cartItemDto.getRentalStartDate()) && Helper.notNull(cartItemDto.getRentalEndDate())) {
                 numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
 
                 if (numberOfHours == 0)
@@ -71,7 +70,6 @@ public class CartServiceImpl implements CartServiceInterface {
 
                 double perHourRent = cartItemDto.getProduct().getPrice() / 24;
                 totalCost += (perHourRent * cartItemDto.getQuantity() * numberOfHours);
-            }
         }
 
         // Calculate tax and final price

@@ -54,12 +54,13 @@ public class Cart {
 
     /**
      * Creates a Cart object with the specified product, user, quantity, rental dates, and image URL.
-     * @param product The product added to the cart.
-     * @param user The user who owns the cart.
-     * @param quantity The quantity of the product in the cart.
+     *
+     * @param product         The product added to the cart.
+     * @param user            The user who owns the cart.
+     * @param quantity        The quantity of the product in the cart.
      * @param rentalStartDate The start date of the rental period (if applicable).
-     * @param rentalEndDate The end date of the rental period (if applicable).
-     * @param imageUrl The list of product URLs, from which the first URL is used as the image URL.
+     * @param rentalEndDate   The end date of the rental period (if applicable).
+     * @param imageUrl        The list of product URLs, from which the first URL is used as the image URL.
      */
     public Cart(Product product, User user, int quantity, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate, List<ProductUrl> imageUrl) {
         // Set the create date to the current date and time
@@ -71,15 +72,10 @@ public class Cart {
         this.quantity = quantity;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
-
         // Use the first image URL from the list (if available) as the cart item's image URL
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            ProductUrl productUrl = imageUrl.get(0);
-            this.imageUrl = productUrl.getUrl();
-        } else {
-            this.imageUrl = null; // Set a default value or handle this case as needed
-        }
+        this.imageUrl = imageUrl.stream()
+                .findFirst()
+                .map(ProductUrl::getUrl)
+                .orElse(null);
     }
-
-
 }

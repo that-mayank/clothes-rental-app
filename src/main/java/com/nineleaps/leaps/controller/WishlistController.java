@@ -57,10 +57,9 @@ public class WishlistController {
 
         // Guard Statement : Check the same product cannot be added to wishlist
 
-        for (Wishlist wishlist : wishlistService.readWishlist(user.getId())) {
-            if (wishlist.getProduct().getId().equals(productId)) {
-                return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
-            }
+        List<Wishlist> userWishlist = wishlistService.readWishlist(user.getId());
+        if (userWishlist.stream().anyMatch(wishlist -> wishlist.getProduct().getId().equals(productId))) {
+            return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
         }
 
         // Calling service layer to add product to wishlist

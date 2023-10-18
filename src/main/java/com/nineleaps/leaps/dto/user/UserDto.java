@@ -25,10 +25,6 @@ public class UserDto {
         this.email = user.getEmail();
         this.phoneNumber = user.getPhoneNumber();
         this.role = user.getRole();
-        if (user.getProfileImageUrl() == null) {
-            this.profileImageUrl = null;
-        } else {
-            this.profileImageUrl = NGROK + user.getProfileImageUrl();
-        }
+        this.profileImageUrl = (user.getProfileImageUrl() == null) ? null : NGROK + user.getProfileImageUrl();
     }
 }

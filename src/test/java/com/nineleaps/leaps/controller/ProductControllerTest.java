@@ -490,6 +490,27 @@ class ProductControllerTest {
         verifyNoMoreInteractions(productService);
     }
 
+    @Test
+    void testDeleteProductWithNullUser() {
+        // Prepare a productId
+        Long productId = 123L;
+
+        // Prepare a mock HttpServletRequest
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Mock the behavior of helper.getUser(request) to return null
+        when(helper.getUser(request)).thenReturn(null);
+
+        // Call the deleteProduct method with the prepared productId and request
+        ResponseEntity<ApiResponse> response = productController.deleteProduct(productId, request);
+
+        // Verify that the response contains a "Not Found" status
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertFalse(response.getBody().isSuccess());
+        assertEquals("User is invalid!", response.getBody().getMessage());
+    }
+
+
 
     @Test
     void disableProducts_ValidProductId_ReturnsOkResponse() {

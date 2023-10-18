@@ -3,6 +3,7 @@ package com.nineleaps.leaps.service.implementation;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,10 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
 
+
 @Service // Marks this class as a Spring service component
 @Transactional // Marks this class as transactional for database operations
+@RequiredArgsConstructor
 public class FCMInitializer {
 
     @Value("${app.firebase-configuration-file}") // Reads the path to the Firebase configuration file from properties
@@ -26,9 +29,11 @@ public class FCMInitializer {
     public void initialize() {
         try {
             // Build FirebaseOptions using the Firebase configuration file
-            FirebaseOptions options = new FirebaseOptions.Builder()
+            FirebaseOptions options = new FirebaseOptions
+                    .Builder()
                     .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream()))
                     .build();
+
 
             // Check if FirebaseApp is not already initialized
             if (FirebaseApp.getApps().isEmpty()) {

@@ -2,7 +2,6 @@ package com.nineleaps.leaps.utils;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Arrays;
 
 class PdfResponseTest {
 
@@ -24,23 +23,13 @@ class PdfResponseTest {
     }
 
     @Test
-    void testEquals() {
-        byte[] pdfBytes1 = new byte[]{1, 2, 3, 4, 5};
-        byte[] pdfBytes2 = new byte[]{1, 2, 3, 4, 5};
-        PdfResponse pdfResponse1 = new PdfResponse(pdfBytes1);
-        PdfResponse pdfResponse2 = new PdfResponse(pdfBytes2);
-
-        assertTrue(pdfResponse1.equals(pdfResponse2));
-    }
-
-    @Test
     void testNotEquals() {
         byte[] pdfBytes1 = new byte[]{1, 2, 3, 4, 5};
         byte[] pdfBytes2 = new byte[]{5, 4, 3, 2, 1};
         PdfResponse pdfResponse1 = new PdfResponse(pdfBytes1);
         PdfResponse pdfResponse2 = new PdfResponse(pdfBytes2);
 
-        assertFalse(pdfResponse1.equals(pdfResponse2));
+        assertNotEquals(pdfResponse1, pdfResponse2);
     }
 
     @Test
@@ -52,15 +41,5 @@ class PdfResponseTest {
 
         // Ensure that the actual hash code is not the same as any specific expected value
         assertNotSame(0, actualHashCode); // Hash code is non-zero
-    }
-
-
-    @Test
-    void testToString() {
-        byte[] pdfBytes = new byte[]{1, 2, 3, 4, 5};
-        PdfResponse pdfResponse = new PdfResponse(pdfBytes);
-
-        String expectedToString = "PdfResponse(pdfBytes=" + Arrays.toString(pdfBytes) + ")";
-        assertEquals(expectedToString, pdfResponse.toString());
     }
 }

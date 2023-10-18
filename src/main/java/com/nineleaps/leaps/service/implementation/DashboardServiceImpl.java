@@ -20,7 +20,6 @@ import java.util.Map;
 @Service // Marks this class as a Spring service component
 @AllArgsConstructor // Lombok's annotation to generate a constructor with all required fields
 @Transactional // Marks this class as transactional for database operations
-//todo - move services from orders to here
 public class DashboardServiceImpl implements DashboardServiceInterface {
 
     private final OrderItemRepository orderItemRepository;

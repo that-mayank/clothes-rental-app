@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ class CartServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -78,6 +79,8 @@ class CartServiceImplTest {
 
         Cart cart2 = new Cart();
         cart2.setQuantity(1);
+        cart2.setRentalStartDate(LocalDateTime.now());
+        cart2.setRentalEndDate(LocalDateTime.now().plusHours(2));
         Product product2 = new Product();
         cart2.setProduct(product2);
 
@@ -94,6 +97,38 @@ class CartServiceImplTest {
         assertEquals(0, cartDto.getTotalCost());
         assertEquals(0, cartDto.getTax());
         assertEquals(100, cartDto.getFinalPrice()); //because shipping cost is 100 which is mandatory
+    }
+
+    @Test
+    void testCalculateTotalCostWithZeroHours() {
+        // Create a test user
+        User testUser = new User();
+        testUser.setId(1L);
+
+        // Create a cart item with rental dates and zero hours
+        Product product = new Product();
+        product.setPrice(10.0);  // Product price per hour
+
+
+        // Mock the behavior of the cart repository to return a list with the test cart item
+        List<Cart> cartList = new ArrayList<>();
+        Cart cart = new Cart();
+        cart.setId(1L);
+        cart.setUser(testUser);
+        cart.setProduct(product);
+        cart.setRentalStartDate(LocalDateTime.now());
+        cart.setRentalEndDate(LocalDateTime.now());
+        cartList.add(cart);
+        when(cartRepository.findAllByUserOrderByCreateDateDesc(testUser)).thenReturn(cartList);
+
+        // Call the method to calculate the total cost
+        CartDto cartDto = cartService.listCartItems(testUser);
+
+        // Calculate the expected total cost (0 hours should be considered as 1 hour)
+        double expectedTotalCost = product.getPrice() * product.getQuantity();
+
+        // Ensure that the calculated total cost matches the expected total cost
+        assertEquals(expectedTotalCost, cartDto.getTotalCost());
     }
 
     @Test

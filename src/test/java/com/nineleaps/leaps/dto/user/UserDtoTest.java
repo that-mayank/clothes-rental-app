@@ -5,7 +5,9 @@ import com.nineleaps.leaps.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserDtoTest {
 
@@ -98,5 +100,31 @@ class UserDtoTest {
     void setProfileImageUrl() {
         userDto.setProfileImageUrl("avatar.jpg");
         assertEquals("avatar.jpg", userDto.getProfileImageUrl());
+    }
+
+    @Test
+    void testProfileImageUrlWithNonNullValue() {
+        // Create a User with a non-null profileImageUrl
+        User user = new User();
+        user.setProfileImageUrl("example.jpg");
+
+        // Initialize a UserDto using the User object
+        UserDto userDto = new UserDto(user);
+
+        // Assert that the profileImageUrl in the UserDto should be NGROK + user.getProfileImageUrl()
+        assertEquals(NGROK + user.getProfileImageUrl(), userDto.getProfileImageUrl());
+    }
+
+    @Test
+    void testProfileImageUrlWithNullValue() {
+        // Create a User with a null profileImageUrl
+        User user = new User();
+        user.setProfileImageUrl(null);
+
+        // Initialize a UserDto using the User object
+        UserDto userDto = new UserDto(user);
+
+        // Assert that the profileImageUrl in the UserDto should be null
+        assertNull(userDto.getProfileImageUrl());
     }
 }

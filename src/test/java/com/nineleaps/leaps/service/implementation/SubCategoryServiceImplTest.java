@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +73,7 @@ class SubCategoryServiceImplTest {
 
 
     @Test
-    public void readSubCategory_WithInvalidSubcategoryName_ReturnsNull() {
+    void readSubCategory_WithInvalidSubcategoryName_ReturnsNull() {
         // Arrange
         Category validCategory = new Category();
         validCategory.setId(1L);
@@ -87,8 +86,6 @@ class SubCategoryServiceImplTest {
         SubCategory subCategory2 = new SubCategory();
         subCategory2.setId(2L);
         subCategory2.setSubcategoryName("Subcategory 2");
-
-        List<SubCategory> subCategories = Arrays.asList(subCategory1, subCategory2);
 
         when(categoryRepository.findById(validCategory.getId())).thenReturn(Optional.empty());
 
@@ -214,8 +211,7 @@ class SubCategoryServiceImplTest {
         subcategoryIds.add(2L);
         SubCategory subCategory1 = new SubCategory();
         subCategory1.setId(1L);
-        List<SubCategory> subCategories = new ArrayList<>();
-        subCategories.add(subCategory1);
+
 
         // Mock the behavior of categoryRepository
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(subCategory1));
@@ -223,8 +219,6 @@ class SubCategoryServiceImplTest {
         when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
 
         // Perform getSubCategoriesFromIds method and assert an exception is thrown
-        assertThrows(CategoryNotExistException.class, () -> {
-            subCategoryService.getSubCategoriesFromIds(subcategoryIds);
-        });
+        assertThrows(CategoryNotExistException.class, () -> subCategoryService.getSubCategoriesFromIds(subcategoryIds));
     }
 }

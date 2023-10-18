@@ -75,7 +75,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleRefreshToken(
+    void handleRefreshToken(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
@@ -85,7 +85,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null) {
             try {
                 String token = authorizationHeader.substring(7);
-                if (securityUtility.isTokenExpired(token)) {
+                if (!securityUtility.isTokenExpired(token)) {
                     filterChain.doFilter(request, response);
                 } else {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token expired");
@@ -107,8 +107,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             HttpServletRequest request
     ) throws IOException, ServletException {
 
-        if (securityUtility.isTokenExpired(token)) {
-            String secretFilePath = "Desktop/leaps/secret/secret.txt";
+        if (!securityUtility.isTokenExpired(token)) {
+            String secretFilePath = "Desktop/nineleaps/secret/secret.txt";
             String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
             String secret = securityUtility.readSecretFromFile(absolutePath);
             Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

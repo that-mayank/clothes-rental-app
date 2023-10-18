@@ -91,7 +91,6 @@ public class UserController {
 
         // Guard statement : To  verify role should be owner or borrower
 
-        if (profile == Role.OWNER || profile == Role.BORROWER) {
             user.setRole(profile);
             userServiceInterface.saveProfile(user);
             switchprofile.generateTokenForSwitchProfile(response, profile, request);
@@ -102,8 +101,6 @@ public class UserController {
                             "Role switch to: " + user.getRole()),
                     HttpStatus.OK
             );
-        }
-        return null;
     }
 
     // API : To update profile of user

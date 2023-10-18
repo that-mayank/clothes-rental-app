@@ -5,6 +5,7 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
+import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -76,6 +77,28 @@ class OrderControllerTest {
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = orderController.placeOrder(null, request);
+
+        // Assert
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        ApiResponse response = responseEntity.getBody();
+        assertNotNull(response);
+        assertFalse(response.isSuccess());
+        assertEquals("Missing or empty razorpayId parameter", response.getMessage());
+
+        // Verify that the service method was not called
+        verifyZeroInteractions(orderService);
+    }
+
+    @Test
+    void placeOrder_EmptyRazorpayId_ReturnsBadRequest()  {
+        // Arrange
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getHeader("Authorization")).thenReturn("Bearer token");
+
+        // Act
+        ResponseEntity<ApiResponse> responseEntity = orderController.placeOrder("", request);
 
         // Assert
         assertNotNull(responseEntity);
@@ -189,6 +212,49 @@ class OrderControllerTest {
     }
 
     @Test
+    void testOrderInTransitOrderItemIdNull() {
+        // Prepare request parameters with null orderItemId
+        Long orderItemId = null;
+        String orderStatus = "IN TRANSIT";
+
+        // Prepare a mock HttpServletRequest
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Call the orderInTransit method
+        ResponseEntity<ApiResponse> response = orderController.orderInTransit(orderItemId, orderStatus, request);
+
+
+        // Check if the response is as expected
+        assertAll(
+                () -> assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode()),
+                () -> assertFalse(response.getBody().isSuccess()),
+                () -> assertNotNull(response.getBody().getMessage()),
+                () -> assertTrue(response.getBody().getMessage().contains("OrderItem does not belong to current user"))
+        );
+    }
+
+    @Test
+    void testOrderInTransitOrderStatusBlank() {
+        // Prepare request parameters with blank orderStatus
+        Long orderItemId = 123L;
+        String orderStatus = "   ";  // Blank orderStatus
+
+        // Prepare a mock HttpServletRequest
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Call the orderInTransit method
+        ResponseEntity<ApiResponse> response = orderController.orderInTransit(orderItemId, orderStatus, request);
+
+
+        // Check if the response is as expected
+        assertAll(
+                () -> assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode()),
+                () -> assertFalse(response.getBody().isSuccess()),
+                () -> assertNotNull(response.getBody().getMessage())
+        );
+    }
+
+    @Test
     void getRentedOutProducts_ReturnsProductDtoList() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -286,4 +352,32 @@ class OrderControllerTest {
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
+
+    @Test
+    void testGenerateInvoiceOrderIsNull() {
+        // Prepare request parameters
+        Long orderId = 123L;
+
+        // Prepare a mock HttpServletRequest
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Prepare a mock User
+        User user = new User();
+        user.setId(1L);
+
+        // Mock the behavior of helper.getUser(request)
+        when(helper.getUser(request)).thenReturn(user);
+
+        // Mock the behavior of orderService.getOrder
+        when(orderService.getOrder(orderId, user)).thenReturn(null);
+
+        // Define the expected exception
+        OrderNotFoundException expectedException = new OrderNotFoundException("No order items found for the user and order ID");
+
+        // Call the generateInvoice method and expect an exception
+        assertThrows(OrderNotFoundException.class, () -> {
+            orderController.generateInvoice(orderId, request);
+        }, "Expected OrderNotFoundException was not thrown");
+    }
+
 }

@@ -118,7 +118,7 @@ public class OrderController {
 
     // Validating the orderStatus variable
 
-    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @NonNull @RequestParam("Order Status") String orderStatus, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> orderInTransit(@RequestParam("orderItemId") Long orderItemId, @RequestParam("Order Status") String orderStatus, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
 

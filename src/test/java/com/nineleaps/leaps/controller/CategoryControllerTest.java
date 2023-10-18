@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +98,43 @@ class CategoryControllerTest {
         // Assert
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void testCreateCategorySuccess() {
+        // Prepare a mock CategoryDto
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setCategoryName("NewCategory");
+        categoryDto.setDescription("Category Description");
+
+        // Prepare a mock HttpServletRequest
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
+        // Prepare a mock User
+        User user = new User();
+        user.setId(1L);
+        user.setRole(Role.ADMIN);
+
+        // Mock the behavior of helper.getUser(request)
+        when(helper.getUser(request)).thenReturn(user);
+
+        // Mock the behavior of categoryService.readCategory
+        when(categoryService.readCategory(categoryDto.getCategoryName())).thenReturn(null);
+
+        // Create a category entity from the CategoryDto
+        Category category = new Category(categoryDto);
+
+        // Mock the behavior of categoryService.createCategory to do nothing
+        Mockito.doNothing().when(categoryService).createCategory(category);
+
+
+        // Call the createCategory method
+        ResponseEntity<ApiResponse> response = categoryController.createCategory(categoryDto, request);
+
+        // Verify the response
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(true, response.getBody().isSuccess());
+        assertEquals("Created a new Category", response.getBody().getMessage());
     }
 
     @Test

@@ -104,6 +104,33 @@ class ProductControllerTest {
     }
 
     @Test
+    void testAddProductWithPriceLessThanZero() {
+        // Prepare a ProductDto with price less than zero
+        ProductDto productDto = new ProductDto();
+        productDto.setPrice(-10.0); // Set a negative price
+        productDto.setTotalQuantity(10);
+
+        // Prepare a mock HttpServletRequest
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Prepare a mock User
+        User user = new User();
+        user.setId(1L);
+
+        // Mock the behavior of helper.getUser(request)
+        when(helper.getUser(request)).thenReturn(user);
+
+        // Call the addProduct method with the prepared ProductDto
+        ResponseEntity<ApiResponse> response = productController.addProduct(productDto, request);
+
+        // Verify that the response contains a "Bad Request" status
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(response.getBody().isSuccess());
+        assertEquals("Price cannot be zero", response.getBody().getMessage());
+    }
+
+
+    @Test
     void listProducts_ReturnsListOfProducts() {
         // Arrange
         User user = new User();

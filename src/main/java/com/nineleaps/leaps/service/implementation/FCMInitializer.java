@@ -14,12 +14,10 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
 
-
 @Service // Marks this class as a Spring service component
 @Transactional // Marks this class as transactional for database operations
 @RequiredArgsConstructor
 public class FCMInitializer {
-
     Logger logger = LoggerFactory.getLogger(FCMInitializer.class); // Create a logger for this class
     @Value("${app.firebase-configuration-file}") // Reads the path to the Firebase configuration file from properties
     private String firebaseConfigPath;
@@ -32,13 +30,11 @@ public class FCMInitializer {
                 .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream()))
                 .build();
 
-
         // Check if FirebaseApp is not already initialized
         if (FirebaseApp.getApps().isEmpty()) {
             FirebaseApp.initializeApp(options); // Initialize FirebaseApp with the provided options
             logger.info("Firebase application has been initialized"); // Log a success message
         }
-
     }
 }
 

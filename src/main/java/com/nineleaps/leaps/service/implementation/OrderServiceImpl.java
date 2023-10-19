@@ -495,7 +495,8 @@ public class OrderServiceImpl implements OrderServiceInterface {
         List<OrderItem> orderItemList = orderItemRepository.findAll();
         List<OrderItemDto> orderItemDtos = new ArrayList<>();
         for (var orderItem : orderItemList) {
-            if(orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus)) orderItemDtos.add(new OrderItemDto(orderItem));
+            if(orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus))
+                orderItemDtos.add(new OrderItemDto(orderItem));
         }
         return orderItemDtos;
     }
@@ -504,6 +505,4 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private Date convertToDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
-
-
 }

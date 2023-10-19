@@ -18,6 +18,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,5 +86,19 @@ class PdfServiceImplTest {
 
         // Act and Assert
         assertThrows(DocumentException.class, () -> pdfService.addContent(document, user));
+    }
+
+    @Test
+    void testGetPdf() {
+        // Mock user data
+        User user = new User();
+        user.setFirstName("Mayank");
+        user.setLastName("Singh");
+
+        // Call the method to test
+        Document document = pdfService.getPdf(user);
+
+        // Assert that the document is not null
+        assertNotNull(document);
     }
 }

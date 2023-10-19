@@ -79,11 +79,9 @@ public class ProductServiceImpl implements ProductServiceInterface {
             throw new ProductNotExistException("Product does not belong to the user: " + user.getFirstName() + " " + user.getLastName());
         }
         Product product = getProductFromDto(productDto, subCategories, categories, user);
-        if (Helper.notNull(product)) {
-            product.setId(productId);
-            //setting image url
-            setImageUrl(product, productDto);
-        }
+        product.setId(productId);
+        //setting image url
+        setImageUrl(product, productDto);
     }
 
     @Override
@@ -147,11 +145,9 @@ public class ProductServiceImpl implements ProductServiceInterface {
 
     @Override
     public Product getProductById(Long productId) throws ProductNotExistException {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isEmpty()) {
-            throw new ProductNotExistException("Product is invalid: " + productId);
-        }
-        return optionalProduct.get();
+        return productRepository
+                .findById(productId)
+                .orElseThrow(() -> new ProductNotExistException("Product is invalid: " + productId));
     }
 
     @Override
@@ -210,8 +206,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
         deletedProductFilter.setParameter(DELETED, false);
         disabledProductFilter.setParameter(DISABLED, false);
-        String[] stringArray = query.split(" ");
-        String[] stringList = stringArray;
+        String[] stringList = query.split(" ");
 
         List<ProductDto> productDtos = new ArrayList<>();
 
@@ -300,24 +295,24 @@ public class ProductServiceImpl implements ProductServiceInterface {
     private void setImageUrl(Product product, ProductDto productDto) {
         //setting image url
         List<ProductUrl> productUrls = new ArrayList<>();
-        for (String imageurl : productDto.getImageUrl()) {
+        for (String imageUrl : productDto.getImageUrl()) {
             ProductUrl productUrl = new ProductUrl();
             productUrl.setProduct(product);
             //removing ngrok link
-            String newImageurl = ngrokLinkRemove(imageurl);
-            productUrl.setUrl(newImageurl);
+            String newImageUrl = ngrokLinkRemove(imageUrl);
+            productUrl.setUrl(newImageUrl);
             productUrls.add(productUrl);
         }
         product.setImageURL(productUrls);
         productRepository.save(product);
     }
 
-    private String ngrokLinkRemove(String imageurl) {
-        if (imageurl.contains(NGROK)) {
+    private String ngrokLinkRemove(String imageUrl) {
+        if (imageUrl.contains(NGROK)) {
             int size = NGROK.length();
-            return imageurl.substring(size);
+            return imageUrl.substring(size);
         }
-        return imageurl;
+        return imageUrl;
     }
 
 }

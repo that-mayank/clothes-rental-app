@@ -5,10 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
-import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.utils.SecurityUtility;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,18 +26,16 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final SecurityUtility securityUtility;
-    private final RefreshTokenRepository refreshTokenRepository;
-
-
 
     //Authenticates the user using login credentials - email and password
     @Override
@@ -55,24 +52,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
         // Check if device token is present
-        JsonNode deviceTokenNode = jsonNode.get("deviceToken");
-        String deviceToken = null;
-        if (deviceTokenNode != null) {
-            deviceToken = deviceTokenNode.asText();
-        }
-
+        Optional<JsonNode> deviceTokenNodeOptional = Optional.ofNullable(jsonNode.get("deviceToken"));
+        String deviceToken = deviceTokenNodeOptional.map(JsonNode::asText).orElse(null);
         // Process authentication
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-
-
         // Set device token if available
-        if (deviceToken != null) {
-            securityUtility.setDeviceToken(email, deviceToken);
-        }
+        Optional.ofNullable(deviceToken).ifPresent(token -> securityUtility.setDeviceToken(email, token));
         return authenticationManager.authenticate(authenticationToken);
-
     }
-
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
@@ -101,11 +88,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
         String email = user.getUsername();
 
-        if (securityUtility.saveTokens(refreshToken, email)) {
-            response.getWriter().write("RefreshTokens added successfully!");
-        } else {
-            response.getWriter().write("Token not added");
-        }
+        Optional<String> result = Optional.of(refreshToken)
+                .map(token -> securityUtility.saveTokens(token, email) ? "RefreshTokens added successfully!" : "Token not added");
+        result.ifPresent(response.getWriter()::write);
+
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
     }

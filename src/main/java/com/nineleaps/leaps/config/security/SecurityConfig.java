@@ -2,7 +2,6 @@ package com.nineleaps.leaps.config.security;
 
 import com.nineleaps.leaps.config.filter.CustomAuthenticationFilter;
 import com.nineleaps.leaps.config.filter.CustomAuthorizationFilter;
-import com.nineleaps.leaps.repository.RefreshTokenRepository;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityUtility securityUtility;
 
     @Override
@@ -36,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility, refreshTokenRepository);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), securityUtility);
         customAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
         http
                 .csrf().disable()

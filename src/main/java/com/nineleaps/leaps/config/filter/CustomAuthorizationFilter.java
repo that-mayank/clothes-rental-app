@@ -126,18 +126,19 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access token expired");
-
         }
 
     }
 
     void handleUnauthorized(HttpServletResponse response, String errorMessage) throws IOException {
         response.setStatus(FORBIDDEN.value());
-        Map<String, String> error = new HashMap<>();
-        error.put("error_message", errorMessage);
-        response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), error);
+
+        if (response.getOutputStream() != null) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error_message", errorMessage);
+            response.setContentType(APPLICATION_JSON_VALUE);
+
+            new ObjectMapper().writeValue(response.getOutputStream(), error);
+        }
     }
-
-
 }

@@ -1,13 +1,9 @@
 package com.nineleaps.leaps.config.filter;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
@@ -47,14 +40,12 @@ class CustomAuthorizationFilterTest {
 
     @InjectMocks
     private CustomAuthorizationFilter authorizationFilter;
-
     @Mock
     private SecurityUtility securityUtility;
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
-
     @Mock
     private FilterChain filterChain;
 
@@ -106,6 +97,72 @@ class CustomAuthorizationFilterTest {
         authorizationFilter.doFilterInternal(request, response, filterChain);
 
         verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+    @Test
+    void testDoFilterInternal_HandleAccessToken() throws Exception {
+        // Define the authorization header with a valid token
+        String validToken = generateAccessToken(60);
+        when(request.getHeader(AUTHORIZATION)).thenReturn("Bearer " + validToken);
+
+        // Define the servlet path that starts with "/api/v1/"
+        when(request.getServletPath()).thenReturn("/api/v1/secure");
+
+        // Mock the behavior of securityUtility to indicate a valid token
+        when(securityUtility.isTokenExpired(validToken)).thenReturn(false);
+
+        when(securityUtility.readSecretFromFile(anyString())).thenReturn("meinhuchotadon");
+
+        // Call the method to test
+        authorizationFilter.doFilterInternal(request, response, filterChain);
+
+        // Verify that handleAccessToken is called
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+    @Test
+    void testDoFilterInternal_HandleUnauthorized() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // Define the authorization header with a invalid token
+        String invalidToken = generateAccessToken(-60);
+        when(request.getHeader(AUTHORIZATION)).thenReturn("Bearer " + invalidToken);
+
+        // Define the servlet path that starts with "/api/v1/"
+        when(request.getServletPath()).thenReturn("/api/random");
+
+        // Call the method to test
+        authorizationFilter.doFilterInternal(request, response, filterChain);
+
+        String responseContent = response.getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> errorResponse = objectMapper.readValue(responseContent, new TypeReference<>() {});
+        assertEquals("Unauthorized Request", errorResponse.get("error_message"));
+    }
+
+    @Test
+    void testDoFilterInternal_ThrowsException() throws Exception{
+        MockHttpServletResponse response = new MockHttpServletResponse(); // Create a new response object
+
+        // Define the authorization header with a invalid token
+        String invalidToken = generateAccessToken(-60);
+        when(request.getHeader(AUTHORIZATION)).thenReturn("Bearer " + invalidToken);
+
+        // Create mock of CustomAuthorizationFilter
+        CustomAuthorizationFilter authorizationFilterMock = Mockito.mock(CustomAuthorizationFilter.class);
+
+        // Mock the handleAccessToken method to throw an exception
+        doThrow(new RuntimeException("Simulated exception"))
+                .when(authorizationFilterMock)
+                .handleAccessToken(eq(invalidToken), any(HttpServletResponse.class), any(FilterChain.class), any(HttpServletRequest.class));
+
+        // Define the servlet path that starts with "/api/v1/"
+        when(request.getServletPath()).thenReturn("/api/v1/secure");
+
+        // Call the method to test
+        authorizationFilter.doFilterInternal(request, response, filterChain);
+
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
@@ -221,7 +278,6 @@ class CustomAuthorizationFilterTest {
     @Test
     void testHandleUnauthorized() throws Exception {
         // Create mock request and response objects
-        MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // Define an error message
@@ -239,7 +295,7 @@ class CustomAuthorizationFilterTest {
         // Parse the JSON response content and check its content
         String responseContent = response.getContentAsString();
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> errorResponse = objectMapper.readValue(responseContent, new TypeReference<Map<String, String>>() {});
+        Map<String, String> errorResponse = objectMapper.readValue(responseContent, new TypeReference<>() {});
         assertEquals(errorMessage, errorResponse.get("error_message"));
     }
 
@@ -253,7 +309,7 @@ class CustomAuthorizationFilterTest {
                 .withSubject("admin@nineleaps.com")
                 .withExpiresAt(expirationDate)
                 .withIssuer("https://example.com")
-                .withClaim("roles", Arrays.asList("ADMIN"))
+                .withClaim("roles", List.of("ADMIN"))
                 .sign(algorithm);
     }
 }

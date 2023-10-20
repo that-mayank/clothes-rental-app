@@ -29,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 public class SMSController {
 
     //Linking layers using constructor injection
-
     private final SmsServiceInterface smsService;
     private final UserServiceInterface userService;
     private final SimpMessagingTemplate webSocket;
@@ -39,59 +38,68 @@ public class SMSController {
     }
 
     // API : To send sms to phone number
-
     @ApiOperation(value = "API : To send sms to phone number")
     @PostMapping(value = "/phoneNo", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-
     public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
 
         // Guard Statement : If the phone number is in database or not
-
         if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
-            return new ResponseEntity<>(new ApiResponse(false, "Phone number not present in database"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            false,
+                            "Phone number not present in database"),
+                    HttpStatus.NOT_FOUND);
         }
-
         try {
-
             // Send SMS using the smsService
-
             smsService.send(phoneNumber);
         } catch (Exception e) {
-
             // Handle exceptions when sending SMS
-
-            return new ResponseEntity<>(new ApiResponse(false, "Enter a valid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            false,
+                            "Enter a valid OTP"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Define a topic destination for WebSocket notification
-
         String topicDestination = "/lesson/sms";
 
         // Send a WebSocket notification about the SMS sent
-
-        webSocket.convertAndSend(topicDestination, getTimeStamp() + ":SMS has been sent " + phoneNumber);
+        webSocket.convertAndSend(
+                topicDestination,
+                getTimeStamp() + ":SMS has been sent " + phoneNumber
+        );
 
         // Return a success response
-
-        return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "OTP sent successfully"),
+                HttpStatus.CREATED);
     }
 
     // API : To verify OTP sent to phone number
-
     @ApiOperation(value = "API : To verify OTP sent to phone number")
     @PostMapping(value = "/otp", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-
-    public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws OtpValidationException, IOException {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ApiResponse> verifyOTP(
+            HttpServletResponse response,
+            HttpServletRequest request,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("otp") Integer otp
+    ) throws OtpValidationException, IOException {
 
         // Call the smsService to verify the OTP
-
         smsService.verifyOtp(phoneNumber, otp, response, request);
 
         // Return a success response
-
-        return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "OTP is verified"),
+                HttpStatus.OK);
     }
 
 }

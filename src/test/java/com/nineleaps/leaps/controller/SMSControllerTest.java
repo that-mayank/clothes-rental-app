@@ -7,6 +7,8 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,17 +25,15 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class SMSControllerTest {
 
     @Mock
     private SmsServiceInterface smsServiceInterface;
-
     @Mock
     private UserServiceInterface userService;
-
     @Mock
     private SimpMessagingTemplate webSocket;
-
     @InjectMocks
     private SMSController smsController;
 
@@ -43,6 +43,7 @@ class SMSControllerTest {
     }
 
     @Test
+    @DisplayName("Send SMS")
     void smsSubmit_ValidPhoneNumber_ReturnsSuccessResponse() {
         // Arrange
         String phoneNumber = "9066650446";
@@ -54,13 +55,12 @@ class SMSControllerTest {
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
-        // Add more assertions for the response body if necessary
-
         verify(smsServiceInterface, times(1)).send(phoneNumber);
         verify(webSocket, times(1)).convertAndSend(anyString(), anyString());
     }
 
     @Test
+    @DisplayName("Send SMS - Invalid Phone Number")
     void smsSubmit_PhoneNumberNotPresentInDatabase_ReturnsNotFoundResponse() {
         // Arrange
         String phoneNumber = "1234567890";
@@ -73,14 +73,12 @@ class SMSControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Phone number not present in database", response.getBody().getMessage());
-
-        // Add more assertions for the response body if necessary
-
         verify(smsServiceInterface, never()).send(phoneNumber);
         verify(webSocket, never()).convertAndSend(anyString(), anyString());
     }
 
     @Test
+    @DisplayName("Send SMS - Exception")
     void smsSubmit_ExceptionWhenSendingSMS_ReturnsInternalServerErrorResponse() {
         // Arrange
         String phoneNumber = "9066650446";
@@ -94,14 +92,12 @@ class SMSControllerTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Enter a valid OTP", response.getBody().getMessage());
-
-        // Add more assertions for the response body if necessary
-
         verify(smsServiceInterface, times(1)).send(phoneNumber);
         verify(webSocket, never()).convertAndSend(anyString(), anyString());
     }
 
     @Test
+    @DisplayName("Verify OTP")
     void verifyOTP_ValidOTP_ReturnsSuccessResponse() throws OtpValidationException, IOException {
         // Arrange
         String phoneNumber = "9066650446";
@@ -115,12 +111,8 @@ class SMSControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-        // Add more assertions for the response body if necessary
-
         verify(smsServiceInterface, times(1)).verifyOtp(phoneNumber, otp, response, request);
     }
-
-
 
     private User someUserObject() {
         // Create and return a dummy User object for testing
@@ -129,9 +121,6 @@ class SMSControllerTest {
         user.setEmail("prath@gmail.com");
         user.setPhoneNumber("9066650446");
         user.setRole(Role.OWNER);
-
         return user;
     }
-
-
 }

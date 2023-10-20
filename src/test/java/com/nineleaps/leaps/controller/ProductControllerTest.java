@@ -11,7 +11,10 @@ import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
@@ -20,39 +23,36 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class ProductControllerTest {
 
     @Mock
     private ProductServiceInterface productService;
-
     @Mock
     private SubCategoryServiceInterface subCategoryService;
-
     @Mock
     private CategoryServiceInterface categoryService;
-
     @Mock
     private Helper helper;
-
     @Mock
     private HttpServletRequest request;
-
+    @InjectMocks
     private ProductController productController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        productController = new ProductController(
-                productService, subCategoryService, categoryService, helper);
     }
 
     @Test
+    @DisplayName("Add Product - Success")
     void addProduct_ValidProduct_ReturnsCreatedResponse() {
         // Arrange
         ProductDto productDto = new ProductDto();
@@ -82,6 +82,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Add Product - Invalid Quantity")
     void addProduct_InvalidQuantity_ReturnsBadRequestResponse() {
         // Arrange
         User user = new User();
@@ -104,6 +105,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Add Product - Invalid Price")
     void testAddProductWithPriceLessThanZero() {
         // Prepare a ProductDto with price less than zero
         ProductDto productDto = new ProductDto();
@@ -125,12 +127,13 @@ class ProductControllerTest {
 
         // Verify that the response contains a "Bad Request" status
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Price cannot be zero", response.getBody().getMessage());
     }
 
 
     @Test
+    @DisplayName("List Product - Success")
     void listProducts_ReturnsListOfProducts() {
         // Arrange
         User user = new User();
@@ -152,6 +155,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Update Product - Success")
     void updateProduct_ValidProduct_ReturnsOkResponse() {
         // Arrange
         Long productId = 1L;
@@ -181,6 +185,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Update Product - Invalid Product")
     void updateProduct_InvalidProduct_ReturnsNotFoundResponse() {
         // Arrange
         Long productId = 1L;
@@ -208,6 +213,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product By Subcategory Id")
     void listBySubcategoryId_ValidSubcategoryId_ReturnsListOfProducts() {
         // Arrange
         User user = new User();
@@ -233,6 +239,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product - Invalid Subcategory Id")
     void listBySubcategoryId_InvalidSubcategoryId_ReturnsNotFoundResponse() {
         // Arrange
         Long subcategoryId = 1L;
@@ -254,6 +261,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product - Category Id")
     void listByCategoryId_ValidCategoryId_ReturnsListOfProducts() {
         // Arrange
         User user = new User();
@@ -279,6 +287,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product - Invalid Category Id")
     void listByCategoryId_InvalidCategoryId_ReturnsNotFoundResponse() {
         // Arrange
         Long categoryId = 1L;
@@ -300,6 +309,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Get Product - Success")
     void listByProductId_ValidProductId_ReturnsProductDto() {
         // Arrange
         Long productId = 1L;
@@ -321,6 +331,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product - Price Range")
     void getProductsByPriceRange_ValidRange_ReturnsListOfProducts() {
         // Arrange
         double minPrice = 10.0;
@@ -343,6 +354,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Search Products")
     void searchProducts_ValidQuery_ReturnsListOfProducts() {
         // Arrange
         User user = new User();
@@ -366,6 +378,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product - Desc")
     void listProductsDesc_ReturnsListOfProductsInDescendingOrder() {
         // Arrange
         User user = new User();
@@ -388,6 +401,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List Product - Owner")
     void listOwnerProducts_ReturnsListOfOwnerProducts() {
         // Arrange
         User user = new User();
@@ -410,6 +424,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Product Filter")
     void filterProducts_ReturnsListOfFilteredProducts() {
         // Arrange
         String size = "large";
@@ -434,6 +449,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Delete Product")
     void deleteProduct_ValidProductId_ReturnsOkResponse() {
         // Arrange
         Product product = new Product();
@@ -463,6 +479,7 @@ class ProductControllerTest {
 
 
     @Test
+    @DisplayName("Delete Product - Invalid ProductId")
     void deleteProduct_InvalidProductId_ReturnsNotFoundResponse() {
         // Arrange
         User user = new User();
@@ -491,6 +508,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Delete Product - Invalid User")
     void testDeleteProductWithNullUser() {
         // Prepare a productId
         Long productId = 123L;
@@ -506,13 +524,14 @@ class ProductControllerTest {
 
         // Verify that the response contains a "Not Found" status
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(response.getBody().isSuccess());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("User is invalid!", response.getBody().getMessage());
     }
 
 
 
     @Test
+    @DisplayName("Disable Products - Success")
     void disableProducts_ValidProductId_ReturnsOkResponse() {
         // Arrange
         Long productId = 1L;
@@ -538,6 +557,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Disable Products - Invalid Id")
     void disableProducts_InvalidProductId_ReturnsForbiddenResponse() {
         // Arrange
         Long productId = 1L;
@@ -566,6 +586,7 @@ class ProductControllerTest {
 
 
     @Test
+    @DisplayName("Enable Products - Valid Id")
     void enableProducts_ValidProductId_ReturnsOkResponse() {
         // Arrange
         Long productId = 1L;
@@ -591,6 +612,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Enable Products - Invalid Id")
     void enableProducts_InvalidProductId_ReturnsForbiddenResponse() {
         // Arrange
         Long productId = 1L;

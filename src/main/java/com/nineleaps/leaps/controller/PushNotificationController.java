@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/v1/push-notification")
 @Validated
@@ -20,23 +19,21 @@ import org.springframework.web.bind.annotation.*;
 public class PushNotificationController {
 
     //Linking layers using constructor injection
-
     private final PushNotificationServiceImpl pushNotificationService;
 
     // API : To send push notification to device using fcm token
-
     @ApiOperation(value = "API : To send push notification to device using fcm token")
     @PostMapping("/notification/token")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
-
-    public ResponseEntity<PushNotificationResponse> sendTokenNotification(@RequestParam("Device Token") String deviceToken) {
-
+    public ResponseEntity<PushNotificationResponse> sendTokenNotification(
+            @RequestParam("Device Token") String deviceToken) {
         // Calling Service layer to send notification
-
         pushNotificationService.sendNotification(deviceToken);
-        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."),
+        return new ResponseEntity<>(
+                new PushNotificationResponse(
+                        HttpStatus.OK.value(),
+                        "Notification has been sent."),
                 HttpStatus.OK);
     }
-
 }

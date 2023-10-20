@@ -34,20 +34,19 @@ import java.io.IOException;
 public class PdfController {
 
     //Linking layers using constructor injection
-
     private final PdfServiceInterface pdfService;
     private final Helper helper;
 
     //API : To export pdf
-
     @ApiOperation(value = "API : To export pdf")
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
+    public ResponseEntity<InputStreamResource> getPdf(
+            HttpServletRequest request
+    ) throws IOException, DocumentException {
 
-    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
         User user = helper.getUser(request);
-
         Document document = pdfService.getPdf(user);
 
         // Convert the Document into a byte array
@@ -66,7 +65,9 @@ public class PdfController {
         byte[] pdfBytes = baos.toByteArray();
 
         // Create the InputStreamResource from the byte array
-        InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
+        InputStreamResource inputStreamResource = new InputStreamResource(
+                new ByteArrayInputStream(pdfBytes)
+        );
 
         // Set the Content-Disposition header to force download the PDF
         HttpHeaders headers = new HttpHeaders();

@@ -8,6 +8,8 @@ import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,19 +21,19 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class CategoryControllerTest {
 
     @InjectMocks
     private CategoryController categoryController;
-
     @Mock
     private CategoryServiceInterface categoryService;
-
     @Mock
     private Helper helper;
 
@@ -41,6 +43,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Category - Success")
     void createCategory_ValidCategoryDto_ReturnsCreatedResponse() {
         // Arrange
         CategoryDto categoryDto = new CategoryDto();
@@ -63,6 +66,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Category - Invalid Role")
     void createCategory_AdminUserInvalidRole_ReturnsForbiddenResponse() {
         // Arrange
         CategoryDto categoryDto = new CategoryDto();
@@ -81,6 +85,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Category - Category Exists Conflict")
     void createCategory_CategoryExists_ReturnsConflictResponse() {
         // Arrange
         CategoryDto categoryDto = new CategoryDto();
@@ -101,6 +106,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Category - Success")
     void testCreateCategorySuccess() {
         // Prepare a mock CategoryDto
         CategoryDto categoryDto = new CategoryDto();
@@ -127,17 +133,17 @@ class CategoryControllerTest {
         // Mock the behavior of categoryService.createCategory to do nothing
         Mockito.doNothing().when(categoryService).createCategory(category);
 
-
         // Call the createCategory method
         ResponseEntity<ApiResponse> response = categoryController.createCategory(categoryDto, request);
 
         // Verify the response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(true, response.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("Created a new Category", response.getBody().getMessage());
     }
 
     @Test
+    @DisplayName("List Category - Success")
     void listCategory_ReturnsCategoryList() {
         // Arrange
         List<Category> categoryList = new ArrayList<>();
@@ -155,8 +161,8 @@ class CategoryControllerTest {
         assertEquals(categoryList, resultCategoryList);
     }
 
-
     @Test
+    @DisplayName("Update Category - Success")
     void updateCategory_ValidCategoryId_ReturnsOkResponse() {
         // Arrange
         Long categoryId = 1L;
@@ -183,6 +189,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Category - Invalid Role")
     void updateCategory_UserInvalidRole_ReturnsForbiddenResponse() {
         // Arrange
         Long categoryId = 1L;
@@ -202,6 +209,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Category - Category Not Found")
     void updateCategory_CategoryNotExists_ReturnsNotFoundResponse() {
         // Arrange
         Long categoryId = 1L;

@@ -27,92 +27,102 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 @Api(tags = "Category Api")
-
 public class CategoryController {
 
     //Linking layers using constructor injection
-
     private final CategoryServiceInterface categoryService;
     private final Helper helper;
 
     // API : To add category by admin
-
     @ApiOperation(value = "API : To add category")
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
-
     // Validate the categoryDto object
-
     public ResponseEntity<ApiResponse> createCategory(@RequestBody @Valid CategoryDto categoryDto, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
-
         User user = helper.getUser(request);
 
         // Guard Statement : Check user role is admin or not
-
         if(user.getRole() != Role.ADMIN) {
-            return new ResponseEntity<>(new ApiResponse(false, "Category can only be accessed by admin"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            false,
+                            "Category can only be accessed by admin"),
+                    HttpStatus.FORBIDDEN);
         }
 
         // Guard Statement : Check if category already present in DB
 
+
         if (Helper.notNull(categoryService.readCategory(categoryDto.getCategoryName()))) {
-            return new ResponseEntity<>(new ApiResponse(false, "Category already exists"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            false,
+                            "Category already exists"),
+                    HttpStatus.CONFLICT);
         }
 
         // Calling service layer to save category
 
         Category category = new Category(categoryDto);
         categoryService.createCategory(category);
-        return new ResponseEntity<>(new ApiResponse(true, "Created a new Category"), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "Created a new Category"),
+                HttpStatus.CREATED);
     }
 
     // API : To get list of categories
-
     @ApiOperation(value = "API : To get list of categories")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-
     public ResponseEntity<List<Category>> listCategory() {
 
         // Calling service layer to get list of categories
-
         List<Category> body = categoryService.listCategory();
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     // API : To update category
-
     @ApiOperation(value = "API : To update category")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
-
     // Validate the categoryDto object
-
-    public ResponseEntity<ApiResponse> updateCategory(@PathVariable("id") Long id, @Valid @RequestBody CategoryDto updateCategory, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> updateCategory(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody CategoryDto updateCategory,
+            HttpServletRequest request) {
 
         // JWT : Extracting user info from token
-
         User user = helper.getUser(request);
 
         // Guard Statement : Check user role is admin or not
-
         if(user.getRole() != Role.ADMIN) {
-            return new ResponseEntity<>(new ApiResponse(false, "Category can only be accessed by admin"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            false,
+                            "Category can only be accessed by admin"),
+                    HttpStatus.FORBIDDEN);
         }
 
         // Guard Statement : Check to see if category exists
-
         if ((categoryService.readCategory(id)).isPresent()) {
             categoryService.updateCategory(id, updateCategory);
-            return new ResponseEntity<>(new ApiResponse(true, "category has been updated"), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    new ApiResponse(true,
+                            "category has been updated"),
+                    HttpStatus.OK);
         }
 
         //Return if category does not exist
-
-        return new ResponseEntity<>(new ApiResponse(false, "category does not exist"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        false,
+                        "category does not exist"),
+                HttpStatus.NOT_FOUND);
     }
 }

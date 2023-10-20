@@ -10,6 +10,8 @@ import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,17 +29,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class SubCategoryControllerTest {
 
     @Mock
     private CategoryServiceInterface categoryService;
-
     @Mock
     private SubCategoryServiceInterface subCategoryService;
-
     @Mock
     private Helper helper;
-
     @InjectMocks
     private SubCategoryController subCategoryController;
 
@@ -47,6 +47,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Subcategory - Success")
     void createSubCategory_AdminRole_ShouldReturnCreatedApiResponse() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -74,6 +75,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Subcategory - Invalid Role")
     void createSubCategory_NonAdminRole_ShouldReturnForbiddenApiResponse() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -93,6 +95,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Subcategory - Invalid Category")
     void createSubCategory_InvalidParentCategory_ShouldReturnNotFoundApiResponse() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -113,6 +116,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Create Subcategory - Subcategory Already Exists")
     void createSubCategory_SubCategoryExists_ShouldReturnConflictApiResponse() {
         // Arrange
         SubCategoryDto subCategoryDto = new SubCategoryDto();
@@ -140,6 +144,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("List Subcategories")
     void listSubCategories_ShouldReturnListOfSubCategories() {
         // Arrange
         List<SubCategory> expectedSubCategories = new ArrayList<>();
@@ -154,6 +159,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("List Subcategories By Category")
     void listSubCategoriesByCategoriesId_ValidCategoryId_ShouldReturnListOfSubCategories() {
         // Arrange
         Long categoryId = 1L;
@@ -170,6 +176,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("List Subcategories By Category - Invalid Category")
     void listSubCategoriesByCategoriesId_InvalidCategoryId_ShouldReturnNotFoundApiResponse() {
         // Arrange
         Long categoryId = 1L;
@@ -184,6 +191,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory")
     void updateSubCategory_AdminRole_ShouldReturnOkApiResponse() {
         // Arrange
         Long subcategoryId = 1L;
@@ -209,6 +217,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory - Invalid Role")
     void updateSubCategory_NonAdminRole_ShouldReturnForbiddenApiResponse() {
         // Arrange
         Long subcategoryId = 1L;
@@ -229,6 +238,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory - Invalid Category")
     void updateSubCategory_InvalidParentCategory_ShouldReturnNotFoundApiResponse() {
         // Arrange
         Long subcategoryId = 1L;
@@ -250,6 +260,7 @@ class SubCategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update Subcategory - Invalid Subcategory")
     void updateSubCategory_InvalidSubCategory_ShouldReturnNotFoundApiResponse() {
         // Arrange
         Long subcategoryId = 1L;

@@ -3,6 +3,8 @@ package com.nineleaps.leaps.config.filter;
 import com.nineleaps.leaps.exceptions.RuntimeCustomException;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
+@DisplayName("Custom Authentication Filter Test")
 class CustomAuthenticationFilterTest {
 
     @Mock
@@ -52,6 +56,7 @@ class CustomAuthenticationFilterTest {
     }
 
     @Test
+    @DisplayName("Attempt Authentication")
     void attemptAuthentication_ValidCredentials_ReturnsAuthentication() throws Exception {
         // Arrange
         String email = "jyoshnavi@nineleaps.com";
@@ -69,6 +74,7 @@ class CustomAuthenticationFilterTest {
     }
 
     @Test
+    @DisplayName("Attempt Authentication")
     void attemptAuthentication_InvalidJsonData_ThrowsRuntimeCustomException() throws Exception {
         // Arrange
         String invalidJsonInput = "invalid json data";
@@ -79,20 +85,23 @@ class CustomAuthenticationFilterTest {
     }
 
     @Test
+    @DisplayName("Attempt Authentication")
     void successfulAuthentication_GeneratesTokensAndSetsResponseHeaders() throws Exception {
         // Arrange
-        User user = new User("jyoshnavi@nineleaps.com", "jyosh@123", getAuthorities());
+        User user = new User(
+                "jyoshnavi@nineleaps.com",
+                "jyosh@123",
+                getAuthorities());
         Authentication authentication = mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(user);
         PrintWriter writer = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(writer);
-        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
-        String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
+
         // Stub the getRequestURL() method
         when(request.getRequestURL()).thenReturn(new StringBuffer(NGROK));
         // Mock the successful saving of tokens
         when(securityUtility.saveTokens(anyString(), anyString())).thenReturn(true);
-        when(securityUtility.readSecretFromFile(absolutePath)).thenReturn("meinhuchotadon");
+        when(securityUtility.readSecretFromFile(anyString())).thenReturn("meinhuchotadon");
         // Act
         customAuthenticationFilter.successfulAuthentication(request, response, filterChain, authentication);
         // Assert

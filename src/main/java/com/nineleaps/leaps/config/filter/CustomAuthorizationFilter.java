@@ -30,6 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+
     private final SecurityUtility securityUtility;
     String bearerHeader = "Bearer ";
 
@@ -44,7 +45,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         String servletPath = request.getServletPath();
 
         // List of API URLs that do not require token
-        List<String> exemptedUrls = Arrays.asList("/api/v1/login", "/api/v1/user/signup", "/api/v1/public");
+        List<String> exemptedUrls = Arrays.asList(
+                "/api/v1/login",
+                "/api/v1/user/signup"
+        );
 
         if (exemptedUrls.contains(servletPath)) {
             filterChain.doFilter(request, response);
@@ -58,8 +62,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith(bearerHeader)) {
             try {
-                String token = authorizationHeader.substring(bearerHeader.length());
-
+                String token = authorizationHeader.substring(7);
                 // Check if the requested path starts with "/api/v1/"
                 if (servletPath.startsWith("/api/v1/")) {
                     handleAccessToken(token, response, filterChain, request);
@@ -88,7 +91,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 if (!securityUtility.isTokenExpired(token)) {
                     filterChain.doFilter(request, response);
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token expired");
+                    response.sendError(
+                            HttpServletResponse.SC_UNAUTHORIZED,
+                            "Refresh token expired"
+                    );
                 }
             } catch (Exception e) {
                 response.setStatus(FORBIDDEN.value());
@@ -125,12 +131,17 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access token expired");
+            response.sendError(
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "Access token expired"
+            );
         }
-
     }
 
-    void handleUnauthorized(HttpServletResponse response, String errorMessage) throws IOException {
+    void handleUnauthorized(
+            HttpServletResponse response,
+            String errorMessage
+    ) throws IOException {
         response.setStatus(FORBIDDEN.value());
 
         if (response.getOutputStream() != null) {

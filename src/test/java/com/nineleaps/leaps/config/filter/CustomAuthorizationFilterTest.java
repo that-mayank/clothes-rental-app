@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,7 +37,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-
+@Tag("unit")
+@DisplayName("Custom Authorization Filter Test")
 class CustomAuthorizationFilterTest {
 
     @InjectMocks
@@ -55,6 +58,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Internal Filter - No Authorization Header")
     void testDoFilterInternal_NoAuthorizationHeader() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -70,6 +74,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Internal Filter - Exempted URL")
     void testDoFilterInternal_ExemptedURL() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -85,6 +90,7 @@ class CustomAuthorizationFilterTest {
 
 
     @Test
+    @DisplayName("Internal Filter - Handle Refresh Token")
     void testDoFilterInternal_HandleRefreshToken() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -100,6 +106,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Internal Filter - Handle Access Token")
     void testDoFilterInternal_HandleAccessToken() throws Exception {
         // Define the authorization header with a valid token
         String validToken = generateAccessToken(60);
@@ -121,10 +128,11 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Internal Filter - Handle Unauthorized")
     void testDoFilterInternal_HandleUnauthorized() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        // Define the authorization header with a invalid token
+        // Define the authorization header with invalid token
         String invalidToken = generateAccessToken(-60);
         when(request.getHeader(AUTHORIZATION)).thenReturn("Bearer " + invalidToken);
 
@@ -141,10 +149,11 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Internal Filter - Throws Exception")
     void testDoFilterInternal_ThrowsException() throws Exception{
         MockHttpServletResponse response = new MockHttpServletResponse(); // Create a new response object
 
-        // Define the authorization header with a invalid token
+        // Define the authorization header with invalid token
         String invalidToken = generateAccessToken(-60);
         when(request.getHeader(AUTHORIZATION)).thenReturn("Bearer " + invalidToken);
 
@@ -166,6 +175,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Refresh Token - Valid Token")
     void testHandleRefreshTokenWhenAuthorizationHeaderIsPresentAndTokenIsNotExpired() throws Exception {
         // Define the authorization header with a valid token
         when(request.getHeader(AUTHORIZATION)).thenReturn( "Bearer valid-token");
@@ -181,6 +191,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Refresh Token - Invalid Token")
     void testHandleRefreshTokenWhenAuthorizationHeaderIsPresentAndTokenIsExpired() throws Exception {
         // Create mock request and response objects
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -203,6 +214,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Refresh Token - Exception")
     void testHandleRefreshTokenWhenExceptionIsCaught() throws Exception {
         // Create mock request and response objects
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -225,6 +237,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Access Token - Valid Token")
     void testHandleAccessTokenValidToken() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -257,6 +270,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Access Token - Invalid Token")
     void testHandleAccessTokenExpiredToken() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -276,6 +290,7 @@ class CustomAuthorizationFilterTest {
     }
 
     @Test
+    @DisplayName("Handle Unauthorized")
     void testHandleUnauthorized() throws Exception {
         // Create mock request and response objects
         MockHttpServletResponse response = new MockHttpServletResponse();

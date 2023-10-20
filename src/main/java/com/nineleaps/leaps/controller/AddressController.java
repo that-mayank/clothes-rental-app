@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/address")
 @AllArgsConstructor
 @Validated
 @Api(tags = "Address Api")
+@RequestMapping("/api/v1/address")
 public class AddressController {
 
     //Linking layers using constructor injection
@@ -48,7 +48,7 @@ public class AddressController {
 
         User user = helper.getUser(request);
 
-        //Calling service layer to add address using Dto
+        // Calling service layer to add address using Dto
 
         addressService.saveAddress(addressDto, user);
         return new ResponseEntity<>(

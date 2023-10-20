@@ -78,6 +78,4 @@ public class SwaggerConfig {
                 .contact(contact)
                 .build();
     }
-
-
 }

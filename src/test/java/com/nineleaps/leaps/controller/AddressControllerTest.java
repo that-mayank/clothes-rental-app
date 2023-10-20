@@ -8,6 +8,8 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.AddressServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,14 +25,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class AddressControllerTest {
 
     @Mock
     private AddressServiceInterface addressService;
-
     @Mock
     private Helper helper;
-
     @InjectMocks
     private AddressController addressController;
 
@@ -40,6 +41,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Add Address - Success")
     void addAddress_ValidAddressDto_ReturnsCreatedResponse() {
         // Arrange
         AddressDto addressDto = new AddressDto();
@@ -61,6 +63,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Update Address - Success")
     void updateAddress_ValidAddressIdAndAddressDto_ReturnsOkResponse() {
         // Arrange
         Long addressId = 1L;
@@ -86,6 +89,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Update Address - Invalid AddressId")
     void updateAddress_InvalidAddressId_ReturnsNotFoundResponse() {
         // Arrange
         Long addressId = 1L;
@@ -109,6 +113,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Update Address - Address Do Not Belong To CurrentUser")
     void updateAddress_AddressNotBelongToCurrentUser_ReturnsForbiddenResponse() {
         // Arrange
         Long addressId = 1L;
@@ -134,6 +139,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("List Address - Success")
     void listAddress_ReturnsListOfAddresses() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -154,6 +160,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Delete Address - Success")
     void deleteAddress_ValidAddressId_ReturnsOkResponse()  {
         // Arrange
         Long addressId = 1L;
@@ -180,6 +187,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("List Address - Invalid AddressId")
     void deleteAddress_InvalidAddressId_ReturnsNotFoundResponse()  {
         // Arrange
         Long addressId = 1L;
@@ -202,6 +210,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Delete Address - Address Do Not Belong To Current User")
     void deleteAddress_AddressNotBelongToCurrentUser_ReturnsForbiddenResponse() {
         // Arrange
         Long addressId = 1L;
@@ -227,6 +236,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Get Address - Success")
     void getAddressById_ExistingAddressId_ReturnsAddress() {
         // Arrange
         Long addressId = 1L;
@@ -259,6 +269,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Get Address - Invalid AddressId")
     void getAddressById_NonExistingAddressId_ReturnsNotFoundResponse() {
         // Arrange
         Long addressId = 1L;
@@ -286,6 +297,7 @@ class AddressControllerTest {
     }
 
     @Test
+    @DisplayName("Get Address - Address Do Not Belong To User")
     void getAddressById_AddressNotBelongingToUser_ThrowsAddressOwnershipException() {
         // Arrange
         Long addressId = 1L;

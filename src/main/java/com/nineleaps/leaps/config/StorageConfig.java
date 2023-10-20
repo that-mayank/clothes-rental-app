@@ -32,5 +32,4 @@ public class StorageConfig {
                 .withRegion(region)
                 .build();
     }
-
 }

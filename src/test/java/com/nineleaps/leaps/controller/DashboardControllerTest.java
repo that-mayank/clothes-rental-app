@@ -9,6 +9,8 @@ import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,17 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Tag("unit")
 class DashboardControllerTest {
 
     @Mock
     private DashboardServiceInterface dashboardService;
-
     @Mock
     private OrderServiceInterface orderService;
-
     @Mock
     private Helper helper;
-
     @InjectMocks
     private DashboardController dashboardController;
 
@@ -49,6 +49,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Dashboard - Success")
     void dashboard_ReturnsDashboardDto() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -70,6 +71,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("On Click Dashboard - Success")
     void onClickDashboard_ReturnsDashboardAnalyticsDtoList() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -91,6 +93,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("On Click Dashboard Yearly- Success")
     void onClickDashboardYearWiseData_ReturnsYearlyDataMap() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -112,6 +115,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Get Order Items Dashboard - Success")
     void getOrderItemsDashboard_ReturnsMonthlyOrderItemsMap() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -133,6 +137,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Get Order Items By SubCategories - Success")
     void getOrderItemsBySubCategories_ReturnsOrderItemsBySubCategoriesMap() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -157,6 +162,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Get Order Items By Categories")
     void getOrderItemsByCategories_ReturnsOrderItemsByCategoriesMap() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -181,6 +187,7 @@ class DashboardControllerTest {
     }
 
     @Test
+    @DisplayName("Get Order Items Dashboard Bw Dates")
     void getOrderItemsDashboardBwDates_ReturnsOrderItemsByDateRangeMap() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);

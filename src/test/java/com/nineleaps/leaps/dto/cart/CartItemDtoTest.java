@@ -105,7 +105,7 @@ class CartItemDtoTest {
 
     @Test
     void setImageUrl() {
-        cartItemDto.setImageUrl("/api/images/new_product.jpg");
+        cartItemDto.setImageUrl(NGROK + "/api/images/new_product.jpg");
         assertEquals(NGROK + "/api/images/new_product.jpg", cartItemDto.getImageUrl());
     }
 }

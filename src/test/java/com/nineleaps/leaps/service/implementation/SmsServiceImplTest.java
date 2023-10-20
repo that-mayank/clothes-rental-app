@@ -8,14 +8,10 @@ import com.nineleaps.leaps.service.UserServiceInterface;
 import com.nineleaps.leaps.utils.SecurityUtility;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.rest.api.v2010.account.MessageCreator;
-import com.twilio.type.PhoneNumber;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -24,10 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,13 +42,9 @@ class SmsServiceImplTest {
     @Mock
     private MockHttpServletResponse response;
 
-    private static final int MAX = 999999;
-    private static final int MIN = 100000;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        smsService = new SmsServiceImpl(userServiceInterface, securityUtility);
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
         Twilio.init("ACe47c40c1144c690f78982e8d814abe5d", "2727852852992be1d14a9e1307a0dfb0");
@@ -177,25 +166,4 @@ class SmsServiceImplTest {
             assertEquals("OTP not generated for phone number", e.getMessage());
         }
     }
-
-//    @Test
-//    void sendShouldSendOtpMessageAndStoreInOtpMap() {
-//        // Define the phone number for testing
-//        String phoneNumber = "1234567890";
-//
-//        // Mock Twilio's Message class using PowerMockito
-//        PowerMockito.mockStatic(Message.class);
-//
-//        // Call the send method
-//        smsService.send(phoneNumber);
-//
-//        // Verify that the Message.creator method was called with the expected arguments
-//        PowerMockito.verifyStatic(Message.class, times(1));
-//        Message.creator(new PhoneNumber("+91" + phoneNumber), new PhoneNumber("+12542724507"), anyString()).create();
-//
-//        // Verify that the OTP was stored in the otpMap
-//        assertNotNull(smsService.otpMap.get(phoneNumber));
-//        assertEquals(6, String.valueOf(smsService.otpMap.get(phoneNumber)).length());
-//    }
-
 }

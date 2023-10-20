@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -90,7 +91,7 @@ class OrderItemDtoTest {
 
     @Test
     void getImageUrl() {
-        assertEquals("/xyz.jpeg", orderItemDto.getImageUrl());
+        assertEquals(NGROK + "/xyz.jpeg", orderItemDto.getImageUrl());
     }
 
     @Test

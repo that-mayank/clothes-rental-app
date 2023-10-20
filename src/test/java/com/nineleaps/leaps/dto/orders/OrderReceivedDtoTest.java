@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderReceivedDtoTest {
@@ -73,7 +74,7 @@ class OrderReceivedDtoTest {
 
     @Test
     void getImageUrl() {
-        assertEquals("/api/v1/image.jpg", orderReceivedDto.getImageUrl());
+        assertEquals(NGROK + "/api/v1/image.jpg", orderReceivedDto.getImageUrl());
     }
 
     @Test

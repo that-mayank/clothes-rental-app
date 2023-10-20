@@ -29,6 +29,11 @@ import java.util.*;
 @Transactional // Marks this class as transactional for database operations
 public class SmsServiceImpl implements SmsServiceInterface {
 
+    private static final int MIN = 100000;
+    private static final int MAX = 999999;
+    private final UserServiceInterface userServiceInterface;
+    private final SecurityUtility securityUtility;
+    Map<String, Integer> otpMap = new HashMap<>();
     // Read Twilio configuration values from application.properties
     @Value("${twilio.account_sid}")
     private String accountSid;
@@ -36,12 +41,6 @@ public class SmsServiceImpl implements SmsServiceInterface {
     private String authToken;
     @Value("${twilio.from_number}")
     private String fromNumber;
-
-    private final UserServiceInterface userServiceInterface;
-    private final SecurityUtility securityUtility;
-    Map<String, Integer> otpMap = new HashMap<>();
-    private static final int MIN = 100000;
-    private static final int MAX = 999999;
 
     // Method to send an OTP to a phone number
     public void send(String phoneNumber) {
@@ -78,8 +77,7 @@ public class SmsServiceImpl implements SmsServiceInterface {
 
     // Method to generate JWT tokens and set them in the response headers
     @Override
-    public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber)
-            throws IOException {
+    public void generateToken(HttpServletResponse response, HttpServletRequest request, String phoneNumber) throws IOException {
         // Define the path to the secret file
         String secretFilePath = "Desktop/leaps/secret/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;

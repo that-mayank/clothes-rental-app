@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     @Override
     public void updateProfileImage(String profileImageUrl, User user) {
         // Remove ngrok link from the image URL.
-            String imageUrl = profileImageUrl.substring(NGROK.length());
+        String imageUrl = profileImageUrl.substring(NGROK.length());
 
         user.setProfileImageUrl(imageUrl);
         userRepository.save(user);

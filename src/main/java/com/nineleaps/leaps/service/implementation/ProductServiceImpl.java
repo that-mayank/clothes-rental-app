@@ -286,9 +286,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         }
         product.setDisabledQuantities(product.getDisabledQuantities() - quantity);
         product.setAvailableQuantities(product.getAvailableQuantities() + quantity);
-        if (product.isDisabled()) {
-            product.setDisabled(false);
-        }
+        product.setDisabled(false);
         productRepository.save(product);
     }
 
@@ -308,11 +306,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     private String ngrokLinkRemove(String imageUrl) {
-        if (imageUrl.contains(NGROK)) {
-            int size = NGROK.length();
-            return imageUrl.substring(size);
-        }
-        return imageUrl;
+        return Optional.of(imageUrl)
+                .filter(url -> url.contains(NGROK))
+                .map(url -> url.substring(NGROK.length()))
+                .orElse(imageUrl);
     }
 
 }

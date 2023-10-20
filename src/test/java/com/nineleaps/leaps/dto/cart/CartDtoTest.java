@@ -1,7 +1,5 @@
 package com.nineleaps.leaps.dto.cart;
 
-import com.nineleaps.leaps.dto.cart.CartDto;
-import com.nineleaps.leaps.dto.cart.CartItemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.USER_CREATED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -237,14 +238,14 @@ class UserServiceImplTest {
     @Test
     void updateProfileImage_UpdatesProfileImageUrlAndCallsUserRepositorySaveMethod() {
         // Arrange
-        String profileImageUrl = "https://example.com/profile.jpg";
+        String profileImageUrl = NGROK + "/profile.jpg";
         User user = new User();
 
         // Act
         userService.updateProfileImage(profileImageUrl, user);
 
         // Assert
-        assertEquals(profileImageUrl, user.getProfileImageUrl());
+        assertEquals(profileImageUrl, NGROK + user.getProfileImageUrl());
         verify(userRepository).save(user);
     }
 

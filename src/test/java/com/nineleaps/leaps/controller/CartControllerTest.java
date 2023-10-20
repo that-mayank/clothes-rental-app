@@ -12,6 +12,8 @@ import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,17 +26,15 @@ import javax.servlet.http.HttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class CartControllerTest {
 
     @Mock
     private CartServiceInterface cartService;
-
     @Mock
     private ProductServiceInterface productService;
-
     @Mock
     private Helper helper;
-
     @InjectMocks
     private CartController cartController;
 
@@ -44,6 +44,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("Add To Cart - Success")
     void addToCart_ValidAddToCartDto_ReturnsCreatedResponse() throws ProductNotExistException, QuantityOutOfBoundException {
         // Arrange
         AddToCartDto addToCartDto = new AddToCartDto();
@@ -67,6 +68,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("Get Cart Items - Success")
     void getCartItems_ReturnsCartDto()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -89,6 +91,7 @@ class CartControllerTest {
 
 
     @Test
+    @DisplayName("Delete Cart Item - Success")
     void deleteCartItem_ValidProductId_ReturnsOkResponse()  {
         // Arrange
         Long productId = 1L;
@@ -112,6 +115,7 @@ class CartControllerTest {
     }
 
     @Test
+    @DisplayName("Update Quantity - Success")
     void updateQuantity_ValidUpdateProductQuantityDto_ReturnsOkResponse() {
         // Arrange
         UpdateProductQuantityDto updateProductQuantityDto = new UpdateProductQuantityDto();

@@ -33,63 +33,57 @@ import javax.validation.Valid;
 public class CartController {
 
     //Linking layers using constructor injection
-
     private final CartServiceInterface cartService;
     private final ProductServiceInterface productService;
     private final Helper helper;
 
     // API : To add products to cart for particular user
-
     @ApiOperation(value = "API : To add products to cart for particular user")
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('BORROWER')")
-
     // Validate the addToCartDto object
-
-    public ResponseEntity<ApiResponse> addToCart(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws ProductNotExistException {
+    public ResponseEntity<ApiResponse> addToCart(
+            @RequestBody @Valid AddToCartDto addToCartDto,
+            HttpServletRequest request
+    ) throws ProductNotExistException {
 
         // JWT : Extracting user info from token
-
         User user = helper.getUser(request);
 
-
         // Retrieve product from id
-
         Product product = productService.getProductById(addToCartDto.getProductId());
 
         // Calling service layer to add product to cart
-
         cartService.addToCart(addToCartDto, product, user);
-        return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "Added to cart"
+                ),
+                HttpStatus.CREATED);
     }
 
     // API : To list products of cart for particular user
-
     @ApiOperation(value = "API : To list products of cart for particular user")
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
-
     public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) {
 
         // JWT : Extracting user info from token
-
         User user = helper.getUser(request);
 
         // Calling service layer to get all products from cart
-
         CartDto cartDto = cartService.listCartItems(user);
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
     // API : To remove product from cart for particular user
-
     @ApiOperation(value = "API : To remove product from cart for particular user")
     @DeleteMapping("/delete/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('BORROWER')")
-
     public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) {
 
         // JWT : Extracting user info from token
@@ -99,27 +93,32 @@ public class CartController {
         // Calling service layer to remove product from cart
 
         cartService.deleteCartItem(productId, user);
-        return new ResponseEntity<>(new ApiResponse(true, "Item has been removed from cart successfully"), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "Item has been removed from cart successfully"),
+                HttpStatus.NO_CONTENT);
     }
 
     // API : To update product quantity in cart for particular user
-
     @ApiOperation(value = "API : To update products quantity in cart for particular user")
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
-
     // Validate the updateProductQuantityDto object
-
-    public ResponseEntity<ApiResponse> updateQuantity(@RequestBody @Valid UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> updateQuantity(
+            @RequestBody @Valid UpdateProductQuantityDto updateProductQuantityDto,
+            HttpServletRequest request) {
 
         // JWT : Extracting user info from token
-
         User user = helper.getUser(request);
 
         // Calling service layer to update product quantity in cart
-
         cartService.updateProductQuantity(updateProductQuantityDto, user);
-        return new ResponseEntity<>(new ApiResponse(true, "Product quantity has been updated successfully"), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "Product quantity has been updated successfully"),
+                HttpStatus.OK);
     }
 }

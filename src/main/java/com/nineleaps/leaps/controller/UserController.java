@@ -41,7 +41,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class UserController {
 
     //Linking layers using constructor injection
-
     private final UserServiceInterface userServiceInterface;
     private final SwitchProfile switchprofile;
     private final Helper helper;

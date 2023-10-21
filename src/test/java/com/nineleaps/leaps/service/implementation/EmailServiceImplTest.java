@@ -1,21 +1,21 @@
 package com.nineleaps.leaps.service.implementation;
 
-import com.nineleaps.leaps.service.implementation.EmailServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
 
 class EmailServiceImplTest {
+    @InjectMocks
     private EmailServiceImpl emailService;
 
     @BeforeEach
     void setUp() {
-        emailService = new EmailServiceImpl();
+        MockitoAnnotations.openMocks(this);
     }
 
     @ParameterizedTest

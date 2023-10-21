@@ -28,7 +28,7 @@ class ExceptionControllerAdviceTest {
     void handleCategoryNotExistException() {
         CategoryNotExistException categoryNotExistException = new CategoryNotExistException("Category not found");
         ResponseEntity<String> responseEntity = controllerAdvice.handleUpdateFailException(categoryNotExistException);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Category not found", responseEntity.getBody());
     }
 
@@ -36,7 +36,7 @@ class ExceptionControllerAdviceTest {
     void handleProductNotExistException() {
         ProductNotExistException productNotExistException = new ProductNotExistException("Product not found");
         ResponseEntity<String> responseEntity = controllerAdvice.handleUpdateFailException(productNotExistException);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Product not found", responseEntity.getBody());
     }
 
@@ -44,7 +44,7 @@ class ExceptionControllerAdviceTest {
     void handleCartItemNotExistException() {
         CartItemNotExistException cartItemNotExistException = new CartItemNotExistException("Cart item not found");
         ResponseEntity<String> responseEntity = controllerAdvice.handleUpdateFailException(cartItemNotExistException);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Cart item not found", responseEntity.getBody());
     }
 
@@ -52,7 +52,7 @@ class ExceptionControllerAdviceTest {
     void handleCartItemAlreadyExistException() {
         CartItemAlreadyExistException cartItemAlreadyExistException = new CartItemAlreadyExistException("Cart item already exists");
         ResponseEntity<String> responseEntity = controllerAdvice.handleUpdateFailException(cartItemAlreadyExistException);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
         assertEquals("Cart item already exists", responseEntity.getBody());
     }
 
@@ -60,7 +60,7 @@ class ExceptionControllerAdviceTest {
     void handleUserNotExistException() {
         UserNotExistException userNotExistException = new UserNotExistException("User not found");
         ResponseEntity<String> responseEntity = controllerAdvice.handleUpdateFailException(userNotExistException);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("User not found", responseEntity.getBody());
     }
 
@@ -68,7 +68,7 @@ class ExceptionControllerAdviceTest {
     void handleOrderNotFoundException() {
         OrderNotFoundException orderNotFoundException = new OrderNotFoundException("Order not found");
         ResponseEntity<String> responseEntity = controllerAdvice.handleUpdateFailException(orderNotFoundException);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Order not found", responseEntity.getBody());
     }
 

@@ -15,32 +15,32 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(value = CategoryNotExistException.class)
     public final ResponseEntity<String> handleUpdateFailException(CategoryNotExistException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = ProductNotExistException.class)
     public final ResponseEntity<String> handleUpdateFailException(ProductNotExistException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = CartItemNotExistException.class)
     public final ResponseEntity<String> handleUpdateFailException(CartItemNotExistException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = CartItemAlreadyExistException.class)
     public final ResponseEntity<String> handleUpdateFailException(CartItemAlreadyExistException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = UserNotExistException.class)
     public final ResponseEntity<String> handleUpdateFailException(UserNotExistException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = OrderNotFoundException.class)
     public final ResponseEntity<String> handleUpdateFailException(OrderNotFoundException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = QuantityOutOfBoundException.class)

@@ -41,19 +41,14 @@ class UserControllerTest {
 
     @Mock
     private UserServiceInterface userServiceInterface;
-
     @Mock
     private SwitchProfile switchProfile;
-
     @Mock
     private Helper helper;
-
     @Mock
     private RefreshTokenServiceInterface refreshTokenService;
-
     @Mock
     private SecurityUtility securityUtility;
-
     @InjectMocks
     private UserController userController;
 
@@ -230,8 +225,7 @@ class UserControllerTest {
         // Assertions
         assertNotNull(responseEntity);
         assertEquals(201, responseEntity.getStatusCodeValue());
-//        assertEquals("newAccessToken", response.getHeader("access_token"));
-        assertTrue(responseEntity.getBody().isSuccess());
+        assertTrue(Objects.requireNonNull(responseEntity.getBody()).isSuccess());
         assertEquals("AccessToken Updated Via RefreshToken", responseEntity.getBody().getMessage());
     }
 

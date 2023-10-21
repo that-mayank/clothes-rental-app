@@ -1,7 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -12,10 +12,13 @@ import java.util.Properties;
 
 @Service // Marks this class as a Spring service component
 @Slf4j // Lombok's annotation to generate a logger for this class
-@AllArgsConstructor // Lombok's annotation to generate a constructor with all required fields
 @Transactional // Marks this class as transactional for database operations
 public class EmailServiceImpl {
 
+    @Value("${email.username}")
+    private String username;
+    @Value("${email.password}")
+    private String password;
 
     // Method to send an email
     public boolean sendEmail(String subject, String message, String to) {

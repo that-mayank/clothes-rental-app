@@ -9,7 +9,7 @@ import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
-import org.apache.http.annotation.Obsolete;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -27,8 +27,8 @@ import java.time.YearMonth;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 @Tag("unit_tests")
 @DisplayName("Test case file for dashboardController test")
 @ExtendWith(RuntimeBenchmarkExtension.class)
@@ -102,6 +102,25 @@ class DashboardControllerTest {
     }
 
     @Test
+     void testDashboardCatchBlock() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when dashboardService.dashboardOwnerView is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(dashboardService).dashboardOwnerView(any(User.class));
+
+        // Call the dashboard method
+        ResponseEntity<Map<String, Object>> responseEntity = dashboardController.dashboard(request);
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
     @DisplayName("Get year wise data")
     void testOnClickDashboardYearWiseData() {
         User user = new User();
@@ -132,6 +151,25 @@ class DashboardControllerTest {
     }
 
     @Test
+     void testOnClickDashboardCatchBlock() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when dashboardService.analytics is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(dashboardService).analytics(any(User.class));
+
+        // Call the onClickDashboard method
+        ResponseEntity<Map<YearMonth, Map<String, Object>>> responseEntity = dashboardController.onClickDashboard(request);
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
     @DisplayName("get order items")
     void testGetOrderItemsDashboard() {
         User user = new User();
@@ -157,6 +195,25 @@ class DashboardControllerTest {
 
         Map<YearMonth, List<OrderReceivedDto>> responseOrderItemsByMonth = responseEntity.getBody();
         assertEquals(1, responseOrderItemsByMonth.get(yearMonth).size()); // Check the number of order items
+    }
+
+    @Test
+     void testCatchBlockInOnClickDashboard() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when dashboardService.analytics is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(dashboardService).analytics(any(User.class));
+
+        // Call the onClickDashboard method
+        ResponseEntity<Map<YearMonth, Map<String, Object>>> responseEntity = dashboardController.onClickDashboard(request);
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
     @Test
@@ -215,6 +272,26 @@ class DashboardControllerTest {
         assertEquals(1, responseOrderItemsByCategories.get(yearMonth).size()); // Check the number of order items data
     }
 
+
+    @Test
+     void testCatchBlockInOnClickDashboardYearWiseData() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when orderService.onClickDashboardYearWiseData is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(orderServiceInterface).onClickDashboardYearWiseData(any(User.class));
+
+        // Call the onClickDashboardYearWiseData method
+        ResponseEntity<Map<Year, Map<YearMonth, Map<String, Object>>>> responseEntity = dashboardController.onClickDashboardYearWiseData(request);
+
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
     @Test
     @DisplayName("get order items between dates")
     void testGetOrderItemsDashboardBwDates() {
@@ -242,6 +319,87 @@ class DashboardControllerTest {
 
         Map<YearMonth, List<OrderReceivedDto>> responseOrderItemsByDates = responseEntity.getBody();
         assertEquals(1, responseOrderItemsByDates.get(yearMonth).size()); // Check the number of order items data
+    }
+
+    @Test
+     void testCatchBlockInGetOrderItemsDashboard() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when orderService.getOrderedItemsByMonth is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(orderServiceInterface).getOrderedItemsByMonth(any(User.class));
+
+        // Call the getOrderItemsDashboard method
+        ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> responseEntity = dashboardController.getOrderItemsDashboard(request);
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+
+    @Test
+     void testCatchBlockInGetOrderItemsBySubCategories() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when orderService.getOrderItemsBySubCategories is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(orderServiceInterface).getOrderItemsBySubCategories(any(User.class));
+
+        // Call the getOrderItemsBySubCategories method
+        ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> responseEntity = dashboardController.getOrderItemsBySubCategories(request);
+
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+     void testCatchBlockInGetOrderItemsByCategories() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+
+        // Simulate an exception when orderService.getOrderItemsByCategories is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(orderServiceInterface).getOrderItemsByCategories(any(User.class));
+
+        // Call the getOrderItemsByCategories method
+        ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> responseEntity = dashboardController.getOrderItemsByCategories(request);
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+     void testCatchBlockInGetOrderItemsDashboardBwDates() {
+        // Create a mock HttpServletRequest and User
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(); // You may need to initialize this properly
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime endDate = LocalDateTime.now();
+
+        // Simulate an exception when orderService.getOrderedItemsByMonthBwDates is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        doAnswer(invocation -> {
+            throw new RuntimeException("Simulated Exception");
+        }).when(orderServiceInterface).getOrderedItemsByMonthBwDates(any(User.class), eq(startDate), eq(endDate));
+
+        // Call the getOrderItemsDashboardBwDates method
+        ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> responseEntity = dashboardController.getOrderItemsDashboardBwDates(request, startDate, endDate);
+
+
+        // Verify the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
 }

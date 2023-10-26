@@ -6,7 +6,7 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.exceptions.AuthenticationFailException;
+
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
@@ -28,8 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 @Tag("unit_tests")
@@ -98,7 +97,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Get order by id")
-    void testGetOrderById() throws AuthenticationFailException {
+    void testGetOrderById() {
         Long orderId = 123L; // Replace with a valid order ID
         Order order = new Order(); // Replace with a valid order object
         User user = new User(); // Replace with a valid user
@@ -119,7 +118,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Get order in Transit")
-    void testOrderInTransit() throws AuthenticationFailException {
+    void testOrderInTransit(){
         Long orderItemId = 123L;
         String orderStatus = "IN_TRANSIT";
         User user = new User();
@@ -250,6 +249,200 @@ class OrderControllerTest {
 
         // Verify the response
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
+    @Test
+     void testPlaceOrderCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        // Mock orderService to throw a simulated exception using doAnswer
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(orderService).placeOrder(user, "mockedRazorpayId");
+
+        // Call the method and capture the response
+        ResponseEntity<ApiResponse> responseEntity = orderController.placeOrder("mockedRazorpayId", request);
+
+        // Verify that the response and exception handling are as expected
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        ApiResponse responseBody = responseEntity.getBody();
+        assert responseBody != null;
+        assertFalse(responseBody.isSuccess());
+        assertEquals("Error placing order", responseBody.getMessage());
+    }
+
+    @Test
+     void testGetAllOrdersCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request =mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        // Mock orderService to throw a simulated exception when listOrders is called
+        when(orderService.listOrders(user)).thenThrow(new RuntimeException("Simulated exception"));
+
+        // Call the method and capture the response
+        ResponseEntity<List<OrderDto> > responseEntity = orderController.getAllOrders(request);
+
+        // Verify that the catch block is executed and the response is internal server error
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        List<OrderDto> responseBody = responseEntity.getBody();
+        assertNull(responseBody);
+    }
+
+    @Test
+     void testGetOrderByIdCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        // Mock orderService to throw a simulated exception when getOrder is called
+        when(orderService.getOrder(anyLong(), eq(user)))
+                .thenThrow(new RuntimeException("Simulated exception"));
+
+
+        // Call the method and capture the response
+        ResponseEntity<Order> responseEntity = orderController.getOrderById(1L, request);
+
+        // Verify that the catch block is executed and the response is internal server error
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        Order responseBody = responseEntity.getBody();
+        assertNull(responseBody);
+    }
+
+    @Test
+     void testOrderInTransitCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request =mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        // Mock orderItem
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+
+        // Mock orderService to throw a simulated exception when orderStatus is called
+        when(orderService.getOrderItem(anyLong(), eq(user))).thenReturn(orderItem);
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(orderService).orderStatus(orderItem, "In Transit");
+
+
+        // Call the method and capture the response
+        ResponseEntity<ApiResponse> responseEntity = orderController.orderInTransit(orderItem.getId(), "In Transit", request);
+
+        // Verify that the catch block is executed and the response is internal server error
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        ApiResponse responseBody = responseEntity.getBody();
+        assert responseBody != null;
+        assertFalse(responseBody.isSuccess());
+        assertEquals("Error updating order status", responseBody.getMessage());
+    }
+
+    @Test
+     void testGetRentedOutProductsCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request =mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+
+
+        // Mock orderService to throw a simulated exception when getRentedOutProducts is called
+        when(orderService.getRentedOutProducts(user, 0, 10))
+                .thenThrow(new RuntimeException("Simulated exception"));
+        doAnswer(invocation ->{
+            throw new Exception("Simulated Exception");
+        }).when(orderService).getRentedOutProducts(user,0,10);
+
+        // Call the method and capture the response
+        ResponseEntity<List<ProductDto>> responseEntity = orderController.getRentedOutProducts(0, 10, request);
+
+        // Verify that the catch block is executed and the response is internal server error
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+
+    }
+
+    @Test
+     void testGetShippingStatusCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+       when(helper.getUserFromToken(request)).thenReturn(user);
+
+
+
+        // Use doAnswer to throw a simulated exception when getOrdersItemByStatus is called
+        doAnswer(invocation -> {
+                throw new RuntimeException("Simulated exception");
+        }).when(orderService).getOrdersItemByStatus("status", user);
+
+        // Call the method and capture the response
+        ResponseEntity<List<OrderItemDto>> responseEntity = orderController.getShippingStatus("status", request);
+
+        // Verify that the catch block is executed and the response is internal server error
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+
+    }
+
+    @Test
+     void testGenerateInvoiceCatchBlock() {
+        // Mock HttpServletRequest and its methods
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // Mock user
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        // Mock helper to return the user
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+
+        // Use doAnswer to throw a simulated exception when getOrder is called
+        doAnswer(invocation -> {
+                throw new IOException("Simulated exception");
+        }).when(orderService).getOrder(1L, user);
+
+        // Call the method and capture the response
+        ResponseEntity<byte[]> responseEntity = orderController.generateInvoice(1L, request);
+
+        // Verify that the catch block is executed and the response is internal server error
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+
     }
 
 }

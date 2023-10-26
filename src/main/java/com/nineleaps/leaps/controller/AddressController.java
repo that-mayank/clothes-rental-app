@@ -10,7 +10,8 @@ import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +28,13 @@ import java.util.Optional;
 @AllArgsConstructor
 @Api(tags = "Address Api", description = "Contains API for add, update, list, and delete address")
 @SuppressWarnings("deprecation")
-@Slf4j
+
 public class AddressController {
 
    
     private final AddressServiceInterface addressService;
     private final Helper helper;
+    private static final Logger log = LoggerFactory.getLogger(AddressController.class);
 
     @ApiOperation(value = "Add new address to a particular user")
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)

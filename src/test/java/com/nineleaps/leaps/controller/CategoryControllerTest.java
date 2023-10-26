@@ -3,6 +3,7 @@ package com.nineleaps.leaps.controller;
 import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.CategoryDto;
+import com.nineleaps.leaps.exceptions.AuthenticationFailException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
@@ -15,9 +16,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -93,6 +93,27 @@ class CategoryControllerTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertEquals("Category already exists", Objects.requireNonNull(response.getBody()).getMessage());
     }
+
+    @Test
+    void testCreateCategoryCatchBlock() throws AuthenticationFailException {
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setCategoryName("TestCategory");
+
+        // Mocking the helper.getUserFromToken method
+        when(helper.getUserFromToken(any(HttpServletRequest.class))).thenReturn(user);
+
+        // Mocking categoryService.readCategory to simulate an exception
+        when(categoryService.readCategory(anyString())).thenThrow(new RuntimeException("Simulated exception"));
+
+        ResponseEntity<ApiResponse> response = categoryController.createCategory(categoryDto, mock(HttpServletRequest.class));
+
+        // Verify that the response has the expected status code and message
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to create a new category", Objects.requireNonNull(response.getBody()).getMessage());
+    }
     @Test
     @DisplayName("List Category")
     void listCategory() {
@@ -108,6 +129,18 @@ class CategoryControllerTest {
         // Assert the response
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(categories, response.getBody());
+    }
+
+    @Test
+    void testListCategoryCatchBlock() {
+        // Mock the categoryService.listCategory to simulate an exception
+      when(categoryService.listCategory()).thenThrow(new RuntimeException("Simulated exception"));
+
+        ResponseEntity<List<Category>> response = categoryController.listCategory();
+
+        // Verify that the response has the expected status code and is an empty list of categories
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals(null, response.getBody());
     }
 
     @Test
@@ -152,5 +185,28 @@ class CategoryControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         Assertions.assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
         assertEquals("category does not exist", response.getBody().getMessage());
+    }
+
+    @Test
+    void testUpdateCategoryCatchBlock() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        Long categoryId = 1L;
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setCategoryName("Test Category");
+
+        Category category = new Category();
+        User user = new User();
+        user.setEmail("test@email.com");
+
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        // Mock the categoryService.readCategory and categoryService.updateCategory to simulate an exception
+        when(categoryService.readCategory(categoryId)).thenReturn(Optional.of(category));
+        doThrow(new RuntimeException("Simulated exception")).when(categoryService).updateCategory(categoryId, categoryDto, user);
+
+        ResponseEntity<ApiResponse> response = categoryController.updateCategory(categoryId, categoryDto, request);
+
+        // Verify that the response has the expected status code and message
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to update the category", Objects.requireNonNull(response.getBody()).getMessage());
     }
 }

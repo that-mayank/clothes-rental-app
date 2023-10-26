@@ -56,6 +56,21 @@ class AdminControllerTest {
         assertEquals("Fetched All Users From The Database", response.getBody().getMessage());
     }
 
+    @Test
+    @DisplayName("Get All Users - Exception Case")
+    void getAllUsersExceptionCase() {
+        // Mock behavior to return an exception when userService.getUsers is called
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(userService).getUsers();
+
+        // Call the method
+        ResponseEntity<ApiResponse> response = adminController.getAllUsers();
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
 
     @Test
     @DisplayName("Activate account")

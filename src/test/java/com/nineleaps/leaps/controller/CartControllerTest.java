@@ -6,21 +6,22 @@ import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.AuthenticationFailException;
+import com.nineleaps.leaps.exceptions.ProductNotExistException;
+import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -83,6 +84,31 @@ class CartControllerTest {
     }
 
     @Test
+    void testAddToCartCatchBlock() throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
+        // Create a sample AddToCartDto
+        AddToCartDto addToCartDto = new AddToCartDto();
+        addToCartDto.setProductId(1L); // Set a product ID
+
+        User user = new User();
+        user.setId(1L);
+
+        // Mock the helper.getUserFromToken to return a User
+        when(helper.getUserFromToken(any())).thenReturn(user);
+
+        // Mock productService.getProductById to throw a simulated exception
+        doAnswer(invocation -> {
+            throw new ProductNotExistException("Simulated ProductNotExistException");
+        }).when(productService).getProductById(1L);
+
+        // Call the addToCart method and capture the response
+        ResponseEntity<ApiResponse> response = cartController.addToCart(addToCartDto, new MockHttpServletRequest());
+
+        // Assert that the response status code is INTERNAL_SERVER_ERROR
+        // and the message in the ApiResponse is as expected
+        ResponseEntity<ApiResponse> expectedResponse = new ResponseEntity<>(new ApiResponse(false, "Failed to add to cart"), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), response.getStatusCode());
+    }
+    @Test
     @DisplayName("get cart items")
     void testGetCartItems() throws AuthenticationFailException {
         // Mock user and cartDto
@@ -102,6 +128,29 @@ class CartControllerTest {
         // Check the response
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(cartDto, responseEntity.getBody());
+    }
+
+    @Test
+    void testGetCartItemsCatchBlock() throws AuthenticationFailException {
+        // Mock a User and a CartDto
+        User user = new User();
+        CartDto cartDto = new CartDto(); // You can create an empty or sample CartDto
+
+        // Mock helper.getUserFromToken to return the user
+        when(helper.getUserFromToken(any())).thenReturn(user);
+
+        // Mock cartService.listCartItems to throw a simulated exception
+        doAnswer(invocation -> {
+            throw new Exception("Simulated Exception");
+        }).when(cartService).listCartItems(user);
+
+        // Call the getCartItems method and capture the response
+        ResponseEntity<CartDto> response = cartController.getCartItems(new MockHttpServletRequest());
+
+        // Assert that the response status code is INTERNAL_SERVER_ERROR
+        // and the response body is an empty CartDto (or matches the expected content)
+        ResponseEntity<CartDto> expectedResponse = new ResponseEntity<>(new CartDto(), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), response.getStatusCode());
     }
 
     @Test
@@ -128,6 +177,30 @@ class CartControllerTest {
     }
 
     @Test
+    void testDeleteCartItemCatchBlock() throws AuthenticationFailException {
+        // Set a sample product ID
+        Long productId = 1L;
+        User user = new User();
+
+        // Mock the helper.getUserFromToken to return a User
+       when(helper.getUserFromToken(any())).thenReturn(user);
+
+        // Mock cartService.deleteCartItem to throw a simulated exception
+        doAnswer(invocation -> {
+            throw new Exception("Simulated Exception");
+        }).when(cartService).deleteCartItem(productId, user);
+
+        // Call the deleteCartItem method and capture the response
+        ResponseEntity<ApiResponse> response = cartController.deleteCartItem(productId, new MockHttpServletRequest());
+
+        // Assert that the response status code is INTERNAL_SERVER_ERROR
+        // and the message in the ApiResponse is as expected
+        ResponseEntity<ApiResponse> expectedResponse = new ResponseEntity<>(new ApiResponse(false, "Failed to delete cart item"), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), response.getStatusCode());
+    }
+
+
+    @Test
     @DisplayName("Update Cart Item")
     void testUpdateCartItem() throws AuthenticationFailException {
         AddToCartDto addToCartDto = new AddToCartDto(); // Replace with a valid DTO
@@ -151,6 +224,30 @@ class CartControllerTest {
     }
 
     @Test
+    void testUpdateCartItemCatchBlock() throws AuthenticationFailException {
+        // Create a sample AddToCartDto
+        AddToCartDto addToCartDto = new AddToCartDto();
+        User user = new User();
+
+        // Mock the helper.getUserFromToken to return a User
+        when(helper.getUserFromToken(any())).thenReturn(user);
+
+        // Mock cartService.updateCartItem to throw a simulated exception
+        doAnswer(invocation -> {
+            throw new Exception("Simulated Exception");
+        }).when(cartService).updateCartItem(addToCartDto,user);
+
+        // Call the updateCartItem method and capture the response
+        ResponseEntity<ApiResponse> response = cartController.updateCartItem(addToCartDto, new MockHttpServletRequest());
+
+        // Assert that the response status code is INTERNAL_SERVER_ERROR
+        // and the message in the ApiResponse is as expected
+        ResponseEntity<ApiResponse> expectedResponse = new ResponseEntity<>(new ApiResponse(false, "Failed to update cart item"), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), response.getStatusCode());
+    }
+
+
+    @Test
     @DisplayName("Update Quantity")
     void testUpdateQuantity() throws AuthenticationFailException {
         UpdateProductQuantityDto updateProductQuantityDto = new UpdateProductQuantityDto(); // Replace with a valid DTO
@@ -171,6 +268,30 @@ class CartControllerTest {
 
         // Verify that cartService.updateProductQuantity was called with the correct arguments
         verify(cartService).updateProductQuantity(updateProductQuantityDto, user);
+    }
+
+    @Test
+    void testUpdateQuantityCatchBlock() throws AuthenticationFailException {
+        // Create a sample UpdateProductQuantityDto
+        UpdateProductQuantityDto updateProductQuantityDto = new UpdateProductQuantityDto();
+        updateProductQuantityDto.setProductId(1L); // Set a product ID
+        User user = new User();
+
+        // Mock the helper.getUserFromToken to return a User
+        when(helper.getUserFromToken(any())).thenReturn(user);
+
+        // Mock cartService.updateProductQuantity to throw a simulated exception
+        doAnswer(invocation -> {
+            throw new Exception("Simulated Exception");
+        }).when(cartService).updateProductQuantity(updateProductQuantityDto, user);
+
+        // Call the updateQuantity method and capture the response
+        ResponseEntity<ApiResponse> response = cartController.updateQuantity(updateProductQuantityDto, new MockHttpServletRequest());
+
+        // Assert that the response status code is INTERNAL_SERVER_ERROR
+        // and the message in the ApiResponse is as expected
+        ResponseEntity<ApiResponse> expectedResponse = new ResponseEntity<>(new ApiResponse(false, "Failed to update product quantity in cart"), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), response.getStatusCode());
     }
 
 }

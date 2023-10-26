@@ -25,8 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Tag("unit_tests")
 @DisplayName("Address controller test file")
@@ -69,6 +68,31 @@ class AddressControllerTest {
         // Assert the response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
+
+    }
+
+
+
+    @Test
+    @DisplayName("Add address - Exception Case")
+    void addAddressExceptionCase() throws AuthenticationFailException {
+        // Mock user and addressDto
+        User user = new User();
+        AddressDto addressDto = new AddressDto();
+
+        // Mock behavior to throw an exception when addressService.saveAddress is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(addressService).saveAddress(any(), any());
+
+        // Call the method
+        ResponseEntity<ApiResponse> response = addressController.addAddress(addressDto, request);
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 
 
@@ -157,6 +181,35 @@ class AddressControllerTest {
         assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 
+    @Test
+    @DisplayName("Update address - Exception Case")
+    void updateAddressExceptionCase() throws AuthenticationFailException {
+        // Mock addressId, user, and addressDto
+        Long addressId = 1L;
+        User user = new User();
+        user.setId(1L);
+        AddressDto addressDto = new AddressDto();
+        addressDto.setId(1L);
+        Address address = new Address(addressDto,user);
+
+        // Mock behavior to throw an exception when addressService.readAddress is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        when(addressService.readAddress(user,address.getId())).thenReturn(address);
+        when(addressService.readAddress(addressId)).thenReturn(Optional.of(address));
+
+        // Simulate an exception by throwing an exception within doAnswer
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(addressService).updateAddress(any(), any(), any());
+
+        // Call the method
+        ResponseEntity<ApiResponse> response = addressController.updateAddress(addressId, addressDto, request);
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
+    }
+
 
 
     @Test
@@ -175,6 +228,26 @@ class AddressControllerTest {
         // Assert the response
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isEmpty());
+    }
+
+    @Test
+    @DisplayName("List Address - Exception Case")
+    void listAddressExceptionCase() throws AuthenticationFailException {
+        // Mock user
+        User user = new User();
+
+        // Mock behavior to return an exception when addressService.listAddress is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(addressService).listAddress(user);
+
+        // Call the method
+        ResponseEntity<List<Address>> response = addressController.listAddress(request);
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
@@ -259,6 +332,33 @@ class AddressControllerTest {
         assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
     }
 
+    @Test
+    @DisplayName("Delete Address - Exception Case")
+    void deleteAddressExceptionCase() throws AuthenticationFailException {
+        // Mock addressId, user, and addressDto
+        Long addressId = 1L;
+        User user = new User();
+        user.setId(1L);
+        AddressDto addressDto = new AddressDto();
+        addressDto.setId(1L);
+        Address address = new Address(addressDto,user);
+
+        // Mock behavior to throw an exception when addressService.readAddress is called
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        when(addressService.readAddress(user,address.getId())).thenReturn(address);
+        when(addressService.readAddress(addressId)).thenReturn(Optional.of(address));
+
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(addressService).deleteAddress(addressId);
+
+        // Call the method
+        ResponseEntity<ApiResponse> response = addressController.deleteAddress(addressId, request);
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
 
     @Test
     @DisplayName("get address by id")
@@ -309,5 +409,23 @@ class AddressControllerTest {
 
         // Assert the response
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get Address by ID - Exception Case")
+    void getAddressByIdExceptionCase() {
+        // Mock addressId
+        Long addressId = 1L;
+
+        // Mock behavior to return an exception when addressService.readAddress is called
+        doAnswer(invocation -> {
+            throw new Exception("Simulated exception");
+        }).when(addressService).readAddress(addressId);
+
+        // Call the method
+        ResponseEntity<Address> response = addressController.getAddressById(addressId);
+
+        // Assert the response
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

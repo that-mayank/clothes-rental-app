@@ -15,6 +15,7 @@ import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @Api(tags = "Cart Api", description = "Contains api for adding products, updating products, list products and delete products in the cart")
 @SuppressWarnings("deprecation")
+@Slf4j
 public class CartController {
 
 
@@ -47,18 +49,18 @@ public class CartController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> addToCart(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException, ProductNotExistException, QuantityOutOfBoundException {
 
-        // Extract User from the token
         User user = helper.getUserFromToken(request);
 
-
-        // Calling service layer to get product
-        Product product = productService.getProductById(addToCartDto.getProductId());
-
-        // Calling service layer to add products to cart
-        cartService.addToCart(addToCartDto, product, user);
-
-        // Status Code : 201-HttpStatus.CREATED
-        return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);
+        try {
+            log.info("Adding product to cart: ProductId={}, User={}", addToCartDto.getProductId(), user.getEmail());
+            Product product = productService.getProductById(addToCartDto.getProductId());
+            cartService.addToCart(addToCartDto, product, user);
+            log.info("Product added to cart successfully: ProductId={}, User={}", addToCartDto.getProductId(), user.getEmail());
+            return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Error adding product to cart: ProductId={}, User={}", addToCartDto.getProductId(), user.getEmail(), e);
+            return new ResponseEntity<>(new ApiResponse(false, "Failed to add to cart"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -68,15 +70,18 @@ public class CartController {
     @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CartDto> getCartItems(HttpServletRequest request) throws AuthenticationFailException {
-        // Extract User from the token
         User user = helper.getUserFromToken(request);
 
-
-        // Calling the service layer to list cart items
-        CartDto cartDto = cartService.listCartItems(user);
-
-        // Status code - 200-HttpStatus.OK
-        return new ResponseEntity<>(cartDto, HttpStatus.OK);
+        try {
+            log.info("Listing cart items for User={}", user.getEmail());
+            CartDto cartDto = cartService.listCartItems(user);
+            log.info("Cart items listed successfully for User={}", user.getEmail());
+            return new ResponseEntity<>(cartDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error listing cart items for User={}", user.getEmail(), e);
+            // Return an empty CartDto and INTERNAL_SERVER_ERROR status in case of an exception
+            return new ResponseEntity<>(new CartDto(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //API - Allows the user to update the cart items
@@ -85,15 +90,17 @@ public class CartController {
     @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> updateCartItem(@RequestBody @Valid AddToCartDto addToCartDto, HttpServletRequest request) throws AuthenticationFailException {
-        // Extract User from the token
         User user = helper.getUserFromToken(request);
 
-
-        // Calling the service layer for updating cart item
-        cartService.updateCartItem(addToCartDto, user);
-
-        // Status code - 200-HttpStatus.OK
-        return new ResponseEntity<>(new ApiResponse(true, "Cart item has been updated"), HttpStatus.OK);
+        try {
+            log.info("Updating cart item: ProductId={}, User={}", addToCartDto.getProductId(), user.getEmail());
+            cartService.updateCartItem(addToCartDto, user);
+            log.info("Cart item has been updated successfully: ProductId={}, User={}", addToCartDto.getProductId(), user.getEmail());
+            return new ResponseEntity<>(new ApiResponse(true, "Cart item has been updated"), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error updating cart item: ProductId={}, User={}", addToCartDto.getProductId(), user.getEmail(), e);
+            return new ResponseEntity<>(new ApiResponse(false, "Failed to update cart item"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // API - Allows the user to remove items from cart
@@ -102,15 +109,17 @@ public class CartController {
     @PreAuthorize("hasAnyAuthority( 'OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("productId") Long productId, HttpServletRequest request) throws AuthenticationFailException {
-        // Extract User from the token
         User user = helper.getUserFromToken(request);
 
-
-        // Calling the service layer to delete items from cart
-        cartService.deleteCartItem(productId, user);
-
-        // Status code - 200-HttpStatus.OK
-        return new ResponseEntity<>(new ApiResponse(true, "Item has been removed from cart successfully"), HttpStatus.OK);
+        try {
+            log.info("Deleting cart item: ProductId={}, User={}", productId, user.getEmail());
+            cartService.deleteCartItem(productId, user);
+            log.info("Item has been removed from cart successfully: ProductId={}, User={}", productId, user.getEmail());
+            return new ResponseEntity<>(new ApiResponse(true, "Item has been removed from cart successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error deleting cart item: ProductId={}, User={}", productId, user.getEmail(), e);
+            return new ResponseEntity<>(new ApiResponse(false, "Failed to delete cart item"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // API - Allows the user to update quantity of individual products in the cart
@@ -119,14 +128,16 @@ public class CartController {
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> updateQuantity(@RequestBody @Valid UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request) {
-        // Extract User from the token
         User user = helper.getUserFromToken(request);
 
-
-        // Calling service layer to update product's quantity in the cart
-        cartService.updateProductQuantity(updateProductQuantityDto, user);
-
-        // Status code - 200-HttpStatus.OK
-        return new ResponseEntity<>(new ApiResponse(true, "Product quantity has been updated successfully"), HttpStatus.OK);
+        try {
+            log.info("Updating product quantity in cart: ProductId={}, User={}", updateProductQuantityDto.getProductId(), user.getEmail());
+            cartService.updateProductQuantity(updateProductQuantityDto, user);
+            log.info("Product quantity has been updated successfully: ProductId={}, User={}", updateProductQuantityDto.getProductId(), user.getEmail());
+            return new ResponseEntity<>(new ApiResponse(true, "Product quantity has been updated successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error updating product quantity in cart: ProductId={}, User={}", updateProductQuantityDto.getProductId(), user.getEmail(), e);
+            return new ResponseEntity<>(new ApiResponse(false, "Failed to update product quantity in cart"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

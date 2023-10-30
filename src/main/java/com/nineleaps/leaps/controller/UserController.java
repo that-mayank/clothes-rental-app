@@ -18,6 +18,7 @@ import com.nineleaps.leaps.utils.SwitchProfile;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 
+import static com.nineleaps.leaps.config.MessageStrings.AUTH_TOKEN_NOT_VALID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
@@ -36,6 +38,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @AllArgsConstructor
 @Api(tags = "User Api", description = "Contains api for user onboarding and actions")
 @SuppressWarnings("deprecation")
+@Slf4j
 public class UserController {
 
 
@@ -53,11 +56,18 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> signup(@RequestBody SignupDto signupDto) throws CustomException {
 
-        // Calling userServiceInterface to do the signup process
-        userServiceInterface.signUp(signupDto);
+        try {
+            // Calling userServiceInterface to do the signup process
+            userServiceInterface.signUp(signupDto);
 
-        // Status Code - 201-HttpStatus.CREATED
-        return new ResponseEntity<>(new ApiResponse(true, "SignedUp Successfully"), HttpStatus.CREATED);
+            log.info("User signed up successfully: {}", signupDto.getEmail());
+
+            // Status Code - 201-HttpStatus.CREATED
+            return new ResponseEntity<>(new ApiResponse(true, "Signed up successfully"), HttpStatus.CREATED);
+        } catch (CustomException e) {
+            log.error("Error during user signup: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Signup failed"));
+        }
     }
 
 
@@ -69,21 +79,31 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
+        try {
             // Extract User from the token
             User user = helper.getUserFromToken(request);
 
             if (!Helper.notNull(user)) {
-                throw new UserNotExistException("User is invalid");
+                log.error(AUTH_TOKEN_NOT_VALID);
+                throw new UserNotExistException(AUTH_TOKEN_NOT_VALID);
             }
+
             user.setRole(profile);
 
-            // Calling the service layer to save profile of the user
+            // Calling the service layer to save the profile of the user
             userServiceInterface.saveProfile(user);
-            //  Calling switch profile utility file to Generate new AccessTokens for the newly Switched Profile.
+
+            // Calling switch profile utility file to generate new AccessTokens for the newly switched profile
             switchprofile.generateTokenForSwitchProfile(response, profile, request);
 
-        // Status code - 200-HttpStatus.OK
-        return new ResponseEntity<>(new ApiResponse(true, "Role switch to: " + user.getRole()), HttpStatus.OK);
+            log.info("User role switched to: {}", user.getRole());
+
+            // Status code - 200-HttpStatus.OK
+            return new ResponseEntity<>(new ApiResponse(true, "Role switched to: " + user.getRole()), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while switching profile", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error switching profile"));
+        }
     }
 
     // API - Helps user to update his profile information
@@ -93,21 +113,26 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> updateProfile(@RequestBody @Valid ProfileUpdateDto profileUpdateDto, HttpServletRequest request) throws AuthenticationFailException {
 
-        // Extract User from the token
-        User oldUser = helper.getUserFromToken(request);
+        try {
+            // Extract User from the token
+            User oldUser = helper.getUserFromToken(request);
 
+            if (!Helper.notNull(oldUser)) {
+                log.error(AUTH_TOKEN_NOT_VALID);
+                // Status Code: 404-HttpStatus.NOT_FOUND
+                return new ResponseEntity<>(new ApiResponse(false, AUTH_TOKEN_NOT_VALID), HttpStatus.NOT_FOUND);
+            }
 
-        // Check if user is null
-        if (!Helper.notNull(oldUser)) {
+            // Interact with the service layer to update the profile
+            userServiceInterface.updateProfile(oldUser, profileUpdateDto);
+            log.info("Profile updated successfully for user: {}", oldUser.getEmail());
 
-            // Status Code: 404-HttpStatus.NOT_FOUND
-            return new ResponseEntity<>(new ApiResponse(false, "User not found"), HttpStatus.NOT_FOUND);
+            // Status Code: 200-HttpStatus.Ok
+            return new ResponseEntity<>(new ApiResponse(true, "Profile updated successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while updating profile", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error updating profile"));
         }
-        // Interact with the service layer to update profile
-        userServiceInterface.updateProfile(oldUser, profileUpdateDto);
-
-        // Status Code : 200-HttpStatus.Ok
-        return new ResponseEntity<>(new ApiResponse(true, "Profile updated successfully"), HttpStatus.OK);
     }
 
     // API - Gives details about the currently logged-in user
@@ -116,15 +141,27 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<UserDto> getUser(HttpServletRequest request) {
-        // Extract User from the token
-        User user = helper.getUserFromToken(request);
+        try {
+            // Extract User from the token
+            User user = helper.getUserFromToken(request);
 
+            // Check if the user is null
+            if (!Helper.notNull(user)) {
+                log.error("User not found");
+                // Status Code: 404-HttpStatus.NOT_FOUND
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
 
-        // Calling the service layer to get user details
-        UserDto userDto = userServiceInterface.getUser(user);
+            // Calling the service layer to get user details
+            UserDto userDto = userServiceInterface.getUser(user);
+            log.info("User details fetched successfully for user: {}", user.getEmail());
 
-        // Status Code : 200-HttpStatus.OK
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+            // Status Code: 200-HttpStatus.OK
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while getting user details", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // API - Allows the User to Update his profile picture
@@ -134,21 +171,27 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
 
-        // Extract User from the token
-        User user = helper.getUserFromToken(request);
+        try {
+            // Extract User from the token
+            User user = helper.getUserFromToken(request);
 
+            // Check if the user is null
+            if (!Helper.notNull(user)) {
+                log.error(AUTH_TOKEN_NOT_VALID);
+                // Status Code: 404-HttpStatus.NOT_FOUND
+                return new ResponseEntity<>(new ApiResponse(false, AUTH_TOKEN_NOT_VALID), HttpStatus.NOT_FOUND);
+            }
 
-        // check if user is null
-        if (!Helper.notNull(user)) {
+            // Calling the Service Layer to update the profile picture
+            userServiceInterface.updateProfileImage(profileImageUrl, user);
+            log.info("Profile picture updated successfully for user: {}", user.getEmail());
 
-            // Status Code: 404-HttpStatus.NOT_FOUND
-            return new ResponseEntity<>(new ApiResponse(false, "User is invalid"), HttpStatus.NOT_FOUND);
+            // Status Code: 201-HttpStatus.CREATED
+            return new ResponseEntity<>(new ApiResponse(true, "Profile picture has been updated."), HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Error while updating profile picture", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error updating profile picture"));
         }
-        // Calling the Service Layer to update profile picture
-        userServiceInterface.updateProfileImage(profileImageUrl, user);
-
-        // Status Code : 201-HttpStatus.CREATED
-        return new ResponseEntity<>(new ApiResponse(true, "Profile picture has been updated."), HttpStatus.CREATED);
     }
 
 
@@ -158,22 +201,28 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
 
-        // Fetch token from header
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
+        try {
+            // Fetch token from the header
+            String authorizationHeader = request.getHeader(AUTHORIZATION);
+            String token = authorizationHeader.substring(7);
 
-            // Extract user from token
+            // Extract user from the token
             User user = helper.getUser(token);
             String email = user.getEmail();
 
             // Calling Security utility file to generate a new token
-            String accessToken = securityUtility.updateAccessTokenViaRefreshToken(email,request,token);
+            String accessToken = securityUtility.updateAccessTokenViaRefreshToken(email, request, token);
 
-            // set the newly generated token to its respective header
-            response.setHeader("access_token",accessToken);
+            // Set the newly generated token to its respective header
+            response.setHeader("access_token", accessToken);
+            log.info("AccessToken updated via RefreshToken for user: {}", user.getEmail());
 
-            // Status Code : 201-HttpStatus.CREATED
+            // Status Code: 201-HttpStatus.CREATED
             return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Error while updating access token via RefreshToken", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error updating access token"));
+        }
     }
 
 
@@ -183,20 +232,26 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
 
-        // Fetch token from header
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String token = authorizationHeader.substring(7);
+        try {
+            // Fetch token from the header
+            String authorizationHeader = request.getHeader(AUTHORIZATION);
+            String token = authorizationHeader.substring(7);
 
-        // Extract user from token
-        User user = helper.getUser(token);
-        String email = user.getEmail();
+            // Extract user from the token
+            User user = helper.getUser(token);
+            String email = user.getEmail();
 
-        // Calling the service layer to delete the refresh token in DB during logout.
-        refreshTokenService.deleteRefreshTokenByEmailAndToken(email,token);
-        helper.setUserToBorrower(request);
+            // Calling the service layer to delete the refresh token in the DB during logout.
+            refreshTokenService.deleteRefreshTokenByEmailAndToken(email, token);
+            helper.setUserToBorrower(request);
+            log.info("User logged out successfully: {}", user.getEmail());
 
-        // Status Code : 200-HttpStatus.OK
-        return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out "), HttpStatus.OK);
+            // Status Code: 200-HttpStatus.OK
+            return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out"), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error during user logout", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error logging out"));
+        }
     }
 
 

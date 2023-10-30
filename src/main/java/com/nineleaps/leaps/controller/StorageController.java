@@ -60,11 +60,13 @@ public class StorageController {
                 // Construct the bucket path based on category and subcategory
                 String url = storageServiceInterface.uploadFileToBucket(file, categoryId, subcategoryId);
                 urls.add(url);
+                log.info("File uploaded to Amazon S3: {}", url);
             }
             urlResponse.setUrls(urls);
+            log.info("Files uploaded successfully to Amazon S3.");
             return ResponseEntity.ok(urlResponse);  // Return 200 OK with the UrlResponse
         } catch (Exception e) {
-            log.error("Network Error in fetching Amazon S3");
+            log.error("Error uploading files to Amazon S3", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // Return 500 Internal Server Error
         }
     }
@@ -80,10 +82,13 @@ public class StorageController {
         try {
             // Upload the profile image and obtain the URL
             String url = storageServiceInterface.uploadProfileImage(file, user);
+            log.info("Profile image uploaded to Amazon S3 for user: {}", user.getEmail());
+
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("url", url);
             return ResponseEntity.ok(jsonResponse.toString());  // Return 200 OK with the UrlResponse
         } catch (Exception e) {
+            log.error("Error uploading profile image to Amazon S3 for user: {}", user.getEmail(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // Return 500 Internal Server Error with an error message
         }
     }
@@ -97,9 +102,10 @@ public class StorageController {
         try {
             // View the file in the response
             storageServiceInterface.viewFile(fileName, response);
+            log.info("Image '{}' fetched from S3", fileName);
             return ResponseEntity.ok("Image fetched from S3");  // Return 200 OK with a success message
         } catch (IOException e) {
-            log.error("Error viewing file from S3: {}", e.getMessage(), e);
+            log.error("Error viewing file '{}' from S3: {}", fileName, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error viewing file from S3");  // Return 500 Internal Server Error with an error message
         }
     }
@@ -114,9 +120,10 @@ public class StorageController {
         try {
             // Delete the file from S3
             storageServiceInterface.deleteFile(fileName);
+            log.info("File '{}' deleted from S3", fileName);
             return ResponseEntity.noContent().build();  // Return 204 No Content for successful deletion
         } catch (IOException e) {
-            log.error("Error deleting file from S3: {}", e.getMessage(), e);
+            log.error("Error deleting file '{}' from S3: {}", fileName, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting file from S3");  // Return 500 Internal Server Error with an error message
         }
     }

@@ -12,6 +12,7 @@ public class LeapsApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(LeapsApplication.class, args);
+
     }
 
 

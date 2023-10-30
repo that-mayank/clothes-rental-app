@@ -73,7 +73,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal();
 
         // Extract Secret Key from the Secret File Path for Generating Token
-        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String secretFilePath = "/Desktop"+"/Leaps-BE-SQ"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = securityUtility.readSecretFromFile(absolutePath);
 

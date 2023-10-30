@@ -23,7 +23,10 @@ twilio:
   account_sid: ACe47c40c1144c690f78982e8d814abe5d
   token: 2727852852992be1d14a9e1307a0dfb0
   from_number: +12542724507
-
+#  vault write aws/config/root\
+#  > access_key=AKIA2SH7LQXPJ7D7U5MZ\
+#  > secret_key=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\
+#  > region=eu-north-1
 #ngrok:
 #  link: https://98a8-106-51-70-135.ngrok-free.app
 

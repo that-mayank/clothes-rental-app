@@ -4,6 +4,7 @@ import com.nineleaps.leaps.dto.pushnotification.PushNotificationResponse;
 import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 public class PushNotificationController {
 
     // Status Code: 200 - HttpStatus.OK
@@ -28,11 +30,18 @@ public class PushNotificationController {
     @PreAuthorize("hasAnyAuthority( 'BORROWER')")
     @ApiOperation(value = "Send push notification to device using fcm token")
     public ResponseEntity<PushNotificationResponse> sendTokenNotification(@RequestBody String token) {
-        // Invoke the push notification service to send notification using the provided token
-        pushNotificationService.sendNotification(token);
+        try {
+            // Invoke the push notification service to send notification using the provided token
+            pushNotificationService.sendNotification(token);
 
-        // Return a response indicating the notification has been sent successfully
-        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."),
-                HttpStatus.OK);
+            // Return a response indicating the notification has been sent successfully
+            return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the error and return an error response
+            log.error("Error sending push notification: {}", e.getMessage(), e);
+            return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to send notification."),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

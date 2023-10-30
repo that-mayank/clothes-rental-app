@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.PdfServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -24,6 +25,7 @@ import java.io.*;
 
 @RestController
 @RequestMapping("/api/v1/pdf")
+@Slf4j
 public class PdfController {
 
     private final PdfServiceInterface pdfService;
@@ -37,19 +39,20 @@ public class PdfController {
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) {
+        User user = helper.getUserFromToken(request);
         try {
-            User user = helper.getUserFromToken(request);
 
             Document document = pdfService.getPdf(user);
 
             Resource pdfResource = generatePdfResource(document, user);
-
+            log.info("pdfResponse Generated Sucessfully .");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", "report.pdf");
-
+            log.info("PDF Exported Sucessfully");
             return new ResponseEntity<>(new InputStreamResource(pdfResource.getInputStream()), headers, HttpStatus.OK);
         } catch (DocumentException | IOException e) {
+            log.error("Error exporting pdf for User={}",user.getEmail(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -61,7 +64,6 @@ public class PdfController {
         pdfService.addContent(document, user);
         document.close();
         pdfWriter.close();
-
         return new FileSystemResource(file);
     }
 }

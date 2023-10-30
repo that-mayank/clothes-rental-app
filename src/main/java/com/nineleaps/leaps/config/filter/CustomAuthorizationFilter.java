@@ -92,7 +92,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private void handleAccessToken(String token, HttpServletResponse response, FilterChain filterChain, HttpServletRequest request) throws IOException, ServletException {
         if (!securityUtility.isAccessTokenExpired(token)) {
-            String secretFilePath = "Desktop/leaps/secret/secret.txt";
+            String secretFilePath = "/Desktop"+"/Leaps-BE-SQ"+"/secret"+"/secret.txt";
             String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
             String secret = securityUtility.readSecretFromFile(absolutePath);
             Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

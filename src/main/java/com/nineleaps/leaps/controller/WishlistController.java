@@ -63,66 +63,88 @@ public class WishlistController {
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> addWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
-        // Extract User from the token
-        User user = helper.getUserFromToken(request);
+        try {
+            // Extract User from the token
+            User user = helper.getUserFromToken(request);
 
-        // Check if the product is valid
-        Optional<Product> optionalProduct = productService.readProduct(productId);
-        if (optionalProduct.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
-        }
-
-        // Check if the same product is already in the wishlist
-        for (Wishlist wishlist : wishlistService.readWishlist(user.getId())) {
-            Long wishlistProductId = wishlist.getProduct().getId();
-            if (wishlistProductId.equals(productId)) {
-                return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
+            // Check if the product is valid
+            Optional<Product> optionalProduct = productService.readProduct(productId);
+            if (optionalProduct.isEmpty()) {
+                log.error("Product is invalid: {}", productId);
+                return new ResponseEntity<>(new ApiResponse(false, "Product is invalid"), HttpStatus.NOT_FOUND);
             }
+
+            // Check if the same product is already in the wishlist
+            for (Wishlist wishlist : wishlistService.readWishlist(user.getId())) {
+                Long wishlistProductId = wishlist.getProduct().getId();
+                if (wishlistProductId.equals(productId)) {
+                    log.info("Product already in wishlist: {}", productId);
+                    return new ResponseEntity<>(new ApiResponse(false, "Product already in wishlist"), HttpStatus.CONFLICT);
+                }
+            }
+
+            // Add the product to the wishlist
+            Wishlist wishlist = new Wishlist(optionalProduct.get(), user);
+            wishlistService.createWishlist(wishlist);
+            log.info("Product added to wishlist: {}", productId);
+
+            return new ResponseEntity<>(new ApiResponse(true, "Added to wishlist"), HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Error while adding product to wishlist", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error adding to wishlist"));
         }
-
-
-        // Add the product to the wishlist
-        Wishlist wishlist = new Wishlist(optionalProduct.get(), user);
-        wishlistService.createWishlist(wishlist);
-        return new ResponseEntity<>(new ApiResponse(true, "Added to wishlist"), HttpStatus.CREATED);
     }
 
     // API to get all items in the wishlist
     @GetMapping(value = "/list",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<List<ProductDto>> getWishlist(HttpServletRequest request) {
-        // Extract User from the token
-        User user = helper.getUserFromToken(request);
+        try {
+            // Extract User from the token
+            User user = helper.getUserFromToken(request);
 
-        // Get the user's ID
-        Long userId = user.getId();
+            // Get the user's ID
+            Long userId = user.getId();
 
-        // Get the wishlist for the user
-        List<Wishlist> body = wishlistService.readWishlist(userId);
-        List<ProductDto> productDos = new ArrayList<>();
+            // Get the wishlist for the user
+            List<Wishlist> body = wishlistService.readWishlist(userId);
+            List<ProductDto> productDtos = new ArrayList<>();
 
-        // Convert wishlist items to ProductDto
-        for (Wishlist wishlist : body) {
-            productDos.add(ProductServiceImpl.getDtoFromProduct(wishlist.getProduct()));
+            // Convert wishlist items to ProductDto
+            for (Wishlist wishlist : body) {
+                productDtos.add(ProductServiceImpl.getDtoFromProduct(wishlist.getProduct()));
+            }
+
+            log.info("Wishlist items fetched for user: {}", user.getEmail());
+
+            // Return the wishlist
+            return new ResponseEntity<>(productDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while fetching wishlist items", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
-        // Return the wishlist
-        return new ResponseEntity<>(productDos, HttpStatus.OK);
     }
 
     // API to remove items from the wishlist
     @DeleteMapping("/remove")
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<ApiResponse> removeFromWishlist(@RequestParam("productId") Long productId, HttpServletRequest request) {
-        // Extract User from the token
-        User user = helper.getUserFromToken(request);
+        try {
+            // Extract User from the token
+            User user = helper.getUserFromToken(request);
 
-        // Get the user's ID
-        Long userId = user.getId();
+            // Get the user's ID
+            Long userId = user.getId();
 
-        // Remove the specified item from the wishlist
-        wishlistService.removeFromWishlist(userId, productId);
-        return new ResponseEntity<>(new ApiResponse(true, "Product removed successfully"), HttpStatus.OK);
+            // Remove the specified item from the wishlist
+            wishlistService.removeFromWishlist(userId, productId);
+            log.info("Product removed from wishlist: User={}, ProductId={}", user.getEmail(), productId);
+
+            return new ResponseEntity<>(new ApiResponse(true, "Product removed successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while removing product from wishlist", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error removing product from wishlist"));
+        }
     }
 }
 

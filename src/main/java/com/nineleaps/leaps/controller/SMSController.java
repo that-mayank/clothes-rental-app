@@ -9,6 +9,7 @@ import com.nineleaps.leaps.utils.SecurityUtility;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-
+@Slf4j
 @Api(tags = "Notifications Api", description = "Contains APIs for sending SMS")
 @SuppressWarnings("deprecation")
 public class SMSController {
@@ -58,14 +59,17 @@ public class SMSController {
     public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
         // Check if the phone number is in the database
         if (!isPhoneNumberPresent(phoneNumber)) {
+            log.error("Phone number not present in the database: {}", phoneNumber);
             return new ResponseEntity<>(new ApiResponse(false, "Phone number not present in the database"), HttpStatus.NOT_FOUND);
         }
 
         try {
             sendSms(phoneNumber);
             sendSmsWebSocketMessage(phoneNumber);
+            log.info("OTP sent successfully to phone number: {}", phoneNumber);
             return new ResponseEntity<>(new ApiResponse(true, "OTP sent successfully"), HttpStatus.OK);
         } catch (InvalidOtpException e) {
+            log.error("Invalid OTP for phone number: {}", phoneNumber, e);
             return new ResponseEntity<>(new ApiResponse(false, "Invalid OTP"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -94,10 +98,19 @@ public class SMSController {
     @ApiOperation(value = "Verify OTP")
     @PostMapping(value = "/otp",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> verifyOTP(HttpServletResponse response, HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("otp") Integer otp) throws IOException {
-        // Verify the OTP
-        if(smsService.verifyOtp(phoneNumber, otp)){
-            securityUtility.generateToken(response, request, phoneNumber);
+        try {
+            // Verify the OTP
+            if (smsService.verifyOtp(phoneNumber, otp)) {
+                securityUtility.generateToken(response, request, phoneNumber);
+                log.info("OTP verification successful for phone number: {}", phoneNumber);
+                return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
+            } else {
+                log.error("OTP verification failed for phone number: {}", phoneNumber);
+                return new ResponseEntity<>(new ApiResponse(false, "OTP verification failed"), HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error("Error verifying OTP for phone number: {}", phoneNumber, e);
+            return new ResponseEntity<>(new ApiResponse(false, "Internal server error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(new ApiResponse(true, "OTP is verified"), HttpStatus.OK);
     }
 }

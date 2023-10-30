@@ -33,7 +33,7 @@ public class SwitchProfile {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);
         User user = helper.getUser(token);
-        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String secretFilePath = "/Desktop"+"/Leaps-BE-SQ"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

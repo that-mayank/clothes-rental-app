@@ -22,7 +22,7 @@
 
     <!-- Define project properties -->
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <aws.sdk.version>2.19.1</aws.sdk.version>
     </properties>
 
@@ -280,19 +280,8 @@
             <version>6.27.0</version>
         </dependency>
 
-
-<!--        &lt;!&ndash;logback-classic &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-classic</artifactId>-->
-<!--            <version>1.4.11</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-
-
     </dependencies>
 
-    <!-- Project build configuration -->
     <build>
         <finalName>${project.artifactId}-${project.version}}</finalName>
         <plugins>

@@ -40,11 +40,8 @@ public class PdfController {
     //API : To export pdf
     @ApiOperation(value = "API : To export pdf")
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_PDF_VALUE)
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
-    public ResponseEntity<InputStreamResource> getPdf(
-            HttpServletRequest request
-    ) throws IOException, DocumentException {
+    public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
 
         User user = helper.getUser(request);
         Document document = pdfService.getPdf(user);
@@ -57,7 +54,7 @@ public class PdfController {
         document.open();
 
         // Add content to the document
-        pdfService.addContent(document, user);
+        pdfService.addContent(document, request);
 
         // Close the document
         document.close();

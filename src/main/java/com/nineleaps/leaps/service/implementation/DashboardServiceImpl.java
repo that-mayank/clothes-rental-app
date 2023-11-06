@@ -6,9 +6,11 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.service.DashboardServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -23,10 +25,14 @@ import java.util.Map;
 public class DashboardServiceImpl implements DashboardServiceInterface {
 
     private final OrderItemRepository orderItemRepository;
+    private final Helper helper;
 
     // Calculate the dashboard view for the owner user
     @Override
-    public DashboardDto dashboardOwnerView(User user) {
+    public DashboardDto dashboardOwnerView(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
         double totalEarnings = 0;
         int totalNumberOfItems = orderItemRepository.findByOwnerId(user.getId()).size();
 
@@ -41,7 +47,10 @@ public class DashboardServiceImpl implements DashboardServiceInterface {
 
     // Generate analytics data for the owner user
     @Override
-    public List<DashboardAnalyticsDto> analytics(User user) {
+    public List<DashboardAnalyticsDto> analytics(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
         Map<YearMonth, Double> totalEarningsByMonth = new HashMap<>();
         Map<YearMonth, Integer> totalItemsByMonth = new HashMap<>();
 

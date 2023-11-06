@@ -25,9 +25,9 @@ public interface OrderServiceInterface {
 
     Order getOrder(Long orderId, HttpServletRequest request);
 
-    Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user);
+    Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(HttpServletRequest request);
 
-    Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user);
+    Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(HttpServletRequest request);
 
     List<ProductDto> getRentedOutProducts(HttpServletRequest request, int pageNumber, int pageSize);
 
@@ -35,11 +35,11 @@ public interface OrderServiceInterface {
 
     void orderStatus(HttpServletRequest request, Long orderItemId, String orderReturned);
 
-    Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(User user);
+    Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(HttpServletRequest request);
 
-    Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(User user);
+    Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(HttpServletRequest request);
 
-    Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(User user, LocalDateTime startDate, LocalDateTime endDate);
+    Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(HttpServletRequest request, LocalDateTime startDate, LocalDateTime endDate);
 
     byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException;
 

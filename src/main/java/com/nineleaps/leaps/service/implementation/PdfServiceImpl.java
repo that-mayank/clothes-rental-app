@@ -7,6 +7,7 @@ import com.nineleaps.leaps.dto.dashboard.DashboardAnalyticsDto;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.PdfServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -15,6 +16,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.util.List;
 public class PdfServiceImpl implements PdfServiceInterface {
 
     private final DashboardServiceInterface dashboardService;
+    private final Helper helper;
 
     private void setCellPadding(PdfPCell cell) {
         cell.setPadding(6);
@@ -39,7 +42,9 @@ public class PdfServiceImpl implements PdfServiceInterface {
     }
 
     @Override
-    public void addContent(Document document, User user) throws DocumentException, IOException {
+    public void addContent(Document document, HttpServletRequest request) throws DocumentException, IOException {
+
+        User user = helper.getUser(request);
 
         // Add header
         Font headingFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 30, BaseColor.BLACK);
@@ -60,7 +65,7 @@ public class PdfServiceImpl implements PdfServiceInterface {
         // Add empty line
         document.add(new Paragraph(" "));
         // Get the dashboard data
-        List<DashboardAnalyticsDto> dashboardData = dashboardService.analytics(user);
+        List<DashboardAnalyticsDto> dashboardData = dashboardService.analytics(request);
         // Determine the number of columns based on the data
         int numColumns = 3;
         // Create table

@@ -231,7 +231,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(User user) {
+    public Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
         Map<Year, Map<YearMonth, Double>> totalEarningsByYearMonth = new HashMap<>();
         Map<Year, Map<YearMonth, Integer>> totalItemsByYearMonth = new HashMap<>();
 
@@ -278,7 +281,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(User user, LocalDateTime startDate, LocalDateTime endDate) {
+    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(HttpServletRequest request, LocalDateTime startDate, LocalDateTime endDate) {
+        // JWT: Extracting user info from token
+        User user = helper.getUser(request);
+
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -298,7 +304,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user) {
+    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(HttpServletRequest request) {
+        // JWT: Extracting user info from token
+        User user = helper.getUser(request);
+
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
 
         for (Order order : orderRepository.findAll()) {
@@ -319,7 +328,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user) {
+    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(HttpServletRequest request) {
+        // JWT: Extracting user info from token
+        User user = helper.getUser(request);
+
         Map<YearMonth, Map<String, OrderItemsData>> orderItemsSubcategoryWise = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -357,7 +369,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(User user) {
+    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(HttpServletRequest request) {
+        // JWT: Extracting user info from token
+        User user = helper.getUser(request);
+
         Map<YearMonth, Map<String, OrderItemsData>> orderItemsCategoryWise = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {

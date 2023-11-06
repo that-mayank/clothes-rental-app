@@ -1,13 +1,19 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +25,13 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryServiceInterface {
     // Linking Repository using constructor injection
     private final CategoryRepository categoryRepository;
+    private final Helper helper;
 
     @Override
-    public void createCategory(Category category) {
+    public void createCategory(CategoryDto categoryDto) {
+        // Calling service layer to save category
+
+        Category category = new Category(categoryDto);
         categoryRepository.save(category); // Save the category to the database
     }
 

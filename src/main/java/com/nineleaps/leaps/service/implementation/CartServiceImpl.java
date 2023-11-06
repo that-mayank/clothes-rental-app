@@ -11,14 +11,17 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.CartRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
+import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.nineleaps.leaps.config.MessageStrings.CART_ITEM_INVALID;
 
@@ -27,6 +30,8 @@ import static com.nineleaps.leaps.config.MessageStrings.CART_ITEM_INVALID;
 @Transactional
 public class CartServiceImpl implements CartServiceInterface {
     private final CartRepository cartRepository;
+    private final Helper helper;
+    private final ProductServiceInterface productService;
 
     // Helper method to convert Cart entity to CartItemDto
     private static CartItemDto getDtoFromCart(Cart cart) {
@@ -35,11 +40,16 @@ public class CartServiceImpl implements CartServiceInterface {
 
     // Add a product to the user's cart
     @Override
-    public void addToCart(AddToCartDto addToCartDto, Product product, User user)  {
+    public void addToCart(AddToCartDto addToCartDto, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+        // Retrieve product from id
+        Product product = productService.getProductById(addToCartDto.getProductId());
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), product.getId());
-        if (Helper.notNull(cartItem)) {
-            throw new CartItemAlreadyExistException("Product is already in the Cart: " + product.getId());
-        }
+        Optional.ofNullable(cartItem)
+                .ifPresent(item -> {
+                    throw new CartItemAlreadyExistException("Product is already in the Cart: " + product.getId());
+                });
 
         // Create a new Cart entity with the provided details and save it to the cart repository
         Cart cart = new Cart(product, user, addToCartDto.getQuantity(), addToCartDto.getRentalStartDate(), addToCartDto.getRentalEndDate(), product.getImageURL());
@@ -48,7 +58,9 @@ public class CartServiceImpl implements CartServiceInterface {
 
     // List all items in the user's cart
     @Override
-    public CartDto listCartItems(User user) {
+    public CartDto listCartItems(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         List<Cart> cartList = cartRepository.findAllByUserOrderByCreateDateDesc(user);
         List<CartItemDto> cartItems = new ArrayList<>();
 
@@ -63,13 +75,13 @@ public class CartServiceImpl implements CartServiceInterface {
         // Calculate the total cost, considering rental durations and quantities
         for (CartItemDto cartItemDto : cartItems) {
             long numberOfHours = 0;
-                numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
+            numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
 
-                if (numberOfHours == 0)
-                    numberOfHours = 1; // Minimum 1-hour rental
+            if (numberOfHours == 0)
+                numberOfHours = 1; // Minimum 1-hour rental
 
-                double perHourRent = cartItemDto.getProduct().getPrice() / 24;
-                totalCost += (perHourRent * cartItemDto.getQuantity() * numberOfHours);
+            double perHourRent = cartItemDto.getProduct().getPrice() / 24;
+            totalCost += (perHourRent * cartItemDto.getQuantity() * numberOfHours);
         }
 
         // Calculate tax and final price
@@ -82,7 +94,9 @@ public class CartServiceImpl implements CartServiceInterface {
 
     // Delete a cart item by product ID
     @Override
-    public void deleteCartItem(Long productId, User user) throws CartItemNotExistException {
+    public void deleteCartItem(Long productId, HttpServletRequest request) throws CartItemNotExistException {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         // Find the cart item associated with the specified product and user
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), productId);
 
@@ -103,8 +117,10 @@ public class CartServiceImpl implements CartServiceInterface {
 
     // Update the quantity of a product in the cart
     @Override
-    public void updateProductQuantity(UpdateProductQuantityDto updateProductQuantityDto, User user)
+    public void updateProductQuantity(UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request)
             throws CartItemNotExistException {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         // Find the cart item associated with the specified product and user
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), updateProductQuantityDto.getProductId());
 
@@ -115,7 +131,7 @@ public class CartServiceImpl implements CartServiceInterface {
 
         // If the updated quantity is zero or less, delete the cart item
         if (updateProductQuantityDto.getQuantity() <= 0) {
-            deleteCartItem(updateProductQuantityDto.getProductId(), user);
+            deleteCartItem(updateProductQuantityDto.getProductId(), request);
             return;
         }
 

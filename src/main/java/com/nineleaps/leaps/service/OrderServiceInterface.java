@@ -10,6 +10,7 @@ import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -18,21 +19,21 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderServiceInterface {
-    void placeOrder(User user, String razorpayId);
+    void placeOrder(HttpServletRequest request, String razorpayId);
 
-    List<OrderDto> listOrders(User user);
+    List<OrderDto> listOrders(HttpServletRequest request);
 
-    Order getOrder(Long orderId, User user);
+    Order getOrder(Long orderId, HttpServletRequest request);
 
     Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user);
 
     Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user);
 
-    List<ProductDto> getRentedOutProducts(User user, int pageNumber, int pageSize);
+    List<ProductDto> getRentedOutProducts(HttpServletRequest request, int pageNumber, int pageSize);
 
     OrderItem getOrderItem(Long orderItemId, User user);
 
-    void orderStatus(OrderItem orderItem, String orderReturned);
+    void orderStatus(HttpServletRequest request, Long orderItemId, String orderReturned);
 
     Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(User user);
 
@@ -42,5 +43,5 @@ public interface OrderServiceInterface {
 
     byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException;
 
-    List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, User user);
+    List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, HttpServletRequest request);
 }

@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.notifications.PushNotificationRequest;
@@ -24,13 +25,17 @@ import com.nineleaps.leaps.repository.OrderRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -54,11 +59,14 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
     private final PushNotificationServiceImpl pushNotificationService;
+    private final Helper helper;
 
     @Override
-    public void placeOrder(User user, String razorpayId) {
+    public void placeOrder(HttpServletRequest request, String razorpayId) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         //retrieve the cart items for the user
-        CartDto cartDto = cartService.listCartItems(user);
+        CartDto cartDto = cartService.listCartItems(request);
         List<CartItemDto> cartItemDtos = cartDto.getCartItems();
         //create order and save it
         Order newOrder = new Order();
@@ -98,7 +106,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
         // function to send email
         String email = user.getEmail();
-        String subject = ORDER_PLACED;
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
@@ -117,23 +124,25 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
         messageBuilder.append("Total Price of order: ").append(newOrder.getTotalPrice()).append("\n\n");
         String message = messageBuilder.toString();
-        emailServiceImpl.sendEmail(subject, message, email);
+        emailServiceImpl.sendEmail(ORDER_PLACED, message, email);
 
 
         for(OrderItem orderItem:orderItemList){
             String deviceToken = orderItem.getProduct().getUser().getDeviceToken();
             log.debug("Device token of owner from oder service is: {}",deviceToken);
-            var request = PushNotificationRequest.builder()
+            var pushNotificationRequest = PushNotificationRequest.builder()
                     .title("Order info")
                     .message(ORDER_PLACED)
                     .token(deviceToken)
                     .build();
-            pushNotificationService.sendPushNotificationToToken(request);
+            pushNotificationService.sendPushNotificationToToken(pushNotificationRequest);
         }
     }
 
     @Override
-    public List<OrderDto> listOrders(User user) {
+    public List<OrderDto> listOrders(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         List<Order> orders = orderRepository.findByUserOrderByCreateDateDesc(user);
         List<OrderDto> orderDtos = new ArrayList<>();
         for (Order order : orders) {
@@ -144,7 +153,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Order getOrder(Long orderId, User user) throws OrderNotFoundException {
+    public Order getOrder(Long orderId, HttpServletRequest request) throws OrderNotFoundException {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         Optional<Order> optionalOrder = orderRepository.findByIdAndUserId(orderId, user.getId());
         if (optionalOrder.isEmpty()) {
             throw new OrderNotFoundException("Order not found");
@@ -153,7 +164,14 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public void orderStatus(OrderItem orderItem, String status) {
+    public void orderStatus(HttpServletRequest request, Long orderItemId, String status) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+        //Guard Statement : Check if order item belongs to the current user
+        OrderItem orderItem = getOrderItem(orderItemId, user);
+        if (Optional.ofNullable(orderItem).isEmpty()) {
+            throw new OrderNotFoundException(ORDER_ITEM_UNAUTHORIZED_ACCESS);
+        }
         orderItem.setStatus(status);
         orderItemRepository.save(orderItem);
         if (status.equals("ORDER RETURNED")) {
@@ -377,7 +395,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public List<ProductDto> getRentedOutProducts(User user, int pageNumber, int pageSize) {
+    public List<ProductDto> getRentedOutProducts(HttpServletRequest request, int pageNumber, int pageSize) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<OrderItem> page = orderItemRepository.findByOwnerId(pageable, user.getId());
         List<ProductDto> productDtoList = new ArrayList<>();
@@ -491,7 +511,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, User user) {
+    public List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         List<OrderItem> orderItemList = orderItemRepository.findAll();
         List<OrderItemDto> orderItemDtos = new ArrayList<>();
         for (var orderItem : orderItemList) {

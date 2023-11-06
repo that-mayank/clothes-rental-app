@@ -30,7 +30,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/dashboard")
 @RequiredArgsConstructor
 @Validated
-@Api(tags = "Category Api")
+@Api(tags = "Dashboard Api")
 public class DashboardController {
 
     //Linking layers using constructor injection

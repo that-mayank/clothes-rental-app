@@ -4,7 +4,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.notifications.PushNotificationRequest;
@@ -31,8 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

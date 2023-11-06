@@ -3,7 +3,6 @@ package com.nineleaps.leaps.service;
 import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.model.categories.Category;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 

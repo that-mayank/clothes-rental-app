@@ -4,7 +4,6 @@ import com.nineleaps.leaps.dto.dashboard.DashboardAnalyticsDto;
 import com.nineleaps.leaps.dto.dashboard.DashboardDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
-import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
 import com.nineleaps.leaps.utils.Helper;

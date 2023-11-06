@@ -28,8 +28,6 @@ import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
 
-import static com.nineleaps.leaps.config.MessageStrings.ORDER_ITEM_UNAUTHORIZED_ACCESS;
-
 @RestController
 @RequestMapping("/api/v1/order")
 @AllArgsConstructor

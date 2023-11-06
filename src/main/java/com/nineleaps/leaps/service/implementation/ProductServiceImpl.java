@@ -1,6 +1,7 @@
 package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
+import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
 import com.nineleaps.leaps.model.User;
@@ -9,7 +10,9 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.product.ProductUrl;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.ProductServiceInterface;
+import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import org.hibernate.Filter;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +39,20 @@ import static com.nineleaps.leaps.config.MessageStrings.*;
 public class ProductServiceImpl implements ProductServiceInterface {
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
+    private final Helper helper;
+    private final SubCategoryServiceInterface subCategoryService;
+    private final CategoryServiceInterface categoryService;
 
-    public static ProductDto getDtoFromProduct(Product product) {
-        return new ProductDto(product);
-    }
-
-
-    private static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
-        return new Product(productDto, subCategories, categories, user);
-    }
+    
 
     @Override
-    public void addProduct(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
+    public void addProduct(ProductDto productDto, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
+        // Retrieving Categories and Subcategories from DTO
+        List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
+        List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
         Product product = getProductFromDto(productDto, subCategories, categories, user);
         productRepository.save(product);
         //setting image url
@@ -54,12 +60,12 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public List<ProductDto> listProducts(int pageNumber, int pageSize, User user) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        disabledProductFilter.setParameter(DISABLED, false);
+    public List<ProductDto> listProducts(int pageNumber, int pageSize, HttpServletRequest request) {
+
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
+        Session session = getSession();
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Product> page = productRepository.findAllByUserNot(pageable, user);
         List<ProductDto> productDtos = new ArrayList<>();
@@ -67,13 +73,19 @@ public class ProductServiceImpl implements ProductServiceInterface {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
-        session.disableFilter(DELETED_PRODUCT_FILTER);
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
+        disableSession(session);
         return productDtos;
     }
 
     @Override
-    public void updateProduct(Long productId, ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
+    public void updateProduct(Long productId, ProductDto productDto, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
+        // Retrieving Categories and Subcategories from DTO
+        List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
+        List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
+        
         Product oldProduct = productRepository.findByUserIdAndId(user.getId(), productId);
         if (!Helper.notNull(oldProduct)) {
             throw new ProductNotExistException("Product does not belong to the user: " + user.getFirstName() + " " + user.getLastName());
@@ -90,12 +102,16 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public List<ProductDto> listProductsById(Long subcategoryId, User user) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        disabledProductFilter.setParameter(DISABLED, false);
+    public List<ProductDto> listProductsById(Long subcategoryId, HttpServletRequest request) {
+        Session session = getSession();
+        // Guard Statement : Check if subcategory is valid
+        Optional<SubCategory> optionalSubCategory = subCategoryService.readSubCategory(subcategoryId);
+        if (optionalSubCategory.isEmpty()) {
+            throw new CustomException("Subcategory not found!");
+        }
+
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
 
         List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
         List<ProductDto> productDtos = new ArrayList<>();
@@ -105,19 +121,23 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 productDtos.add(productDto);
             }
         }
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
-        session.disableFilter(DELETED_PRODUCT_FILTER);
+        disableSession(session);
         return productDtos;
 
     }
 
     @Override
-    public List<ProductDto> listProductsByCategoryId(Long categoryId, User user) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        disabledProductFilter.setParameter(DISABLED, false);
+    public List<ProductDto> listProductsByCategoryId(Long categoryId, HttpServletRequest request) {
+        Session session = getSession();
+        //Guard Statement : Check if category id is valid
+        Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
+        if (optionalCategory.isEmpty()) {
+            throw new CustomException("Category not found!");
+        }
+
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
         List<Product> products = productRepository.findByCategoriesId(categoryId);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : products) {
@@ -126,8 +146,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 productDtos.add(productDto);
             }
         }
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
-        session.disableFilter(DELETED_PRODUCT_FILTER);
+        disableSession(session);
         return productDtos;
     }
 
@@ -151,7 +170,10 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public List<ProductDto> listProductsDesc(User user) {
+    public List<ProductDto> listProductsDesc(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
         Session session = entityManager.unwrap(Session.class);
         Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
         deletedProductFilter.setParameter(DELETED, false);
@@ -166,7 +188,9 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public List<ProductDto> listOwnerProducts(User user) {
+    public List<ProductDto> listOwnerProducts(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         Session session = entityManager.unwrap(Session.class);
         Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
         deletedProductFilter.setParameter(DELETED, false);
@@ -183,33 +207,24 @@ public class ProductServiceImpl implements ProductServiceInterface {
 
     @Override
     public List<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        disabledProductFilter.setParameter(DISABLED, false);
+        Session session = getSession();
         List<Product> body = productRepository.findProductByPriceRange(minPrice, maxPrice);
         List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : body) {
             ProductDto productDto = getDtoFromProduct(product);
             productDtos.add(productDto);
         }
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
-        session.disableFilter(DELETED_PRODUCT_FILTER);
+        disableSession(session);
         return productDtos;
     }
 
     @Override
-    public List<ProductDto> searchProducts(String query, User user) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        disabledProductFilter.setParameter(DISABLED, false);
+    public List<ProductDto> searchProducts(String query, HttpServletRequest request) {
+        Session session = getSession();
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
         String[] stringList = query.split(" ");
-
         List<ProductDto> productDtos = new ArrayList<>();
-
         for (String keyword : stringList) {
             List<Product> products = productRepository.searchProducts(keyword);
             for (Product product : products) {
@@ -219,18 +234,13 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 }
             }
         }
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
-        session.disableFilter(DELETED_PRODUCT_FILTER);
+        disableSession(session);
         return productDtos;
     }
 
     @Override
     public List<ProductDto> filterProducts(String size, Long subcategoryId, double minPrice, double maxPrice) {
-        Session session = entityManager.unwrap(Session.class);
-        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
-        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
-        deletedProductFilter.setParameter(DELETED, false);
-        disabledProductFilter.setParameter(DISABLED, false);
+        Session session = getSession();
         List<Product> productList = productRepository.findBySubCategoriesId(subcategoryId);
 
         List<Product> result = new ArrayList<>();
@@ -246,15 +256,16 @@ public class ProductServiceImpl implements ProductServiceInterface {
             ProductDto productDto = getDtoFromProduct(product);
             resultDtos.add(productDto);
         }
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
-        session.disableFilter(DELETED_PRODUCT_FILTER);
+        disableSession(session);
         return resultDtos;
     }
 
     @Override
-    public void deleteProduct(Long productId, Long userId) {
-        Product product = productRepository.findByUserIdAndId(userId, productId);
-        if (!Helper.notNull(product)) {
+    public void deleteProduct(Long productId, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+        Product product = productRepository.findByUserIdAndId(user.getId(), productId);
+        if (Optional.ofNullable(product).isEmpty()) {
             throw new ProductNotExistException("Product does not belong to current user.");
         }
         product.setDeleted(true);
@@ -267,7 +278,15 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public void disableProduct(Product product, int quantity) {
+    public void disableProduct(Long productId, int quantity, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
+        // Guard Statement : To check product belongs to current user
+        Product product = productRepository.findByUserIdAndId(user.getId(), productId);
+        if (Optional.ofNullable(product).isEmpty()) {
+            throw new ProductNotExistException("Product does not belong to current user.");
+        }
         if (quantity > product.getAvailableQuantities()) {
             throw new QuantityOutOfBoundException("User cannot disable more quantities than available quantities");
         }
@@ -280,7 +299,16 @@ public class ProductServiceImpl implements ProductServiceInterface {
     }
 
     @Override
-    public void enableProduct(Product product, int quantity) {
+    public void enableProduct(Long productId, int quantity, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUser(request);
+
+        // Guard Statement : To check product belongs to current user
+        Product product = productRepository.findByUserIdAndId(user.getId(), productId);
+        if (Optional.ofNullable(product).isEmpty()) {
+            throw new ProductNotExistException("Product does not belong to current user.");
+        }
+
         if (quantity > product.getDisabledQuantities()) {
             throw new QuantityOutOfBoundException("User cannot enable more quantities than disabled quantities");
         }
@@ -310,6 +338,29 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 .filter(url -> url.contains(NGROK))
                 .map(url -> url.substring(NGROK.length()))
                 .orElse(imageUrl);
+    }
+
+    public static ProductDto getDtoFromProduct(Product product) {
+        return new ProductDto(product);
+    }
+
+
+    private static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
+        return new Product(productDto, subCategories, categories, user);
+    }
+
+    private Session getSession() {
+        Session session = entityManager.unwrap(Session.class);
+        Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
+        deletedProductFilter.setParameter(DELETED, false);
+        Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
+        disabledProductFilter.setParameter(DISABLED, false);
+        return session;
+    }
+
+    private static void disableSession(Session session) {
+        session.disableFilter(DELETED_PRODUCT_FILTER);
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
     }
 
 }

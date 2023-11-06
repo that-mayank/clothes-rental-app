@@ -1,15 +1,15 @@
 cloud:
   aws:
     credentials:
-      access-key: AKIA2SH7LQXPJ7D7U5MZ
-      secret-key: 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
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
       static: eu-north-1
     stack:
       auto: false
 
 application:
   bucket:
-    name: leapsimagebucket
+    name: ${AWS_BUCKET_NAME}
 
 
 spring:
@@ -21,6 +21,6 @@ spring:
       max-request-size: 10MB
 
 twilio:
-  account_sid: ACe47c40c1144c690f78982e8d814abe5d
-  token: 2727852852992be1d14a9e1307a0dfb0
-  from_number: +12542724507
+  account_sid: ${TWILIO_SID}
+  token: ${TWILIO_TOKEN}
+  from_number: ${TWILIO_NUMBER}

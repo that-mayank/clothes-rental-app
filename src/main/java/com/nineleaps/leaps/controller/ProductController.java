@@ -89,7 +89,7 @@ public class ProductController {
     // Parameters required for pagination
     public ResponseEntity<List<ProductDto>> listProducts(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "1000", required = false) int pageSize,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             HttpServletRequest request) {
 
         // JWT : Extracting user info from token

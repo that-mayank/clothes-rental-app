@@ -80,7 +80,7 @@ class ProductServiceImplTest {
         productService.addProduct(productDto, subCategories, categories, user);
 
         // Then
-        verify(productRepository, times(2)).save(any(Product.class)); //because we are saving twice one before and one after adding inageUrl
+        verify(productRepository, times(2)).save(any(Product.class)); //because we are saving twice one before and one after adding imageUrl
     }
 
     @Test

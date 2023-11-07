@@ -76,7 +76,7 @@ class CartControllerTest {
         CartDto cartDto = new CartDto();
 
         when(helper.getUser((request))).thenReturn(user);
-        when(cartService.listCartItems((user))).thenReturn(cartDto);
+        when(cartService.listCartItems((request))).thenReturn(cartDto);
 
         // Act
         ResponseEntity<CartDto> responseEntity = cartController.getCartItems(request);
@@ -111,7 +111,7 @@ class CartControllerTest {
         assertTrue(response.isSuccess());
         assertEquals("Item has been removed from cart successfully", response.getMessage());
 
-        verify(cartService).deleteCartItem((productId), (user));
+        verify(cartService).deleteCartItem((productId), (request));
     }
 
     @Test

@@ -1,13 +1,14 @@
 package com.nineleaps.leaps.service;
 
-import com.nineleaps.leaps.model.Wishlist;
+import com.nineleaps.leaps.dto.product.ProductDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface WishlistServiceInterface {
-    void createWishlist(Wishlist wishlist);
+    void createWishlist(Long productId, HttpServletRequest request);
 
-    List<Wishlist> readWishlist(Long userId);
+    List<ProductDto> readWishlist(HttpServletRequest request);
 
-    void removeFromWishlist(Long userId, Long productId);
+    void removeFromWishlist(HttpServletRequest request, Long productId);
 }

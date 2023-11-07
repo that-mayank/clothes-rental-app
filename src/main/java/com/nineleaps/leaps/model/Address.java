@@ -59,8 +59,9 @@ public class Address {
 
     /**
      * Creates an Address object by copying values from another address and associating it with a user.
+     *
      * @param address The source address to copy values from.
-     * @param user The user to whom this address belongs.
+     * @param user    The user to whom this address belongs.
      */
     public Address(Address address, User user) {
         // Copy values from the source address
@@ -79,8 +80,9 @@ public class Address {
 
     /**
      * Creates an Address object from an AddressDto and associates it with a user.
+     *
      * @param addressDto The AddressDto containing address information.
-     * @param user The user to whom this address belongs.
+     * @param user       The user to whom this address belongs.
      */
     public Address(AddressDto addressDto, User user) {
         this.id = addressDto.getId();
@@ -97,8 +99,9 @@ public class Address {
 
     /**
      * Creates an Address object with the given address ID and associates it with a user.
+     *
      * @param addressId The ID of the address.
-     * @param user The user to whom this address belongs.
+     * @param user      The user to whom this address belongs.
      */
     public Address(Long addressId, User user) {
         this.id = addressId;

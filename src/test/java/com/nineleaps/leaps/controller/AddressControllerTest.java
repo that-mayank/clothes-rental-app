@@ -74,7 +74,7 @@ class AddressControllerTest {
 
         when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress((user), (addressId))).thenReturn(address);
+        when(addressService.readAddress((request), (addressId))).thenReturn(address);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.updateAddress(addressId, addressDto, request);
@@ -124,7 +124,7 @@ class AddressControllerTest {
 
         when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress((user), (addressId))).thenReturn(null);
+        when(addressService.readAddress((request), (addressId))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.updateAddress(addressId, addressDto, request);
@@ -147,7 +147,7 @@ class AddressControllerTest {
         List<Address> addressList = new ArrayList<>();
 
         when(helper.getUser((request))).thenReturn(user);
-        when(addressService.listAddress((user))).thenReturn(addressList);
+        when(addressService.listAddress((request))).thenReturn(addressList);
 
         // Act
         ResponseEntity<List<Address>> responseEntity = addressController.listAddress(request);
@@ -170,7 +170,7 @@ class AddressControllerTest {
 
         when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress((user), (addressId))).thenReturn(address);
+        when(addressService.readAddress((request), (addressId))).thenReturn(address);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.deleteAddress(addressId, request);
@@ -183,7 +183,7 @@ class AddressControllerTest {
         assertTrue(response.isSuccess());
         assertEquals("Address deleted successfully", response.getMessage());
 
-        verify(addressService).deleteAddress((addressId));
+        verify(addressService).deleteAddress((request), (addressId));
     }
 
     @Test
@@ -221,7 +221,7 @@ class AddressControllerTest {
 
         when(helper.getUser((request))).thenReturn(user);
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
-        when(addressService.readAddress((user), (addressId))).thenReturn(null);
+        when(addressService.readAddress((request), (addressId))).thenReturn(null);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = addressController.deleteAddress(addressId, request);
@@ -250,7 +250,7 @@ class AddressControllerTest {
         when(addressService.readAddress((addressId))).thenReturn(Optional.of(address));
 
         // Mock the behavior of addressService.readAddress(user, addressId) to indicate that the address belongs to the user
-        when(addressService.readAddress(user, addressId)).thenReturn(address);
+        when(addressService.readAddress(request, addressId)).thenReturn(address);
 
         // Act
         ResponseEntity<Address> responseEntity = addressController.getAddressById(addressId, request);
@@ -265,7 +265,7 @@ class AddressControllerTest {
         // Verify that the relevant methods were called with the expected arguments
         verify(helper).getUser(request);
         verify(addressService).readAddress(addressId);
-        verify(addressService).readAddress(user, addressId);
+        verify(addressService).readAddress(request, addressId);
     }
 
     @Test
@@ -293,7 +293,7 @@ class AddressControllerTest {
         // Verify that the relevant methods were called with the expected arguments
         verify(helper).getUser(request);
         verify(addressService).readAddress(addressId);
-        verify(addressService, never()).readAddress(user, addressId);
+        verify(addressService, never()).readAddress(request, addressId);
     }
 
     @Test
@@ -311,7 +311,7 @@ class AddressControllerTest {
         when(addressService.readAddress(addressId)).thenReturn(Optional.of(address));
 
         // Mock the behavior of addressService.readAddress(user, addressId) to indicate that the address does not belong to the user
-        when(addressService.readAddress(user, addressId)).thenReturn(null);
+        when(addressService.readAddress(request, addressId)).thenReturn(null);
 
         // Act and Assert (Exception)
         assertThrows(AddressOwnershipException.class, () -> addressController.getAddressById(addressId, request));
@@ -319,6 +319,6 @@ class AddressControllerTest {
         // Verify that the relevant methods were called with the expected arguments
         verify(helper).getUser(request);
         verify(addressService).readAddress(addressId);
-        verify(addressService).readAddress(user, addressId);
+        verify(addressService).readAddress(request, addressId);
     }
 }

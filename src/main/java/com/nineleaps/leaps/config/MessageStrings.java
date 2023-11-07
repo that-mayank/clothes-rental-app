@@ -15,6 +15,8 @@ public class MessageStrings {
     public static final String ORDER_PLACED = "Order placed";
     public static final String USER_NOT_FOUND = "User not found in the database";
 
+    public static final String CATEGORY_INVALID = "Parent Category is invalid";
+
     private MessageStrings() {
         // Private constructor to prevent instantiation
     }

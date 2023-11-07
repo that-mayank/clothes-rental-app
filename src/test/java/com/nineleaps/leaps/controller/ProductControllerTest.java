@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,7 +66,7 @@ class ProductControllerTest {
         when(helper.getUser(request)).thenReturn(user);
         when(categoryService.getCategoriesFromIds(anyList())).thenReturn(categories);
         when(subCategoryService.getSubCategoriesFromIds(anyList())).thenReturn(subCategories);
-        doNothing().when(productService).addProduct(any(ProductDto.class), anyList(), anyList(), any(User.class));
+        doNothing().when(productService).addProduct(any(ProductDto.class), request);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = productController.addProduct(productDto, request);
@@ -78,7 +79,7 @@ class ProductControllerTest {
         assertTrue(responseBody.isSuccess());
         assertEquals("Product has been added", responseBody.getMessage());
 
-        verify(productService).addProduct(productDto, subCategories, categories, user);
+        verify(productService).addProduct(productDto, request);
     }
 
     @Test
@@ -139,7 +140,7 @@ class ProductControllerTest {
         User user = new User();
         List<ProductDto> productList = new ArrayList<>();
         when(helper.getUser(request)).thenReturn(user);
-        when(productService.listProducts(anyInt(), anyInt(), any(User.class))).thenReturn(productList);
+        when(productService.listProducts(anyInt(), anyInt(), request)).thenReturn(productList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = productController.listProducts(0, 1000, request);
@@ -151,7 +152,7 @@ class ProductControllerTest {
         assertNotNull(responseBody);
         assertEquals(productList, responseBody);
 
-        verify(productService).listProducts(0, 1000, user);
+        verify(productService).listProducts(0, 1000, request);
     }
 
     @Test
@@ -181,7 +182,7 @@ class ProductControllerTest {
         assertTrue(responseBody.isSuccess());
         assertEquals("Product has been updated", responseBody.getMessage());
 
-        verify(productService).updateProduct(productId, productDto, subCategories, categories, user);
+        verify(productService).updateProduct(productId, productDto, request);
     }
 
     @Test
@@ -209,7 +210,7 @@ class ProductControllerTest {
         assertFalse(responseBody.isSuccess());
         assertEquals("Product is invalid", responseBody.getMessage());
 
-        verify(productService, never()).updateProduct(anyLong(), any(ProductDto.class), anyList(), anyList(), any(User.class));
+        verify(productService, never()).updateProduct(anyLong(), any(ProductDto.class), request);
     }
 
     @Test
@@ -223,7 +224,7 @@ class ProductControllerTest {
 
         when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(optionalSubCategory);
         when(helper.getUser(request)).thenReturn(user);
-        when(productService.listProductsById(subcategoryId, user)).thenReturn(productList);
+        when(productService.listProductsById(subcategoryId, request)).thenReturn(productList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = productController.listBySubcategoryId(subcategoryId, request);
@@ -235,7 +236,7 @@ class ProductControllerTest {
         assertNotNull(responseBody);
         assertEquals(productList, responseBody);
 
-        verify(productService).listProductsById(subcategoryId, user);
+        verify(productService).listProductsById(subcategoryId, request);
     }
 
     @Test
@@ -271,7 +272,7 @@ class ProductControllerTest {
 
         when(categoryService.readCategory(categoryId)).thenReturn(optionalCategory);
         when(helper.getUser(request)).thenReturn(user);
-        when(productService.listProductsByCategoryId(categoryId, user)).thenReturn(productList);
+        when(productService.listProductsByCategoryId(categoryId, request)).thenReturn(productList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = productController.listByCategoryId(categoryId, request);
@@ -283,7 +284,7 @@ class ProductControllerTest {
         assertNotNull(responseBody);
         assertEquals(productList, responseBody);
 
-        verify(productService).listProductsByCategoryId(categoryId, user);
+        verify(productService).listProductsByCategoryId(categoryId, request);
     }
 
     @Test
@@ -362,7 +363,7 @@ class ProductControllerTest {
         List<ProductDto> productList = new ArrayList<>();
 
         when(helper.getUser(request)).thenReturn(user);
-        when(productService.searchProducts(query, user)).thenReturn(productList);
+        when(productService.searchProducts(query, request)).thenReturn(productList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = productController.searchProducts(query, request);
@@ -374,7 +375,7 @@ class ProductControllerTest {
         assertNotNull(responseBody);
         assertEquals(productList, responseBody);
 
-        verify(productService).searchProducts(query, user);
+        verify(productService).searchProducts(query, request);
     }
 
     @Test
@@ -385,7 +386,7 @@ class ProductControllerTest {
         List<ProductDto> productList = new ArrayList<>();
 
         when(helper.getUser(request)).thenReturn(user);
-        when(productService.listProductsDesc(user)).thenReturn(productList);
+        when(productService.listProductsDesc(request)).thenReturn(productList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = productController.listProductsDesc(request);
@@ -397,7 +398,7 @@ class ProductControllerTest {
         assertNotNull(responseBody);
         assertEquals(productList, responseBody);
 
-        verify(productService).listProductsDesc(user);
+        verify(productService).listProductsDesc(request);
     }
 
     @Test
@@ -408,7 +409,7 @@ class ProductControllerTest {
         List<ProductDto> productList = new ArrayList<>();
 
         when(helper.getUser(request)).thenReturn(user);
-        when(productService.listOwnerProducts(user)).thenReturn(productList);
+        when(productService.listOwnerProducts(request)).thenReturn(productList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = productController.listOwnerProducts(request);
@@ -420,7 +421,7 @@ class ProductControllerTest {
         assertNotNull(responseBody);
         assertEquals(productList, responseBody);
 
-        verify(productService).listOwnerProducts(user);
+        verify(productService).listOwnerProducts(request);
     }
 
     @Test
@@ -473,7 +474,7 @@ class ProductControllerTest {
         assertTrue(responseBody.isSuccess());
         assertEquals("Product has been deleted successfully.", responseBody.getMessage());
 
-        verify(productService).deleteProduct(productId, user.getId());
+        verify(productService).deleteProduct(productId, request);
         verify(productService).readProduct(productId);
     }
 
@@ -553,7 +554,7 @@ class ProductControllerTest {
         assertTrue(responseBody.isSuccess());
         assertEquals("Product has been disabled", responseBody.getMessage());
 
-        verify(productService).disableProduct(product, quantity);
+        verify(productService).disableProduct(productId, quantity, request);
     }
 
     @Test
@@ -608,7 +609,7 @@ class ProductControllerTest {
         assertTrue(responseBody.isSuccess());
         assertEquals("Product has been enabled", responseBody.getMessage());
 
-        verify(productService).enableProduct(product, quantity);
+        verify(productService).enableProduct(productId, quantity, request);
     }
 
     @Test

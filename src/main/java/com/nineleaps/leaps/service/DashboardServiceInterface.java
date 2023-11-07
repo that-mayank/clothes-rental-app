@@ -9,5 +9,6 @@ import java.util.List;
 public interface DashboardServiceInterface {
 
     DashboardDto dashboardOwnerView(HttpServletRequest request);
+
     List<DashboardAnalyticsDto> analytics(HttpServletRequest request);
 }

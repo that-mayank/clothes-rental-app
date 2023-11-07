@@ -124,9 +124,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
         emailServiceImpl.sendEmail(ORDER_PLACED, message, email);
 
 
-        for(OrderItem orderItem:orderItemList){
+        for (OrderItem orderItem : orderItemList) {
             String deviceToken = orderItem.getProduct().getUser().getDeviceToken();
-            log.debug("Device token of owner from oder service is: {}",deviceToken);
+            log.debug("Device token of owner from oder service is: {}", deviceToken);
             var pushNotificationRequest = PushNotificationRequest.builder()
                     .title("Order info")
                     .message(ORDER_PLACED)
@@ -467,11 +467,11 @@ public class OrderServiceImpl implements OrderServiceInterface {
             document.add(new Paragraph(ORDER_ID + order.getId()));
             document.add(new Paragraph("Order Date: " + dateFormat.format(convertToDate(order.getCreateDate()))));
             document.add(new Paragraph("Name: " + user.getFirstName() + " " + user.getLastName()));
-            document.add(new Paragraph(("Address: "+ order.getUser().getAddresses())));
+            document.add(new Paragraph(("Address: " + order.getUser().getAddresses())));
             document.add(new Paragraph("\n"));
 
             // Create and populate order items table
-            PdfPTable table = new PdfPTable(new float[]{20, 20, 15, 18, 35, 35,35});
+            PdfPTable table = new PdfPTable(new float[]{20, 20, 15, 18, 35, 35, 35});
             table.setWidthPercentage(100);
 
             Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
@@ -529,7 +529,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         List<OrderItem> orderItemList = orderItemRepository.findAll();
         List<OrderItemDto> orderItemDtos = new ArrayList<>();
         for (var orderItem : orderItemList) {
-            if(orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus))
+            if (orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus))
                 orderItemDtos.add(new OrderItemDto(orderItem));
         }
         return orderItemDtos;

@@ -53,16 +53,16 @@ class WishlistControllerTest {
         Optional<Product> optionalProduct = Optional.of(product);
         when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
-        when(wishlistService.readWishlist(user.getId())).thenReturn(new ArrayList<>());
-        doNothing().when(wishlistService).createWishlist(any(Wishlist.class));
+        when(wishlistService.readWishlist(request)).thenReturn(new ArrayList<>());
+        doNothing().when(wishlistService).createWishlist(productId, request);
 
         // Act
         ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
 
         // Assert
         verify(productService, times(1)).readProduct(productId);
-        verify(wishlistService, times(1)).readWishlist(user.getId());
-        verify(wishlistService, times(1)).createWishlist(any(Wishlist.class));
+        verify(wishlistService, times(1)).readWishlist(request);
+        verify(wishlistService, times(1)).createWishlist(productId, request);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
     }
@@ -96,19 +96,19 @@ class WishlistControllerTest {
         Product product = new Product();
         product.setId(productId);
         Optional<Product> optionalProduct = Optional.of(product);
-        Wishlist wishlistItem = new Wishlist(product, user);
-        List<Wishlist> wishlistItems = new ArrayList<>();
+        ProductDto wishlistItem = new ProductDto(product);
+        List<ProductDto> wishlistItems = new ArrayList<>();
         wishlistItems.add(wishlistItem);
         when(helper.getUser(request)).thenReturn(user);
         when(productService.readProduct(productId)).thenReturn(optionalProduct);
-        when(wishlistService.readWishlist(user.getId())).thenReturn(wishlistItems);
+        when(wishlistService.readWishlist(request)).thenReturn(wishlistItems);
 
         // Act
         ResponseEntity<ApiResponse> response = wishlistController.addWishlist(productId, request);
 
         // Assert
         verify(productService, times(1)).readProduct(productId);
-        verify(wishlistService, times(1)).readWishlist(user.getId());
+        verify(wishlistService, times(1)).readWishlist(request);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
     }
@@ -120,20 +120,20 @@ class WishlistControllerTest {
         User user = new User();
         user.setId(1L);
         when(helper.getUser(request)).thenReturn(user);
-        List<Wishlist> wishlistItems = new ArrayList<>();
+        List<ProductDto> wishlistItems = new ArrayList<>();
         Product product1 = new Product();
         product1.setId(1L);
         Product product2 = new Product();
         product2.setId(2L);
-        wishlistItems.add(new Wishlist(product1, user));
-        wishlistItems.add(new Wishlist(product2, user));
-        when(wishlistService.readWishlist(user.getId())).thenReturn(wishlistItems);
+        wishlistItems.add(new ProductDto(product1));
+        wishlistItems.add(new ProductDto(product2));
+        when(wishlistService.readWishlist(request)).thenReturn(wishlistItems);
 
         // Act
         ResponseEntity<List<ProductDto>> response = wishlistController.getWishlist(request);
 
         // Assert
-        verify(wishlistService, times(1)).readWishlist(user.getId());
+        verify(wishlistService, times(1)).readWishlist(request);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, Objects.requireNonNull(response.getBody()).size());
     }
@@ -146,13 +146,13 @@ class WishlistControllerTest {
         User user = new User();
         user.setId(1L);
         when(helper.getUser(request)).thenReturn(user);
-        doNothing().when(wishlistService).removeFromWishlist(user.getId(), productId);
+        doNothing().when(wishlistService).removeFromWishlist(request, productId);
 
         // Act
         ResponseEntity<ApiResponse> response = wishlistController.removeFromWishlist(productId, request);
 
         // Assert
-        verify(wishlistService, times(1)).removeFromWishlist(user.getId(), productId);
+        verify(wishlistService, times(1)).removeFromWishlist(request, productId);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isSuccess());
     }

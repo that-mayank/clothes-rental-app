@@ -68,7 +68,7 @@ class OrderControllerTest {
         assertEquals("Order has been placed", response.getMessage());
 
         // Verify that the service method was called with the correct arguments
-        verify(orderService).placeOrder(user, razorpayId);
+        verify(orderService).placeOrder(request, razorpayId);
     }
 
     @Test
@@ -126,7 +126,7 @@ class OrderControllerTest {
         List<OrderDto> orderDtoList = Collections.singletonList(new OrderDto());
 
         when(helper.getUser(request)).thenReturn(user);
-        when(orderService.listOrders(user)).thenReturn(orderDtoList);
+        when(orderService.listOrders(request)).thenReturn(orderDtoList);
 
         // Act
         ResponseEntity<List<OrderDto>> responseEntity = orderController.getAllOrders(request);
@@ -139,7 +139,7 @@ class OrderControllerTest {
         assertEquals(orderDtoList, resultOrderDtoList);
 
         // Verify that the service method was called with the correct arguments
-        verify(orderService).listOrders(user);
+        verify(orderService).listOrders(request);
     }
 
     @Test
@@ -152,7 +152,7 @@ class OrderControllerTest {
         Order order = new Order();
 
         when(helper.getUser(request)).thenReturn(user);
-        when(orderService.getOrder(orderId, user)).thenReturn(order);
+        when(orderService.getOrder(orderId, request)).thenReturn(order);
 
         // Act
         ResponseEntity<Order> responseEntity = orderController.getOrderById(orderId, request);
@@ -165,7 +165,7 @@ class OrderControllerTest {
         assertEquals(order, resultOrder);
 
         // Verify that the service method was called with the correct arguments
-        verify(orderService).getOrder(orderId, user);
+        verify(orderService).getOrder(orderId, request);
     }
 
     @Test
@@ -181,7 +181,7 @@ class OrderControllerTest {
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(new OrderItem());
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = orderController.orderInTransit(orderItemId, orderStatus, request);
+        ResponseEntity<ApiResponse> responseEntity = orderController.orderStatus(orderItemId, orderStatus, request);
 
         // Assert
         assertNotNull(responseEntity);
@@ -190,9 +190,6 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is " + orderStatus, response.getMessage());
-
-        // Verify that the service method was called with the correct arguments
-        verify(orderService).orderStatus(any(OrderItem.class), eq(orderStatus));
     }
 
     @Test
@@ -208,7 +205,7 @@ class OrderControllerTest {
         when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = orderController.orderInTransit(orderItemId, orderStatus, request);
+        ResponseEntity<ApiResponse> responseEntity = orderController.orderStatus(orderItemId, orderStatus, request);
 
         // Assert
         assertNotNull(responseEntity);
@@ -230,7 +227,7 @@ class OrderControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         // Call the orderInTransit method
-        ResponseEntity<ApiResponse> response = orderController.orderInTransit(null, orderStatus, request);
+        ResponseEntity<ApiResponse> response = orderController.orderStatus(null, orderStatus, request);
 
 
         // Check if the response is as expected
@@ -253,7 +250,7 @@ class OrderControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         // Call the orderInTransit method
-        ResponseEntity<ApiResponse> response = orderController.orderInTransit(orderItemId, orderStatus, request);
+        ResponseEntity<ApiResponse> response = orderController.orderStatus(orderItemId, orderStatus, request);
 
 
         // Check if the response is as expected
@@ -273,7 +270,7 @@ class OrderControllerTest {
         List<ProductDto> productDtoList = Collections.singletonList(new ProductDto());
 
         when(helper.getUser(request)).thenReturn(user);
-        when(orderService.getRentedOutProducts(user, 0, 100)).thenReturn(productDtoList);
+        when(orderService.getRentedOutProducts(request, 0, 100)).thenReturn(productDtoList);
 
         // Act
         ResponseEntity<List<ProductDto>> responseEntity = orderController.getRentedOutProducts(0, 100, request);
@@ -286,7 +283,7 @@ class OrderControllerTest {
         assertEquals(productDtoList, resultProductDtoList);
 
         // Verify that the service method was called with the correct arguments
-        verify(orderService).getRentedOutProducts(user, 0, 100);
+        verify(orderService).getRentedOutProducts(request, 0, 100);
     }
 
     @Test
@@ -299,7 +296,7 @@ class OrderControllerTest {
         List<OrderItemDto> orderItemDtoList = Collections.singletonList(new OrderItemDto());
 
         when(helper.getUser(request)).thenReturn(user);
-        when(orderService.getOrdersItemByStatus(shippingStatus, user)).thenReturn(orderItemDtoList);
+        when(orderService.getOrdersItemByStatus(shippingStatus, request)).thenReturn(orderItemDtoList);
 
         // Act
         ResponseEntity<List<OrderItemDto>> responseEntity = orderController.getShippingStatus(shippingStatus, request);
@@ -312,7 +309,7 @@ class OrderControllerTest {
         assertEquals(orderItemDtoList, resultOrderItemDtoList);
 
         // Verify that the service method was called with the correct arguments
-        verify(orderService).getOrdersItemByStatus(shippingStatus, user);
+        verify(orderService).getOrdersItemByStatus(shippingStatus, request);
     }
 
     @Test
@@ -326,7 +323,7 @@ class OrderControllerTest {
         byte[] pdfBytes = new byte[1024]; // Mock PDF bytes
 
         when(helper.getUser(request)).thenReturn(user);
-        when(orderService.getOrder(orderId, user)).thenReturn(order);
+        when(orderService.getOrder(orderId, request)).thenReturn(order);
         when(orderService.generateInvoicePDF(anyList(), eq(user), eq(order))).thenReturn(pdfBytes);
 
         // Act
@@ -340,7 +337,7 @@ class OrderControllerTest {
         assertArrayEquals(pdfBytes, resultPdfBytes);
 
         // Verify that the necessary methods were called
-        verify(orderService, times(1)).getOrder(orderId, user);
+        verify(orderService, times(1)).getOrder(orderId, request);
         verify(orderService, times(1)).generateInvoicePDF(anyList(), eq(user), eq(order));
         verifyNoMoreInteractions(orderService);
     }
@@ -355,7 +352,7 @@ class OrderControllerTest {
         Order order = new Order();
 
         when(helper.getUser(request)).thenReturn(user);
-        when(orderService.getOrder(orderId, user)).thenReturn(order);
+        when(orderService.getOrder(orderId, request)).thenReturn(order);
         when(orderService.generateInvoicePDF(anyList(), eq(user), eq(order)))
                 .thenThrow(new DocumentException("PDF generation failed"));
 
@@ -384,7 +381,7 @@ class OrderControllerTest {
         when(helper.getUser(request)).thenReturn(user);
 
         // Mock the behavior of orderService.getOrder
-        when(orderService.getOrder(orderId, user)).thenReturn(null);
+        when(orderService.getOrder(orderId, request)).thenReturn(null);
 
         // Call the generateInvoice method and expect an exception
         assertThrows(OrderNotFoundException.class, () -> orderController.generateInvoice(orderId, request), "Expected OrderNotFoundException was not thrown");

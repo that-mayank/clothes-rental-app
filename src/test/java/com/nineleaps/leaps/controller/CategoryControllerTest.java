@@ -54,10 +54,10 @@ class CategoryControllerTest {
 
         when(helper.getUser(request)).thenReturn(adminUser);
         when(categoryService.readCategory(categoryDto.getCategoryName())).thenReturn(existingCategory);
-        doNothing().when(categoryService).createCategory(any(Category.class));
+        doNothing().when(categoryService).createCategory(any(CategoryDto.class));
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto, request);
+        ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto);
 
         // Assert
         assertNotNull(responseEntity);
@@ -77,7 +77,7 @@ class CategoryControllerTest {
         when(helper.getUser(request)).thenReturn(user);
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto, request);
+        ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto);
 
         // Assert
         assertNotNull(responseEntity);
@@ -98,7 +98,7 @@ class CategoryControllerTest {
         when(categoryService.readCategory(categoryDto.getCategoryName())).thenReturn(existingCategory);
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto, request);
+        ResponseEntity<ApiResponse> responseEntity = categoryController.createCategory(categoryDto);
 
         // Assert
         assertNotNull(responseEntity);
@@ -131,10 +131,10 @@ class CategoryControllerTest {
         Category category = new Category(categoryDto);
 
         // Mock the behavior of categoryService.createCategory to do nothing
-        Mockito.doNothing().when(categoryService).createCategory(category);
+        Mockito.doNothing().when(categoryService).createCategory(categoryDto);
 
         // Call the createCategory method
-        ResponseEntity<ApiResponse> response = categoryController.createCategory(categoryDto, request);
+        ResponseEntity<ApiResponse> response = categoryController.createCategory(categoryDto);
 
         // Verify the response
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -177,7 +177,7 @@ class CategoryControllerTest {
         doNothing().when(categoryService).updateCategory(categoryId, updateCategoryDto);
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto, request);
+        ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto);
 
         // Assert
         assertNotNull(responseEntity);
@@ -201,7 +201,7 @@ class CategoryControllerTest {
         when(helper.getUser(request)).thenReturn(user);
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto, request);
+        ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto);
 
         // Assert
         assertNotNull(responseEntity);
@@ -222,7 +222,7 @@ class CategoryControllerTest {
         when(categoryService.readCategory(categoryId)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto, request);
+        ResponseEntity<ApiResponse> responseEntity = categoryController.updateCategory(categoryId, updateCategoryDto);
 
         // Assert
         assertNotNull(responseEntity);

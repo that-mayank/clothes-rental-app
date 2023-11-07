@@ -61,7 +61,7 @@ class SubCategoryControllerTest {
         when(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category)).thenReturn(null);
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto);
 
         // Assert
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
@@ -71,7 +71,7 @@ class SubCategoryControllerTest {
 
         verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
         verify(subCategoryService, times(1)).readSubCategory(subCategoryDto.getSubcategoryName(), category);
-        verify(subCategoryService, times(1)).createSubCategory(subCategoryDto, category);
+        verify(subCategoryService, times(1)).createSubCategory(subCategoryDto);
     }
 
     @Test
@@ -86,10 +86,10 @@ class SubCategoryControllerTest {
         when(helper.getUser(request)).thenReturn(user);
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto);
 
         // Assert
-        verify(subCategoryService, never()).createSubCategory(any(), any());
+        verify(subCategoryService, never()).createSubCategory(any());
         assertEquals(HttpStatus.FORBIDDEN, apiResponse.getStatusCode());
         assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
@@ -107,10 +107,10 @@ class SubCategoryControllerTest {
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto);
 
         // Assert
-        verify(subCategoryService, never()).createSubCategory(any(), any());
+        verify(subCategoryService, never()).createSubCategory(any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
         assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
@@ -133,10 +133,10 @@ class SubCategoryControllerTest {
         when(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category)).thenReturn(new SubCategory());
 
         // Act
-        ResponseEntity<ApiResponse> response = subCategoryController.createSubCategory(subCategoryDto, request);
+        ResponseEntity<ApiResponse> response = subCategoryController.createSubCategory(subCategoryDto);
 
         // Assert
-        verify(subCategoryService, never()).createSubCategory(any(), any());
+        verify(subCategoryService, never()).createSubCategory(any());
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertEquals("Sub Category already exists", Objects.requireNonNull(response.getBody()).getMessage());
@@ -208,10 +208,10 @@ class SubCategoryControllerTest {
         when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(Optional.of(new SubCategory(subCategoryDto, category)));
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
 
         // Assert
-        verify(subCategoryService, times(1)).updateSubCategory(subcategoryId, subCategoryDto, category);
+        verify(subCategoryService, times(1)).updateSubCategory(subcategoryId, subCategoryDto);
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
@@ -229,10 +229,10 @@ class SubCategoryControllerTest {
         when(helper.getUser(request)).thenReturn(user);
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
 
         // Assert
-        verify(subCategoryService, never()).updateSubCategory(any(), any(), any());
+        verify(subCategoryService, never()).updateSubCategory(any(), any());
         assertEquals(HttpStatus.FORBIDDEN, apiResponse.getStatusCode());
         assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
@@ -251,10 +251,10 @@ class SubCategoryControllerTest {
         when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
 
         // Assert
-        verify(subCategoryService, never()).updateSubCategory(any(), any(), any());
+        verify(subCategoryService, never()).updateSubCategory(any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
         assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
@@ -274,10 +274,10 @@ class SubCategoryControllerTest {
         when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto, request);
+        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
 
         // Assert
-        verify(subCategoryService, never()).updateSubCategory(any(), any(), any());
+        verify(subCategoryService, never()).updateSubCategory(any(), any());
         assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
         assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }

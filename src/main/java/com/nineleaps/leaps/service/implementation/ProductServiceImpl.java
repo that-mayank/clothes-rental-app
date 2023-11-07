@@ -43,7 +43,18 @@ public class ProductServiceImpl implements ProductServiceInterface {
     private final SubCategoryServiceInterface subCategoryService;
     private final CategoryServiceInterface categoryService;
 
-    
+    public static ProductDto getDtoFromProduct(Product product) {
+        return new ProductDto(product);
+    }
+
+    private static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
+        return new Product(productDto, subCategories, categories, user);
+    }
+
+    private static void disableSession(Session session) {
+        session.disableFilter(DELETED_PRODUCT_FILTER);
+        session.disableFilter(DISABLED_PRODUCT_FILTER);
+    }
 
     @Override
     public void addProduct(ProductDto productDto, HttpServletRequest request) {
@@ -85,7 +96,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         // Retrieving Categories and Subcategories from DTO
         List<Category> categories = categoryService.getCategoriesFromIds(productDto.getCategoryIds());
         List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
-        
+
         Product oldProduct = productRepository.findByUserIdAndId(user.getId(), productId);
         if (!Helper.notNull(oldProduct)) {
             throw new ProductNotExistException("Product does not belong to the user: " + user.getFirstName() + " " + user.getLastName());
@@ -340,15 +351,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
                 .orElse(imageUrl);
     }
 
-    public static ProductDto getDtoFromProduct(Product product) {
-        return new ProductDto(product);
-    }
-
-
-    private static Product getProductFromDto(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
-        return new Product(productDto, subCategories, categories, user);
-    }
-
     private Session getSession() {
         Session session = entityManager.unwrap(Session.class);
         Filter deletedProductFilter = session.enableFilter(DELETED_PRODUCT_FILTER);
@@ -356,11 +358,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
         Filter disabledProductFilter = session.enableFilter(DISABLED_PRODUCT_FILTER);
         disabledProductFilter.setParameter(DISABLED, false);
         return session;
-    }
-
-    private static void disableSession(Session session) {
-        session.disableFilter(DELETED_PRODUCT_FILTER);
-        session.disableFilter(DISABLED_PRODUCT_FILTER);
     }
 
 }

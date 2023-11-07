@@ -5,7 +5,6 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.service.CategoryServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,6 @@ public class CategoryController {
 
     //Linking layers using constructor injection
     private final CategoryServiceInterface categoryService;
-    private final Helper helper;
 
     // API : To add category by admin
     @ApiOperation(value = "API : To add category")

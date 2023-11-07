@@ -6,7 +6,6 @@ import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.service.DashboardServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,6 @@ public class DashboardController {
     //Linking layers using constructor injection
     private final DashboardServiceInterface dashboardService;
     private final OrderServiceInterface orderService;
-    private final Helper helper;
 
     // API : Gives details about how many orders the owner has got and the total earnings
     @ApiOperation(value = "API : Gives details about how many orders the owner has got and the total earnings")

@@ -29,7 +29,7 @@ public class SwitchProfile {
 
     public void generateTokenForSwitchProfile(HttpServletResponse response, Role profile, HttpServletRequest request) throws IOException {
         User user = helper.getUser(request);
-        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String secretFilePath = "/Desktop" + "/leaps" + "/secret" + "/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());

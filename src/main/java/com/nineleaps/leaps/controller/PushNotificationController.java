@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/push-notification")
+@RequestMapping("/api/v1/push")
 @Validated
 @AllArgsConstructor
 @Api(tags = "Push Notification Api")
@@ -23,17 +23,13 @@ public class PushNotificationController {
 
     // API : To send push notification to device using fcm token
     @ApiOperation(value = "API : To send push notification to device using fcm token")
-    @PostMapping("/notification/token")
+    @PostMapping("{token}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
     public ResponseEntity<PushNotificationResponse> sendTokenNotification(
-            @RequestParam("Device Token") String deviceToken) {
+            @PathVariable("token") String deviceToken) {
         // Calling Service layer to send notification
         pushNotificationService.sendNotification(deviceToken);
-        return new ResponseEntity<>(
-                new PushNotificationResponse(
-                        HttpStatus.OK.value(),
-                        "Notification has been sent."),
-                HttpStatus.OK);
+        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
     }
 }

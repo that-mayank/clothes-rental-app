@@ -5,6 +5,7 @@ import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
+import com.nineleaps.leaps.service.CategoryServiceInterface;
 import com.nineleaps.leaps.service.SubCategoryServiceInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,16 +15,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.nineleaps.leaps.config.MessageStrings.CATEGORY_INVALID;
+
 @Service // Marks this class as a Spring service component.
 @AllArgsConstructor // Lombok's annotation to generate a constructor with all required fields.
 @Transactional // Marks this class as transactional for database operations.
 public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
 
     private final SubCategoryRepository categoryRepository;
+    private final CategoryServiceInterface categoryService;
 
     // Create a new subcategory.
     @Override
-    public void createSubCategory(SubCategoryDto subCategoryDto, Category category) {
+    public void createSubCategory(SubCategoryDto subCategoryDto) {
+        // Guard Statement : Check if category already present in DB
+        Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
+        if (optionalCategory.isEmpty()) {
+            throw new CategoryNotExistException(CATEGORY_INVALID);
+        }
+        Category category = optionalCategory.get();
+
+        // `Guard Statement` : Check if subcategory already exists by name in the same category
+        if (Optional.ofNullable(readSubCategory(subCategoryDto.getSubcategoryName(), category)).isEmpty()) {
+            throw new CategoryNotExistException(CATEGORY_INVALID);
+        }
         SubCategory subCategory = getSubCategoryFromDto(subCategoryDto, category);
         categoryRepository.save(subCategory);
     }
@@ -68,14 +83,28 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
     // List subcategories within a specific category.
     @Override
     public List<SubCategory> listSubCategory(Long categoryId) {
+        Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
+        if (optionalCategory.isPresent())
+            throw new CategoryNotExistException(CATEGORY_INVALID);
         return categoryRepository.findByCategoryId(categoryId);
     }
 
     // Update an existing subcategory.
     @Override
-    public void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category) {
+    public void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto) {
+        // Guard Statement : Check if category is valid or not
+        Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
+        if (optionalCategory.isEmpty()) {
+            throw new CategoryNotExistException(CATEGORY_INVALID);
+        }
+
+        // Guard Statement : Check if subcategory is valid or not
+        Optional<SubCategory> optionalSubCategory = readSubCategory(subcategoryId);
+        if (optionalSubCategory.isEmpty()) {
+            throw new CategoryNotExistException("Category is invalid");
+        }
         // Create a new SubCategory instance using the provided SubCategoryDto and Category.
-        SubCategory updatedSubCategory = getSubCategoryFromDto(subCategoryDto, category);
+        SubCategory updatedSubCategory = getSubCategoryFromDto(subCategoryDto, optionalCategory.get());
 
         // Set the ID of the updated SubCategory to the provided subcategoryId.
         updatedSubCategory.setId(subcategoryId);

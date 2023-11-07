@@ -35,81 +35,6 @@ import java.util.List;
 public class Product {
 
     /**
-     * The unique identifier for a Product (Primary Key).
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    /**
-     * The brand of the product.
-     */
-    private String brand;
-
-    /**
-     * The name of the product (not nullable).
-     */
-    private @NotNull String name;
-
-    /**
-     * The price of the product (not nullable).
-     */
-    private @NotNull double price;
-
-    /**
-     * The description of the product (not nullable).
-     */
-    private @NotNull String description;
-
-    /**
-     * The color of the product.
-     */
-    private String color;
-
-    /**
-     * The material of the product.
-     */
-    private String material;
-
-    /**
-     * The quantity of the product (not nullable).
-     */
-    private @NotNull int quantity;
-
-    /**
-     * The available quantities of the product.
-     */
-    @Column(name = "available_quantities")
-    private int availableQuantities;
-
-    /**
-     * The disabled quantities of the product.
-     */
-    @Column(name = "disabled_quantities")
-    private int disabledQuantities;
-
-    /**
-     * The rented quantities of the product.
-     */
-    @Column(name = "rented_quantities")
-    private int rentedQuantities;
-
-    /**
-     * The size of the product (not nullable).
-     */
-    private @NotNull String size;
-
-    /**
-     * Indicates if the product is deleted or not (not nullable).
-     */
-    private @NotNull boolean deleted = Boolean.FALSE;
-
-    /**
-     * Indicates if the product is disabled or not (not nullable).
-     */
-    private @NotNull boolean disabled = Boolean.FALSE;
-
-    /**
      * List of subcategories associated with the product (Many-to-Many relationship).
      */
     @ManyToMany(fetch = FetchType.LAZY)
@@ -118,7 +43,6 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "subcategory_id"))
     @JsonIgnore
     List<SubCategory> subCategories = new ArrayList<>();
-
     /**
      * List of categories associated with the product (Many-to-Many relationship).
      */
@@ -128,7 +52,67 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     @JsonIgnore
     List<Category> categories = new ArrayList<>();
-
+    /**
+     * The unique identifier for a Product (Primary Key).
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    /**
+     * The brand of the product.
+     */
+    private String brand;
+    /**
+     * The name of the product (not nullable).
+     */
+    private @NotNull String name;
+    /**
+     * The price of the product (not nullable).
+     */
+    private @NotNull double price;
+    /**
+     * The description of the product (not nullable).
+     */
+    private @NotNull String description;
+    /**
+     * The color of the product.
+     */
+    private String color;
+    /**
+     * The material of the product.
+     */
+    private String material;
+    /**
+     * The quantity of the product (not nullable).
+     */
+    private @NotNull int quantity;
+    /**
+     * The available quantities of the product.
+     */
+    @Column(name = "available_quantities")
+    private int availableQuantities;
+    /**
+     * The disabled quantities of the product.
+     */
+    @Column(name = "disabled_quantities")
+    private int disabledQuantities;
+    /**
+     * The rented quantities of the product.
+     */
+    @Column(name = "rented_quantities")
+    private int rentedQuantities;
+    /**
+     * The size of the product (not nullable).
+     */
+    private @NotNull String size;
+    /**
+     * Indicates if the product is deleted or not (not nullable).
+     */
+    private @NotNull boolean deleted = Boolean.FALSE;
+    /**
+     * Indicates if the product is disabled or not (not nullable).
+     */
+    private @NotNull boolean disabled = Boolean.FALSE;
     /**
      * List of wishlists containing this product (One-to-Many relationship).
      */
@@ -161,10 +145,11 @@ public class Product {
 
     /**
      * Constructor to create a Product based on a ProductDto, subcategories, categories, and user.
-     * @param productDto The ProductDto containing product information.
+     *
+     * @param productDto    The ProductDto containing product information.
      * @param subCategories The list of subcategories associated with the product.
-     * @param categories The list of categories associated with the product.
-     * @param user The user associated with the product.
+     * @param categories    The list of categories associated with the product.
+     * @param user          The user associated with the product.
      */
     public Product(ProductDto productDto, List<SubCategory> subCategories, List<Category> categories, User user) {
         this.name = productDto.getName();

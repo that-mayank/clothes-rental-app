@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubCategoryServiceInterface {
-    void createSubCategory(SubCategoryDto subCategoryDto, Category category);
+    void createSubCategory(SubCategoryDto subCategoryDto);
 
     SubCategory readSubCategory(String subcategoryName, Category category);
 
@@ -19,7 +19,7 @@ public interface SubCategoryServiceInterface {
 
     List<SubCategory> listSubCategory(Long categoryId);
 
-    void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto, Category category);
+    void updateSubCategory(Long subcategoryId, SubCategoryDto subCategoryDto);
 
     List<SubCategory> getSubCategoriesFromIds(List<Long> subcategoryIds);
 }

@@ -90,16 +90,16 @@ public class UserController {
 
         // Guard statement : To  verify role should be owner or borrower
 
-            user.setRole(profile);
-            userServiceInterface.saveProfile(user);
-            switchprofile.generateTokenForSwitchProfile(response, profile, request);
+        user.setRole(profile);
+        userServiceInterface.saveProfile(user);
+        switchprofile.generateTokenForSwitchProfile(response, profile, request);
 
-            return new ResponseEntity<>(
-                    new ApiResponse(
-                            true,
-                            "Role switch to: " + user.getRole()),
-                    HttpStatus.OK
-            );
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        true,
+                        "Role switch to: " + user.getRole()),
+                HttpStatus.OK
+        );
     }
 
     // API : To update profile of user

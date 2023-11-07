@@ -30,7 +30,7 @@ public class StorageController {
 
     // API : To upload images of the product to s3
     @ApiOperation(value = "API : To upload images of the product to s3")
-    @PostMapping("/upload")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('OWNER')")
     public UrlResponse uploadFile(@RequestParam(value = "file") MultipartFile[] files) {
@@ -57,7 +57,7 @@ public class StorageController {
 
     // API: To upload a profile image to Amazon S3
     @ApiOperation(value = "API : To upload a profile image to Amazon S3")
-    @PostMapping("/uploadProfileImage")
+    @PostMapping("/profile")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<String> uploadProfileFile(@RequestParam("file") MultipartFile file) {
@@ -76,7 +76,7 @@ public class StorageController {
 
     // API: To download the image of the product from Amazon S3
     @ApiOperation(value = "API : To download the image of the product from Amazon S3")
-    @GetMapping("/download/{fileName}")
+    @GetMapping("{fileName}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
@@ -107,7 +107,7 @@ public class StorageController {
 
     // API: To delete the image in S3 cloud storage
     @ApiOperation(value = "API : To delete the image in S3 cloud storage")
-    @DeleteMapping("/delete/{fileName}")
+    @DeleteMapping("{fileName}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADMIN')")
     // This method deletes the specified image file in S3 storage

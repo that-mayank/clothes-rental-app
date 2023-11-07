@@ -71,12 +71,12 @@ public class User {
     /**
      * Constructor for creating a new user.
      *
-     * @param firstName    The first name of the user.
-     * @param lastName     The last name of the user.
-     * @param email        The email address of the user.
-     * @param phoneNumber  The phone number of the user.
-     * @param password     The password of the user (hashed or encrypted).
-     * @param role         The role of the user (e.g., ROLE_ADMIN, ROLE_USER).
+     * @param firstName   The first name of the user.
+     * @param lastName    The last name of the user.
+     * @param email       The email address of the user.
+     * @param phoneNumber The phone number of the user.
+     * @param password    The password of the user (hashed or encrypted).
+     * @param role        The role of the user (e.g., ROLE_ADMIN, ROLE_USER).
      */
     public User(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {
         this.firstName = firstName;
@@ -91,8 +91,8 @@ public class User {
     /**
      * Constructor for updating user profile information.
      *
-     * @param profileUpdateDto  The DTO containing updated profile information.
-     * @param oldUser           The existing user object.
+     * @param profileUpdateDto The DTO containing updated profile information.
+     * @param oldUser          The existing user object.
      */
     public User(ProfileUpdateDto profileUpdateDto, User oldUser) {
         this.id = oldUser.getId();

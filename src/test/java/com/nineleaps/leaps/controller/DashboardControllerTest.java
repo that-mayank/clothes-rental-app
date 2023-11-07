@@ -57,7 +57,7 @@ class DashboardControllerTest {
         DashboardDto dashboardDto = new DashboardDto();
 
         when(helper.getUser((request))).thenReturn(user);
-        when(dashboardService.dashboardOwnerView(user)).thenReturn(dashboardDto);
+        when(dashboardService.dashboardOwnerView(request)).thenReturn(dashboardDto);
 
         // Act
         ResponseEntity<DashboardDto> responseEntity = dashboardController.dashboard(request);
@@ -79,7 +79,7 @@ class DashboardControllerTest {
         List<DashboardAnalyticsDto> dashboardAnalyticsDtoList = Collections.singletonList(new DashboardAnalyticsDto());
 
         when(helper.getUser((request))).thenReturn(user);
-        when(dashboardService.analytics(user)).thenReturn(dashboardAnalyticsDtoList);
+        when(dashboardService.analytics(request)).thenReturn(dashboardAnalyticsDtoList);
 
         // Act
         ResponseEntity<List<DashboardAnalyticsDto>> responseEntity = dashboardController.onClickDashboard(request);
@@ -101,7 +101,7 @@ class DashboardControllerTest {
         Map<Year, Map<YearMonth, Map<String, Object>>> yearlyDataMap = Collections.singletonMap(Year.of(2023), Collections.emptyMap());
 
         when(helper.getUser((request))).thenReturn(user);
-        when(orderService.onClickDashboardYearWiseData(user)).thenReturn(yearlyDataMap);
+        when(orderService.onClickDashboardYearWiseData(request)).thenReturn(yearlyDataMap);
 
         // Act
         ResponseEntity<Map<Year, Map<YearMonth, Map<String, Object>>>> responseEntity = dashboardController.onClickDashboardYearWiseData(request);
@@ -123,7 +123,7 @@ class DashboardControllerTest {
         Map<YearMonth, List<OrderReceivedDto>> monthlyOrderItemsMap = Collections.singletonMap(YearMonth.of(2023, 9), Collections.emptyList());
 
         when(helper.getUser((request))).thenReturn(user);
-        when(orderService.getOrderedItemsByMonth(user)).thenReturn(monthlyOrderItemsMap);
+        when(orderService.getOrderedItemsByMonth(request)).thenReturn(monthlyOrderItemsMap);
 
         // Act
         ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> responseEntity = dashboardController.getOrderItemsDashboard(request);
@@ -148,7 +148,7 @@ class DashboardControllerTest {
         );
 
         when(helper.getUser((request))).thenReturn(user);
-        when(orderService.getOrderItemsBySubCategories(user)).thenReturn(orderItemsBySubCategoriesMap);
+        when(orderService.getOrderItemsBySubCategories(request)).thenReturn(orderItemsBySubCategoriesMap);
 
         // Act
         ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> responseEntity = dashboardController.getOrderItemsBySubCategories(request);
@@ -173,7 +173,7 @@ class DashboardControllerTest {
         );
 
         when(helper.getUser((request))).thenReturn(user);
-        when(orderService.getOrderItemsByCategories(user)).thenReturn(orderItemsByCategoriesMap);
+        when(orderService.getOrderItemsByCategories(request)).thenReturn(orderItemsByCategoriesMap);
 
         // Act
         ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> responseEntity = dashboardController.getOrderItemsByCategories(request);
@@ -200,7 +200,7 @@ class DashboardControllerTest {
         );
 
         when(helper.getUser((request))).thenReturn(user);
-        when(orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate)).thenReturn(orderItemsByDateRangeMap);
+        when(orderService.getOrderedItemsByMonthBwDates(request, startDate, endDate)).thenReturn(orderItemsByDateRangeMap);
 
         // Act
         ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> responseEntity = dashboardController.getOrderItemsDashboardBwDates(request, startDate, endDate);

@@ -59,7 +59,7 @@ class PdfControllerTest {
         assertEquals(MediaType.APPLICATION_PDF, response.getHeaders().getContentType());
         assertEquals("form-data; name=\"attachment\"; filename=\"report.pdf\"", response.getHeaders().getContentDisposition().toString());
         verify(pdfServiceInterface, times(1)).getPdf(user);
-        verify(pdfServiceInterface, times(1)).addContent(document, user);
+        verify(pdfServiceInterface, times(1)).addContent(document, request);
         byte[] pdfBytes = baos.toByteArray();
         byte[] readBytes = new byte[pdfBytes.length];
         assertArrayEquals(pdfBytes, readBytes);

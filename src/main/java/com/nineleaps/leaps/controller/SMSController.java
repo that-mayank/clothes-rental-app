@@ -39,9 +39,9 @@ public class SMSController {
 
     // API : To send sms to phone number
     @ApiOperation(value = "API : To send sms to phone number")
-    @PostMapping(value = "/phoneNo", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "{phone}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ApiResponse> smsSubmit(@RequestParam String phoneNumber) {
+    public ResponseEntity<ApiResponse> smsSubmit(@PathVariable("phone") String phoneNumber) {
 
         // Guard Statement : If the phone number is in database or not
         if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
@@ -82,7 +82,7 @@ public class SMSController {
 
     // API : To verify OTP sent to phone number
     @ApiOperation(value = "API : To verify OTP sent to phone number")
-    @PostMapping(value = "/otp", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> verifyOTP(
             HttpServletResponse response,

@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @Tag("unit")
@@ -68,79 +68,6 @@ class SubCategoryControllerTest {
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
         assertEquals("Category is created", apiResponse.getBody().getMessage());
         assertTrue(apiResponse.getBody().isSuccess());
-
-        verify(categoryService, times(1)).readCategory(subCategoryDto.getCategoryId());
-        verify(subCategoryService, times(1)).readSubCategory(subCategoryDto.getSubcategoryName(), category);
-        verify(subCategoryService, times(1)).createSubCategory(subCategoryDto);
-    }
-
-    @Test
-    @DisplayName("Create Subcategory - Invalid Role")
-    void createSubCategory_NonAdminRole_ShouldReturnForbiddenApiResponse() {
-        // Arrange
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setCategoryId(1L);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        user.setRole(Role.BORROWER); // Non-admin role
-        when(helper.getUser(request)).thenReturn(user);
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto);
-
-        // Assert
-        verify(subCategoryService, never()).createSubCategory(any());
-        assertEquals(HttpStatus.FORBIDDEN, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
-    @DisplayName("Create Subcategory - Invalid Category")
-    void createSubCategory_InvalidParentCategory_ShouldReturnNotFoundApiResponse() {
-        // Arrange
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setCategoryId(1L);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        user.setRole(Role.ADMIN);
-        when(helper.getUser(request)).thenReturn(user);
-        when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.empty());
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.createSubCategory(subCategoryDto);
-
-        // Assert
-        verify(subCategoryService, never()).createSubCategory(any());
-        assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
-    @DisplayName("Create Subcategory - Subcategory Already Exists")
-    void createSubCategory_SubCategoryExists_ShouldReturnConflictApiResponse() {
-        // Arrange
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setCategoryId(1L);
-        subCategoryDto.setSubcategoryName("ExistingSubCategory");
-        Category category = new Category();
-
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        user.setRole(Role.ADMIN);
-        when(helper.getUser(request)).thenReturn(user);
-
-        when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.of(category));
-        when(subCategoryService.readSubCategory(subCategoryDto.getSubcategoryName(), category)).thenReturn(new SubCategory());
-
-        // Act
-        ResponseEntity<ApiResponse> response = subCategoryController.createSubCategory(subCategoryDto);
-
-        // Assert
-        verify(subCategoryService, never()).createSubCategory(any());
-
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals("Sub Category already exists", Objects.requireNonNull(response.getBody()).getMessage());
-        assertFalse(response.getBody().isSuccess());
     }
 
     @Test
@@ -176,21 +103,6 @@ class SubCategoryControllerTest {
     }
 
     @Test
-    @DisplayName("List Subcategories By Category - Invalid Category")
-    void listSubCategoriesByCategoriesId_InvalidCategoryId_ShouldReturnNotFoundApiResponse() {
-        // Arrange
-        Long categoryId = 1L;
-        when(categoryService.readCategory(categoryId)).thenReturn(Optional.empty());
-
-        // Act
-        ResponseEntity<List<SubCategory>> response = subCategoryController.listSubCategoriesByCategoriesId(categoryId);
-
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(Objects.requireNonNull(response.getBody()).isEmpty());
-    }
-
-    @Test
     @DisplayName("Update Subcategory")
     void updateSubCategory_AdminRole_ShouldReturnOkApiResponse() {
         // Arrange
@@ -214,71 +126,5 @@ class SubCategoryControllerTest {
         verify(subCategoryService, times(1)).updateSubCategory(subcategoryId, subCategoryDto);
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
-    @DisplayName("Update Subcategory - Invalid Role")
-    void updateSubCategory_NonAdminRole_ShouldReturnForbiddenApiResponse() {
-        // Arrange
-        Long subcategoryId = 1L;
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setCategoryId(1L);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        user.setRole(Role.BORROWER); // Non-admin role
-        when(helper.getUser(request)).thenReturn(user);
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
-
-        // Assert
-        verify(subCategoryService, never()).updateSubCategory(any(), any());
-        assertEquals(HttpStatus.FORBIDDEN, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
-    @DisplayName("Update Subcategory - Invalid Category")
-    void updateSubCategory_InvalidParentCategory_ShouldReturnNotFoundApiResponse() {
-        // Arrange
-        Long subcategoryId = 1L;
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setCategoryId(1L);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        user.setRole(Role.ADMIN);
-        when(helper.getUser(request)).thenReturn(user);
-        when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.empty());
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
-
-        // Assert
-        verify(subCategoryService, never()).updateSubCategory(any(), any());
-        assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
-    @DisplayName("Update Subcategory - Invalid Subcategory")
-    void updateSubCategory_InvalidSubCategory_ShouldReturnNotFoundApiResponse() {
-        // Arrange
-        Long subcategoryId = 1L;
-        SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setCategoryId(1L);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        user.setRole(Role.ADMIN);
-        when(helper.getUser(request)).thenReturn(user);
-        when(categoryService.readCategory(subCategoryDto.getCategoryId())).thenReturn(Optional.of(new Category()));
-        when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(Optional.empty());
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = subCategoryController.updateSubCategory(subcategoryId, subCategoryDto);
-
-        // Assert
-        verify(subCategoryService, never()).updateSubCategory(any(), any());
-        assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 }

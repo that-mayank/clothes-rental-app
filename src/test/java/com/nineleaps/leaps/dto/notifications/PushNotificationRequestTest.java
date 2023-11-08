@@ -1,6 +1,5 @@
 package com.nineleaps.leaps.dto.notifications;
 
-import com.nineleaps.leaps.dto.notifications.PushNotificationRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,9 @@ class CartServiceImplTest {
 
     @Mock
     private CartRepository cartRepository;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private CartServiceImpl cartService;
@@ -46,7 +50,7 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), product.getId())).thenReturn(null);
 
         //Act
-        cartService.addToCart(addToCartDto, product, user);
+        cartService.addToCart(addToCartDto, request);
 
         //Assert
         verify(cartRepository, times(1)).save(any(Cart.class));
@@ -62,7 +66,7 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), product.getId())).thenReturn(new Cart());
 
         //Act & Assert
-        assertThrows(CartItemAlreadyExistException.class, () -> cartService.addToCart(addToCartDto, product, user));
+        assertThrows(CartItemAlreadyExistException.class, () -> cartService.addToCart(addToCartDto, request));
     }
 
     @Test
@@ -89,7 +93,7 @@ class CartServiceImplTest {
         when(cartRepository.findAllByUserOrderByCreateDateDesc(user)).thenReturn(cartList);
 
         //Act
-        CartDto cartDto = cartService.listCartItems(user);
+        CartDto cartDto = cartService.listCartItems(request);
 
         // Assert
         assertNotNull(cartDto);
@@ -122,7 +126,7 @@ class CartServiceImplTest {
         when(cartRepository.findAllByUserOrderByCreateDateDesc(testUser)).thenReturn(cartList);
 
         // Call the method to calculate the total cost
-        CartDto cartDto = cartService.listCartItems(testUser);
+        CartDto cartDto = cartService.listCartItems(request);
 
         // Calculate the expected total cost (0 hours should be considered as 1 hour)
         double expectedTotalCost = product.getPrice() * product.getQuantity();
@@ -143,7 +147,7 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), productId)).thenReturn(cartItem);
 
         // Act
-        cartService.deleteCartItem(productId, user);
+        cartService.deleteCartItem(productId, request);
 
         // Assert
         verify(cartRepository, times(1)).deleteById(cartItem.getId());
@@ -158,7 +162,7 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), productId)).thenReturn(null);
 
         // Act & Assert
-        assertThrows(CartItemNotExistException.class, () -> cartService.deleteCartItem(productId, user));
+        assertThrows(CartItemNotExistException.class, () -> cartService.deleteCartItem(productId, request));
     }
 
     @Test
@@ -188,7 +192,7 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), updateProductQuantityDto.getProductId())).thenReturn(cartItem);
 
         // Act
-        cartService.updateProductQuantity(updateProductQuantityDto, user);
+        cartService.updateProductQuantity(updateProductQuantityDto, request);
 
         // Assert
         verify(cartRepository, times(1)).save(cartItem);
@@ -209,7 +213,7 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), updateProductQuantityDto.getProductId())).thenReturn(cartItem);
 
         // Act
-        cartService.updateProductQuantity(updateProductQuantityDto, user);
+        cartService.updateProductQuantity(updateProductQuantityDto, request);
 
         // Assert
         verify(cartRepository, times(1)).deleteById(cartItem.getId());
@@ -226,6 +230,6 @@ class CartServiceImplTest {
         when(cartRepository.findByUserIdAndProductId(user.getId(), updateProductQuantityDto.getProductId())).thenReturn(null);
 
         // Act & Assert
-        assertThrows(CartItemNotExistException.class, () -> cartService.updateProductQuantity(updateProductQuantityDto, user));
+        assertThrows(CartItemNotExistException.class, () -> cartService.updateProductQuantity(updateProductQuantityDto, request));
     }
 }

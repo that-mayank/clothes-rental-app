@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,9 @@ class ProductServiceImplTest {
 
     @Mock
     private EntityManager entityManager;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -77,7 +81,7 @@ class ProductServiceImplTest {
         User user = new User();
 
         // When
-        productService.addProduct(productDto, subCategories, categories, user);
+        productService.addProduct(productDto, request);
 
         // Then
         verify(productRepository, times(2)).save(any(Product.class)); //because we are saving twice one before and one after adding imageUrl
@@ -118,7 +122,7 @@ class ProductServiceImplTest {
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
         // When
-        List<ProductDto> productDtos = productService.listProducts(pageNumber, pageSize, user);
+        List<ProductDto> productDtos = productService.listProducts(pageNumber, pageSize, request);
 
         // Then
         assertEquals(products.size(), productDtos.size());
@@ -153,7 +157,7 @@ class ProductServiceImplTest {
         when(productRepository.findByUserIdAndId(user.getId(), productId)).thenReturn(existingProduct);
 
         // When
-        productService.updateProduct(productId, productDto, subCategories, categories, user);
+        productService.updateProduct(productId, productDto, request);
 
         // Then
         verify(productRepository, times(1)).save(any(Product.class));
@@ -171,7 +175,7 @@ class ProductServiceImplTest {
 
         // When/Then
         assertThrows(ProductNotExistException.class, () ->
-                productService.updateProduct(productId, productDto, subCategories, categories, user)
+                productService.updateProduct(productId, productDto, request)
         );
         verify(productRepository, never()).save(any(Product.class));
     }
@@ -233,7 +237,7 @@ class ProductServiceImplTest {
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
         // When
-        List<ProductDto> productDtos = productService.listProductsById(subcategoryId, user1);
+        List<ProductDto> productDtos = productService.listProductsById(subcategoryId, request);
 
         // Then
         assertNotNull(productDtos);
@@ -245,73 +249,6 @@ class ProductServiceImplTest {
         verify(session, times(1)).disableFilter(DISABLED_PRODUCT_FILTER);
 
     }
-
-//    @Test
-//    void listProductsById_SpecificSubcategoryId() {
-//        // Given
-//        SubCategory subCategory = new SubCategory();
-//        Long subcategoryId = 19L;
-//        subCategory.setId(subcategoryId);
-//        User user = new User();
-//        User user1 = new User();
-//        List<Product> products = new ArrayList<>();
-//        Product product1 = new Product();
-//        product1.setUser(user);
-//        product1.setSubCategories(List.of(subCategory));
-//        products.add(product1);
-//        Product product2 = new Product();
-//        product2.setUser(user);
-//        product2.setSubCategories(List.of(subCategory));
-//        products.add(product2);
-//        when(productRepository.findBySubCategoriesId(subcategoryId)).thenReturn(products);
-//
-//        Session session = mock(Session.class);
-//        Filter deletedProductFilter = mock(Filter.class);
-//        Filter disabledProductFilter = mock(Filter.class);
-//        when(entityManager.unwrap(Session.class)).thenReturn(session);
-//        when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
-//        when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
-//
-//        // Mock the behavior of getDtoFromProduct()
-//        when(ProductServiceImpl.getDtoFromProduct(product1)).thenReturn(new ProductDto());
-//        when(ProductServiceImpl.getDtoFromProduct(product2)).thenReturn(new ProductDto());
-//
-//        // When
-//        List<ProductDto> productDtos = productService.listProductsById(subcategoryId, user1);
-//
-//        // Then
-//        assertNotNull(productDtos);
-//        assertEquals(products.size(), productDtos.size());
-//        verify(productRepository, times(1)).findBySubCategoriesId(subcategoryId);
-//        verify(session, times(1)).enableFilter(DELETED_PRODUCT_FILTER);
-//        verify(session, times(1)).enableFilter(DISABLED_PRODUCT_FILTER);
-//        verify(session, times(1)).disableFilter(DELETED_PRODUCT_FILTER);
-//        verify(session, times(1)).disableFilter(DISABLED_PRODUCT_FILTER);
-//
-//        // Additional assertions to verify the behavior for different subcategory IDs
-////        if (subcategoryId == 19) {
-//            verify(productService, times(1)).getProductsByPriceRange(0, 2000);
-////        } else if (subcategoryId == 20) {
-////            verify(productService, times(1)).getProductsByPriceRange(2001, 5000);
-////        } else if (subcategoryId == 21) {
-////            verify(productService, times(1)).getProductsByPriceRange(5001, 10000);
-////        } else if (subcategoryId == 22) {
-////            verify(productService, times(1)).getProductsByPriceRange(10000, Long.MAX_VALUE);
-////        } else {
-////            verify(productService, never()).getProductsByPriceRange(anyLong(), anyLong());
-//
-//            // Verify that the expected behavior is executed in the else block
-//            List<Product> body = productRepository.findBySubCategoriesId(subcategoryId);
-//            List<ProductDto> expectedProductDtos = new ArrayList<>();
-//            for (Product product : body) {
-//                if (!product.getUser().equals(user)) {
-//                    ProductDto productDto = productService.getDtoFromProduct(product);
-//                    expectedProductDtos.add(productDto);
-//                }
-//            }
-//            assertEquals(expectedProductDtos, productDtos.isEmpty());
-//        }
-//    }
 
     @Test
     void listProductsByCategoryId() {
@@ -340,7 +277,7 @@ class ProductServiceImplTest {
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
         // When
-        List<ProductDto> productDtos = productService.listProductsByCategoryId(categoryId, user1);
+        List<ProductDto> productDtos = productService.listProductsByCategoryId(categoryId, request);
 
         // Then
         assertNotNull(productDtos);
@@ -364,9 +301,6 @@ class ProductServiceImplTest {
         // Mock the behavior of productRepository.findById()
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Call the listProductByid() method
         ProductDto productDto = productService.listProductByid(1L);
 
@@ -381,8 +315,6 @@ class ProductServiceImplTest {
         // Mock the behavior of productRepository.findById() with an empty Optional
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
 
         // Call the listProductByid() method and expect a ProductNotExistException to be thrown
         assertThrows(ProductNotExistException.class, () -> {
@@ -402,8 +334,6 @@ class ProductServiceImplTest {
         // Mock the behavior of productRepository.findById()
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
 
         // Call the getProductById() method
         Product resultProduct = productService.getProductById(1L);
@@ -442,11 +372,9 @@ class ProductServiceImplTest {
         // Mock the behavior of the productRepository.findAllByUser()
         when(productRepository.findAllByUser(user, Sort.by(Sort.Direction.DESC, "id"))).thenReturn(products);
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
 
         // Call the listProductsDesc() method
-        List<ProductDto> productList = productService.listProductsDesc(user);
+        List<ProductDto> productList = productService.listProductsDesc(request);
 
         // Verify the result
         assertEquals(2, productList.size());
@@ -495,11 +423,8 @@ class ProductServiceImplTest {
         // Mock the behavior of the productRepository.findAllByUser()
         when(productRepository.findAllByUser(user)).thenReturn(products);
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Call the listOwnerProducts() method
-        List<ProductDto> productList = productService.listOwnerProducts(user);
+        List<ProductDto> productList = productService.listOwnerProducts(request);
 
         // Verify the result
         assertEquals(2, productList.size());
@@ -540,9 +465,6 @@ class ProductServiceImplTest {
 
         // Mock the behavior of the productRepository.findProductByPriceRange()
         when(productRepository.findProductByPriceRange(0.0, 15.0)).thenReturn(products);
-
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
 
         // Call the getProductsByPriceRange() method
         List<ProductDto> productList = productService.getProductsByPriceRange(0.0, 15.0);
@@ -594,11 +516,8 @@ class ProductServiceImplTest {
         // Mock the behavior of the productRepository.searchProducts()
         when(productRepository.searchProducts("Product")).thenReturn(products);
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Call the searchProducts() method
-        List<ProductDto> productList = productService.searchProducts("Product", user1);
+        List<ProductDto> productList = productService.searchProducts("Product", request);
 
         // Verify the result
         assertEquals(2, productList.size());
@@ -647,9 +566,6 @@ class ProductServiceImplTest {
         // Mock the behavior of the productRepository.findBySubCategoriesId()
         when(productRepository.findBySubCategoriesId(1L)).thenReturn(products);
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Call the filterProducts() method
         List<ProductDto> productList = productService.filterProducts("S", 1L, 0.0, 15.0);
 
@@ -687,11 +603,8 @@ class ProductServiceImplTest {
         // Mock the behavior of the productRepository.findByUserIdAndId()
         when(productRepository.findByUserIdAndId(1L, 1L)).thenReturn(product);
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Call the deleteProduct() method
-        productService.deleteProduct(1L, 1L);
+        productService.deleteProduct(1L, request);
 
         // Verify that the product is marked as deleted and saved
         verify(product).setDeleted(true);
@@ -703,11 +616,8 @@ class ProductServiceImplTest {
         // Mock the behavior of the productRepository.findByUserIdAndId() to return null
         when(productRepository.findByUserIdAndId(1L, 1L)).thenReturn(null);
 
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Call the deleteProduct() method and assert that it throws ProductNotExistException
-        assertThrows(ProductNotExistException.class, () -> productService.deleteProduct(1L, 1L));
+        assertThrows(ProductNotExistException.class, () -> productService.deleteProduct(1L, request));
     }
 
 
@@ -726,9 +636,6 @@ class ProductServiceImplTest {
 
         // Configure the mock repository to return the test product when findByUserIdAndId() is called
         when(productRepository.findByUserIdAndId(user.getId(), productId)).thenReturn(product);
-
-        // Create an instance of ProductServiceImpl and pass the mocked productRepository
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
 
         // Call the getProduct() method
         Product result = productService.getProduct(productId, user.getId());
@@ -751,12 +658,9 @@ class ProductServiceImplTest {
         product.setDisabledQuantities(0);
         product.setDisabled(false);
 
-        // Create an instance of ProductServiceImpl
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Disable 5 quantities of the product
         int disableQuantity = 5;
-        productService.disableProduct(product, disableQuantity);
+        productService.disableProduct(product.getId(), disableQuantity, request);
 
         // Verify that the available quantities and disabled quantities are updated correctly
         assertEquals(5, product.getAvailableQuantities());
@@ -779,12 +683,9 @@ class ProductServiceImplTest {
         product.setDisabledQuantities(5);
         product.setDisabled(true);
 
-        // Create an instance of ProductServiceImpl
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository, entityManager);
-
         // Enable 3 quantities of the product
         int enableQuantity = 3;
-        productService.enableProduct(product, enableQuantity);
+        productService.enableProduct(product.getId(), enableQuantity, request);
 
         // Verify that the available quantities and disabled quantities are updated correctly
         assertEquals(8, product.getAvailableQuantities());

@@ -38,7 +38,7 @@ public class PdfController {
 
     //API : To export pdf
     @ApiOperation(value = "API : To export pdf")
-    @GetMapping(value = "/export", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "export", produces = MediaType.APPLICATION_PDF_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<InputStreamResource> getPdf(HttpServletRequest request) throws IOException, DocumentException {
 

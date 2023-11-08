@@ -6,11 +6,7 @@ import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.ProductNotExistException;
 import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
-import com.nineleaps.leaps.model.User;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.service.CartServiceInterface;
-import com.nineleaps.leaps.service.ProductServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -32,9 +28,7 @@ class CartControllerTest {
     @Mock
     private CartServiceInterface cartService;
     @Mock
-    private ProductServiceInterface productService;
-    @Mock
-    private Helper helper;
+    private HttpServletRequest request;
     @InjectMocks
     private CartController cartController;
 
@@ -48,12 +42,6 @@ class CartControllerTest {
     void addToCart_ValidAddToCartDto_ReturnsCreatedResponse() throws ProductNotExistException, QuantityOutOfBoundException {
         // Arrange
         AddToCartDto addToCartDto = new AddToCartDto();
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        Product product = new Product();
-
-        when(helper.getUser((request))).thenReturn(user);
-        when(productService.getProductById((addToCartDto.getProductId()))).thenReturn(product);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.addToCart(addToCartDto, request);
@@ -72,10 +60,8 @@ class CartControllerTest {
     void getCartItems_ReturnsCartDto()  {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
         CartDto cartDto = new CartDto();
 
-        when(helper.getUser((request))).thenReturn(user);
         when(cartService.listCartItems((request))).thenReturn(cartDto);
 
         // Act
@@ -96,9 +82,6 @@ class CartControllerTest {
         // Arrange
         Long productId = 1L;
         HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-
-        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.deleteCartItem(productId, request);
@@ -120,9 +103,6 @@ class CartControllerTest {
         // Arrange
         UpdateProductQuantityDto updateProductQuantityDto = new UpdateProductQuantityDto();
         HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-
-        when(helper.getUser((request))).thenReturn(user);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = cartController.updateQuantity(updateProductQuantityDto, request);

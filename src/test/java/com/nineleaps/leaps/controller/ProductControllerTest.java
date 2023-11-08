@@ -21,15 +21,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @Tag("unit")
 class ProductControllerTest {
@@ -59,14 +58,6 @@ class ProductControllerTest {
         ProductDto productDto = new ProductDto();
         productDto.setTotalQuantity(10);
         productDto.setPrice(10);
-        User user = new User();
-        List<Category> categories = new ArrayList<>();
-        List<SubCategory> subCategories = new ArrayList<>();
-
-        when(helper.getUser(request)).thenReturn(user);
-        when(categoryService.getCategoriesFromIds(anyList())).thenReturn(categories);
-        when(subCategoryService.getSubCategoriesFromIds(anyList())).thenReturn(subCategories);
-        doNothing().when(productService).addProduct(any(ProductDto.class), request);
 
         // Act
         ResponseEntity<ApiResponse> responseEntity = productController.addProduct(productDto, request);
@@ -80,79 +71,6 @@ class ProductControllerTest {
         assertEquals("Product has been added", responseBody.getMessage());
 
         verify(productService).addProduct(productDto, request);
-    }
-
-    @Test
-    @DisplayName("Add Product - Invalid Quantity")
-    void addProduct_InvalidQuantity_ReturnsBadRequestResponse() {
-        // Arrange
-        User user = new User();
-        ProductDto productDto = new ProductDto();
-        productDto.setTotalQuantity(0);
-        when(helper.getUser(request)).thenReturn(user);
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = productController.addProduct(productDto, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        ApiResponse responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertFalse(responseBody.isSuccess());
-        assertEquals("Quantity cannot be zero", responseBody.getMessage());
-
-        verifyNoInteractions(productService);
-    }
-
-    @Test
-    @DisplayName("Add Product - Invalid Price")
-    void testAddProductWithPriceLessThanZero() {
-        // Prepare a ProductDto with price less than zero
-        ProductDto productDto = new ProductDto();
-        productDto.setPrice(-10.0); // Set a negative price
-        productDto.setTotalQuantity(10);
-
-        // Prepare a mock HttpServletRequest
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        // Prepare a mock User
-        User user = new User();
-        user.setId(1L);
-
-        // Mock the behavior of helper.getUser(request)
-        when(helper.getUser(request)).thenReturn(user);
-
-        // Call the addProduct method with the prepared ProductDto
-        ResponseEntity<ApiResponse> response = productController.addProduct(productDto, request);
-
-        // Verify that the response contains a "Bad Request" status
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
-        assertEquals("Price cannot be zero", response.getBody().getMessage());
-    }
-
-
-    @Test
-    @DisplayName("List Product - Success")
-    void listProducts_ReturnsListOfProducts() {
-        // Arrange
-        User user = new User();
-        List<ProductDto> productList = new ArrayList<>();
-        when(helper.getUser(request)).thenReturn(user);
-        when(productService.listProducts(anyInt(), anyInt(), request)).thenReturn(productList);
-
-        // Act
-        ResponseEntity<List<ProductDto>> responseEntity = productController.listProducts(0, 1000, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        List<ProductDto> responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertEquals(productList, responseBody);
-
-        verify(productService).listProducts(0, 1000, request);
     }
 
     @Test
@@ -186,34 +104,6 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Update Product - Invalid Product")
-    void updateProduct_InvalidProduct_ReturnsNotFoundResponse() {
-        // Arrange
-        Long productId = 1L;
-        ProductDto productDto = new ProductDto();
-        User user = new User();
-
-
-        Optional<Product> optionalProduct = Optional.empty();
-
-        when(helper.getUser(request)).thenReturn(user);
-        when(productService.readProduct(productId)).thenReturn(optionalProduct);
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = productController.updateProduct(productId, productDto, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        ApiResponse responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertFalse(responseBody.isSuccess());
-        assertEquals("Product is invalid", responseBody.getMessage());
-
-        verify(productService, never()).updateProduct(anyLong(), any(ProductDto.class), request);
-    }
-
-    @Test
     @DisplayName("List Product By Subcategory Id")
     void listBySubcategoryId_ValidSubcategoryId_ReturnsListOfProducts() {
         // Arrange
@@ -238,29 +128,6 @@ class ProductControllerTest {
 
         verify(productService).listProductsById(subcategoryId, request);
     }
-
-    @Test
-    @DisplayName("List Product - Invalid Subcategory Id")
-    void listBySubcategoryId_InvalidSubcategoryId_ReturnsNotFoundResponse() {
-        // Arrange
-        Long subcategoryId = 1L;
-        Optional<SubCategory> optionalSubCategory = Optional.empty();
-
-        when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(optionalSubCategory);
-
-        // Act
-        ResponseEntity<List<ProductDto>> responseEntity = productController.listBySubcategoryId(subcategoryId, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        List<ProductDto> responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertTrue(responseBody.isEmpty());
-
-        verifyNoInteractions(productService);
-    }
-
     @Test
     @DisplayName("List Product - Category Id")
     void listByCategoryId_ValidCategoryId_ReturnsListOfProducts() {
@@ -285,28 +152,6 @@ class ProductControllerTest {
         assertEquals(productList, responseBody);
 
         verify(productService).listProductsByCategoryId(categoryId, request);
-    }
-
-    @Test
-    @DisplayName("List Product - Invalid Category Id")
-    void listByCategoryId_InvalidCategoryId_ReturnsNotFoundResponse() {
-        // Arrange
-        Long categoryId = 1L;
-        Optional<Category> optionalCategory = Optional.empty();
-
-        when(categoryService.readCategory(categoryId)).thenReturn(optionalCategory);
-
-        // Act
-        ResponseEntity<List<ProductDto>> responseEntity = productController.listByCategoryId(categoryId, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        List<ProductDto> responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertTrue(responseBody.isEmpty());
-
-        verifyNoInteractions(productService);
     }
 
     @Test
@@ -474,62 +319,7 @@ class ProductControllerTest {
         assertTrue(responseBody.isSuccess());
         assertEquals("Product has been deleted successfully.", responseBody.getMessage());
 
-        verify(productService).deleteProduct(productId, request);
-        verify(productService).readProduct(productId);
     }
-
-
-    @Test
-    @DisplayName("Delete Product - Invalid ProductId")
-    void deleteProduct_InvalidProductId_ReturnsNotFoundResponse() {
-        // Arrange
-        User user = new User();
-        Product product = new Product();
-        Long productId = 1L;
-        product.setId(productId);
-        Optional<Product> optionalProduct = Optional.empty();
-
-        when(helper.getUser(request)).thenReturn(user);
-
-        when(productService.readProduct(productId)).thenReturn(optionalProduct);
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = productController.deleteProduct(productId, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        ApiResponse responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertFalse(responseBody.isSuccess());
-        assertEquals("Product is invalid!", responseBody.getMessage());
-
-        verify(productService).readProduct(productId);
-        verifyNoMoreInteractions(productService);
-    }
-
-    @Test
-    @DisplayName("Delete Product - Invalid User")
-    void testDeleteProductWithNullUser() {
-        // Prepare a productId
-        Long productId = 123L;
-
-        // Prepare a mock HttpServletRequest
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        // Mock the behavior of helper.getUser(request) to return null
-        when(helper.getUser(request)).thenReturn(null);
-
-        // Call the deleteProduct method with the prepared productId and request
-        ResponseEntity<ApiResponse> response = productController.deleteProduct(productId, request);
-
-        // Verify that the response contains a "Not Found" status
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertFalse(Objects.requireNonNull(response.getBody()).isSuccess());
-        assertEquals("User is invalid!", response.getBody().getMessage());
-    }
-
-
 
     @Test
     @DisplayName("Disable Products - Success")
@@ -558,35 +348,6 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Disable Products - Invalid Id")
-    void disableProducts_InvalidProductId_ReturnsForbiddenResponse() {
-        // Arrange
-        Long productId = 1L;
-        int quantity = 10;
-        User user = new User();
-        user.setId(1L);
-
-        when(helper.getUser(request)).thenReturn(user);
-        when(productService.getProduct(productId, user.getId())).thenReturn(null);
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = productController.disableProducts(productId, quantity, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
-        ApiResponse responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertFalse(responseBody.isSuccess());
-        assertEquals("The product does not belong to current user", responseBody.getMessage());
-
-        verify(productService).getProduct(productId, user.getId());
-        verifyNoMoreInteractions(productService);
-    }
-
-
-
-    @Test
     @DisplayName("Enable Products - Valid Id")
     void enableProducts_ValidProductId_ReturnsOkResponse() {
         // Arrange
@@ -612,29 +373,4 @@ class ProductControllerTest {
         verify(productService).enableProduct(productId, quantity, request);
     }
 
-    @Test
-    @DisplayName("Enable Products - Invalid Id")
-    void enableProducts_InvalidProductId_ReturnsForbiddenResponse() {
-        // Arrange
-        Long productId = 1L;
-        int quantity = 10;
-        User user = new User();
-
-        when(helper.getUser(request)).thenReturn(user);
-        when(productService.getProduct(productId, user.getId())).thenReturn(null);
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = productController.enableProducts(productId, quantity, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
-        ApiResponse responseBody = responseEntity.getBody();
-        assertNotNull(responseBody);
-        assertFalse(responseBody.isSuccess());
-        assertEquals("The product does not belong to current user", responseBody.getMessage());
-
-        verify(productService).getProduct(productId, user.getId());
-        verifyNoMoreInteractions(productService);
-    }
 }

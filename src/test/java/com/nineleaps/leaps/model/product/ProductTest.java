@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProductTest {
 
@@ -97,13 +98,13 @@ class ProductTest {
     @Test
     void isDeleted() {
         product.setDeleted(true);
-        assertEquals(true, product.isDeleted());
+        assertTrue(product.isDeleted());
     }
 
     @Test
     void isDisabled() {
         product.setDisabled(true);
-        assertEquals(true, product.isDisabled());
+        assertTrue(product.isDisabled());
     }
 
     @Test
@@ -223,6 +224,6 @@ class ProductTest {
     @Test
     void setDeleted() {
         product.setDeleted(true);
-        assertEquals(true, product.isDeleted());
+        assertTrue(product.isDeleted());
     }
 }

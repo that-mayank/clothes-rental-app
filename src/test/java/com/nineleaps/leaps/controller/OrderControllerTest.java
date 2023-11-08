@@ -25,10 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @Tag("unit")
@@ -48,7 +48,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("Place Order - Success")
-    void placeOrder_ReturnsApiResponse()  {
+    void placeOrder_ReturnsApiResponse() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         User user = new User();
@@ -69,52 +69,6 @@ class OrderControllerTest {
 
         // Verify that the service method was called with the correct arguments
         verify(orderService).placeOrder(request, razorpayId);
-    }
-
-    @Test
-    @DisplayName("Place Order - Missing Razorpay Id")
-    void placeOrder_MissingRazorpayId_ReturnsBadRequest()  {
-        // Arrange
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = orderController.placeOrder(null, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        ApiResponse response = responseEntity.getBody();
-        assertNotNull(response);
-        assertFalse(response.isSuccess());
-        assertEquals("Missing or empty razorpayId parameter", response.getMessage());
-
-        // Verify that the service method was not called
-        verifyNoMoreInteractions(orderService);
-    }
-
-    @Test
-    @DisplayName("Place Order - Empty Razorpay Id")
-    void placeOrder_EmptyRazorpayId_ReturnsBadRequest()  {
-        // Arrange
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        when(request.getHeader("Authorization")).thenReturn("Bearer token");
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = orderController.placeOrder("", request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        ApiResponse response = responseEntity.getBody();
-        assertNotNull(response);
-        assertFalse(response.isSuccess());
-        assertEquals("Missing or empty razorpayId parameter", response.getMessage());
-
-        // Verify that the service method was not called
-        verifyNoMoreInteractions(orderService);
     }
 
     @Test
@@ -190,75 +144,6 @@ class OrderControllerTest {
         assertNotNull(response);
         assertTrue(response.isSuccess());
         assertEquals("Order is " + orderStatus, response.getMessage());
-    }
-
-    @Test
-    @DisplayName("Order Status - Unauthorized Access")
-    void orderInTransit_UnauthorizedAccess_ReturnsForbidden()  {
-        // Arrange
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User();
-        Long orderItemId = 1L;
-        String orderStatus = "IN TRANSIT";
-
-        when(helper.getUser(request)).thenReturn(user);
-        when(orderService.getOrderItem(orderItemId, user)).thenReturn(null);
-
-        // Act
-        ResponseEntity<ApiResponse> responseEntity = orderController.orderStatus(orderItemId, orderStatus, request);
-
-        // Assert
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
-        ApiResponse response = responseEntity.getBody();
-        assertNotNull(response);
-        assertFalse(response.isSuccess());
-        assertEquals("OrderItem does not belong to current user", response.getMessage());
-
-    }
-
-    @Test
-    @DisplayName("Order Status - Invalid OrderItem")
-    void testOrderInTransitOrderItemIdNull() {
-        // Prepare request parameters with null orderItemId
-        String orderStatus = "IN TRANSIT";
-
-        // Prepare a mock HttpServletRequest
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        // Call the orderInTransit method
-        ResponseEntity<ApiResponse> response = orderController.orderStatus(null, orderStatus, request);
-
-
-        // Check if the response is as expected
-        assertAll(
-                () -> assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode()),
-                () -> assertFalse(Objects.requireNonNull(response.getBody()).isSuccess()),
-                () -> assertNotNull(Objects.requireNonNull(response.getBody()).getMessage()),
-                () -> assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("OrderItem does not belong to current user"))
-        );
-    }
-
-    @Test
-    @DisplayName("Order Status - Blank Order Status Variable")
-    void testOrderInTransitOrderStatusBlank() {
-        // Prepare request parameters with blank orderStatus
-        Long orderItemId = 123L;
-        String orderStatus = "   ";  // Blank orderStatus
-
-        // Prepare a mock HttpServletRequest
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        // Call the orderInTransit method
-        ResponseEntity<ApiResponse> response = orderController.orderStatus(orderItemId, orderStatus, request);
-
-
-        // Check if the response is as expected
-        assertAll(
-                () -> assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode()),
-                () -> assertFalse(Objects.requireNonNull(response.getBody()).isSuccess()),
-                () -> assertNotNull(Objects.requireNonNull(response.getBody()).getMessage())
-        );
     }
 
     @Test

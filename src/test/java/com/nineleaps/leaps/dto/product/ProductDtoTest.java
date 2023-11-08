@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductDtoTest {
 
@@ -129,7 +129,7 @@ class ProductDtoTest {
 
     @Test
     void isDisabled() {
-        assertEquals(false, productDto.isDisabled());
+        assertFalse(productDto.isDisabled());
     }
 
     @Test
@@ -223,6 +223,6 @@ class ProductDtoTest {
     @Test
     void setDisabled() {
         productDto.setDisabled(true);
-        assertEquals(true, productDto.isDisabled());
+        assertTrue(productDto.isDisabled());
     }
 }

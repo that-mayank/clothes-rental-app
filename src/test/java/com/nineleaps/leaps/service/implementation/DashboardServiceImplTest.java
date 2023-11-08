@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,23 +22,20 @@ import static org.mockito.Mockito.when;
 class DashboardServiceImplTest {
 
     @Mock
-
     private OrderItemRepository orderItemRepository;
 
-    @InjectMocks
+    @Mock
+    private HttpServletRequest request;
 
+    @InjectMocks
     private DashboardServiceImpl dashboardService;
 
     @BeforeEach
-
     void setUp() {
-
         MockitoAnnotations.openMocks(this);
-
     }
 
     @Test
-
     void dashboardOwnerView() {
 
         // Create a user
@@ -68,7 +66,7 @@ class DashboardServiceImplTest {
 
         // Call the dashboardOwnerView method
 
-        DashboardDto dashboardDto = dashboardService.dashboardOwnerView(user);
+        DashboardDto dashboardDto = dashboardService.dashboardOwnerView(request);
 
         // Verify that the method returns the expected result
 
@@ -79,7 +77,6 @@ class DashboardServiceImplTest {
     }
 
     @Test
-
     void analytics() {
 
         // Create a user
@@ -112,7 +109,7 @@ class DashboardServiceImplTest {
 
         // Call the analytics method
 
-        List<DashboardAnalyticsDto> analyticsDtoList = dashboardService.analytics(user);
+        List<DashboardAnalyticsDto> analyticsDtoList = dashboardService.analytics(request);
 
         // Verify that the method returns the expected result
 

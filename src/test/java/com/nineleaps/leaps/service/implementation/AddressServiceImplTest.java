@@ -4,12 +4,14 @@ import com.nineleaps.leaps.dto.AddressDto;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.AddressRepository;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +27,10 @@ class AddressServiceImplTest {
     private AddressRepository addressRepository;
     @Mock
     private AddressDto addressDto;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private Helper helper;
 
     @InjectMocks
     private AddressServiceImpl addressService;
@@ -38,10 +44,9 @@ class AddressServiceImplTest {
     void saveAddress_shouldSaveAddress() {
         // Arrange
         AddressDto addressDto = new AddressDto();
-        User user = new User();
 
         // Act
-        addressService.saveAddress(addressDto, user);
+        addressService.saveAddress(addressDto, request);
 
         // Assert
         verify(addressRepository, times(1)).save(any(Address.class));
@@ -62,8 +67,7 @@ class AddressServiceImplTest {
         doReturn(addressMock).when(addressRepository).save(any(Address.class));
 
         // Execute
-        AddressServiceImpl addressServiceImpl = new AddressServiceImpl(addressRepository);
-        addressServiceImpl.saveAddress(addressDto, user);
+        addressService.saveAddress(addressDto, request);
 
         // Verify
         verify(addressDto, times(2)).isDefaultAddress();
@@ -73,7 +77,6 @@ class AddressServiceImplTest {
         }
         verify(addressRepository, times(1)).save(any(Address.class));
     }
-
 
 
     @Test
@@ -87,7 +90,7 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(addresses);
 
         // Act
-        List<Address> result = addressService.listAddress(user);
+        List<Address> result = addressService.listAddress(request);
 
         // Assert
         assertEquals(2, result.size());
@@ -122,11 +125,12 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(addresses);
 
         // Act
-        Address result = addressService.readAddress(user, addressId);
+        Address result = addressService.readAddress(request, addressId);
 
         // Assert
         assertEquals(matchingAddress, result);
     }
+
     @Test
     void testReadAddress_shouldReturnNullWhenNoMatchingAddress() {
         // Arrange
@@ -139,7 +143,7 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(addresses);
 
         // Act
-        Address result = addressService.readAddress(user, addressId);
+        Address result = addressService.readAddress(request, addressId);
 
         // Assert
         assertNull(result);
@@ -153,7 +157,7 @@ class AddressServiceImplTest {
         User user = new User();
 
         // Act
-        addressService.updateAddress(addressDto, addressId, user);
+        addressService.updateAddress(addressDto, addressId, request);
 
         // Assert
         verify(addressRepository, times(1)).save(any(Address.class));
@@ -165,7 +169,7 @@ class AddressServiceImplTest {
         Long addressId = 1L;
 
         // Act
-        addressService.deleteAddress(addressId);
+        addressService.deleteAddress(request, addressId);
 
         // Assert
         verify(addressRepository, times(1)).deleteById(addressId);

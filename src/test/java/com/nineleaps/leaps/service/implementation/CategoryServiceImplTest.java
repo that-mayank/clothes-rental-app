@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,23 +23,26 @@ class CategoryServiceImplTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void createCategory_ShouldSaveCategory() {
         // Arrange
-        Category category = new Category();
+        CategoryDto categoryDto = new CategoryDto();
+        Category category = new Category(categoryDto);
         when(categoryRepository.save(category)).thenReturn(category);
 
         // Act
-        categoryService.createCategory(category);
+        categoryService.createCategory(categoryDto);
 
         // Assert
         verify(categoryRepository, times(1)).save(category);

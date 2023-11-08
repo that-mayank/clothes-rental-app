@@ -46,7 +46,7 @@ public class DashboardController {
 
     // API : Gives details about how many orders the owner has got month wise
     @ApiOperation(value = "API : Gives details about how many orders the owner has got month wise")
-    @GetMapping(value = "/analytics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "analytics", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<DashboardAnalyticsDto>> onClickDashboard(
             HttpServletRequest request) {
@@ -57,7 +57,7 @@ public class DashboardController {
 
     // API : Gives details about how many orders the owner has got month wise in provided year
     @ApiOperation(value = "API : Gives details about how many orders the owner has got month wise in provided year")
-    @GetMapping(value = "/yearly", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "yearly", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<Year, Map<YearMonth, Map<String, Object>>>> onClickDashboardYearWiseData(HttpServletRequest request) {
         // Calling service layer to get data
@@ -67,7 +67,7 @@ public class DashboardController {
 
     // API: Retrieves monthly order items for the dashboard
     @ApiOperation("API: Retrieves monthly order items for the dashboard")
-    @GetMapping(value = "/monthly", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "monthly", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboard(HttpServletRequest request) {
         // Calling service layer to retrieve monthly order items
@@ -77,7 +77,7 @@ public class DashboardController {
 
     // API: Retrieves order items by subcategories for the dashboard
     @ApiOperation("API: Retrieves order items by subcategories for the dashboard")
-    @GetMapping(value = "/subcategory", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "subcategory", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsBySubCategories(HttpServletRequest request) {
@@ -88,7 +88,7 @@ public class DashboardController {
 
     // API: Retrieves order items by categories for the dashboard
     @ApiOperation("API: Retrieves order items by categories for the dashboard")
-    @GetMapping(value = "/category", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "category", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, Map<String, OrderItemsData>>> getOrderItemsByCategories(HttpServletRequest request) {
         // Calling service layer to retrieve order items by categories
@@ -98,7 +98,7 @@ public class DashboardController {
 
     // API: Retrieves order items for the dashboard within a specified date range
     @ApiOperation("API: Retrieves order items for the dashboard within a specified date range")
-    @GetMapping(value = "/date-selector", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "date-selector", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<Map<YearMonth, List<OrderReceivedDto>>> getOrderItemsDashboardBwDates(HttpServletRequest request, @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate, @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {

@@ -1,19 +1,18 @@
 package com.nineleaps.leaps.service.implementation;
 
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.nineleaps.leaps.dto.dashboard.DashboardAnalyticsDto;
-import com.nineleaps.leaps.dto.dashboard.DashboardDto;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.service.DashboardServiceInterface;
-import com.nineleaps.leaps.service.PdfServiceInterface;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfPTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +25,9 @@ import static org.mockito.Mockito.when;
 class PdfServiceImplTest {
     @Mock
     private DashboardServiceInterface dashboardService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private PdfServiceImpl pdfService;
@@ -45,39 +47,39 @@ class PdfServiceImplTest {
         dashboardAnalyticsDto.setTotalOrders(1);
         dashboardAnalyticsDto.setTotalEarnings(10000.00);
         dashboardData.add(dashboardAnalyticsDto);
-        when(dashboardService.analytics(user)).thenReturn(dashboardData);
+        when(dashboardService.analytics(request)).thenReturn(dashboardData);
         Document document = new Document();
         document.open();
 
         // Act
-        pdfService.addContent(document, user);
+        pdfService.addContent(document, request);
 
         // Assert
         // Verify that the document was modified as expected
-        verify(dashboardService).analytics(user);
+        verify(dashboardService).analytics(request);
     }
 
     @Test
     void addContent_WithEmptyDashboardData() throws Exception {
         // Arrange
         User user = new User();
-        when(dashboardService.analytics(user)).thenReturn(new ArrayList<>());
+        when(dashboardService.analytics(request)).thenReturn(new ArrayList<>());
         Document document = new Document();
         document.open();
 
         // Act
-        pdfService.addContent(document, user);
+        pdfService.addContent(document, request);
 
         // Assert
         // Verify that the document was modified as expected
-        verify(dashboardService).analytics(user);
+        verify(dashboardService).analytics(request);
     }
 
     @Test
     void addContent_WithDocumentException() throws Exception {
         // Arrange
         User user = new User();
-        when(dashboardService.analytics(user)).thenReturn(new ArrayList<>());
+        when(dashboardService.analytics(request)).thenReturn(new ArrayList<>());
         Document document = new Document();
         document.open();
         // Simulate an IOException while adding content
@@ -85,7 +87,7 @@ class PdfServiceImplTest {
         document.close();
 
         // Act and Assert
-        assertThrows(DocumentException.class, () -> pdfService.addContent(document, user));
+        assertThrows(DocumentException.class, () -> pdfService.addContent(document, request));
     }
 
     @Test

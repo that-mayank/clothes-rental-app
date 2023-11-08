@@ -5,7 +5,7 @@ import com.nineleaps.leaps.enums.AddressType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AddressTest {
 
@@ -67,7 +67,7 @@ class AddressTest {
     @Test
     void isDefaultAddress() {
         address.setDefaultAddress(true);
-        assertEquals(true, address.isDefaultAddress());
+        assertTrue(address.isDefaultAddress());
     }
 
     @Test
@@ -128,7 +128,7 @@ class AddressTest {
     @Test
     void setDefaultAddress() {
         address.setDefaultAddress(false);
-        assertEquals(false, address.isDefaultAddress());
+        assertFalse(address.isDefaultAddress());
     }
 
     @Test
@@ -158,7 +158,7 @@ class AddressTest {
         assertEquals("CA", address.getState());
         assertEquals("94101", address.getPostalCode());
         assertEquals("USA", address.getCountry());
-        assertEquals(true, address.isDefaultAddress());
+        assertTrue(address.isDefaultAddress());
         assertEquals(user, address.getUser());
     }
 
@@ -182,7 +182,7 @@ class AddressTest {
         assertEquals("IL", address.getState());
         assertEquals("60601", address.getPostalCode());
         assertEquals("USA", address.getCountry());
-        assertEquals(false, address.isDefaultAddress());
+        assertFalse(address.isDefaultAddress());
         assertEquals(user, address.getUser());
     }
 

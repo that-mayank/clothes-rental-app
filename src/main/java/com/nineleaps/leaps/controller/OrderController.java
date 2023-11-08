@@ -72,7 +72,7 @@ public class OrderController {
 
     //API : To alter order status i.e. transit, delivered, pickup and return
     @ApiOperation(value = "API : To alter order status")
-    @PostMapping(value = "/{status}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "{status}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     // Validating the orderStatus variable
     public ResponseEntity<ApiResponse> orderStatus(@RequestParam("orderItemId") Long orderItemId, @PathVariable("status") String orderStatus, HttpServletRequest request) {
@@ -83,7 +83,7 @@ public class OrderController {
 
     //API : To get owner order received history or rented products
     @ApiOperation(value = "API : To get owner order received history")
-    @GetMapping(value = "/owner-history", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "owner-history", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> getRentedOutProducts(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "100", required = false) int pageSize, HttpServletRequest request) {
         //Calling service layer to get owner order received history
@@ -93,7 +93,7 @@ public class OrderController {
 
     //API : To get orders by shipping/order status
     @ApiOperation(value = "API : To get orders by shipping/order status")
-    @GetMapping(value = "/shipping-status", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "shipping-status", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     // Validating shipping status
     public ResponseEntity<List<OrderItemDto>> getShippingStatus(@NotBlank @RequestParam("status") String shippingStatus, HttpServletRequest request) {
@@ -104,7 +104,7 @@ public class OrderController {
 
     //API : To get generate invoice
     @ApiOperation(value = "API : To get generate invoice")
-    @GetMapping(value = "/generateInvoice/{orderId}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "generateInvoice/{orderId}", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('BORROWER')")
     public ResponseEntity<byte[]> generateInvoice(

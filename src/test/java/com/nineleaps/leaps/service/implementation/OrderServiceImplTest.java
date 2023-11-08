@@ -32,6 +32,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -44,32 +45,28 @@ import static org.mockito.Mockito.*;
 class OrderServiceImplTest {
 
     @InjectMocks
-
     private OrderServiceImpl orderService;
 
     @Mock
-
     private OrderRepository orderRepository;
 
     @Mock
-
     private CartServiceInterface cartService;
 
     @Mock
-
     private OrderItemRepository orderItemRepository;
 
     @Mock
-
     private EmailServiceImpl emailService;
 
     @Mock
-
     private ProductRepository productRepository;
 
     @Mock
-
     private PushNotificationServiceImpl pushNotificationService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @BeforeEach
     void setUp() {
@@ -93,11 +90,11 @@ class OrderServiceImplTest {
 
         cartDto.setCartItems(cartItemDtos);
 
-        when(cartService.listCartItems(user)).thenReturn(cartDto);
+        when(cartService.listCartItems(request)).thenReturn(cartDto);
 
         // Act
 
-        assertDoesNotThrow(() -> orderService.placeOrder(user, razorpayId));
+        assertDoesNotThrow(() -> orderService.placeOrder(request, razorpayId));
 
         // Assert
 
@@ -156,11 +153,11 @@ class OrderServiceImplTest {
 
         cartDto.setCartItems(cartItemDtos);
 
-        when(cartService.listCartItems(user)).thenReturn(cartDto);
+        when(cartService.listCartItems(request)).thenReturn(cartDto);
 
         // Act
 
-        assertDoesNotThrow(() -> orderService.placeOrder(user, razorpayId));
+        assertDoesNotThrow(() -> orderService.placeOrder(request, razorpayId));
 
         // Assert
 
@@ -171,8 +168,6 @@ class OrderServiceImplTest {
         verify(productRepository, times(1)).save(any());
 
         verify(cartService, times(1)).deleteUserCartItems(user);
-
-//        verify(emailService, times(1)).sendEmail(anyString(), anyString(), anyString());
 
         verify(pushNotificationService, times(1)).sendPushNotificationToToken(any(PushNotificationRequest.class));
 
@@ -193,7 +188,7 @@ class OrderServiceImplTest {
 
         cartDto.setCartItems(cartItemDtos);
 
-        when(cartService.listCartItems(user)).thenReturn(cartDto);
+        when(cartService.listCartItems(request)).thenReturn(cartDto);
 
         // Act and Assert
 
@@ -201,7 +196,7 @@ class OrderServiceImplTest {
 
             // Your code that is expected to throw an exception
 
-            orderService.placeOrder(user, razorpayId);
+            orderService.placeOrder(request, razorpayId);
 
         });
 
@@ -244,7 +239,7 @@ class OrderServiceImplTest {
 
         // Act
 
-        List<OrderDto> orderDtos = orderService.listOrders(user);
+        List<OrderDto> orderDtos = orderService.listOrders(request);
 
         // Assert
 
@@ -277,7 +272,7 @@ class OrderServiceImplTest {
 
         // Act
 
-        Order retrievedOrder = orderService.getOrder(orderId, user);
+        Order retrievedOrder = orderService.getOrder(orderId, request);
 
         // Assert
 
@@ -300,7 +295,7 @@ class OrderServiceImplTest {
 
         // Act and Assert
 
-        assertThrows(OrderNotFoundException.class, () -> orderService.getOrder(orderId, user));
+        assertThrows(OrderNotFoundException.class, () -> orderService.getOrder(orderId, request));
 
     }
 
@@ -315,7 +310,7 @@ class OrderServiceImplTest {
 
         // Act
 
-        assertDoesNotThrow(() -> orderService.orderStatus(orderItem, status));
+        assertDoesNotThrow(() -> orderService.orderStatus(request, orderItem.getId(), status));
 
         // Assert
 
@@ -481,7 +476,7 @@ class OrderServiceImplTest {
 
         // Act
 
-        Map<Year, Map<YearMonth, Map<String, Object>>> result = orderService.onClickDashboardYearWiseData(user);
+        Map<Year, Map<YearMonth, Map<String, Object>>> result = orderService.onClickDashboardYearWiseData(request);
 
         // Assert
 
@@ -515,6 +510,7 @@ class OrderServiceImplTest {
     void testOrderStatusOrderReturned() {
         // Create a mock OrderItem and Product
         OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
         orderItem.setQuantity(2); // Example quantity
         Product product = new Product();
         product.setAvailableQuantities(5); // Example available quantities
@@ -529,7 +525,7 @@ class OrderServiceImplTest {
         when(productRepository.save(product)).thenReturn(product);
 
         // Call the method
-        orderService.orderStatus(orderItem, status);
+        orderService.orderStatus(request,orderItem.getId(), status);
 
         // Assertions
         assertEquals("ORDER RETURNED", orderItem.getStatus());
@@ -545,6 +541,7 @@ class OrderServiceImplTest {
     void testOrderStatusOtherStatus() {
         // Create a mock OrderItem
         OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
 
         // Define a different status
         String status = "SHIPPED"; // Example other status
@@ -553,7 +550,7 @@ class OrderServiceImplTest {
         when(orderItemRepository.save(orderItem)).thenReturn(orderItem);
 
         // Call the method
-        orderService.orderStatus(orderItem, status);
+        orderService.orderStatus(request, orderItem.getId(), status);
 
         // Assertions
         assertEquals("SHIPPED", orderItem.getStatus());
@@ -614,7 +611,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
 
         // Call the method to be tested
-        Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate);
+        Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonthBwDates(request, startDate, endDate);
 
         // Verify the result
         assertNotNull(result);
@@ -646,7 +643,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAll()).thenReturn(Collections.singletonList(order));
 
         // Call the method
-        Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate);
+        Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = orderService.getOrderedItemsByMonthBwDates(request, startDate, endDate);
 
         // Assertions
         assertNotNull(orderedItemsByMonth);
@@ -702,7 +699,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1,order2));
 
         // Call the method to be tested
-        Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonth(user);
+        Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonth(request);
 
         // Verify the result
         assertNotNull(result);
@@ -772,7 +769,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
 
         // Call the method to be tested
-        Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsBySubCategories(user);
+        Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsBySubCategories(request);
 
         // Verify the result
         assertNotNull(result);
@@ -830,7 +827,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAll()).thenReturn(List.of(order1));
 
         // Call the method to be tested
-        Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsByCategories(user);
+        Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsByCategories(request);
 
         // Verify the result
         assertNotNull(result);
@@ -864,7 +861,7 @@ class OrderServiceImplTest {
         when(orderItemRepository.findByOwnerId(pageable, user.getId())).thenReturn(orderItemPage);
 
         // Call the method to be tested
-        List<ProductDto> productDtoList = orderService.getRentedOutProducts(user, 0, 10);
+        List<ProductDto> productDtoList = orderService.getRentedOutProducts(request, 0, 10);
 
         // Verify the result
         assertNotNull(productDtoList);
@@ -1032,7 +1029,7 @@ class OrderServiceImplTest {
         when(orderItemRepository.findAll()).thenReturn(Arrays.asList(orderItem1, orderItem2, orderItem3));
 
         // Call the method to be tested
-        List<OrderItemDto> result = orderService.getOrdersItemByStatus("SHIPPED", user);
+        List<OrderItemDto> result = orderService.getOrdersItemByStatus("SHIPPED", request);
 
         // Verify the result
         assertNotNull(result);

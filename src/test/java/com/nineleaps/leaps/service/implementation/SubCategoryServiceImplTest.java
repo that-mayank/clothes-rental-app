@@ -7,6 +7,7 @@ import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -22,12 +23,12 @@ class SubCategoryServiceImplTest {
     @Mock
     private SubCategoryRepository categoryRepository;
 
+    @InjectMocks
     private SubCategoryServiceImpl subCategoryService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        subCategoryService = new SubCategoryServiceImpl(categoryRepository);
     }
 
     @Test
@@ -38,7 +39,7 @@ class SubCategoryServiceImplTest {
         subCategoryDto.setSubcategoryName("Test Subcategory");
 
         // Perform createSubCategory method
-        subCategoryService.createSubCategory(subCategoryDto, category);
+        subCategoryService.createSubCategory(subCategoryDto);
 
         // Verify that the save method is called on the categoryRepository
         verify(categoryRepository).save(any(SubCategory.class));
@@ -165,7 +166,7 @@ class SubCategoryServiceImplTest {
         when(categoryRepository.save(any(SubCategory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Perform updateSubCategory method
-        subCategoryService.updateSubCategory(subcategoryId, subCategoryDto, category);
+        subCategoryService.updateSubCategory(subcategoryId, subCategoryDto);
 
         // Verify that the save method is called on the categoryRepository with the updated subcategory
         verify(categoryRepository).save(argThat(subCategory -> subCategory.getId().equals(subcategoryId)

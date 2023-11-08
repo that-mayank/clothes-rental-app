@@ -57,7 +57,7 @@ public class StorageController {
 
     // API: To upload a profile image to Amazon S3
     @ApiOperation(value = "API : To upload a profile image to Amazon S3")
-    @PostMapping("/profile")
+    @PostMapping("profile")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')")
     public ResponseEntity<String> uploadProfileFile(@RequestParam("file") MultipartFile file) {
@@ -95,7 +95,7 @@ public class StorageController {
 
     // API: To view the uploaded image
     @ApiOperation(value = "API : To view the uploaded image")
-    @GetMapping("/view/{fileName}")
+    @GetMapping("view/{fileName}")
     @ResponseStatus(HttpStatus.OK)
     // PreAuthorize annotation restricts access to authorized users with specified authorities (OWNER, BORROWER, ADMIN)
     public void viewFile(

@@ -91,7 +91,7 @@ public class ProductController {
 
     // API : List Products according to price range
     @ApiOperation(value = "API : Filter products according to price range")
-    @GetMapping(value = "/price-range", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "price-range", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     // Validation params, by default required = true
     public ResponseEntity<List<ProductDto>> getProductsByPriceRange(@RequestParam("minPrice") double minPrice, @RequestParam("maxPrice") double maxPrice) {
@@ -102,7 +102,7 @@ public class ProductController {
 
     // API : To search products
     @ApiOperation(value = "API : To search products")
-    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "search", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('BORROWER')")
     public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam("query") String query, HttpServletRequest request) {
         // Calling service layer to get products
@@ -113,7 +113,7 @@ public class ProductController {
     // API : To view recently added products in owner flow
     //List products in descending order for recently added functionality in owner flow
     @ApiOperation(value = "API : To view recently added products in owner flow")
-    @GetMapping(value = "/desc", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "desc", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> listProductsDesc(HttpServletRequest request) {
         // Calling service layer to list products in descending order
@@ -123,7 +123,7 @@ public class ProductController {
 
     // API : To list owner added specific products
     @ApiOperation(value = "API : To list owner added specific products")
-    @GetMapping(value = "/owner-owned", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "owner-owned", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<List<ProductDto>> listOwnerProducts(HttpServletRequest request) {
         // Calling service layer to list products
@@ -133,7 +133,7 @@ public class ProductController {
 
     // API : To filter products
     @ApiOperation(value = "API : To filter products")
-    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "filter", produces = MediaType.APPLICATION_JSON_VALUE)
     // All params are required
     public ResponseEntity<List<ProductDto>> filterProducts(@RequestParam("size") String size, @RequestParam("subcategoryId") Long subcategoryId, @RequestParam("minPrice") double minPrice, @RequestParam("maxPrice") double maxPrice) {
         // Calling service layer to list filtered products
@@ -153,7 +153,7 @@ public class ProductController {
 
     // API : For disabling products
     @ApiOperation(value = "API : For disabling products")
-    @PutMapping(value = "/disable", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "disable", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> disableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity") int quantity, HttpServletRequest request) {
         // Calling service layer to disable product
@@ -163,7 +163,7 @@ public class ProductController {
 
     // API : For enabling products
     @ApiOperation(value = "API : For enabling products")
-    @PutMapping(value = "/enable", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "enable", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('OWNER')")
     public ResponseEntity<ApiResponse> enableProducts(@RequestParam("productId") Long productId, @RequestParam(value = "quantity") int quantity, HttpServletRequest request) {
         // Calling service layer to enable product

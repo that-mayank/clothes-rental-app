@@ -2,7 +2,6 @@ package com.nineleaps.leaps.model;
 
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.product.ProductUrl;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -196,6 +196,6 @@ class CartTest {
         Cart cart = new Cart(product, user, quantity, rentalStartDate, rentalEndDate, imageUrlList);
 
         // Assert that the imageUrl is set to null when the imageUrlList is empty
-        assertEquals(null, cart.getImageUrl());
+        assertNull(cart.getImageUrl());
     }
 }

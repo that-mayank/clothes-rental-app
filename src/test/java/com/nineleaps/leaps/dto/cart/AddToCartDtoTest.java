@@ -1,12 +1,11 @@
 package com.nineleaps.leaps.dto.cart;
 
-import com.nineleaps.leaps.dto.cart.AddToCartDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AddToCartDtoTest {
 

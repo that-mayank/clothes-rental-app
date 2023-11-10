@@ -22,10 +22,6 @@ public class Helper {
 
     private final UserRepository userRepository;
 
-    public static boolean notNull(Object obj) {
-        return obj != null;
-    }
-
     public User getUser(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token = authorizationHeader.substring(7);

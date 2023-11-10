@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -84,7 +85,7 @@ public class UserController {
 
         User user = helper.getUser(request);
 
-        if (!Helper.notNull(user)) {
+        if (Optional.ofNullable(user).isEmpty()) {
             throw new UserNotExistException("User is invalid");
         }
 
@@ -118,7 +119,7 @@ public class UserController {
 
         User oldUser = helper.getUser(request);
 
-        if (!Helper.notNull(oldUser)) {
+        if (Optional.ofNullable(oldUser).isEmpty()) {
             return new ResponseEntity<>(
                     new ApiResponse(
                             false,
@@ -175,7 +176,7 @@ public class UserController {
 
         User user = helper.getUser(request);
 
-        if (!Helper.notNull(user)) {
+        if (Optional.ofNullable(user).isEmpty()) {
             return new ResponseEntity<>(new ApiResponse(false, "User is invalid"), HttpStatus.NOT_FOUND);
         }
 

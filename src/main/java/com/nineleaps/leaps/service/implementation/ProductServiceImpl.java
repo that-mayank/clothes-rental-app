@@ -98,7 +98,7 @@ public class ProductServiceImpl implements ProductServiceInterface {
         List<SubCategory> subCategories = subCategoryService.getSubCategoriesFromIds(productDto.getSubcategoryIds());
 
         Product oldProduct = productRepository.findByUserIdAndId(user.getId(), productId);
-        if (!Helper.notNull(oldProduct)) {
+        if (Optional.ofNullable(oldProduct).isEmpty()) {
             throw new ProductNotExistException("Product does not belong to the user: " + user.getFirstName() + " " + user.getLastName());
         }
         Product product = getProductFromDto(productDto, subCategories, categories, user);

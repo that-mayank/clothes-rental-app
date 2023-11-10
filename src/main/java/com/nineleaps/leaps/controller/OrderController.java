@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/order")
@@ -116,7 +117,7 @@ public class OrderController {
 
             //Guard Statement : Check if order item belongs to the current user
             Order order = orderService.getOrder(orderId, request);
-            if (!Helper.notNull(order)) {
+            if (Optional.ofNullable(order).isEmpty()) {
                 throw new OrderNotFoundException("No order items found for the user and order ID");
             }
 

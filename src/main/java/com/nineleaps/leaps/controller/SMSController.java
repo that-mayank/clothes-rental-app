@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/sms")
@@ -44,7 +45,7 @@ public class SMSController {
     public ResponseEntity<ApiResponse> smsSubmit(@PathVariable("phone") String phoneNumber) {
 
         // Guard Statement : If the phone number is in database or not
-        if (!Helper.notNull(userService.getUserViaPhoneNumber(phoneNumber))) {
+        if (Optional.ofNullable(userService.getUserViaPhoneNumber(phoneNumber)).isEmpty()) {
             return new ResponseEntity<>(
                     new ApiResponse(
                             false,

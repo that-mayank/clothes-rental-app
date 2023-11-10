@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class CartServiceImpl implements CartServiceInterface {
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), productId);
 
         // Check if the cart item exists
-        if (!Helper.notNull(cartItem)) {
+        if (Optional.ofNullable(cartItem).isEmpty()) {
             throw new CartItemNotExistException(CART_ITEM_INVALID + productId);
         }
 
@@ -125,7 +126,7 @@ public class CartServiceImpl implements CartServiceInterface {
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), updateProductQuantityDto.getProductId());
 
         // Check if the cart item exists
-        if (!Helper.notNull(cartItem)) {
+        if (Optional.ofNullable(cartItem).isEmpty()) {
             throw new CartItemNotExistException(CART_ITEM_INVALID + updateProductQuantityDto.getProductId());
         }
 

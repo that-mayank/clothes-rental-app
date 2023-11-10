@@ -24,6 +24,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.nineleaps.leaps.LeapsApplication.NGROK;
@@ -82,13 +83,13 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     @Override
     public ResponseDto signUp(SignupDto signupDto) throws CustomException {
         // Check if the provided email has already been registered.
-        if (Helper.notNull(userRepository.findByEmail(signupDto.getEmail()))) {
+        if (Optional.ofNullable(userRepository.findByEmail(signupDto.getEmail())).isEmpty()) {
             // If email is already registered, throw a custom exception.
             throw new CustomException("Email already associated with another user");
         }
 
         // Check if the provided phone number is already registered.
-        if (Helper.notNull(userRepository.findByPhoneNumber(signupDto.getPhoneNumber()))) {
+        if (Optional.ofNullable(userRepository.findByPhoneNumber(signupDto.getPhoneNumber())).isEmpty()) {
             throw new CustomException("Phone number already associated with another user");
         }
 
@@ -127,7 +128,7 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     @Override
     public User getGuest() {
         User user = userRepository.findByRole(Role.GUEST);
-        if (!Helper.notNull(user)) {
+        if (Optional.ofNullable(user).isEmpty()) {
             return null; // Create a guest user if not found.
         } else {
             return user;

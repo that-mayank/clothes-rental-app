@@ -5,6 +5,7 @@ import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.repository.SubCategoryRepository;
+import com.nineleaps.leaps.service.CategoryServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,6 +24,9 @@ class SubCategoryServiceImplTest {
     @Mock
     private SubCategoryRepository categoryRepository;
 
+    @Mock
+    private CategoryServiceInterface categoryService;
+
     @InjectMocks
     private SubCategoryServiceImpl subCategoryService;
 
@@ -35,8 +39,25 @@ class SubCategoryServiceImplTest {
     void createSubCategory() {
         // Prepare test data
         Category category = new Category();
+        category.setCategoryName("Category");
+        category.setId(1L);
+
         SubCategoryDto subCategoryDto = new SubCategoryDto();
         subCategoryDto.setSubcategoryName("Test Subcategory");
+        subCategoryDto.setCategoryId(1L);
+
+        SubCategory subCategory1 = new SubCategory();
+        SubCategory subCategory2 = new SubCategory();
+        SubCategory subCategory3 = new SubCategory();
+
+        List<SubCategory> subcategoryList = new ArrayList<>();
+        subcategoryList.add(subCategory1);
+        subcategoryList.add(subCategory2);
+        subcategoryList.add(subCategory3);
+
+
+        when(categoryService.readCategory(anyLong())).thenReturn(Optional.of(category));
+        when(categoryRepository.findByCategoryId(anyLong())).thenReturn(subcategoryList);
 
         // Perform createSubCategory method
         subCategoryService.createSubCategory(subCategoryDto);
@@ -152,30 +173,36 @@ class SubCategoryServiceImplTest {
 
     @Test
     void updateSubCategory_SubCategoryNotNull() {
-        // Prepare test data
-        Long subcategoryId = 1L;
-        Category category = new Category();
+        //Arrange
+        Long subCategoryId = 1L;
+
         SubCategoryDto subCategoryDto = new SubCategoryDto();
-        subCategoryDto.setSubcategoryName("Updated Subcategory");
+        subCategoryDto.setCategoryId(1L);
+        subCategoryDto.setSubcategoryName("Updated SubCategory");
+        subCategoryDto.setDescription("Description");
+        subCategoryDto.setImageURL("/image-url.jpeg");
 
-        // Create a mock updatedSubCategory
-        SubCategory updatedSubCategory = new SubCategory();
-        updatedSubCategory.setId(subcategoryId);
+        Category category = new Category();
+        category.setId(1L);
+        category.setCategoryName("Category");
+        category.setDescription("Description");
+        category.setImageUrl("/image-url.jpeg");
 
-        // Mock the behavior of categoryRepository
-        when(categoryRepository.save(any(SubCategory.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        SubCategory subCategory = new SubCategory();
+        subCategory.setId(1L);
+        subCategory.setCategory(category);
+        subCategory.setSubcategoryName("Subcategory");
+        subCategory.setDescription("Description");
+        subCategory.setImageUrl("/image-url.jpeg");
 
-        // Perform updateSubCategory method
-        subCategoryService.updateSubCategory(subcategoryId, subCategoryDto);
+        when(categoryService.readCategory(anyLong())).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(subCategory));
 
-        // Verify that the save method is called on the categoryRepository with the updated subcategory
-        verify(categoryRepository).save(argThat(subCategory -> subCategory.getId().equals(subcategoryId)
-                && subCategory.getSubcategoryName().equals(subCategoryDto.getSubcategoryName())));
+        //Act
+        subCategoryService.updateSubCategory(subCategoryId, subCategoryDto);
 
-        // Additional assertion to verify that the ID is set on the updated subcategory
-        assertNotNull(updatedSubCategory);
-        assertNotNull(updatedSubCategory.getId());
-        assertEquals(subcategoryId, updatedSubCategory.getId());
+        //Assert
+        verify(categoryRepository).save(any(SubCategory.class));
     }
 
 

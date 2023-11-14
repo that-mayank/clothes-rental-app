@@ -4,7 +4,6 @@ import com.nineleaps.leaps.common.ApiResponse;
 import com.nineleaps.leaps.exceptions.OtpValidationException;
 import com.nineleaps.leaps.service.SmsServiceInterface;
 import com.nineleaps.leaps.service.UserServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

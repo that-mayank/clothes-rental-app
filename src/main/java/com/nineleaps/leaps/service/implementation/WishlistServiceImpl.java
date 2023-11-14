@@ -46,7 +46,7 @@ public class WishlistServiceImpl implements WishlistServiceInterface {
         // Guard Statement : Check the same product cannot be added to wishlist
 
         List<ProductDto> userWishlist = readWishlist(request);
-        if (userWishlist.stream().anyMatch(wishlist -> wishlist.getId().equals(productId))) {
+        if (userWishlist.stream().anyMatch(productDto -> productDto.getId().equals(productId))) {
             throw new CustomException("Product already in wishlist");
         }
 

@@ -2,7 +2,6 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.UrlResponse;
 import com.nineleaps.leaps.service.StorageServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -17,6 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -74,7 +74,7 @@ class StorageControllerTest {
 
         // Verify
         verify(storageServiceInterface, times(1)).uploadFile(any(MultipartFile.class));
-        assertFalse(Helper.notNull(response.getUrls()));
+        assertFalse(Optional.ofNullable(response.getUrls()).isPresent());
     }
 
     @Test

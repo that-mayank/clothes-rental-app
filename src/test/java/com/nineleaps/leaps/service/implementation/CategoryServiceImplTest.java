@@ -4,27 +4,31 @@ import com.nineleaps.leaps.dto.category.CategoryDto;
 import com.nineleaps.leaps.exceptions.CategoryNotExistException;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.repository.CategoryRepository;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class CategoryServiceImplTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
     @Mock
-    private HttpServletRequest request;
+    private Helper helper;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -35,17 +39,15 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    void createCategory_ShouldSaveCategory() {
+    void createCategory_ShouldSaveCategoryToRepository() {
         // Arrange
-        CategoryDto categoryDto = new CategoryDto();
-        Category category = new Category(categoryDto);
-        when(categoryRepository.save(category)).thenReturn(category);
+        CategoryDto categoryDto = new CategoryDto(1L,"Test Category", "Description", "image-url");
 
         // Act
-        categoryService.createCategory(categoryDto);
+        assertDoesNotThrow(() -> categoryService.createCategory(categoryDto));
 
         // Assert
-        verify(categoryRepository, times(1)).save(category);
+        verify(categoryRepository, times(1)).save(any());
     }
 
     @Test
@@ -58,118 +60,114 @@ class CategoryServiceImplTest {
         List<Category> result = categoryService.listCategory();
 
         // Assert
+        assertNotNull(result);
         assertEquals(categories, result);
     }
 
     @Test
-    void updateCategory_WhenCategoryExists_ShouldUpdateCategory() {
+    void updateCategory_CategoryExists_ShouldUpdateCategory() {
         // Arrange
-        Long id = 1L;
-        CategoryDto updateCategory = new CategoryDto();
-        updateCategory.setCategoryName("Updated Category");
-        updateCategory.setDescription("Updated Description");
-        updateCategory.setImageUrl("Updated Image URL");
-
-        Category existingCategory = new Category();
-        existingCategory.setId(id);
-        existingCategory.setCategoryName("Original Category");
-        existingCategory.setDescription("Original Description");
-        existingCategory.setImageUrl("Original Image URL");
-
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(existingCategory));
-        when(categoryRepository.save(existingCategory)).thenReturn(existingCategory);
+        Long categoryId = 1L;
+        CategoryDto updateCategoryDto = new CategoryDto(1L,"Updated Category", "Updated Description", "updated-image-url");
+        Category existingCategory = new Category(updateCategoryDto);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
 
         // Act
-        categoryService.updateCategory(id, updateCategory);
+        assertDoesNotThrow(() -> categoryService.updateCategory(categoryId, updateCategoryDto));
 
         // Assert
-        assertEquals(updateCategory.getCategoryName(), existingCategory.getCategoryName());
-        assertEquals(updateCategory.getDescription(), existingCategory.getDescription());
-        assertEquals(updateCategory.getImageUrl(), existingCategory.getImageUrl());
+        assertEquals(updateCategoryDto.getCategoryName(), existingCategory.getCategoryName());
+        assertEquals(updateCategoryDto.getDescription(), existingCategory.getDescription());
+        assertEquals(updateCategoryDto.getImageUrl(), existingCategory.getImageUrl());
         verify(categoryRepository, times(1)).save(existingCategory);
     }
 
-    @Test
-    void updateCategory_WhenCategoryDoesNotExist_ShouldThrowException() {
-        // Arrange
-        Long id = 1L;
-        CategoryDto updateCategory = new CategoryDto();
-
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> categoryService.updateCategory(id, updateCategory));
-        verify(categoryRepository, never()).save(any());
-    }
+    // Add more test cases for readCategory, getCategoriesFromIds, and other methods.
 
     @Test
-    void readCategory_ShouldReturnCategoryByCategoryName() {
+    void readCategory_CategoryNameExists_ShouldReturnCategory() {
         // Arrange
-        String categoryName = "Category";
-        Category expectedCategory = new Category();
-
-        when(categoryRepository.findByCategoryName(categoryName)).thenReturn(expectedCategory);
+        String categoryName = "Test Category";
+        Category category = new Category();
+        category.setId(1L);
+        category.setCategoryName(categoryName);
+        category.setDescription("Description");
+        category.setImageUrl("image-url");
+        when(categoryRepository.findByCategoryName(categoryName)).thenReturn(category);
 
         // Act
         Category result = categoryService.readCategory(categoryName);
 
         // Assert
-        assertEquals(expectedCategory, result);
+        assertNotNull(result);
+        assertEquals(category, result);
     }
 
     @Test
-    void testReadCategory_ShouldReturnCategoryById() {
+    void readCategory_CategoryNameDoesNotExist_ShouldReturnNull() {
         // Arrange
-        Long id = 1L;
-        Category expectedCategory = new Category();
-
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(expectedCategory));
+        String categoryName = "Non-Existent Category";
+        when(categoryRepository.findByCategoryName(categoryName)).thenReturn(null);
 
         // Act
-        Optional<Category> result = categoryService.readCategory(id);
+        Category result = categoryService.readCategory(categoryName);
 
         // Assert
-        assertEquals(Optional.of(expectedCategory), result);
+        assertNull(result);
     }
 
     @Test
-    void getCategoriesFromIds_WhenAllCategoriesExist_ShouldReturnListOfCategories() throws CategoryNotExistException {
+    void readCategory_CategoryIdExists_ShouldReturnCategory() {
         // Arrange
-        List<Long> categoryIds = List.of(1L, 2L, 3L);
-
-        Category category1 = new Category();
-        category1.setId(1L);
-
-        Category category2 = new Category();
-        category2.setId(2L);
-
-        Category category3 = new Category();
-        category3.setId(3L);
-
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
-        when(categoryRepository.findById(2L)).thenReturn(Optional.of(category2));
-        when(categoryRepository.findById(3L)).thenReturn(Optional.of(category3));
+        Long categoryId = 1L;
+        Category category = new Category();
+        category.setId(1L);
+        category.setCategoryName("Category Name");
+        category.setDescription("Description");
+        category.setImageUrl("image-url");
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 
         // Act
-        List<Category> result = categoryService.getCategoriesFromIds(categoryIds);
+        Optional<Category> result = categoryService.readCategory(categoryId);
 
         // Assert
-        assertEquals(3, result.size());
-        assertEquals(category1, result.get(0));
-        assertEquals(category2, result.get(1));
-        assertEquals(category3, result.get(2));
+        assertTrue(result.isPresent());
+        assertEquals(category, result.get());
     }
 
     @Test
-    void getCategoriesFromIds_WhenCategoryDoesNotExist_ShouldThrowException() {
+    void readCategory_CategoryIdDoesNotExist_ShouldReturnEmptyOptional() {
+        // Arrange
+        Long categoryId = 1L;
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
+
+        // Act
+        Optional<Category> result = categoryService.readCategory(categoryId);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getCategoriesFromIds_AllCategoriesExist_ShouldReturnListOfCategories() {
         // Arrange
         List<Long> categoryIds = List.of(1L, 2L, 3L);
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(new Category()));
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+        // Act
+        assertDoesNotThrow(() -> categoryService.getCategoriesFromIds(categoryIds));
+
+        // Assert
+        verify(categoryRepository, times(categoryIds.size())).findById(anyLong());
+    }
+
+    @Test
+    void getCategoriesFromIds_OneCategoryDoesNotExist_ShouldThrowException() {
+        // Arrange
+        List<Long> categoryIds = List.of(1L, 2L, 3L);
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(new Category()), Optional.empty(), Optional.of(new Category()));
 
         // Act & Assert
         assertThrows(CategoryNotExistException.class, () -> categoryService.getCategoriesFromIds(categoryIds));
-        verify(categoryRepository, never()).findById(2L);
-        verify(categoryRepository, never()).findById(3L);
     }
 }

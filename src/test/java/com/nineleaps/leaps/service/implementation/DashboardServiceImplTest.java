@@ -5,6 +5,7 @@ import com.nineleaps.leaps.dto.dashboard.DashboardDto;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.orders.OrderItem;
 import com.nineleaps.leaps.repository.OrderItemRepository;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,6 +27,9 @@ class DashboardServiceImplTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private Helper helper;
 
     @InjectMocks
     private DashboardServiceImpl dashboardService;
@@ -61,6 +65,8 @@ class DashboardServiceImplTest {
         orderItem1.setRentalEndDate(LocalDate.now().plusDays(3).atStartOfDay());
 
         orderItems.add(orderItem1);
+
+        when(helper.getUser(request)).thenReturn(user);
 
         when(orderItemRepository.findByOwnerId(1L)).thenReturn(orderItems);
 
@@ -104,6 +110,8 @@ class DashboardServiceImplTest {
         orderItem1.setCreatedDate(LocalDate.of(2023, 1, 15).atStartOfDay());
 
         orderItems.add(orderItem1);
+
+        when(helper.getUser(request)).thenReturn(user);
 
         when(orderItemRepository.findByOwnerId(1L)).thenReturn(orderItems);
 

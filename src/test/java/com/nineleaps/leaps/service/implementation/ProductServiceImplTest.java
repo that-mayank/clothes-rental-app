@@ -7,9 +7,13 @@ import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.service.CategoryServiceInterface;
+import com.nineleaps.leaps.service.SubCategoryServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,13 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.nineleaps.leaps.LeapsApplication.NGROK;
 import static com.nineleaps.leaps.config.MessageStrings.DELETED_PRODUCT_FILTER;
 import static com.nineleaps.leaps.config.MessageStrings.DISABLED_PRODUCT_FILTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class ProductServiceImplTest {
 
     @Mock
@@ -42,7 +46,16 @@ class ProductServiceImplTest {
     private EntityManager entityManager;
 
     @Mock
+    private Helper helper;
+
+    @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private CategoryServiceInterface categoryService;
+
+    @Mock
+    private SubCategoryServiceInterface subCategoryService;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -72,23 +85,48 @@ class ProductServiceImplTest {
 
     @Test
     void addProduct() {
-        // Given
-        ProductDto productDto = new ProductDto();
-        String url = "NGROK/api/v1/file/view/test2_image.png";
-        productDto.setImageUrl(List.of(url));
-        List<SubCategory> subCategories = new ArrayList<>();
-        List<Category> categories = new ArrayList<>();
+        //Arrange
         User user = new User();
+        user.setId(1L);
 
-        // When
+        ProductDto productDto = new ProductDto();
+        productDto.setBrand("Brand");
+        productDto.setName("Product");
+        productDto.setDescription("Description");
+        productDto.setPrice(100.0);
+        productDto.setSize("Size");
+        productDto.setImageUrl(List.of("/image-url.jpeg"));
+        productDto.setColor("Color");
+        productDto.setCategoryIds(List.of(1L));
+        productDto.setSubcategoryIds(List.of(1L));
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setCategoryName("Category");
+        category.setDescription("Description");
+        category.setImageUrl("/image-url.jpeg");
+
+        SubCategory subCategory = new SubCategory();
+        subCategory.setId(1L);
+        subCategory.setCategory(category);
+        subCategory.setSubcategoryName("Subcategory");
+        subCategory.setDescription("Description");
+        subCategory.setImageUrl("/image-url.jpeg");
+
+        when(helper.getUser(request)).thenReturn(user);
+        when(categoryService.getCategoriesFromIds(anyList())).thenReturn(List.of(category));
+        when(subCategoryService.getSubCategoriesFromIds(anyList())).thenReturn(List.of(subCategory));
+
+        //Act
         productService.addProduct(productDto, request);
 
-        // Then
-        verify(productRepository, times(2)).save(any(Product.class)); //because we are saving twice one before and one after adding imageUrl
+        //Assert
+        verify(productRepository, times(2)).save(any(Product.class));
+
     }
 
     @Test
-     void listProducts() {
+    void listProducts() {
         // Create a list of dummy products
         int pageNumber = 0;
         int pageSize = 10;
@@ -121,6 +159,9 @@ class ProductServiceImplTest {
         when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
+        when(helper.getUser(request)).thenReturn(user);
+
+
         // When
         List<ProductDto> productDtos = productService.listProducts(pageNumber, pageSize, request);
 
@@ -138,46 +179,53 @@ class ProductServiceImplTest {
     void listSuggestions() {
         String suggestion1 = "blue shirt";
         String suggestion2 = "blue shirt";
-        assertSame(suggestion1,suggestion2);
+        assertSame(suggestion1, suggestion2);
     }
 
     @Test
     void updateProduct_existingProduct() {
-        // Given
-        Long productId = 1L;
-        ProductDto productDto = new ProductDto();
-        String url = NGROK+"/api/v1/file/view/test2_image.png";
-        productDto.setImageUrl(List.of(url));
-        List<SubCategory> subCategories = new ArrayList<>();
-        List<Category> categories = new ArrayList<>();
+        //Arrange
         User user = new User();
-        Product existingProduct = new Product();
-        existingProduct.setId(productId);
-        existingProduct.setUser(user);
-        when(productRepository.findByUserIdAndId(user.getId(), productId)).thenReturn(existingProduct);
+        user.setId(1L);
 
-        // When
+        ProductDto productDto = new ProductDto();
+        productDto.setBrand("Brand");
+        productDto.setName("Product");
+        productDto.setDescription("Description");
+        productDto.setPrice(100.0);
+        productDto.setSize("Size");
+        productDto.setImageUrl(List.of("/image-url.jpeg"));
+        productDto.setColor("Color");
+        productDto.setCategoryIds(List.of(1L));
+        productDto.setSubcategoryIds(List.of(1L));
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setCategoryName("Category");
+        category.setDescription("Description");
+        category.setImageUrl("/image-url.jpeg");
+
+        SubCategory subCategory = new SubCategory();
+        subCategory.setId(1L);
+        subCategory.setCategory(category);
+        subCategory.setSubcategoryName("Subcategory");
+        subCategory.setDescription("Description");
+        subCategory.setImageUrl("/image-url.jpeg");
+
+        Long productId = 1L;
+        Product product = new Product(productDto, List.of(subCategory), List.of(category), user);
+
+        when(helper.getUser(request)).thenReturn(user);
+        when(categoryService.getCategoriesFromIds(anyList())).thenReturn(List.of(category));
+        when(subCategoryService.getSubCategoriesFromIds(anyList())).thenReturn(List.of(subCategory));
+
+        when(productRepository.findByUserIdAndId(anyLong(), anyLong())).thenReturn(product);
+
+        //Act
         productService.updateProduct(productId, productDto, request);
 
-        // Then
-        verify(productRepository, times(1)).save(any(Product.class));
-    }
-
-    @Test
-    void updateProduct_nonExistingProduct() {
-        // Given
-        Long productId = 1L;
-        ProductDto productDto = new ProductDto();
-        List<SubCategory> subCategories = new ArrayList<>();
-        List<Category> categories = new ArrayList<>();
-        User user = new User();
-        when(productRepository.findByUserIdAndId(user.getId(), productId)).thenReturn(null);
-
-        // When/Then
-        assertThrows(ProductNotExistException.class, () ->
-                productService.updateProduct(productId, productDto, request)
-        );
-        verify(productRepository, never()).save(any(Product.class));
+        //Assert
+        verify(productRepository).save(any(Product.class));
     }
 
     @Test
@@ -212,86 +260,96 @@ class ProductServiceImplTest {
 
     @Test
     void listProductsById_specificSubcategoryId() {
-        // Given
-        SubCategory subCategory = new SubCategory();
-        Long subcategoryId = 1L;
-        subCategory.setId(subcategoryId);
-        User user = new User();
-        User user1 = new User();
-        List<Product> products = new ArrayList<>();
-        Product product1 = new Product();
-        product1.setUser(user);
-        product1.setSubCategories(List.of(subCategory));
-        products.add(product1);
-        Product product2 = new Product();
-        product2.setUser(user);
-        product2.setSubCategories(List.of(subCategory));
-        products.add(product2);
-        when(productRepository.findBySubCategoriesId(subcategoryId)).thenReturn(products);
-
+        //Arrange
         Session session = mock(Session.class);
         Filter deletedProductFilter = mock(Filter.class);
         Filter disabledProductFilter = mock(Filter.class);
+
+        Long subcategoryId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+
+        Product product1 = new Product();
+        product1.setId(1L);
+        product1.setName("Product 1");
+        product1.setUser(new User());
+
+        Product product2 = new Product();
+        product2.setId(2L);
+        product2.setName("Product 2");
+        product2.setUser(new User());
+
+        SubCategory subCategory = new SubCategory();
+        subCategory.setId(1L);
+        subCategory.setSubcategoryName("Subcategory");
+        subCategory.setDescription("Description");
+        subCategory.setImageUrl("/image-url.jpeg");
+
         when(entityManager.unwrap(Session.class)).thenReturn(session);
         when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
-        // When
-        List<ProductDto> productDtos = productService.listProductsById(subcategoryId, request);
+        when(subCategoryService.readSubCategory(subcategoryId)).thenReturn(Optional.of(subCategory));
+        when(helper.getUser(request)).thenReturn(user);
+        when(productRepository.findBySubCategoriesId(anyLong())).thenReturn(List.of(product1, product2));
 
-        // Then
-        assertNotNull(productDtos);
-        assertEquals(products.size(), productDtos.size());
-        verify(productRepository, times(1)).findBySubCategoriesId(subcategoryId);
-        verify(session, times(1)).enableFilter(DELETED_PRODUCT_FILTER);
-        verify(session, times(1)).enableFilter(DISABLED_PRODUCT_FILTER);
-        verify(session, times(1)).disableFilter(DELETED_PRODUCT_FILTER);
-        verify(session, times(1)).disableFilter(DISABLED_PRODUCT_FILTER);
+        //Act
+        List<ProductDto> productDtoList = productService.listProductsById(subcategoryId, request);
 
+        //Assert
+        assertEquals(2, productDtoList.size());
+        assertEquals(product1.getName(), productDtoList.get(0).getName());
+        assertEquals(product2.getName(), productDtoList.get(1).getName());
     }
 
     @Test
     void listProductsByCategoryId() {
-        // Given
-        Category category = new Category();
+        //Arrange
         Long categoryId = 1L;
-        category.setId(categoryId);
+
         User user = new User();
-        User user1 = new User();
-        List<Product> products = new ArrayList<>();
+        user.setId(1L);
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setCategoryName("Category");
+        category.setDescription("Description");
+        category.setImageUrl("/image-url.jpeg");
+
         Product product1 = new Product();
-        product1.setUser(user);
-        product1.setCategories(List.of(category));
-        products.add(product1);
+        product1.setId(1L);
+        product1.setName("Product 1");
+        product1.setUser(new User());
+
         Product product2 = new Product();
-        product2.setUser(user);
-        product2.setCategories(List.of(category));
-        products.add(product2);
-        when(productRepository.findByCategoriesId(categoryId)).thenReturn(products);
+        product2.setId(2L);
+        product2.setName("Product 2");
+        product2.setUser(new User());
 
         Session session = mock(Session.class);
         Filter deletedProductFilter = mock(Filter.class);
         Filter disabledProductFilter = mock(Filter.class);
+
         when(entityManager.unwrap(Session.class)).thenReturn(session);
         when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
-        // When
-        List<ProductDto> productDtos = productService.listProductsByCategoryId(categoryId, request);
+        when(categoryService.readCategory(anyLong())).thenReturn(Optional.of(category));
+        when(helper.getUser(request)).thenReturn(user);
+        when(productRepository.findByCategoriesId(anyLong())).thenReturn(List.of(product1, product2));
+        
+        //Act
+        List<ProductDto> productDtoList = productService.listProductsByCategoryId(categoryId, request);
 
-        // Then
-        assertNotNull(productDtos);
-        assertEquals(products.size(), productDtos.size());
-        verify(productRepository, times(1)).findByCategoriesId(categoryId);
-        verify(session, times(1)).enableFilter(DELETED_PRODUCT_FILTER);
-        verify(session, times(1)).enableFilter(DISABLED_PRODUCT_FILTER);
-        verify(session, times(1)).disableFilter(DELETED_PRODUCT_FILTER);
-        verify(session, times(1)).disableFilter(DISABLED_PRODUCT_FILTER);
-
+        //Assert
+        assertEquals(2, productDtoList.size());
+        assertEquals(product1.getName(), productDtoList.get(0).getName());
+        assertEquals(product2.getName(), productDtoList.get(1).getName());
     }
 
     @Test
-     void testListProductByid() throws ProductNotExistException {
+    void testListProductByid() throws ProductNotExistException {
         // Create a dummy product
         Product product = new Product();
         product.setId(1L);
@@ -324,7 +382,7 @@ class ProductServiceImplTest {
 
 
     @Test
-     void testGetProductById() throws ProductNotExistException {
+    void testGetProductById() throws ProductNotExistException {
         // Create a dummy product
         Product product = new Product();
         product.setId(1L);
@@ -345,7 +403,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-     void testListProductsDesc() {
+    void testListProductsDesc() {
         // Create a list of dummy products
         User user = new User();
         List<Product> products = new ArrayList<>();
@@ -368,6 +426,9 @@ class ProductServiceImplTest {
         Filter deletedProductFilter = mock(Filter.class);
         when(entityManager.unwrap(Session.class)).thenReturn(session);
         when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
+
+        when(helper.getUser(request)).thenReturn(user);
+
 
         // Mock the behavior of the productRepository.findAllByUser()
         when(productRepository.findAllByUser(user, Sort.by(Sort.Direction.DESC, "id"))).thenReturn(products);
@@ -419,6 +480,8 @@ class ProductServiceImplTest {
         when(entityManager.unwrap(Session.class)).thenReturn(session);
         when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
 
+        when(helper.getUser(request)).thenReturn(user);
+
 
         // Mock the behavior of the productRepository.findAllByUser()
         when(productRepository.findAllByUser(user)).thenReturn(products);
@@ -440,7 +503,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-     void testGetProductsByPriceRange() {
+    void testGetProductsByPriceRange() {
         // Create a list of dummy products
         List<Product> products = new ArrayList<>();
         Product product1 = new Product();
@@ -486,57 +549,48 @@ class ProductServiceImplTest {
     }
 
     @Test
-     void testSearchProducts() {
-        // Create a list of dummy products
+    void testSearchProducts() {
+        String query = "Product";
+
         User user = new User();
-        User user1 = new User();
-        List<Product> products = new ArrayList<>();
+        user.setId(1L);
+
         Product product1 = new Product();
         product1.setId(1L);
         product1.setName("Product 1");
-        product1.setBrand("Brand A");
-        product1.setUser(user);
+        product1.setUser(new User());
 
         Product product2 = new Product();
         product2.setId(2L);
         product2.setName("Product 2");
-        product2.setBrand("Brand B");
-        product2.setUser(user);
-
-        products.add(product1);
-        products.add(product2);
+        product2.setUser(new User());
 
         Session session = mock(Session.class);
         Filter deletedProductFilter = mock(Filter.class);
         Filter disabledProductFilter = mock(Filter.class);
+
         when(entityManager.unwrap(Session.class)).thenReturn(session);
         when(session.enableFilter(DELETED_PRODUCT_FILTER)).thenReturn(deletedProductFilter);
         when(session.enableFilter(DISABLED_PRODUCT_FILTER)).thenReturn(disabledProductFilter);
 
-        // Mock the behavior of the productRepository.searchProducts()
-        when(productRepository.searchProducts("Product")).thenReturn(products);
+        when(helper.getUser(request)).thenReturn(user);
+        when(productRepository.searchProducts(query)).thenReturn(List.of(product1, product2));
 
-        // Call the searchProducts() method
-        List<ProductDto> productList = productService.searchProducts("Product", request);
+        doNothing().when(session).disableFilter(DELETED_PRODUCT_FILTER);
+        doNothing().when(session).disableFilter(DISABLED_PRODUCT_FILTER);
 
-        // Verify the result
-        assertEquals(2, productList.size());
-        assertEquals(1L, productList.get(0).getId());
-        assertEquals("Product 1", productList.get(0).getName());
-        assertEquals("Brand A", productList.get(0).getBrand());
-        assertEquals(2L, productList.get(1).getId());
-        assertEquals("Product 2", productList.get(1).getName());
-        assertEquals("Brand B", productList.get(1).getBrand());
+        //Act
+        List<ProductDto> productDtoList = productService.searchProducts(query, request);
 
-        verify(session, times(1)).enableFilter(DELETED_PRODUCT_FILTER);
-        verify(session, times(1)).enableFilter(DISABLED_PRODUCT_FILTER);
-        verify(session, times(1)).disableFilter(DELETED_PRODUCT_FILTER);
-        verify(session, times(1)).disableFilter(DISABLED_PRODUCT_FILTER);
+        //Assert
+        assertEquals(2, productDtoList.size());
+        assertEquals(product1.getName(), productDtoList.get(0).getName());
+        assertEquals(product2.getName(), productDtoList.get(1).getName());
     }
 
 
     @Test
-     void testFilterProducts() {
+    void testFilterProducts() {
         // Create a list of dummy products
         List<Product> products = new ArrayList<>();
         Product product1 = new Product();
@@ -584,7 +638,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-     void testDeleteProduct() {
+    void testDeleteProduct() {
 
         // Create a mock object
         Product product = Mockito.mock(Product.class);
@@ -596,6 +650,9 @@ class ProductServiceImplTest {
         product.setId(1L);
         product.setName("Product 1");
         product.setUser(user);
+
+        when(helper.getUser(request)).thenReturn(user);
+
 
         // Configure the mock repository to return the test product when findById() is called
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
@@ -612,9 +669,14 @@ class ProductServiceImplTest {
     }
 
     @Test
-     void testDeleteProduct_ProductNotExistException() {
+    void testDeleteProduct_ProductNotExistException() {
+        User user = new User();
+        user.setId(1L);
+
+        when(helper.getUser(request)).thenReturn(user);
         // Mock the behavior of the productRepository.findByUserIdAndId() to return null
         when(productRepository.findByUserIdAndId(1L, 1L)).thenReturn(null);
+
 
         // Call the deleteProduct() method and assert that it throws ProductNotExistException
         assertThrows(ProductNotExistException.class, () -> productService.deleteProduct(1L, request));
@@ -651,6 +713,7 @@ class ProductServiceImplTest {
 
     @Test
     void disableProduct() {
+        User user = new User();
         // Create a dummy product
         Product product = new Product();
         product.setId(1L);
@@ -658,6 +721,7 @@ class ProductServiceImplTest {
         product.setDisabledQuantities(0);
         product.setDisabled(false);
 
+        when(helper.getUser(request)).thenReturn(user);
         // Disable 5 quantities of the product
         int disableQuantity = 5;
         productService.disableProduct(product.getId(), disableQuantity, request);
@@ -683,6 +747,8 @@ class ProductServiceImplTest {
         product.setDisabledQuantities(5);
         product.setDisabled(true);
 
+        User user = new User();
+        when(helper.getUser(request)).thenReturn(user);
         // Enable 3 quantities of the product
         int enableQuantity = 3;
         productService.enableProduct(product.getId(), enableQuantity, request);

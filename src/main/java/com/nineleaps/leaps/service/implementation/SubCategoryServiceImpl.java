@@ -36,7 +36,7 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
         Category category = optionalCategory.get();
 
         // `Guard Statement` : Check if subcategory already exists by name in the same category
-        if (Optional.ofNullable(readSubCategory(subCategoryDto.getSubcategoryName(), category)).isEmpty()) {
+        if (Optional.ofNullable(readSubCategory(subCategoryDto.getSubcategoryName(), category)).isPresent()) {
             throw new CategoryNotExistException(CATEGORY_INVALID);
         }
         SubCategory subCategory = getSubCategoryFromDto(subCategoryDto, category);
@@ -64,7 +64,7 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
 
 
     // Helper method to create a SubCategory object from a SubCategoryDto and Category.
-    private SubCategory getSubCategoryFromDto(SubCategoryDto subCategoryDto, Category category) {
+    SubCategory getSubCategoryFromDto(SubCategoryDto subCategoryDto, Category category) {
         return new SubCategory(subCategoryDto, category);
     }
 
@@ -83,9 +83,6 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
     // List subcategories within a specific category.
     @Override
     public List<SubCategory> listSubCategory(Long categoryId) {
-        Optional<Category> optionalCategory = categoryService.readCategory(categoryId);
-        if (optionalCategory.isPresent())
-            throw new CategoryNotExistException(CATEGORY_INVALID);
         return categoryRepository.findByCategoryId(categoryId);
     }
 

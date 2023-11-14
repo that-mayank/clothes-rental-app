@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,34 +33,6 @@ class HelperTest {
         helper = new Helper(userRepository);
     }
 
-    @Test
-    void notNull_withNonNullObject() {
-        Object obj = new Object();
-        assertTrue(Helper.notNull(obj));
-    }
-
-    @Test
-    void notNull_withNullObject() {
-        Object obj = null;
-        assertFalse(Helper.notNull(obj));
-    }
-
-//    @Test
-//    void testGetUser() {
-//        User user = new User();
-//        user.setId(1L);
-//        user.setEmail("test@example.com");
-//        HttpServletRequest request = mock(HttpServletRequest.class);
-//        when(request.getHeader("Authorization")).thenReturn("Bearer Token"); // Replace with your actual access token
-//
-//        String email = "test@example.com";
-//        DecodedJWT decodedJWT = mock(DecodedJWT.class);
-//        when(decodedJWT.getSubject()).thenReturn(email);
-//        when(userRepository.findByEmail(email)).thenReturn(user); // Replace with appropriate User object
-//
-//
-//        assertEquals(email, user.getEmail());
-//    }
 
     @Test
     void getUserRepository() {

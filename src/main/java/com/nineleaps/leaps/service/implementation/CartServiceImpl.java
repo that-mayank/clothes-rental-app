@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -75,8 +74,7 @@ public class CartServiceImpl implements CartServiceInterface {
 
         // Calculate the total cost, considering rental durations and quantities
         for (CartItemDto cartItemDto : cartItems) {
-            long numberOfHours = 0;
-            numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
+            long numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
 
             if (numberOfHours == 0)
                 numberOfHours = 1; // Minimum 1-hour rental

@@ -22,6 +22,7 @@ import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.repository.OrderRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -46,6 +47,9 @@ class OrderServiceImplTest {
 
     @InjectMocks
     private OrderServiceImpl orderService;
+
+    @Mock
+    private Helper helper;
 
     @Mock
     private OrderRepository orderRepository;
@@ -89,6 +93,8 @@ class OrderServiceImplTest {
         List<CartItemDto> cartItemDtos = new ArrayList<>();
 
         cartDto.setCartItems(cartItemDtos);
+
+        when(helper.getUser(request)).thenReturn(user);
 
         when(cartService.listCartItems(request)).thenReturn(cartDto);
 
@@ -152,6 +158,8 @@ class OrderServiceImplTest {
         cartItemDtos.add(cartItemDto);
 
         cartDto.setCartItems(cartItemDtos);
+
+        when(helper.getUser(request)).thenReturn(user);
 
         when(cartService.listCartItems(request)).thenReturn(cartDto);
 
@@ -235,6 +243,8 @@ class OrderServiceImplTest {
 
         orders.add(order2);
 
+        when(helper.getUser(request)).thenReturn(user);
+
         when(orderRepository.findByUserOrderByCreateDateDesc(user)).thenReturn(orders);
 
         // Act
@@ -268,6 +278,8 @@ class OrderServiceImplTest {
 
         order.setUser(user);
 
+        when(helper.getUser(request)).thenReturn(user);
+
         when(orderRepository.findByIdAndUserId(orderId, user.getId())).thenReturn(Optional.of(order));
 
         // Act
@@ -291,6 +303,8 @@ class OrderServiceImplTest {
 
         Long orderId = 1L;
 
+        when(helper.getUser(request)).thenReturn(user);
+
         when(orderRepository.findByIdAndUserId(orderId, user.getId())).thenReturn(Optional.empty());
 
         // Act and Assert
@@ -304,9 +318,16 @@ class OrderServiceImplTest {
 
         // Arrange
 
+        User user = new User();
+        user.setId(1L);
+
         OrderItem orderItem = new OrderItem();
 
+        orderItem.setOwnerId(user.getId());
+
         String status = "ORDER_RETURNED";
+
+        when(helper.getUser(request)).thenReturn(user);
 
         // Act
 
@@ -472,6 +493,8 @@ class OrderServiceImplTest {
 
         // Mock the orderRepository.findAll() to return the orders
 
+        when(helper.getUser(request)).thenReturn(user);
+
         when(orderRepository.findAll()).thenReturn(orders);
 
         // Act
@@ -509,9 +532,16 @@ class OrderServiceImplTest {
     @Test
     void testOrderStatusOrderReturned() {
         // Create a mock OrderItem and Product
+        User user = new User();
+        user.setId(1L);
+        Order order = new Order();
+        order.setId(1L);
+        order.setUser(user);
         OrderItem orderItem = new OrderItem();
         orderItem.setId(1L);
         orderItem.setQuantity(2); // Example quantity
+        orderItem.setOwnerId(user.getId());
+        orderItem.setOrder(order);
         Product product = new Product();
         product.setAvailableQuantities(5); // Example available quantities
         product.setRentedQuantities(3); // Example rented quantities
@@ -523,6 +553,7 @@ class OrderServiceImplTest {
         // Mock the behavior of the repositories
         when(orderItemRepository.save(orderItem)).thenReturn(orderItem);
         when(productRepository.save(product)).thenReturn(product);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method
         orderService.orderStatus(request,orderItem.getId(), status);
@@ -609,6 +640,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderRepository.findAll()
         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonthBwDates(request, startDate, endDate);
@@ -641,6 +673,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of the repository
         when(orderRepository.findAll()).thenReturn(Collections.singletonList(order));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = orderService.getOrderedItemsByMonthBwDates(request, startDate, endDate);
@@ -697,6 +730,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderRepository.findAll()
         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1,order2));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonth(request);
@@ -767,6 +801,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderRepository.findAll()
         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsBySubCategories(request);
@@ -825,6 +860,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderRepository.findAll()
         when(orderRepository.findAll()).thenReturn(List.of(order1));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsByCategories(request);
@@ -859,6 +895,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderItemRepository.findByOwnerId
         when(orderItemRepository.findByOwnerId(pageable, user.getId())).thenReturn(orderItemPage);
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         List<ProductDto> productDtoList = orderService.getRentedOutProducts(request, 0, 10);
@@ -890,6 +927,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderItemRepository.findById
         when(orderItemRepository.findById(100L)).thenReturn(Optional.of(orderItem));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         OrderItem resultOrderItem = orderService.getOrderItem(100L, user);
@@ -936,6 +974,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderItemRepository.findAll()
         when(orderItemRepository.findAll()).thenReturn(List.of(orderItem1));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         orderService.getRentalPeriods();
@@ -1027,6 +1066,7 @@ class OrderServiceImplTest {
 
         // Mock the behavior of orderItemRepository.findAll()
         when(orderItemRepository.findAll()).thenReturn(Arrays.asList(orderItem1, orderItem2, orderItem3));
+        when(helper.getUser(request)).thenReturn(user);
 
         // Call the method to be tested
         List<OrderItemDto> result = orderService.getOrdersItemByStatus("SHIPPED", request);

@@ -2,29 +2,42 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.dto.product.ProductDto;
 import com.nineleaps.leaps.exceptions.CustomException;
+import com.nineleaps.leaps.exceptions.ProductNotExistException;
+import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.Wishlist;
 import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.WishlistRepository;
+import com.nineleaps.leaps.service.ProductServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 class WishlistServiceImplTest {
 
     @Mock
     private WishlistRepository wishlistRepository;
 
     @Mock
-    private HttpServletRequest request;
+    private Helper helper;
+
+    @Mock
+    private ProductServiceInterface productService;
 
     @InjectMocks
     private WishlistServiceImpl wishlistService;
@@ -35,71 +48,94 @@ class WishlistServiceImplTest {
     }
 
     @Test
-    void createWishlist() {
-        // Prepare test data
+    void createWishlist_ProductExistsAndNotInWishlist_ShouldCreateWishlistItem() {
+        // Arrange
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User();
         Long productId = 1L;
-        Wishlist wishlist = new Wishlist();
+        Product product = new Product();
+        product.setId(productId);
 
-        // Perform createWishlist method
-        wishlistService.createWishlist(productId, request);
+        when(helper.getUser(request)).thenReturn(user);
+        when(productService.readProduct(productId)).thenReturn(Optional.of(product));
+        when(wishlistRepository.findAllByUserIdOrderByCreateDateDesc(user.getId())).thenReturn(new ArrayList<>());
 
-        // Verify that the save method is called on the wishlistRepository
-        verify(wishlistRepository).save(wishlist);
+        // Act
+        assertDoesNotThrow(() -> wishlistService.createWishlist(productId, request));
+
+        // Assert
+        verify(wishlistRepository, times(1)).save(any());
     }
 
     @Test
-    void readWishlist() {
-    // Prepare test data
-        Product product1 = new Product();
-        Product product2 = new Product();
-        Long userId = 1L;
-        ProductDto wishlist1 = new ProductDto(product1);
-        ProductDto wishlist2 = new ProductDto(product2);
+    void createWishlist_ProductDoesNotExist_ShouldThrowProductNotExistException() {
+        // Arrange
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        Long productId = 1L;
+
+        when(productService.readProduct(productId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ProductNotExistException.class, () -> wishlistService.createWishlist(productId, request));
+
+        // Assert
+        verify(wishlistRepository, never()).save(any());
+    }
+
+    @Test
+    void readWishlist_ShouldReturnListOfProductsInWishlist() {
+        // Arrange
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User();
         List<Wishlist> wishlists = new ArrayList<>();
-        wishlists.add(new Wishlist());
-        wishlists.add(new Wishlist());
+        Product product = new Product();
+        product.setId(1L);
+        wishlists.add(new Wishlist(product, user));
 
-    // Mock the behavior of wishlistRepository
-        when(wishlistRepository.findAllByUserIdOrderByCreateDateDesc(userId)).thenReturn(wishlists);
+        when(helper.getUser(request)).thenReturn(user);
+        when(wishlistRepository.findAllByUserIdOrderByCreateDateDesc(user.getId())).thenReturn(wishlists);
 
-    // Perform readWishlist method
+        // Act
         List<ProductDto> result = wishlistService.readWishlist(request);
 
-    // Verify that the correct list of wishlists, excluding the deleted product, is returned
-        assertEquals(2, result.size());
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
     }
 
     @Test
-    void removeFromWishlist_itemFound() throws CustomException {
-        // Prepare test data
-        Long userId = 1L;
+    void removeFromWishlist_WishlistItemExists_ShouldRemoveFromWishlist() {
+        // Arrange
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User();
         Long productId = 1L;
-        Wishlist wishlist = new Wishlist();
+        Wishlist wishlist = new Wishlist(new Product(), user);
         wishlist.setId(1L);
 
-        // Mock the behavior of wishlistRepository
-        when(wishlistRepository.findByUserIdAndProductId(userId, productId)).thenReturn(wishlist);
+        when(helper.getUser(request)).thenReturn(user);
+        when(wishlistRepository.findByUserIdAndProductId(user.getId(), productId)).thenReturn(wishlist);
 
-        // Perform removeFromWishlist method
+        // Act
         assertDoesNotThrow(() -> wishlistService.removeFromWishlist(request, productId));
 
-        // Verify that the deleteById method is called on the wishlistRepository with the correct ID
-        verify(wishlistRepository).deleteById(wishlist.getId());
+        // Assert
+        verify(wishlistRepository, times(1)).deleteById(wishlist.getId());
     }
 
     @Test
-    void removeFromWishlist_itemNotFound() {
-        // Prepare test data
-        Long userId = 1L;
+    void removeFromWishlist_WishlistItemDoesNotExist_ShouldThrowCustomException() {
+        // Arrange
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User();
         Long productId = 1L;
 
-        // Mock the behavior of wishlistRepository
-        when(wishlistRepository.findByUserIdAndProductId(userId, productId)).thenReturn(null);
+        when(helper.getUser(request)).thenReturn(user);
+        when(wishlistRepository.findByUserIdAndProductId(user.getId(), productId)).thenReturn(null);
 
-        // Perform removeFromWishlist method and assert that it throws CustomException
+        // Act & Assert
         assertThrows(CustomException.class, () -> wishlistService.removeFromWishlist(request, productId));
 
-        // Verify that the deleteById method is not called on the wishlistRepository
+        // Assert
         verify(wishlistRepository, never()).deleteById(anyLong());
     }
 }

@@ -10,7 +10,6 @@ import com.nineleaps.leaps.exceptions.CustomException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.UserRepository;
 import com.nineleaps.leaps.service.UserServiceInterface;
-import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

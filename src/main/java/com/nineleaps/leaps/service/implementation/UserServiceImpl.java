@@ -82,13 +82,13 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
     @Override
     public ResponseDto signUp(SignupDto signupDto) throws CustomException {
         // Check if the provided email has already been registered.
-        if (Optional.ofNullable(userRepository.findByEmail(signupDto.getEmail())).isEmpty()) {
+        if (Optional.ofNullable(userRepository.findByEmail(signupDto.getEmail())).isPresent()) {
             // If email is already registered, throw a custom exception.
             throw new CustomException("Email already associated with another user");
         }
 
         // Check if the provided phone number is already registered.
-        if (Optional.ofNullable(userRepository.findByPhoneNumber(signupDto.getPhoneNumber())).isEmpty()) {
+        if (Optional.ofNullable(userRepository.findByPhoneNumber(signupDto.getPhoneNumber())).isPresent()) {
             throw new CustomException("Phone number already associated with another user");
         }
 

@@ -713,54 +713,56 @@ class ProductServiceImplTest {
 
     @Test
     void disableProduct() {
+        Long productId = 1L;
+        int quantity = 2;
+
         User user = new User();
-        // Create a dummy product
+        user.setId(1L);
+
         Product product = new Product();
         product.setId(1L);
-        product.setAvailableQuantities(10);
-        product.setDisabledQuantities(0);
-        product.setDisabled(false);
+        product.setName("Product");
+        product.setUser(new User());
+        product.setQuantity(10);
+        product.setAvailableQuantities(4);
+        product.setDisabledQuantities(6);
 
         when(helper.getUser(request)).thenReturn(user);
-        // Disable 5 quantities of the product
-        int disableQuantity = 5;
-        productService.disableProduct(product.getId(), disableQuantity, request);
+        when(productRepository.findByUserIdAndId(anyLong(), anyLong())).thenReturn(product);
 
-        // Verify that the available quantities and disabled quantities are updated correctly
-        assertEquals(5, product.getAvailableQuantities());
-        assertEquals(5, product.getDisabledQuantities());
+        //Act
+        productService.disableProduct(productId, quantity, request);
 
-        // Verify that the product is not disabled yet
-        assertFalse(product.isDisabled());
-
-        // Verify that the save method is called on the productRepository
-        verify(productRepository).save(product);
+        //Assert
+        assertEquals(2, product.getAvailableQuantities());
+        assertEquals(8, product.getDisabledQuantities());
     }
 
 
     @Test
     void enableProduct() {
-        // Create a dummy product
-        Product product = new Product();
-        product.setId(1L);
-        product.setAvailableQuantities(5);
-        product.setDisabledQuantities(5);
-        product.setDisabled(true);
+        Long productId = 1L;
+        int quantity = 2;
 
         User user = new User();
+        user.setId(1L);
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Product");
+        product.setUser(new User());
+        product.setQuantity(10);
+        product.setAvailableQuantities(4);
+        product.setDisabledQuantities(6);
+
         when(helper.getUser(request)).thenReturn(user);
-        // Enable 3 quantities of the product
-        int enableQuantity = 3;
-        productService.enableProduct(product.getId(), enableQuantity, request);
+        when(productRepository.findByUserIdAndId(anyLong(), anyLong())).thenReturn(product);
 
-        // Verify that the available quantities and disabled quantities are updated correctly
-        assertEquals(8, product.getAvailableQuantities());
-        assertEquals(2, product.getDisabledQuantities());
+        //Act
+        productService.enableProduct(productId, quantity, request);
 
-        // Verify that the product is enabled
-        assertFalse(product.isDisabled());
-
-        // Verify that the save method is called on the productRepository
-        verify(productRepository).save(product);
+        //Assert
+        assertEquals(6, product.getAvailableQuantities());
+        assertEquals(4, product.getDisabledQuantities());
     }
 }

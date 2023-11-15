@@ -1,531 +1,25 @@
-2023-11-14 13:45:35.912  INFO 25171 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 25171 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 13:45:35.914  INFO 25171 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 13:45:38.531  INFO 25171 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 13:45:39.792 ERROR 25171 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
-
-java.sql.SQLException: Access denied for user 'nineleaps'@'localhost' (using password: NO)
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:129) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:824) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:444) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:198) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:121) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-4.0.3.jar:na]
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:181) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:272) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:246) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:295) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:252) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1156) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:910) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:731) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:136) ~[spring-boot-test-2.7.10.jar:2.7.10]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:141) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:90) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:124) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:190) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:132) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:248) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:138) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$8(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:368) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$9(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1625) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:362) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:283) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:282) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:272) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:271) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:102) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:101) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:66) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:107) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:88) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:54) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:67) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:52) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:53) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
-	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-
-2023-11-14 13:45:39.900 ERROR 25171 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
-2023-11-14 13:50:39.192  INFO 25478 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 25478 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 13:50:39.195  INFO 25478 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 13:50:41.514  INFO 25478 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 13:50:42.762 ERROR 25478 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
-
-java.sql.SQLException: Access denied for user 'nineleaps'@'localhost' (using password: NO)
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:129) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:824) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:444) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:198) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:121) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-4.0.3.jar:na]
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:181) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:272) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:246) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:295) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:252) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1156) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:910) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:731) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:136) ~[spring-boot-test-2.7.10.jar:2.7.10]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:141) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:90) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:124) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:190) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:132) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:248) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:138) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$8(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:368) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$9(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1625) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:362) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:283) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:282) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:272) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:271) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:102) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:101) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:66) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:107) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:88) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:54) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:67) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:52) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:53) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
-	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-
-2023-11-14 13:50:42.841 ERROR 25478 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
-2023-11-14 17:55:59.940  INFO 39980 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 39980 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 17:55:59.942  INFO 39980 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 17:56:01.980  INFO 39980 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 17:56:03.126 ERROR 39980 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
-
-java.sql.SQLException: Access denied for user 'nineleaps'@'localhost' (using password: NO)
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:129) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:824) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:444) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:198) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:121) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-4.0.3.jar:na]
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:181) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:272) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:246) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:295) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:252) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1156) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:910) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:731) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:136) ~[spring-boot-test-2.7.10.jar:2.7.10]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:141) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:90) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:124) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:190) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:132) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:248) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:138) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$8(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:368) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$9(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1625) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:362) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:283) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:282) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:272) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:271) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:102) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:101) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:66) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:107) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:88) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:54) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:67) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:52) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:53) ~[junit-platform-launcher-1.8.2.jar:1.8.2]
-	at com.intellij.junit5.JUnit5IdeaTestRunner.startRunnerWithArgs(JUnit5IdeaTestRunner.java:57) ~[junit5-rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38) ~[junit-rt.jar:na]
-	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11) ~[idea_rt.jar:na]
-	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:232) ~[junit-rt.jar:na]
-	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:55) ~[junit-rt.jar:na]
-
-2023-11-14 17:56:03.199 ERROR 39980 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
-2023-11-14 17:58:40.284  INFO 41940 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 41940 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 17:58:40.285  INFO 41940 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 17:58:42.042  INFO 41940 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 17:58:43.238 ERROR 41940 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
-
-java.sql.SQLException: Access denied for user 'nineleaps'@'localhost' (using password: NO)
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:129) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:824) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:444) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:198) ~[mysql-connector-j-8.0.32.jar:8.0.32]
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:121) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115) ~[HikariCP-4.0.3.jar:na]
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-4.0.3.jar:na]
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:181) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:272) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:246) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:295) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:252) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:223) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.15.Final.jar:5.6.15.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1156) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:910) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.26.jar:5.3.26]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:731) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) ~[spring-boot-2.7.10.jar:2.7.10]
-	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:136) ~[spring-boot-test-2.7.10.jar:2.7.10]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:141) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:90) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:124) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:190) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:132) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:248) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:138) ~[spring-test-5.3.26.jar:5.3.26]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$8(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:368) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$9(ClassBasedTestDescriptor.java:363) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179) ~[na:na]
-	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1625) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509) ~[na:na]
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
-	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735) ~[na:na]
-	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734) ~[na:na]
-	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:362) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:283) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:282) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:272) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at java.base/java.util.Optional.orElseGet(Optional.java:364) ~[na:na]
-	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:271) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:102) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:101) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:66) ~[junit-jupiter-engine-5.8.2.jar:5.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54) ~[junit-platform-engine-1.8.2.jar:1.8.2]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:220) ~[junit-platform-launcher-1.3.1.jar:1.3.1]
-	at org.junit.platform.launcher.core.DefaultLauncher.lambda$execute$6(DefaultLauncher.java:188) ~[junit-platform-launcher-1.3.1.jar:1.3.1]
-	at org.junit.platform.launcher.core.DefaultLauncher.withInterceptedStreams(DefaultLauncher.java:202) ~[junit-platform-launcher-1.3.1.jar:1.3.1]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:181) ~[junit-platform-launcher-1.3.1.jar:1.3.1]
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:128) ~[junit-platform-launcher-1.3.1.jar:1.3.1]
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:150) ~[surefire-junit-platform-2.22.2.jar:2.22.2]
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:124) ~[surefire-junit-platform-2.22.2.jar:2.22.2]
-	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:384) ~[surefire-booter-2.22.2.jar:2.22.2]
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:345) ~[surefire-booter-2.22.2.jar:2.22.2]
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:126) ~[surefire-booter-2.22.2.jar:2.22.2]
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:418) ~[surefire-booter-2.22.2.jar:2.22.2]
-
-2023-11-14 17:59:55.234  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 42239 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 17:59:55.235  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
-2023-11-14 17:59:56.205  INFO 42239 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2023-11-14 17:59:56.206  INFO 42239 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
-2023-11-14 17:59:56.236  INFO 42239 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2023-11-14 17:59:56.461  INFO 42239 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 17:59:56.532  INFO 42239 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-11-14 17:59:57.701  INFO 42239 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
-2023-11-14 17:59:58.711  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 3.805 seconds (JVM running for 4.281)
-2023-11-14 18:00:09.291  INFO 42239 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2023-11-14 18:00:44.074  INFO 42239 --- [Thread-5] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
-2023-11-14 18:00:44.075  INFO 42239 --- [Thread-5] o.a.c.c.C.[Tomcat].[localhost].[/]       : Destroying Spring FrameworkServlet 'dispatcherServlet'
-2023-11-14 18:00:44.077  WARN 42239 --- [Thread-5] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [SentryHostnameCache-0] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2023-11-15 13:07:14.250  INFO 13126 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13126 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:07:14.259  INFO 13126 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 13:07:16.074  INFO 13126 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 13:07:16.236  INFO 13126 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 13:07:18.013  INFO 13126 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 13:07:19.775  INFO 13126 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.855 seconds (JVM running for 21.26)
+2023-11-15 13:07:19.864 ERROR 13126 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
+2023-11-15 13:07:19.945  INFO 13126 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 13:07:19.950  INFO 13126 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 13:07:50.568  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:07:50.570  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:07:51.733  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:07:51.734  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:07:51.768  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:07:52.014  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 13:07:52.077  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 13:07:53.180  INFO 13332 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 13:07:54.104  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 3.767 seconds (JVM running for 4.157)
+2023-11-15 13:07:57.995  INFO 13332 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-11-15 13:08:32.440  INFO 13332 --- [Thread-5] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:08:32.444  INFO 13332 --- [Thread-5] o.a.c.c.C.[Tomcat].[localhost].[/]       : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2023-11-15 13:08:32.451  WARN 13332 --- [Thread-5] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [SentryHostnameCache-0] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
  java.base/jdk.internal.misc.Unsafe.park(Native Method)
  java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
  java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
@@ -537,7 +31,7 @@ java.sql.SQLException: Access denied for user 'nineleaps'@'localhost' (using pas
  java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
  java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
  java.base/java.lang.Thread.run(Thread.java:1623)
-2023-11-14 18:00:44.077  WARN 42239 --- [Thread-5] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [SentryAsyncConnection-0] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2023-11-15 13:08:32.454  WARN 13332 --- [Thread-5] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [SentryAsyncConnection-0] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
  java.base/jdk.internal.misc.Unsafe.park(Native Method)
  java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
  java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(AbstractQueuedSynchronizer.java:519)
@@ -549,61 +43,121 @@ java.sql.SQLException: Access denied for user 'nineleaps'@'localhost' (using pas
  java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
  java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
  java.base/java.lang.Thread.run(Thread.java:1623)
-2023-11-14 18:00:44.090  INFO 42239 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2023-11-14 18:00:44.097  INFO 42239 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2023-11-14 18:00:44.185  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 42239 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 18:00:44.186  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
-2023-11-14 18:00:44.448  INFO 42239 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2023-11-14 18:00:44.448  INFO 42239 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
-2023-11-14 18:00:44.455  INFO 42239 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2023-11-14 18:00:44.523  INFO 42239 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
-2023-11-14 18:00:44.525  INFO 42239 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
-2023-11-14 18:00:44.760  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 0.605 seconds (JVM running for 50.33)
-2023-11-14 18:00:46.533  INFO 42239 --- [Thread-8] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
-2023-11-14 18:00:46.538  INFO 42239 --- [Thread-8] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
-2023-11-14 18:00:46.539  INFO 42239 --- [Thread-8] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
-2023-11-14 18:00:46.626  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 42239 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 18:00:46.626  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
-2023-11-14 18:00:47.018  INFO 42239 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2023-11-14 18:00:47.018  INFO 42239 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
-2023-11-14 18:00:47.026  INFO 42239 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2023-11-14 18:00:47.074  INFO 42239 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
-2023-11-14 18:00:47.077  INFO 42239 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
-2023-11-14 18:00:48.785  INFO 42239 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 2.187 seconds (JVM running for 54.355)
-2023-11-14 18:01:03.047  INFO 43809 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 43809 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 18:01:03.050  INFO 43809 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 18:01:06.363  INFO 43809 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 18:01:06.572  INFO 43809 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-11-14 18:01:09.089  INFO 43809 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
-2023-11-14 18:01:11.717  INFO 43809 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 9.04 seconds (JVM running for 24.772)
-2023-11-14 18:01:11.908  INFO 43809 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2023-11-14 18:01:11.915  INFO 43809 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2023-11-14 18:02:28.687  INFO 44122 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 44122 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 18:02:28.696  INFO 44122 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 18:02:30.598  INFO 44122 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 18:02:30.767  INFO 44122 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-11-14 18:02:33.323  INFO 44122 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
-2023-11-14 18:02:36.065  INFO 44122 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 7.74 seconds (JVM running for 22.034)
-2023-11-14 18:02:36.175 ERROR 44122 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
-2023-11-14 18:02:36.311  INFO 44122 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2023-11-14 18:02:36.319  INFO 44122 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2023-11-14 18:03:09.530  INFO 44316 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 44316 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 18:03:09.531  INFO 44316 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 18:03:11.316  INFO 44316 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 18:03:11.473  INFO 44316 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-11-14 18:03:14.150  INFO 44316 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
-2023-11-14 18:03:17.505  INFO 44316 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 8.361 seconds (JVM running for 23.934)
-2023-11-14 18:03:17.620 ERROR 44316 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
-2023-11-14 18:03:17.792  INFO 44316 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2023-11-14 18:03:17.799  INFO 44316 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2023-11-14 18:25:06.464  INFO 47856 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 47856 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
-2023-11-14 18:25:06.464  INFO 47856 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
-2023-11-14 18:25:08.093  INFO 47856 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-14 18:25:08.252  INFO 47856 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-11-14 18:25:09.924  INFO 47856 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
-2023-11-14 18:25:12.320  INFO 47856 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 6.118 seconds (JVM running for 22.243)
-2023-11-14 18:25:12.427 ERROR 47856 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
-2023-11-14 18:25:12.549  INFO 47856 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2023-11-14 18:25:12.558  INFO 47856 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2023-11-14 18:25:51.752  INFO 42239 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
-2023-11-14 18:25:51.754  INFO 42239 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+2023-11-15 13:08:32.507  INFO 13332 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 13:08:32.537  INFO 13332 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 13:08:32.817  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:08:32.819  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:08:33.980  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:08:33.981  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:08:33.998  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:08:34.085  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2023-11-15 13:08:34.101  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2023-11-15 13:08:34.474  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 1.759 seconds (JVM running for 44.527)
+2023-11-15 13:08:37.234  INFO 13332 --- [Thread-8] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:08:37.245  INFO 13332 --- [Thread-8] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2023-11-15 13:08:37.248  INFO 13332 --- [Thread-8] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2023-11-15 13:08:37.374  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:08:37.374  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:08:37.986  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:08:37.986  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:08:38.000  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:08:38.086  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2023-11-15 13:08:38.093  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2023-11-15 13:08:39.788  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 2.451 seconds (JVM running for 49.841)
+2023-11-15 13:08:53.410  INFO 14658 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 14658 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:08:53.411  INFO 14658 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 13:08:55.097  INFO 14658 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 13:08:55.233  INFO 14658 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 13:08:56.957  INFO 14658 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 13:08:58.677  INFO 14658 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.547 seconds (JVM running for 19.435)
+2023-11-15 13:08:58.810  INFO 14658 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 13:08:58.815  INFO 14658 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 13:11:33.184  INFO 13332 --- [Thread-13] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:11:33.191  INFO 13332 --- [Thread-13] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2023-11-15 13:11:33.192  INFO 13332 --- [Thread-13] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+2023-11-15 13:11:33.262  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:11:33.262  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:11:33.590  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:11:33.590  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:11:33.598  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:11:33.650  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2023-11-15 13:11:33.653  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2023-11-15 13:11:34.973  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 1.736 seconds (JVM running for 225.026)
+2023-11-15 13:11:46.160  INFO 13332 --- [Thread-18] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:11:46.168  INFO 13332 --- [Thread-18] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2023-11-15 13:11:46.169  INFO 13332 --- [Thread-18] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+2023-11-15 13:11:46.244  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:11:46.244  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:11:46.541  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:11:46.541  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:11:46.552  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:11:46.582  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2023-11-15 13:11:46.585  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2023-11-15 13:11:46.798  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 0.577 seconds (JVM running for 236.851)
+2023-11-15 13:11:48.175  INFO 13332 --- [Thread-23] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:11:48.180  INFO 13332 --- [Thread-23] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown initiated...
+2023-11-15 13:11:48.182  INFO 13332 --- [Thread-23] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown completed.
+2023-11-15 13:11:48.259  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:11:48.259  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:11:48.644  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:11:48.644  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:11:48.655  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:11:48.740  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Starting...
+2023-11-15 13:11:48.744  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Start completed.
+2023-11-15 13:11:50.096  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 1.861 seconds (JVM running for 240.149)
+2023-11-15 13:11:59.420  INFO 13332 --- [Thread-28] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:11:59.427  INFO 13332 --- [Thread-28] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Shutdown initiated...
+2023-11-15 13:11:59.429  INFO 13332 --- [Thread-28] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Shutdown completed.
+2023-11-15 13:11:59.512  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:11:59.512  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:11:59.751  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:11:59.751  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:11:59.759  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:11:59.800  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Starting...
+2023-11-15 13:11:59.804  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Start completed.
+2023-11-15 13:12:00.088  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 0.602 seconds (JVM running for 250.141)
+2023-11-15 13:12:01.849  INFO 13332 --- [Thread-33] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 13:12:01.853  INFO 13332 --- [Thread-33] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown initiated...
+2023-11-15 13:12:01.855  INFO 13332 --- [Thread-33] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown completed.
+2023-11-15 13:12:01.913  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 13332 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:12:01.913  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:12:02.299  INFO 13332 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:12:02.299  INFO 13332 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:12:02.310  INFO 13332 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:12:02.406  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Starting...
+2023-11-15 13:12:02.411  INFO 13332 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Start completed.
+2023-11-15 13:12:03.742  INFO 13332 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 1.843 seconds (JVM running for 253.795)
+2023-11-15 13:12:16.185  INFO 15687 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 15687 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 13:12:16.186  INFO 15687 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 13:12:17.766  INFO 15687 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 13:12:17.909  INFO 15687 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 13:12:19.639  INFO 15687 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 13:12:21.302  INFO 15687 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.375 seconds (JVM running for 18.646)
+2023-11-15 13:12:21.417  INFO 15687 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 13:12:21.422  INFO 15687 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 15:56:41.752  INFO 13332 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Shutdown initiated...
+2023-11-15 15:56:41.754  INFO 13332 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Shutdown completed.
+2023-11-15 17:34:40.815  INFO 28609 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 28609 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 17:34:40.816  INFO 28609 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 17:34:42.503  INFO 28609 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 17:34:42.645  INFO 28609 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 17:34:44.367  INFO 28609 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 17:34:46.075  INFO 28609 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.521 seconds (JVM running for 20.995)
+2023-11-15 17:34:46.209  INFO 28609 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 17:34:46.214  INFO 28609 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 17:43:39.537  INFO 29647 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 29647 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 17:43:39.538  INFO 29647 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 17:43:41.089  INFO 29647 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 17:43:41.220  INFO 29647 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 17:43:42.824  INFO 29647 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 17:43:44.494  INFO 29647 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.209 seconds (JVM running for 20.686)
+2023-11-15 17:43:44.613  INFO 29647 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 17:43:44.620  INFO 29647 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 17:49:21.596  INFO 30620 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 30620 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 17:49:21.598  INFO 30620 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 17:49:23.628  INFO 30620 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 17:49:23.800  INFO 30620 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 17:49:25.596  INFO 30620 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 17:49:27.896  INFO 30620 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 6.665 seconds (JVM running for 20.099)
+2023-11-15 17:49:28.012  INFO 30620 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 17:49:28.017  INFO 30620 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

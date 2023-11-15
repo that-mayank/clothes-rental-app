@@ -30,6 +30,9 @@ class AddressServiceImplTest {
     @Mock
     private Helper helper;
 
+    @Mock
+    private HttpServletRequest request;
+
     @InjectMocks
     private AddressServiceImpl addressService;
 
@@ -84,6 +87,7 @@ class AddressServiceImplTest {
         // Arrange
         Long addressId = 1L;
         Address expectedAddress = new Address();
+
         when(addressRepository.findById(addressId)).thenReturn(Optional.of(expectedAddress));
 
         // Act
@@ -94,7 +98,27 @@ class AddressServiceImplTest {
         assertEquals(expectedAddress, result.get());
     }
 
-    // Add more test cases for readAddress, updateAddress, and deleteAddress methods.
+    @Test
+    void readAddress_Success() {
+        //Arrange
+        Long addressId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+
+        Address address = new Address();
+        address.setId(1L);
+        address.setUser(user);
+
+        when(helper.getUser(request)).thenReturn(user);
+        when(addressRepository.findAllByUser(any(User.class))).thenReturn(List.of(address));
+
+        //Act
+        Address actualAddress = addressService.readAddress(request, addressId);
+
+        //Assert
+        assertEquals(address.getId(), actualAddress.getId());
+    }
 
     @Test
     void updateAddress_AddressDoesNotBelongToCurrentUser_ShouldThrowException() {
@@ -110,6 +134,30 @@ class AddressServiceImplTest {
     }
 
     @Test
+    void updateAddress_Success() {
+        //Arrange
+        Long addressId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+
+        Address address = new Address();
+        address.setId(1L);
+        address.setUser(user);
+
+        AddressDto addressDto = new AddressDto();
+
+        when(helper.getUser(request)).thenReturn(user);
+        when(addressRepository.findAllByUser(any(User.class))).thenReturn(List.of(address));
+
+        //Act
+        addressService.updateAddress(addressDto, addressId, request);
+
+        //Assert
+        verify(addressRepository).save(any(Address.class));
+    }
+
+    @Test
     void deleteAddress_AddressDoesNotBelongToCurrentUser_ShouldThrowException() {
         // Arrange
         Long addressId = 1L;
@@ -120,5 +168,27 @@ class AddressServiceImplTest {
         // Act & Assert
         assertThrows(AddressOwnershipException.class, () ->
                 addressService.deleteAddress(request, addressId));
+    }
+
+    @Test
+    void deleteAddress_Success() {
+        //Arrange
+        Long addressId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+
+        Address address = new Address();
+        address.setId(1L);
+        address.setUser(user);
+
+        when(helper.getUser(any(HttpServletRequest.class))).thenReturn(user);
+        when(addressRepository.findAllByUser(any(User.class))).thenReturn(List.of(address));
+
+        //Act
+        addressService.deleteAddress(request, addressId);
+
+        //Assert
+        verify(addressRepository).deleteById(anyLong());
     }
 }

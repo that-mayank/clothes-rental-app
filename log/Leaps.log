@@ -161,3 +161,132 @@
 2023-11-15 17:49:27.896  INFO 30620 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 6.665 seconds (JVM running for 20.099)
 2023-11-15 17:49:28.012  INFO 30620 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2023-11-15 17:49:28.017  INFO 30620 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 17:55:04.572  INFO 31097 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 31097 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 17:55:04.573  INFO 31097 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 17:55:05.488  INFO 31097 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 17:55:05.488  INFO 31097 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 17:55:05.521  INFO 31097 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 17:55:05.731  INFO 31097 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 17:55:05.795  INFO 31097 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 17:55:06.841  INFO 31097 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 17:55:07.740  INFO 31097 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 3.367 seconds (JVM running for 3.78)
+2023-11-15 17:55:10.801  INFO 31097 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-11-15 17:55:16.694  INFO 31097 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 17:55:16.697  INFO 31097 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:08:42.864  INFO 31751 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 31751 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:08:42.865  INFO 31751 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 18:08:44.792  INFO 31751 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 18:08:44.941  INFO 31751 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 18:08:46.906  INFO 31751 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 18:08:47.396  INFO 31751 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 18:08:47.402  INFO 31751 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:08:47.560 ERROR 31751 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
+2023-11-15 18:09:22.962  INFO 31935 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 31935 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:09:22.963  INFO 31935 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 18:09:25.045  INFO 31935 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 18:09:25.195  INFO 31935 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 18:09:26.932  INFO 31935 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 18:09:27.270  INFO 31935 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 18:09:27.281  INFO 31935 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:09:51.470  INFO 32145 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 32145 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:09:51.471  INFO 32145 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 18:09:52.349  INFO 32145 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 18:09:52.349  INFO 32145 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 18:09:52.379  INFO 32145 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 18:09:52.585  INFO 32145 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 18:09:52.648  INFO 32145 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 18:09:53.691  INFO 32145 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 18:09:53.833  INFO 32145 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 18:09:53.836  INFO 32145 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:09:53.837  INFO 32145 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 18:11:04.938  INFO 32334 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 32334 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:11:04.938  INFO 32334 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 18:11:05.807  INFO 32334 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 18:11:05.807  INFO 32334 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 18:11:05.837  INFO 32334 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 18:11:06.049  INFO 32334 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 18:11:06.109  INFO 32334 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 18:11:07.133  INFO 32334 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 18:11:07.277  INFO 32334 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 18:11:07.280  INFO 32334 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:11:07.282  INFO 32334 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 18:12:06.185  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 32498 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:12:06.186  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 18:12:07.096  INFO 32498 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 18:12:07.096  INFO 32498 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 18:12:07.125  INFO 32498 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 18:12:07.329  INFO 32498 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 18:12:07.397  INFO 32498 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 18:12:08.434  INFO 32498 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 18:12:09.325  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 3.343 seconds (JVM running for 3.684)
+2023-11-15 18:12:18.524  INFO 32498 --- [Thread-5] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 18:12:18.542  INFO 32498 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 18:12:18.547  INFO 32498 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:12:18.644  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 32498 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:12:18.644  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 18:12:18.925  INFO 32498 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 18:12:18.925  INFO 32498 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 18:12:18.937  INFO 32498 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 18:12:19.000  INFO 32498 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-11-15 18:12:20.857  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 32498 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:12:20.858  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 18:12:21.132  INFO 32498 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 18:12:21.132  INFO 32498 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 18:12:21.139  INFO 32498 --- [restartedMain] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2023-11-15 18:12:21.191  INFO 32498 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2023-11-15 18:12:21.194  INFO 32498 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2023-11-15 18:12:22.447  INFO 32498 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 1.608 seconds (JVM running for 16.806)
+2023-11-15 18:12:37.508  INFO 32719 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 32719 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 18:12:37.509  INFO 32719 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 18:12:39.013  INFO 32719 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 18:12:39.156  INFO 32719 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 18:12:40.784  INFO 32719 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 18:12:42.403  INFO 32719 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.169 seconds (JVM running for 20.951)
+2023-11-15 18:12:42.537  INFO 32719 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 18:12:42.543  INFO 32719 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 18:13:10.696  INFO 32498 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2023-11-15 18:13:10.697  INFO 32498 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2023-11-15 19:12:53.077  INFO 35766 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 35766 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 19:12:53.078  INFO 35766 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 19:12:54.882  INFO 35766 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 19:12:55.037  INFO 35766 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 19:12:56.683  INFO 35766 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 19:12:58.423  INFO 35766 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 5.746 seconds (JVM running for 21.733)
+2023-11-15 19:12:58.491 ERROR 35766 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
+2023-11-15 19:12:58.568  INFO 35766 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 19:12:58.573  INFO 35766 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 19:14:59.361  INFO 35955 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 35955 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 19:14:59.363  INFO 35955 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 19:15:01.325  INFO 35955 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 19:15:01.462  INFO 35955 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 19:15:03.256  INFO 35955 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 19:15:05.066  INFO 35955 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 6.048 seconds (JVM running for 21.405)
+2023-11-15 19:15:05.143 ERROR 35955 --- [main] c.n.leaps.controller.OrderController     : Order Controller: Error generating invoice
+2023-11-15 19:15:05.219  INFO 35955 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 19:15:05.225  INFO 35955 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 19:16:07.400  INFO 36173 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 36173 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 19:16:07.401  INFO 36173 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 19:16:09.550  INFO 36173 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 19:16:09.690  INFO 36173 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 19:16:11.663  INFO 36173 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 19:16:13.733  INFO 36173 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 6.586 seconds (JVM running for 21.766)
+2023-11-15 19:16:13.862  INFO 36173 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 19:16:13.867  INFO 36173 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 19:19:58.192  INFO 36802 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Starting LeapsApplicationTests using Java 17.0.9 on nineleaps-ThinkPad-L14-Gen-3 with PID 36802 (started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 19:19:58.194  INFO 36802 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : The following 1 profile is active: "dev"
+2023-11-15 19:20:00.669  INFO 36802 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 19:20:00.817  INFO 36802 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 19:20:02.660  INFO 36802 --- [main] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 19:20:04.546  INFO 36802 --- [main] c.nineleaps.leaps.LeapsApplicationTests  : Started LeapsApplicationTests in 6.621 seconds (JVM running for 19.926)
+2023-11-15 19:20:04.670  INFO 36802 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 19:20:04.675  INFO 36802 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 19:21:04.534  INFO 37206 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 20.0.2.1 on nineleaps-ThinkPad-L14-Gen-3 with PID 37206 (/home/nineleaps/Desktop/nineleaps/target/classes started by nineleaps in /home/nineleaps/Desktop/nineleaps)
+2023-11-15 19:21:04.534  INFO 37206 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 19:21:05.391  INFO 37206 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 19:21:05.391  INFO 37206 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 19:21:05.419  INFO 37206 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 19:21:05.626  INFO 37206 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 19:21:05.689  INFO 37206 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 19:21:06.723  INFO 37206 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 19:21:07.689  INFO 37206 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 3.344 seconds (JVM running for 3.726)
+2023-11-15 19:21:12.019  INFO 37206 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'

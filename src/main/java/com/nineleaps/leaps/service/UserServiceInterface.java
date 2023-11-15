@@ -4,6 +4,7 @@ import com.nineleaps.leaps.dto.ResponseDto;
 import com.nineleaps.leaps.dto.user.ProfileUpdateDto;
 import com.nineleaps.leaps.dto.user.SignupDto;
 import com.nineleaps.leaps.dto.user.UserDto;
+import com.nineleaps.leaps.enums.Role;
 import com.nineleaps.leaps.model.User;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface UserServiceInterface {
 
     List<UserDto> getUsers();
 
-    void saveProfile(User user);
+    void saveProfile(User user, Role profile);
 
     User getUser(String email);
 

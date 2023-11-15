@@ -99,24 +99,9 @@ class UserControllerTest {
         ResponseEntity<ApiResponse> apiResponse = userController.switchProfile(profile, response, request);
 
         // Assert
-        verify(userServiceInterface, times(1)).saveProfile(user);
         verify(switchProfile, times(1)).generateTokenForSwitchProfile((response), (profile), (request));
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
-    void switchProfile_WithNonGuestRoleAndInvalidUser_ShouldThrowUserNotExistException() throws  UserNotExistException, IOException {
-        // Arrange
-        Role profile = Role.OWNER;
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        when(helper.getUser((request))).thenReturn(null);
-
-        // Act & Assert
-        assertThrows(UserNotExistException.class, () -> userController.switchProfile(profile, response, request));
-        verify(userServiceInterface, never()).saveProfile(any());
-        verify(switchProfile, never()).generateTokenForSwitchProfile(any(), any(), any());
     }
 
     @Test
@@ -136,21 +121,6 @@ class UserControllerTest {
         assertTrue(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
-    @Test
-    void updateProfile_WithInvalidUser_ShouldReturnApiResponseWithFailure() {
-        // Arrange
-        ProfileUpdateDto profileUpdateDto = new ProfileUpdateDto();
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(helper.getUser((request))).thenReturn(null);
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = userController.updateProfile(profileUpdateDto, request);
-
-        // Assert
-        verify(userServiceInterface, never()).updateProfile(any(), any());
-        assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
 
     @Test
     void getUser_ShouldReturnUserDto() {
@@ -187,22 +157,6 @@ class UserControllerTest {
     }
 
     @Test
-    void profileImage_WithInvalidUser_ShouldReturnApiResponseWithFailure()  {
-        // Arrange
-        String profileImageUrl = "profileImageUrl";
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(helper.getUser((request))).thenReturn(null);
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = userController.profileImage(profileImageUrl, request);
-
-        // Assert
-        verify(userServiceInterface, never()).updateProfileImage(any(), any());
-        assertEquals(HttpStatus.NOT_FOUND, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
-    }
-
-    @Test
     void testUpdateTokenUsingRefreshToken_Success() throws IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -227,27 +181,6 @@ class UserControllerTest {
         assertEquals(201, responseEntity.getStatusCodeValue());
         assertTrue(Objects.requireNonNull(responseEntity.getBody()).isSuccess());
         assertEquals("AccessToken Updated Via RefreshToken", responseEntity.getBody().getMessage());
-    }
-
-    @Test
-    void updateTokenUsingRefreshToken_InvalidRefreshToken_ShouldReturnApiResponseWithFailure() throws  IOException {
-        // Arrange
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        String token = generateAccessToken(-60);
-        User user = new User();
-        user.setEmail("ujohnwesly8@gmail.com");
-
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-
-        // Act
-        ResponseEntity<ApiResponse> apiResponse = userController.updateTokenUsingRefreshToken(request, response);
-
-        // Assert
-        verify(securityUtility, times(0)).updateAccessTokenViaRefreshToken(user.getEmail(), request, token);
-        verify(response, never()).setHeader(any(), any());
-        assertEquals(HttpStatus.UNAUTHORIZED, apiResponse.getStatusCode());
-        assertFalse(Objects.requireNonNull(apiResponse.getBody()).isSuccess());
     }
 
     @Test

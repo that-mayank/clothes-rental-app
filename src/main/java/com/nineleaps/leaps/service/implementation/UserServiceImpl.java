@@ -106,7 +106,8 @@ public class UserServiceImpl implements UserServiceInterface, UserDetailsService
 
     // Save user profile information.
     @Override
-    public void saveProfile(User user) {
+    public void saveProfile(User user, Role profile) {
+        user.setRole(profile);
         userRepository.save(user);
     }
 

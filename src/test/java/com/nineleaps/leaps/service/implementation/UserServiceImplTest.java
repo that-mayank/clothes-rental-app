@@ -140,9 +140,10 @@ class UserServiceImplTest {
     void saveProfile_CallsUserRepositorySaveMethod() {
         // Arrange
         User user = new User();
+        Role profile = Role.OWNER;
 
         // Act
-        userService.saveProfile(user);
+        userService.saveProfile(user, profile);
 
         // Assert
         verify(userRepository).save(user);

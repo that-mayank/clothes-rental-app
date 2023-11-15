@@ -290,3 +290,5 @@
 2023-11-15 19:21:06.723  INFO 37206 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
 2023-11-15 19:21:07.689  INFO 37206 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 3.344 seconds (JVM running for 3.726)
 2023-11-15 19:21:12.019  INFO 37206 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-11-15 19:23:45.389  INFO 37206 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 19:23:45.391  INFO 37206 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

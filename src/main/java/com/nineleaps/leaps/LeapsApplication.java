@@ -11,10 +11,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 public class LeapsApplication {
 
+
     public static final String NGROK = "https://783c-106-51-70-135.ngrok-free.app";
 
     public static void main(String[] args) {
         SpringApplication.run(LeapsApplication.class, args);
+        //Added to explain log obfuscation
+        String password = "Mayank&12!<>;";
+        log.info("password :{}", password);
     }
 
     @Bean

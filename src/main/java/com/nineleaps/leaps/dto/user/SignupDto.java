@@ -1,7 +1,9 @@
 package com.nineleaps.leaps.dto.user;
 
 import com.nineleaps.leaps.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
@@ -10,6 +12,8 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignupDto {
 
     @NotBlank(message = "First name is required")

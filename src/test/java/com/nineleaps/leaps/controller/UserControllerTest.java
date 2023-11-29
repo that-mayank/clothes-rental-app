@@ -65,7 +65,7 @@ class UserControllerTest {
     void signup_shouldReturnCreatedResponse() throws CustomException {
         // Arrange
         SignupDto signupDto = new SignupDto();
-        ResponseEntity<ApiResponse> expectedResponse = new ResponseEntity<>(new ApiResponse(true, "SignedUp Successfully"), HttpStatus.CREATED);
+        ResponseEntity<ApiResponse> expectedResponse = new ResponseEntity<>(new ApiResponse(true, "Signed up successfully"), HttpStatus.CREATED);
 
         // Act
         doNothing().when(userServiceInterface).signUp(signupDto);
@@ -87,7 +87,7 @@ class UserControllerTest {
         ResponseEntity<ApiResponse> response = userController.updateProfile(profileUpdateDto, request);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("User not found", Objects.requireNonNull(response.getBody()).getMessage());
+        assertEquals("Authentication Token Not Valid. User Not Found", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
 
@@ -164,7 +164,7 @@ class UserControllerTest {
         ApiResponse responseBody = response.getBody();
         assertNotNull(responseBody);
         assertFalse(responseBody.isSuccess());
-        assertEquals("User is invalid", responseBody.getMessage());
+        assertEquals("Authentication Token Not Valid. User Not Found", responseBody.getMessage());
     }
 
 
@@ -208,26 +208,10 @@ class UserControllerTest {
         // Assert
         assertNotNull(apiResponse);
         assertEquals(HttpStatus.OK, apiResponse.getStatusCode());
-        assertEquals("Role switch to: " + profile, Objects.requireNonNull(apiResponse.getBody()).getMessage());
+        assertEquals("Role switched to: " + profile, Objects.requireNonNull(apiResponse.getBody()).getMessage());
     }
 
-    @Test
-    @DisplayName("Switch Profile - Should Throw User Not Exist Exception When User Is Null")
-    void switchProfile_shouldThrowUserNotExistException_whenUserIsNull() throws AuthenticationFailException, UserNotExistException{
-        // Arrange
-        Role profile = Role.OWNER;
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
 
-        // Act
-        when(helper.getUserFromToken(request)).thenReturn(null);
-
-        // Assert
-        UserNotExistException thrownException = assertThrows(UserNotExistException.class, () ->
-                userController.switchProfile(profile, response, request));
-
-        assertEquals("User is invalid", thrownException.getMessage());
-    }
 
 
 

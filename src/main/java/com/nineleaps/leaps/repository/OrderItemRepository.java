@@ -12,5 +12,8 @@ import java.util.List;
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findByRentalEndDateLessThanEqual(LocalDateTime currentDate);
+
     Page<OrderItem> findByOwnerId(Pageable pageable, Long ownerId);
+
+    List<OrderItem> findByOwnerId(Long ownerId);
 }

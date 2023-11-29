@@ -6,143 +6,139 @@ import com.nineleaps.leaps.dto.cart.CartItemDto;
 import com.nineleaps.leaps.dto.cart.UpdateProductQuantityDto;
 import com.nineleaps.leaps.exceptions.CartItemAlreadyExistException;
 import com.nineleaps.leaps.exceptions.CartItemNotExistException;
-import com.nineleaps.leaps.exceptions.QuantityOutOfBoundException;
 import com.nineleaps.leaps.model.Cart;
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.CartRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
+import com.nineleaps.leaps.service.ProductServiceInterface;
 import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import static com.nineleaps.leaps.config.MessageStrings.CART_ITEM_INVALID;
 
 @Service
 @AllArgsConstructor
 @Transactional
+@Slf4j // Add SLF4J annotation for logging
 public class CartServiceImpl implements CartServiceInterface {
-
     private final CartRepository cartRepository;
+    private final Helper helper;
+    private final ProductServiceInterface productService;
 
-    private static final String PRODUCT_ALREADY_IN_CART = "Product is already in the Cart: %s";
-    private static final String CART_ITEM_INVALID_MESSAGE = "Invalid Cart Item ID: %s";
-
+    // Helper method to convert Cart entity to CartItemDto
     static CartItemDto getDtoFromCart(Cart cart) {
         return new CartItemDto(cart);
     }
 
     @Override
-    public void addToCart(AddToCartDto addToCartDto, Product product, User user)
-            throws CartItemAlreadyExistException, QuantityOutOfBoundException {
-
-        if (addToCartDto.getQuantity() <= 0) {
-            throw new QuantityOutOfBoundException("Quantity must be greater than 0");
-        }
+    public void addToCart(AddToCartDto addToCartDto, HttpServletRequest request) {
+        User user = helper.getUserFromToken(request);
+        Product product = productService.getProductById(addToCartDto.getProductId());
+        log.info("Adding product with ID {} to the cart for user: {}", product.getId(), user.getEmail());
 
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), product.getId());
-        if (Helper.notNull(cartItem)) {
-            throw new CartItemAlreadyExistException(String.format(PRODUCT_ALREADY_IN_CART, product.getId()));
-        }
+        Optional.ofNullable(cartItem)
+                .ifPresent(item -> {
+                    log.error("Product with ID {} is already in the Cart for user: {}", product.getId(), user.getEmail());
+                    throw new CartItemAlreadyExistException("Product is already in the Cart: " + product.getId());
+                });
 
-        Cart cart = new Cart(product, user, addToCartDto.getQuantity(), addToCartDto.getRentalStartDate(),
-                addToCartDto.getRentalEndDate(), product.getImageURL());
+        Cart cart = new Cart(product, user, addToCartDto.getQuantity(), addToCartDto.getRentalStartDate(), addToCartDto.getRentalEndDate(), product.getImageURL());
         cartRepository.save(cart);
+
+        log.info("Product with ID {} added to the cart for user: {}", product.getId(), user.getEmail());
     }
 
     @Override
-    public CartDto listCartItems(User user) {
+    public CartDto listCartItems(HttpServletRequest request) {
+        User user = helper.getUserFromToken(request);
+        log.info("Listing cart items for user: {}", user.getEmail());
+
         List<Cart> cartList = cartRepository.findAllByUserOrderByCreateDateDesc(user);
         List<CartItemDto> cartItems = new ArrayList<>();
+
         for (Cart cart : cartList) {
             CartItemDto cartItemDto = getDtoFromCart(cart);
             cartItems.add(cartItemDto);
         }
-        double totalCost = calculateTotalCost(cartItems);
-        double tax = calculateTax(totalCost);
-        double finalPrice = calculateFinalPrice(totalCost, tax);
+
+        double totalCost = 0;
+
+        for (CartItemDto cartItemDto : cartItems) {
+            long numberOfHours = 0;
+            numberOfHours = ChronoUnit.HOURS.between(cartItemDto.getRentalStartDate(), cartItemDto.getRentalEndDate());
+
+            if (numberOfHours == 0)
+                numberOfHours = 1; // Minimum 1-hour rental
+
+            double perHourRent = cartItemDto.getProduct().getPrice() / 24;
+            totalCost += (perHourRent * cartItemDto.getQuantity() * numberOfHours);
+        }
+
+        double tax = 0.18 * totalCost;
+        double finalPrice = totalCost + tax;
+
+        log.info("Listed {} cart items for user: {} with a total cost of {} and a final price of {}",
+                cartItems.size(), user.getEmail(), totalCost, finalPrice);
+
         return new CartDto(cartItems, totalCost, Math.round(tax), Math.round(finalPrice), user.getId());
     }
 
     @Override
-    public void updateCartItem(AddToCartDto addToCartDto, User user)
-            throws CartItemNotExistException, QuantityOutOfBoundException {
-        Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), addToCartDto.getProductId());
-        if (!Helper.notNull(cartItem)) {
-            throw new CartItemNotExistException(String.format(CART_ITEM_INVALID_MESSAGE, addToCartDto.getProductId()));
-        }
-        if (addToCartDto.getQuantity() == 0) {
-            deleteCartItem(addToCartDto.getProductId(), user);
-            return;
-        }
+    public void deleteCartItem(Long productId, HttpServletRequest request) throws CartItemNotExistException {
+        User user = helper.getUserFromToken(request);
+        log.info("Deleting cart item with product ID {} for user: {}", productId, user.getEmail());
 
-        cartItem.setQuantity(addToCartDto.getQuantity());
-        cartItem.setCreateDate(new Date());
-        cartItem.setRentalStartDate(addToCartDto.getRentalStartDate());
-        cartItem.setRentalEndDate(addToCartDto.getRentalEndDate());
-        cartRepository.save(cartItem);
-    }
-
-    @Override
-    public void deleteCartItem(Long productId, User user) throws CartItemNotExistException {
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), productId);
+
         if (!Helper.notNull(cartItem)) {
-            throw new CartItemNotExistException(String.format(CART_ITEM_INVALID_MESSAGE, productId));
+            log.error("Cart item with product ID {} does not exist for user: {}", productId, user.getEmail());
+            throw new CartItemNotExistException(CART_ITEM_INVALID + productId);
         }
+
         cartRepository.deleteById(cartItem.getId());
+
+        log.info("Deleted cart item with product ID {} for user: {}", productId, user.getEmail());
     }
 
     @Override
     public void deleteUserCartItems(User user) {
+        log.info("Deleting all cart items for user: {}", user.getEmail());
         cartRepository.deleteByUser(user);
     }
 
     @Override
-    public void updateProductQuantity(UpdateProductQuantityDto updateProductQuantityDto, User user)
+    public void updateProductQuantity(UpdateProductQuantityDto updateProductQuantityDto, HttpServletRequest request)
             throws CartItemNotExistException {
+        User user = helper.getUserFromToken(request);
+        log.info("Updating quantity for product with ID {} in the cart for user: {}", updateProductQuantityDto.getProductId(), user.getEmail());
+
         Cart cartItem = cartRepository.findByUserIdAndProductId(user.getId(), updateProductQuantityDto.getProductId());
+
         if (!Helper.notNull(cartItem)) {
-            throw new CartItemNotExistException(String.format(CART_ITEM_INVALID_MESSAGE, updateProductQuantityDto.getProductId()));
+            log.error("Cart item with product ID {} does not exist for user: {}", updateProductQuantityDto.getProductId(), user.getEmail());
+            throw new CartItemNotExistException(CART_ITEM_INVALID + updateProductQuantityDto.getProductId());
         }
-        //if quantity is zero delete cart item
+
         if (updateProductQuantityDto.getQuantity() <= 0) {
-            deleteCartItem(updateProductQuantityDto.getProductId(), user);
+            log.info("Deleting cart item with product ID {} as the updated quantity is zero or less for user: {}", updateProductQuantityDto.getProductId(), user.getEmail());
+            deleteCartItem(updateProductQuantityDto.getProductId(), request);
             return;
         }
+
         cartItem.setQuantity(updateProductQuantityDto.getQuantity());
         cartRepository.save(cartItem);
+
+        log.info("Updated quantity for product with ID {} in the cart for user: {}", updateProductQuantityDto.getProductId(), user.getEmail());
     }
-
-    private double calculateTotalCost(List<CartItemDto> cartItems) {
-        double totalCost = 0;
-        for (CartItemDto cartItem : cartItems) {
-            long numberOfHours = 0;
-            if (Helper.notNull(cartItem.getRentalStartDate()) && Helper.notNull(cartItem.getRentalEndDate())) {
-                numberOfHours = ChronoUnit.HOURS.between(cartItem.getRentalStartDate(), cartItem.getRentalEndDate());
-
-                if (numberOfHours == 0)
-                    numberOfHours = 1;
-            }
-            double perHourRent = cartItem.getProduct().getPrice() / 24;
-            totalCost += (perHourRent * cartItem.getQuantity() * numberOfHours);
-        }
-        return totalCost;
-    }
-
-    private double calculateTax(double totalCost) {
-        // Placeholder for tax calculation
-        return 0.18 * totalCost; // Replace with actual tax calculation logic
-    }
-
-    private double calculateFinalPrice(double totalCost, double tax) {
-        // Placeholder for final price calculation
-        return totalCost + tax; // Replace with actual final price calculation logic
-    }
-
-
 }

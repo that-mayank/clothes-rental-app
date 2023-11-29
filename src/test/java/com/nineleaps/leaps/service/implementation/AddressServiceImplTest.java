@@ -2,9 +2,11 @@ package com.nineleaps.leaps.service.implementation;
 
 import com.nineleaps.leaps.RuntimeBenchmarkExtension;
 import com.nineleaps.leaps.dto.AddressDto;
+import com.nineleaps.leaps.exceptions.AddressOwnershipException;
 import com.nineleaps.leaps.model.Address;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.repository.AddressRepository;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -14,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -32,6 +35,12 @@ class AddressServiceImplTest {
     @InjectMocks
     private AddressServiceImpl addressService;
 
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private Helper helper;
+
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -43,7 +52,9 @@ class AddressServiceImplTest {
         // Arrange
         AddressDto addressDto = new AddressDto();
         addressDto.setDefaultAddress(true);
-        User user = new User();
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
 
         Address oldDefaultAddress1 = new Address();
         oldDefaultAddress1.setDefaultAddress(true);
@@ -54,7 +65,7 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(oldAddresses);
 
         // Act
-        addressService.saveAddress(addressDto, user);
+        addressService.saveAddress(addressDto, request);
 
         // Assert
         assertFalse(oldDefaultAddress1.isDefaultAddress());
@@ -67,7 +78,8 @@ class AddressServiceImplTest {
         // Arrange
         AddressDto addressDto = new AddressDto();
         addressDto.setDefaultAddress(false);
-        User user = new User();
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
 
         Address oldDefaultAddress1 = new Address();
         oldDefaultAddress1.setDefaultAddress(true);
@@ -76,7 +88,7 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(oldAddresses);
 
         // Act
-        addressService.saveAddress(addressDto, user);
+        addressService.saveAddress(addressDto, request);
 
         // Assert
         assertTrue(oldDefaultAddress1.isDefaultAddress());
@@ -88,13 +100,14 @@ class AddressServiceImplTest {
         // Arrange
         AddressDto addressDto = new AddressDto();
         addressDto.setDefaultAddress(false);
-        User user = new User();
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
 
         when(addressRepository.findAllByUser(user)).thenReturn(new ArrayList<>());
         when(addressRepository.save(any())).thenReturn(new Address());
 
         // Act
-        addressService.saveAddress(addressDto, user);
+        addressService.saveAddress(addressDto, request);
 
         // Assert
         // Verify that save method is called
@@ -105,7 +118,8 @@ class AddressServiceImplTest {
     @DisplayName("List Address: Returns List of Addresses for User")
     void listAddress_ReturnsListOfAddressesForUser() {
         // Arrange
-        User user = new User();
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         Address address1 = new Address();
         Address address2 = new Address();
         List<Address> expectedAddresses = List.of(address1, address2);
@@ -113,7 +127,7 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(expectedAddresses);
 
         // Act
-        List<Address> actualAddresses = addressService.listAddress(user);
+        List<Address> actualAddresses = addressService.listAddress(request);
 
         // Assert
         assertEquals(expectedAddresses.size(), actualAddresses.size());
@@ -128,7 +142,8 @@ class AddressServiceImplTest {
         Long addressId = 1L;
         Address expectedAddress = new Address();
         when(addressRepository.findById(addressId)).thenReturn(Optional.of(expectedAddress));
-
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Act
         Optional<Address> actualAddress = addressService.readAddress(addressId);
 
@@ -143,7 +158,8 @@ class AddressServiceImplTest {
         // Arrange
         Long addressId = 1L;
         when(addressRepository.findById(addressId)).thenReturn(Optional.empty());
-
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Act
         Optional<Address> actualAddress = addressService.readAddress(addressId);
 
@@ -156,7 +172,8 @@ class AddressServiceImplTest {
     void readAddress_AddressExistsForUser_ReturnsAddress() {
         // Arrange
         Long addressId = 1L;
-        User user = new User();
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         Address expectedAddress = new Address();
         expectedAddress.setId(addressId);
         List<Address> userAddresses = List.of(expectedAddress);
@@ -164,7 +181,7 @@ class AddressServiceImplTest {
         when(addressRepository.findAllByUser(user)).thenReturn(userAddresses);
 
         // Act
-        Address actualAddress = addressService.readAddress(user, addressId);
+        Address actualAddress = addressService.readAddress(request, addressId);
 
         // Assert
         assertNotNull(actualAddress);
@@ -176,13 +193,14 @@ class AddressServiceImplTest {
     void readAddress_AddressDoesNotExistForUser_ReturnsNull() {
         // Arrange
         Long addressId = 1L;
-        User user = new User();
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         List<Address> userAddresses = new ArrayList<>();
 
         when(addressRepository.findAllByUser(user)).thenReturn(userAddresses);
 
         // Act
-        Address actualAddress = addressService.readAddress(user, addressId);
+        Address actualAddress = addressService.readAddress(request, addressId);
 
         // Assert
         assertNull(actualAddress);
@@ -198,9 +216,10 @@ class AddressServiceImplTest {
         List<Address> userAddresses = List.of(expectedAddress);
 
         when(addressRepository.findAllByUser(any())).thenReturn(userAddresses);
-
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Act
-        Address actualAddress = addressService.readAddress(new User(), addressId);
+        Address actualAddress = addressService.readAddress(request, addressId);
 
         // Assert
         assertNotNull(actualAddress);
@@ -215,11 +234,12 @@ class AddressServiceImplTest {
         Address expectedAddress = new Address();
         expectedAddress.setId(2L);  // Different addressId
         List<Address> userAddresses = List.of(expectedAddress);
-
+        User user = new User(); // create a user instance
+        when(helper.getUserFromToken(request)).thenReturn(user);
         when(addressRepository.findAllByUser(any())).thenReturn(userAddresses);
 
         // Act
-        Address actualAddress = addressService.readAddress(new User(), addressId);
+        Address actualAddress = addressService.readAddress(request, addressId);
 
         // Assert
         assertNull(actualAddress);
@@ -229,41 +249,82 @@ class AddressServiceImplTest {
 
 
 
+
     @Test
-    @DisplayName("Update address ")
-    void updateAddress_ExistingAddressUpdated() {
+    void updateAddress_AddressDoesNotBelongToCurrentUser_ShouldThrowException() {
         // Arrange
         Long addressId = 1L;
-        AddressDto updatedAddressDto = new AddressDto();
-        updatedAddressDto.setId(addressId);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(helper.getUserFromToken(request)).thenReturn(new User());
+        when(addressRepository.findAllByUser(any())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        assertThrows(AddressOwnershipException.class, () ->
+                addressService.updateAddress(new AddressDto(), addressId, request));
+    }
+
+    @Test
+    void updateAddress_Success() {
+        //Arrange
+        Long addressId = 1L;
+
         User user = new User();
-        Address existingAddress = new Address(); // Mock an existing address
-        existingAddress.setId(addressId);
+        user.setId(1L);
 
-        when(addressRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
+        Address address = new Address();
+        address.setId(1L);
+        address.setUser(user);
 
-        // Act
-        addressService.updateAddress(updatedAddressDto, addressId, user);
+        AddressDto addressDto = new AddressDto();
 
-        // Assert
-        verify(addressRepository, times(1)).save(any(Address.class));
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        when(addressRepository.findAllByUser(any(User.class))).thenReturn(List.of(address));
+
+        //Act
+        addressService.updateAddress(addressDto, addressId, request);
+
+        //Assert
+        verify(addressRepository).save(any(Address.class));
     }
 
 
     @Test
-    @DisplayName("Delete address")
-    void deleteAddress_ValidAddressId_AddressDeleted() {
+    void deleteAddress_AddressDoesNotBelongToCurrentUser_ShouldThrowException() {
         // Arrange
         Long addressId = 1L;
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(helper.getUserFromToken(request)).thenReturn(new User());
+        when(addressRepository.findAllByUser(any())).thenReturn(new ArrayList<>());
 
-        // Act
-        addressService.deleteAddress(addressId);
-
-        // Assert
-        verify(addressRepository).deleteById(addressId);
+        // Act & Assert
+        assertThrows(AddressOwnershipException.class, () ->
+                addressService.deleteAddress(request, addressId));
     }
 
+    @Test
+    void deleteAddress_Success() {
+        //Arrange
+        Long addressId = 1L;
 
+        User user = new User();
+        user.setId(1L);
+
+        Address address = new Address();
+        address.setId(1L);
+        address.setUser(user);
+
+        when(helper.getUserFromToken(any(HttpServletRequest.class))).thenReturn(user);
+        when(addressRepository.findAllByUser(any(User.class))).thenReturn(List.of(address));
+
+        //Act
+        addressService.deleteAddress(request, addressId);
+
+        //Assert
+        verify(addressRepository).deleteById(anyLong());
+    }
 
 
 }
+
+
+

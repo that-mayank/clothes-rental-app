@@ -31,12 +31,5 @@ public class CartItemDto {
         this.setImageUrl(NGROK + cart.getImageUrl());
     }
 
-    @Override
-    public String toString() {
-        return "CartItemDto{" +
-                "id=" + id +
-                ", quantity=" + quantity +
-                ", product=" + product +
-                '}';
-    }
+
 }

@@ -2,46 +2,34 @@ package com.nineleaps.leaps.controller;
 
 import com.nineleaps.leaps.dto.pushnotification.PushNotificationResponse;
 import com.nineleaps.leaps.service.implementation.PushNotificationServiceImpl;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1/push")
+@Validated
 @AllArgsConstructor
-@Slf4j
+@Api(tags = "Push Notification Api")
 public class PushNotificationController {
 
-    // Status Code: 200 - HttpStatus.OK
-    // Description: The request was successful, and the response contains the requested data.
-
-    // Service responsible for push notifications
+    //Linking layers using constructor injection
     private final PushNotificationServiceImpl pushNotificationService;
 
-    // API to send push notification to a device using FCM token
-    @PostMapping(value = "/notification/token",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority( 'BORROWER')")
-    @ApiOperation(value = "Send push notification to device using fcm token")
-    public ResponseEntity<PushNotificationResponse> sendTokenNotification(@RequestBody String token) {
-        try {
-            // Invoke the push notification service to send notification using the provided token
-            pushNotificationService.sendNotification(token);
-
-            // Return a response indicating the notification has been sent successfully
-            return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."),
-                    HttpStatus.OK);
-        } catch (Exception e) {
-            // Log the error and return an error response
-            log.error("Error sending push notification: {}", e.getMessage(), e);
-            return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to send notification."),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    // API : To send push notification to device using fcm token
+    @ApiOperation(value = "API : To send push notification to device using fcm token")
+    @PostMapping("{token}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('BORROWER')")
+    public ResponseEntity<PushNotificationResponse> sendTokenNotification(
+            @PathVariable("token") String deviceToken) {
+        // Calling Service layer to send notification
+        pushNotificationService.sendNotification(deviceToken);
+        return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
     }
 }

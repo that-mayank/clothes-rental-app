@@ -6,32 +6,37 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nineleaps.leaps.dto.cart.CartDto;
 import com.nineleaps.leaps.dto.cart.CartItemDto;
+
 import com.nineleaps.leaps.dto.orders.OrderDto;
 import com.nineleaps.leaps.dto.orders.OrderItemDto;
 import com.nineleaps.leaps.dto.orders.OrderItemsData;
 import com.nineleaps.leaps.dto.orders.OrderReceivedDto;
 import com.nineleaps.leaps.dto.product.ProductDto;
-import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.dto.pushnotification.PushNotificationRequest;
-import com.nineleaps.leaps.model.product.Product;
+import com.nineleaps.leaps.exceptions.OrderNotFoundException;
 import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
 import com.nineleaps.leaps.model.orders.Order;
 import com.nineleaps.leaps.model.orders.OrderItem;
+import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.repository.OrderRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
 import com.nineleaps.leaps.service.CartServiceInterface;
 import com.nineleaps.leaps.service.OrderServiceInterface;
+import com.nineleaps.leaps.utils.Helper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -52,127 +57,128 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final EmailServiceImpl emailServiceImpl;
     private final ProductRepository productRepository;
     private final PushNotificationServiceImpl pushNotificationService;
+    private final Helper helper;
 
     @Override
-    public void placeOrder(User user, String sessionId) {
+    public void placeOrder(HttpServletRequest request, String razorpayId) {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
+        log.info("Placing an order for user: {}", user.getEmail());
+        //retrieve the cart items for the user
+        CartDto cartDto = cartService.listCartItems(request);
+        List<CartItemDto> cartItemDtos = cartDto.getCartItems();
+        //create order and save it
         Order newOrder = new Order();
+        newOrder.setCreateDate(LocalDateTime.now());
+        newOrder.setTotalPrice(cartDto.getTotalCost());
+        newOrder.setSessionId(razorpayId);
+        newOrder.setUser(user);
+
         List<OrderItem> orderItemList = new ArrayList<>();
-            //retrieve the cart items for the user
-            CartDto cartDto = cartService.listCartItems(user);
-            List<CartItemDto> cartItemDtos = cartDto.getCartItems();
-            //create order and save it
+        for (CartItemDto cartItemDto : cartItemDtos) {
+            //create cartItem and save each
+            OrderItem orderItem = new OrderItem();
+            orderItem.setName(cartItemDto.getProduct().getName());
+            orderItem.setQuantity(cartItemDto.getQuantity());
+            orderItem.setPrice(cartItemDto.getProduct().getPrice());
+            orderItem.setCreatedDate(LocalDateTime.now());
+            orderItem.setProduct(cartItemDto.getProduct());
+            orderItem.setOrder(newOrder);
+            orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
+            orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
+            orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
+            orderItem.setStatus(ORDER_PLACED);
+            orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
+            //add to orderItem table
+            orderItemRepository.save(orderItem);
+            orderItemList.add(orderItem);
+            //Reduce quantity from product after placing order
+            Product product = orderItem.getProduct();
+            product.setRentedQuantities(product.getRentedQuantities() + cartItemDto.getQuantity());
+            product.setAvailableQuantities(product.getAvailableQuantities() - cartItemDto.getQuantity());
+            productRepository.save(product);
+        }
+        newOrder.setOrderItems(orderItemList);
+        orderRepository.save(newOrder);
+        log.info("Order placed successfully for user: {}", user.getEmail());
+        //delete cart items after placing order
+        cartService.deleteUserCartItems(user);
 
-            newOrder.setCreateDate(LocalDateTime.now());
-            newOrder.setTotalPrice(cartDto.getTotalCost());
-            newOrder.setSessionId(sessionId);
-            newOrder.setUser(user);
-
-
-            for (CartItemDto cartItemDto : cartItemDtos) {
-                //create cartItem and save each
-                OrderItem orderItem = new OrderItem();
-                orderItem.setName(cartItemDto.getProduct().getName());
-                orderItem.setQuantity(cartItemDto.getQuantity());
-                orderItem.setPrice(cartItemDto.getProduct().getPrice());
-                orderItem.setCreatedDate(LocalDateTime.now());
-                orderItem.setProduct(cartItemDto.getProduct());
-                orderItem.setOrder(newOrder);
-                orderItem.setRentalStartDate(cartItemDto.getRentalStartDate());
-                orderItem.setRentalEndDate(cartItemDto.getRentalEndDate());
-                orderItem.setImageUrl(cartItemDto.getProduct().getImageURL().get(0).getUrl());
-                orderItem.setStatus(ORDER_PLACED);
-                orderItem.setOwnerId(cartItemDto.getProduct().getUser().getId());
-                //add to orderItem table
-                orderItemRepository.save(orderItem);
-                orderItemList.add(orderItem);
-                //Reduce quantity from product after placing order
-                Product product = orderItem.getProduct();
-                product.setRentedQuantities(product.getRentedQuantities() + cartItemDto.getQuantity());
-                product.setAvailableQuantities(product.getAvailableQuantities() - cartItemDto.getQuantity());
-                productRepository.save(product);
-            }
-            newOrder.setOrderItems(orderItemList);
-            newOrder.setAuditColumnsCreate(user);
-            newOrder.setAuditColumnsUpdate(user.getId());
-            orderRepository.save(newOrder);
-
-            //delete cart items after placing order
-            cartService.deleteUserCartItems(user);
-
-            // send order confirmation email
-            sendOrderConfirmationEmail(user,newOrder);
-
-            // send push notification for order
-            sendPushNotifications(orderItemList);
-
-    }
-
-    private String generateOrderConfirmationEmailMessage(User user, Order order) {
+        // function to send email
+        String email = user.getEmail();
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append(DEAR_PREFIX).append(user.getFirstName()).append(" ").append(user.getLastName()).append(",\n");
         messageBuilder.append("Your Order has been successfully placed.\n");
         messageBuilder.append("Here are the details of your order:\n");
-        messageBuilder.append(ORDER_ID).append(order.getId()).append("\n");
-
-        for (OrderItem orderItem : order.getOrderItems()) {
+        messageBuilder.append(ORDER_ID).append(newOrder.getId()).append("\n");
+        List<OrderItem> orderItems = newOrder.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
             String productName = orderItem.getName();
             int quantity = orderItem.getQuantity();
             long rentalPeriod = ChronoUnit.DAYS.between(orderItem.getRentalStartDate(), orderItem.getRentalEndDate());
-            double price = orderItem.getPrice() * quantity * rentalPeriod;
+            double price = orderItem.getPrice() * orderItem.getQuantity() * rentalPeriod;
 
             messageBuilder.append("Product: ").append(productName).append("\n");
             messageBuilder.append("Quantity: ").append(quantity).append("\n");
             messageBuilder.append("Price: ").append(price).append("\n");
         }
-
-        messageBuilder.append("Total Price of order: ").append(order.getTotalPrice()).append("\n\n");
-        return messageBuilder.toString();
-    }
-
-    private void sendOrderConfirmationEmail(User user, Order order) {
-        String email = user.getEmail();
-        String message = generateOrderConfirmationEmailMessage(user, order);
+        messageBuilder.append("Total Price of order: ").append(newOrder.getTotalPrice()).append("\n\n");
+        String message = messageBuilder.toString();
         emailServiceImpl.sendEmail(ORDER_PLACED, message, email);
-    }
+        log.info("Email Sent successfully for user: {}", user.getEmail());
 
-    private void sendPushNotifications(List<OrderItem> orderItems) {
-        for (OrderItem orderItem : orderItems) {
+
+        for (OrderItem orderItem : orderItemList) {
             String deviceToken = orderItem.getProduct().getUser().getDeviceToken();
-            log.debug("Device token of owner from order service is: {}", deviceToken);
-
-            var request = PushNotificationRequest.builder()
+            log.debug("Device token of owner from oder service is: {}", deviceToken);
+            var pushNotificationRequest = PushNotificationRequest.builder()
                     .title("Order info")
                     .topic(ORDER_PLACED)
                     .token(deviceToken)
                     .build();
-
-            pushNotificationService.sendPushNotificationToToken(request);
+            pushNotificationService.sendPushNotificationToToken(pushNotificationRequest);
+            log.info("Notification sent successfully for user: {}", user.getEmail());
         }
     }
 
-
     @Override
-    public List<OrderDto> listOrders(User user) {
+    public List<OrderDto> listOrders(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
+        log.info("Placing an order for user: {}", user.getEmail());
         List<Order> orders = orderRepository.findByUserOrderByCreateDateDesc(user);
         List<OrderDto> orderDtos = new ArrayList<>();
         for (Order order : orders) {
             OrderDto orderDto = new OrderDto(order);
             orderDtos.add(orderDto);
         }
+        log.info("Listed orders for user: {}", user.getEmail());
         return orderDtos;
     }
 
     @Override
-    public Order getOrder(Long orderId, User user) throws OrderNotFoundException {
+    public Order getOrder(Long orderId, HttpServletRequest request) throws OrderNotFoundException {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
+        log.info("Getting order with ID {} for user: {}", orderId, user.getEmail());
         Optional<Order> optionalOrder = orderRepository.findByIdAndUserId(orderId, user.getId());
         if (optionalOrder.isEmpty()) {
             throw new OrderNotFoundException("Order not found");
         }
+        log.info("Got order with ID {} for user: {}", orderId, user.getEmail());
         return optionalOrder.get();
     }
 
     @Override
-    public void orderStatus(OrderItem orderItem, String status) {
+    public void orderStatus(HttpServletRequest request, Long orderItemId, String status) {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
+        log.info("Updating order item status to {} for user: {}", status, user.getEmail());
+        //Guard Statement : Check if order item belongs to the current user
+        OrderItem orderItem = getOrderItem(orderItemId, user);
+        if (Optional.ofNullable(orderItem).isEmpty()) {
+            throw new OrderNotFoundException(ORDER_ITEM_UNAUTHORIZED_ACCESS);
+        }
         orderItem.setStatus(status);
         orderItemRepository.save(orderItem);
         if (status.equals("ORDER RETURNED")) {
@@ -181,6 +187,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
             product.setRentedQuantities(Math.max(product.getRentedQuantities() - orderItem.getQuantity(), 0));
             productRepository.save(product);
         }
+        log.info("Updated order item status to {} for user: {}", status, user.getEmail());
     }
 
     public void sendDelayChargeEmail(OrderItem orderItem, double securityDeposit) {
@@ -190,7 +197,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
                 "We regret to inform you that your rental period has exceeded the expected return date. " +
                 "As a result, a delay charge has been deducted from your security deposit.\n\n" +
                 "Rental Details:\n" +
-                "Order ID: " + orderItem.getId() + "\n" +
+                ORDER_ID + orderItem.getId() + "\n" +
                 "Item Name: " + orderItem.getProduct().getName() + "\n" +
                 "Rental Start Date: " + orderItem.getRentalStartDate() + "\n" +
                 "Rental End Date: " + orderItem.getRentalEndDate() + "\n" +
@@ -232,7 +239,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(User user) {
+    public Map<Year, Map<YearMonth, Map<String, Object>>> onClickDashboardYearWiseData(HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
+
         Map<Year, Map<YearMonth, Double>> totalEarningsByYearMonth = new HashMap<>();
         Map<Year, Map<YearMonth, Integer>> totalItemsByYearMonth = new HashMap<>();
 
@@ -279,7 +289,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(User user, LocalDateTime startDate, LocalDateTime endDate) {
+    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonthBwDates(HttpServletRequest request, LocalDateTime startDate, LocalDateTime endDate) {
+        // JWT: Extracting user info from token
+        User user = helper.getUserFromToken(request);
+
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -299,7 +312,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(User user) {
+    public Map<YearMonth, List<OrderReceivedDto>> getOrderedItemsByMonth(HttpServletRequest request) {
+        // JWT: Extracting user info from token
+        User user = helper.getUserFromToken(request);
+
         Map<YearMonth, List<OrderReceivedDto>> orderedItemsByMonth = new HashMap<>();
 
         for (Order order : orderRepository.findAll()) {
@@ -320,7 +336,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(User user) {
+    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsBySubCategories(HttpServletRequest request) {
+        // JWT: Extracting user info from token
+        User user = helper.getUserFromToken(request);
+
         Map<YearMonth, Map<String, OrderItemsData>> orderItemsSubcategoryWise = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -358,7 +377,10 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(User user) {
+    public Map<YearMonth, Map<String, OrderItemsData>> getOrderItemsByCategories(HttpServletRequest request) {
+        // JWT: Extracting user info from token
+        User user = helper.getUserFromToken(request);
+
         Map<YearMonth, Map<String, OrderItemsData>> orderItemsCategoryWise = new HashMap<>();
         for (Order order : orderRepository.findAll()) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -396,7 +418,9 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public List<ProductDto> getRentedOutProducts(User user, int pageNumber, int pageSize) {
+    public List<ProductDto> getRentedOutProducts(HttpServletRequest request, int pageNumber, int pageSize) {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<OrderItem> page = orderItemRepository.findByOwnerId(pageable, user.getId());
         List<ProductDto> productDtoList = new ArrayList<>();
@@ -439,7 +463,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         }
     }
 
-    public byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws  DocumentException {
+    public byte[] generateInvoicePDF(List<OrderItem> orderItems, User user, Order order) throws IOException, DocumentException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document();
@@ -448,18 +472,17 @@ public class OrderServiceImpl implements OrderServiceInterface {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
 
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             // Display overall order details (summary)
-            document.add(new Paragraph("Order ID: " + order.getId()));
+            document.add(new Paragraph(ORDER_ID + order.getId()));
             document.add(new Paragraph("Order Date: " + dateFormat.format(convertToDate(order.getCreateDate()))));
             document.add(new Paragraph("Name: " + user.getFirstName() + " " + user.getLastName()));
-            document.add(new Paragraph(("Address: "+ order.getUser().getAddresses())));
+            document.add(new Paragraph(("Address: " + order.getUser().getAddresses())));
             document.add(new Paragraph("\n"));
 
             // Create and populate order items table
-            PdfPTable table = new PdfPTable(new float[]{20, 20, 15, 18, 35, 35,35});
+            PdfPTable table = new PdfPTable(new float[]{20, 20, 15, 18, 35, 35, 35});
             table.setWidthPercentage(100);
 
             Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
@@ -511,11 +534,14 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     @Override
-    public List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, User user) {
+    public List<OrderItemDto> getOrdersItemByStatus(String shippingStatus, HttpServletRequest request) {
+        // JWT : Extracting user info from token
+        User user = helper.getUserFromToken(request);
         List<OrderItem> orderItemList = orderItemRepository.findAll();
         List<OrderItemDto> orderItemDtos = new ArrayList<>();
         for (var orderItem : orderItemList) {
-            if(orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus)) orderItemDtos.add(new OrderItemDto(orderItem));
+            if (orderItem.getProduct().getUser().equals(user) && orderItem.getStatus().equals(shippingStatus))
+                orderItemDtos.add(new OrderItemDto(orderItem));
         }
         return orderItemDtos;
     }
@@ -524,6 +550,4 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private Date convertToDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
-
-
 }

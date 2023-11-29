@@ -1,0 +1,90 @@
+2023-11-15 11:33:14.430  INFO 5606 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 5606 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-15 11:33:14.433  INFO 5606 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 11:33:16.832  INFO 5606 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 11:33:16.832  INFO 5606 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 11:33:16.905  INFO 5606 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 11:33:17.379  INFO 5606 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 11:33:17.518  INFO 5606 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 11:33:20.064  INFO 5606 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-15 11:33:20.865  WARN 5606 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-15 11:33:21.058  INFO 5606 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 11:33:21.871  INFO 5606 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-15 11:33:23.538  INFO 5606 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 9.691 seconds (JVM running for 10.922)
+2023-11-15 11:33:24.665 ERROR 5606 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 health check failed: The AWS Access Key Id you provided does not exist in our records. (Service: S3, Status Code: 403, Request ID: 86D2AP62P50E8MD4, Extended Request ID: CLmMmdmUFVgosOCnwPqrb+V5MZk3FeAjStpkbNinzCNwHKWTnFi3y4N5AFvFwgYzts7GSW+NCCU=)
+2023-11-15 11:33:26.921  INFO 5606 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 11:33:26.933  INFO 5606 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 11:34:10.930  INFO 6013 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 6013 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-15 11:34:10.932  INFO 6013 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 11:34:12.626  INFO 6013 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 11:34:12.626  INFO 6013 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 11:34:12.681  INFO 6013 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 11:34:13.093  INFO 6013 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 11:34:13.260  INFO 6013 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 11:34:15.118  INFO 6013 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-15 11:34:15.668  WARN 6013 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-15 11:34:15.794  INFO 6013 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 11:34:16.259  INFO 6013 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-15 11:34:17.185  INFO 6013 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 6.595 seconds (JVM running for 7.799)
+2023-11-15 11:34:18.777 ERROR 6013 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 health check failed: The AWS Access Key Id you provided does not exist in our records. (Service: S3, Status Code: 403, Request ID: 836X2HPJAZNA939P, Extended Request ID: AS/Zxr0c07AcP9BJ058JkbHXse5cG0u4XjseSR67WQZrCHF+Y8iYL4eWWFPMcOrrb0h/E5FizcY=)
+2023-11-15 11:34:21.024  INFO 6013 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 11:34:21.036  INFO 6013 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 11:34:26.338  INFO 6193 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 6193 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-15 11:34:26.339  INFO 6193 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 11:34:27.929  INFO 6193 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 11:34:27.930  INFO 6193 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 11:34:27.983  INFO 6193 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 11:34:28.359  INFO 6193 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 11:34:28.461  INFO 6193 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 11:34:30.150  INFO 6193 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-15 11:34:30.654  WARN 6193 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-15 11:34:30.764  INFO 6193 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 11:34:31.155  INFO 6193 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-15 11:34:32.080  INFO 6193 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 6.129 seconds (JVM running for 6.716)
+2023-11-15 11:34:33.262 ERROR 6193 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 health check failed: The AWS Access Key Id you provided does not exist in our records. (Service: S3, Status Code: 403, Request ID: DCHKJNC10BEE5J91, Extended Request ID: h7TIUyGDAiCpv/X554N6iU65xPFNO3JtFMjnYOEcA+lOWL3WBFMmCEwJQHIl0gh4MhAPr/pez7o=)
+2023-11-15 11:34:35.563  INFO 6193 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 11:34:35.571  INFO 6193 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 11:44:33.338  INFO 5852 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 5852 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-15 11:44:33.340  INFO 5852 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 11:44:34.922  INFO 5852 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 11:44:34.922  INFO 5852 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 11:44:34.974  INFO 5852 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 11:44:35.328  INFO 5852 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 11:44:35.429  INFO 5852 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 11:44:37.111  INFO 5852 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-15 11:44:37.614  WARN 5852 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-15 11:44:37.740  INFO 5852 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 11:44:38.150  INFO 5852 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-15 11:44:39.012  INFO 5852 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 6.012 seconds (JVM running for 6.596)
+2023-11-15 11:44:40.380 ERROR 5852 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 health check failed: The AWS Access Key Id you provided does not exist in our records. (Service: S3, Status Code: 403, Request ID: 6RMNPBKS41F5H41H, Extended Request ID: WCmqEmbCnK618yDrOWNr6ZdUq3qL9ODn5LTDE2eJcsvfkcQQx0qn07YOOKXsPXIl8O7AloZi8SQ=)
+2023-11-15 11:44:42.620  INFO 5852 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 11:44:42.625  INFO 5852 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 13:48:02.734  INFO 5054 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 5054 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-15 13:48:02.735  INFO 5054 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:48:04.414  INFO 5054 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:48:04.415  INFO 5054 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:48:04.473  INFO 5054 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:48:04.875  INFO 5054 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 13:48:04.988  INFO 5054 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 13:48:06.733  INFO 5054 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-15 13:48:07.286  WARN 5054 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-15 13:48:07.408  INFO 5054 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 13:48:07.842  INFO 5054 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-15 13:48:08.693  INFO 5054 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 6.325 seconds (JVM running for 7.083)
+2023-11-15 13:48:09.865 ERROR 5054 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 health check failed: The AWS Access Key Id you provided does not exist in our records. (Service: S3, Status Code: 403, Request ID: H3K82XBCBSE5PN62, Extended Request ID: 96DzpUFRS+f2pWU/ukJz2X32UeVCheALaXT+1EySrJ3FT3/1Jo3BtKbkC4B4UQHqp6EMG7sw8ak=)
+2023-11-15 13:48:12.125  INFO 5054 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 13:48:12.130  INFO 5054 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2023-11-15 13:50:42.936  INFO 5462 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 5462 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-15 13:50:42.937  INFO 5462 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-15 13:50:44.499  INFO 5462 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-15 13:50:44.499  INFO 5462 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-15 13:50:44.552  INFO 5462 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-15 13:50:44.902  INFO 5462 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-15 13:50:45.006  INFO 5462 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-15 13:50:46.724  INFO 5462 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-15 13:50:47.306  WARN 5462 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-15 13:50:47.436  INFO 5462 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-15 13:50:47.849  INFO 5462 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-15 13:50:48.835  INFO 5462 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 6.277 seconds (JVM running for 6.902)
+2023-11-15 13:50:50.131 ERROR 5462 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 health check failed: The AWS Access Key Id you provided does not exist in our records. (Service: S3, Status Code: 403, Request ID: 3GCTBBZPYY9Z4884, Extended Request ID: itBOM7Lj35A6u/MMf9YS+hyogtK1INeHD26aavZOOfs59phiDnQmiVeoVatJhSoPsVopEKkSB1s=)
+2023-11-15 13:50:52.448  INFO 5462 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-15 13:50:52.454  INFO 5462 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

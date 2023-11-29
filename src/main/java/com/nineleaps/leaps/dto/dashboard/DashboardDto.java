@@ -1,4 +1,4 @@
-package com.nineleaps.leaps.dto.user;
+package com.nineleaps.leaps.dto.dashboard;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDto {
-    private String status;
-    private String token;
-
+public class DashboardDto {
+    private int totalOrders;
+    private double totalEarnings;
 }

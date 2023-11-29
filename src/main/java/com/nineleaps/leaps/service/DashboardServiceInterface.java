@@ -1,12 +1,14 @@
 package com.nineleaps.leaps.service;
 
-import com.nineleaps.leaps.model.User;
+import com.nineleaps.leaps.dto.dashboard.DashboardAnalyticsDto;
+import com.nineleaps.leaps.dto.dashboard.DashboardDto;
 
-import java.time.YearMonth;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface DashboardServiceInterface {
 
-    Map<String, Object> dashboardOwnerView(User user);
-    Map<YearMonth, Map<String, Object>> analytics(User user);
+    DashboardDto dashboardOwnerView(HttpServletRequest request);
+
+    List<DashboardAnalyticsDto> analytics(HttpServletRequest request);
 }

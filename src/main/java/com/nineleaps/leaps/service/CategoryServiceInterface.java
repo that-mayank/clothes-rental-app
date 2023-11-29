@@ -1,18 +1,17 @@
 package com.nineleaps.leaps.service;
 
 import com.nineleaps.leaps.dto.category.CategoryDto;
-import com.nineleaps.leaps.model.User;
 import com.nineleaps.leaps.model.categories.Category;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CategoryServiceInterface {
-    void createCategory(Category category, User user);
+    void createCategory(CategoryDto categoryDto);
 
     List<Category> listCategory();
 
-    void updateCategory(Long id, CategoryDto updateCategory,User user);
+    void updateCategory(Long id, CategoryDto updateCategory);
 
     Category readCategory(String categoryName);
 

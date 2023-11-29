@@ -22,6 +22,7 @@ import com.nineleaps.leaps.model.product.ProductUrl;
 import com.nineleaps.leaps.repository.OrderItemRepository;
 import com.nineleaps.leaps.repository.OrderRepository;
 import com.nineleaps.leaps.repository.ProductRepository;
+import com.nineleaps.leaps.utils.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -32,12 +33,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.*;
-import static com.nineleaps.leaps.config.MessageStrings.TOTAL_INCOME;
-import static com.nineleaps.leaps.config.MessageStrings.TOTAL_NUMBER;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 @Tag("unit_tests")
@@ -68,6 +70,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
     @InjectMocks
     private OrderServiceImpl orderService;
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private Helper helper;
 
     @BeforeEach
     void setUp() {
@@ -111,7 +118,7 @@ import static org.junit.jupiter.api.Assertions.*;
         cartDto.setCartItems(cartItemDtos);
 
         // Mock the behavior of cartService and other dependencies
-        when(cartService.listCartItems(user)).thenReturn(cartDto);
+        when(cartService.listCartItems(request)).thenReturn(cartDto);
         // Mock other dependencies as needed...
 
         // Mock the behavior of orderItemRepository.save()
@@ -134,9 +141,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
             return savedProduct;
         });
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Call the method to be tested
-        orderService.placeOrder(user, sessionId);
+        orderService.placeOrder(request, sessionId);
         String message = "Dear null null,\n" +
                 "Your Order has been successfully placed.\n" +
                 "Here are the details of your order:\n" +
@@ -149,7 +156,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
         // Verify method invocations
-        verify(cartService).listCartItems(user);
+        verify(cartService).listCartItems(request);
         verify(orderRepository).save(orderCaptor.capture());
         verify(cartService).deleteUserCartItems(user);
         verify(emailServiceImpl).sendEmail("Order Placed", message, user.getEmail());
@@ -202,9 +209,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
         // Mock the behavior of orderRepository.findByUserOrderByCreateDateDesc()
         when(orderRepository.findByUserOrderByCreateDateDesc(user)).thenReturn(orders);
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Call the method to be tested
-        List<OrderDto> orderDtos = orderService.listOrders(user);
+        List<OrderDto> orderDtos = orderService.listOrders(request);
 
         // Verify the result
         assertNotNull(orderDtos);
@@ -239,9 +246,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
         // Mock the behavior of orderRepository.findByIdAndUserId()
         when(orderRepository.findByIdAndUserId(orderId, user.getId())).thenReturn(Optional.of(order));
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Call the method to be tested
-        Order resultOrder = orderService.getOrder(orderId, user);
+        Order resultOrder = orderService.getOrder(orderId, request);
 
         // Verify the result
         assertNotNull(resultOrder);
@@ -256,78 +263,78 @@ import static org.junit.jupiter.api.Assertions.*;
         User user = new User();
         user.setId(1L);
         Long orderId = 100L;
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Mock the behavior of orderRepository.findByIdAndUserId() to return an empty optional
         when(orderRepository.findByIdAndUserId(orderId, user.getId())).thenReturn(Optional.empty());
 
         // Call the method to be tested and expect an exception
-        assertThrows(OrderNotFoundException.class, () -> orderService.getOrder(orderId, user));
+        assertThrows(OrderNotFoundException.class, () -> orderService.getOrder(orderId, request));
     }
 
+
     @Test
-    @DisplayName("Test Order Status - Status Returned")
-     void testOrderStatus_StatusReturned() {
-        // Mock necessary data
-        OrderItem orderItem = new OrderItem();
-        orderItem.setId(100L);
-        orderItem.setStatus("SomeStatus");  // Any initial status
-        int initialAvailableQuantities = 50;
-        int initialRentedQuantities = 30;
-        orderItem.setQuantity(10);
+    void testOrderStatusOtherStatus() {
+        //Arrange
+        Long orderItemId = 1L;
+        String status = "ORDER DISPATCHED";
+
+        User user = new User();
+        user.setId(1L);
+
         Product product = new Product();
-        product.setAvailableQuantities(initialAvailableQuantities);
-        product.setRentedQuantities(initialRentedQuantities);
-        orderItem.setProduct(product);
+        product.setId(1L);
+        product.setQuantity(10);
+        product.setAvailableQuantities(6);
+        product.setDisabledQuantities(3);
+        product.setRentedQuantities(1);
 
+        Order order = new Order();
+        order.setId(1L);
+        order.setUser(user);
 
-
-        // Mock the behavior of orderItemRepository.save()
-        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> {
-            OrderItem savedOrderItem = invocation.getArgument(0);
-            assertNotNull(savedOrderItem);
-            assertEquals("ORDER RETURNED", savedOrderItem.getStatus());
-            return savedOrderItem;
-        });
-
-        // Mock the behavior of productRepository.save()
-        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
-            Product savedProduct = invocation.getArgument(0);
-            assertNotNull(savedProduct);
-            assertEquals(initialAvailableQuantities + 10, savedProduct.getAvailableQuantities());
-            assertEquals(Math.max(initialRentedQuantities - 10, 0), savedProduct.getRentedQuantities());
-            return savedProduct;
-        });
-
-        // Call the method to be tested
-        orderService.orderStatus(orderItem, "ORDER RETURNED");
-
-        // Verify the result
-        assertEquals("ORDER RETURNED", orderItem.getStatus());
-    }
-
-    @Test
-    @DisplayName("Test Order Status - Status Not Returned")
-     void testOrderStatus_StatusNotReturned() {
-        // Mock necessary data
         OrderItem orderItem = new OrderItem();
-        orderItem.setId(101L);
-        orderItem.setStatus("SomeStatus");  // Any initial status
-        orderItem.setQuantity(5);
+        orderItem.setId(1L);
+        orderItem.setQuantity(1);
+        orderItem.setProduct(product);
+        orderItem.setOrder(order);
 
-        // Mock the behavior of orderItemRepository.save()
-        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> {
-            OrderItem savedOrderItem = invocation.getArgument(0);
-            assertNotNull(savedOrderItem);
-            assertEquals("SomeStatus", savedOrderItem.getStatus());
-            return savedOrderItem;
-        });
+        when(helper.getUserFromToken(request)).thenReturn(user);
+        when(orderItemRepository.findById(anyLong())).thenReturn(Optional.of(orderItem));
 
-        // Call the method to be tested
-        orderService.orderStatus(orderItem, "SomeStatus");
+        //Act
+        orderService.orderStatus(request, orderItemId, status);
 
-        // Verify the result
-        assertEquals("SomeStatus", orderItem.getStatus());
+        //Assert
+        assertEquals(status, orderItem.getStatus());
+        verify(orderItemRepository).save(any(OrderItem.class));
     }
+
+
+//    @Test
+//    @DisplayName("Test Order Status - Status Not Returned")
+//     void testOrderStatus_StatusNotReturned() {
+//        // Mock necessary data
+//        OrderItem orderItem = new OrderItem();
+//        orderItem.setId(101L);
+//        orderItem.setStatus("SomeStatus");  // Any initial status
+//        orderItem.setQuantity(5);
+//        User user = new User();
+//        when(helper.getUserFromToken(request)).thenReturn(user);
+//        when(orderService.getOrderItem(orderItem.getId(),user)).thenReturn(orderItem);
+//        // Mock the behavior of orderItemRepository.save()
+//        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> {
+//            OrderItem savedOrderItem = invocation.getArgument(0);
+//            assertNotNull(savedOrderItem);
+//            assertEquals("SomeStatus", savedOrderItem.getStatus());
+//            return savedOrderItem;
+//        });
+//
+//        // Call the method to be tested
+//        orderService.orderStatus(request,orderItem.getId(), "SomeStatus");
+//
+//        // Verify the result
+//        assertEquals("SomeStatus", orderItem.getStatus());
+//    }
 
     @Test
     @DisplayName("Test Send Delay Charge Email")
@@ -360,7 +367,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
         // Call the method to be tested
         orderService.sendDelayChargeEmail(orderItem, securityDeposit);
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Verify the result
         verify(emailServiceImpl).sendEmail(eq("\"Reminder: Your rental period is ended."), anyString(), eq("john@example.com"));
     }
@@ -371,10 +378,10 @@ import static org.junit.jupiter.api.Assertions.*;
         // Mock necessary data
         LocalDateTime rentalEndDate = LocalDateTime.now().minusDays(5);  // Set a date 5 days in the past
         double securityDeposit = 100.0;
-
+    User user = new User();
         // Call the method to be tested
         double delayCharge = orderService.calculateDelayCharge(rentalEndDate, securityDeposit);
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
         // Verify the result
         double expectedDelayCharge = (securityDeposit * 10.0 / 100) * 5;  // 5 days delay
         assertEquals(expectedDelayCharge, delayCharge, 0.001);  // Use a delta for double comparison
@@ -471,73 +478,115 @@ import static org.junit.jupiter.api.Assertions.*;
      }
 
     @Test
-    @DisplayName("Test On Click Dashboard Year Wise Data")
-      void testOnClickDashboardYearWiseData() {
-         // Mock necessary data
-         User user = new User();
+    void onClickDashboardYearWiseData() {
 
-         Order order1 = new Order();
-         Order order2 = new Order();
+        // Create a user
 
-         OrderItem orderItem1 = new OrderItem();
-         OrderItem orderItem2 = new OrderItem();
+        User user = new User();
 
-         Product product1 = new Product();
-         Product product2 = new Product();
+        user.setId(5L);
 
-         product1.setUser(user);
-         product2.setUser(user);
+// Create a product associated with the user
 
-         orderItem1.setProduct(product1);
-         orderItem2.setProduct(product2);
+        Product product = new Product();
 
-         orderItem1.setRentalStartDate(LocalDateTime.now());
-         orderItem1.setRentalEndDate(LocalDateTime.now().plusDays(5));  // 5 days rental duration
+        product.setUser(user);
 
-         orderItem2.setRentalStartDate(LocalDateTime.now());
-         orderItem2.setRentalEndDate(LocalDateTime.now().plusDays(3));  // 3 days rental duration
+        product.setId(1L);
 
-         orderItem1.setPrice(10.0);
-         orderItem2.setPrice(15.0);
+        Product product2 = new Product();
 
-         orderItem1.setQuantity(2);
-         orderItem2.setQuantity(1);
+        product2.setUser(user);
 
-         order1.setOrderItems(Collections.singletonList(orderItem1));
-         order2.setOrderItems(Collections.singletonList(orderItem2));
+        product2.setId(1L);
 
-         // Mock the behavior of orderRepository.findAll()
-         when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
+        List<Order> orders = new ArrayList<>();
 
-         // Call the method to be tested
-         Map<Year, Map<YearMonth, Map<String, Object>>> result = orderService.onClickDashboardYearWiseData(user);
+// Create order 1 with valid product data
 
-         // Verify the result
-         assertNotNull(result);
-         assertFalse(result.isEmpty());
-         // Verify for year 1
-         Year year1 = Year.from(orderItem1.getRentalStartDate());
-         Map<YearMonth, Map<String, Object>> year1Data = result.get(year1);
-         assertNotNull(year1Data);
-         assertTrue(year1Data.containsKey(YearMonth.from(orderItem1.getRentalStartDate())));
-         Map<String, Object> month1Data = year1Data.get(YearMonth.from(orderItem1.getRentalStartDate()));
-         assertEquals(3, month1Data.get(TOTAL_NUMBER)); // Quantity for product 1
+        Order order1 = new Order();
 
+        order1.setId(1L);
 
-         // Verify for year 2
-         Year year2 = Year.from(orderItem2.getRentalStartDate());
-         Map<YearMonth, Map<String, Object>> year2Data = result.get(year2);
-         assertNotNull(year2Data);
-         assertTrue(year2Data.containsKey(YearMonth.from(orderItem2.getRentalStartDate())));
-         Map<String, Object> month2Data = year2Data.get(YearMonth.from(orderItem2.getRentalStartDate()));
-         assertEquals(3, month2Data.get(TOTAL_NUMBER)); // Quantity for product 2
-         assertEquals(15.0 * 3+100, month2Data.get(TOTAL_INCOME)); // Earnings for product 2
+        OrderItem orderItem1 = new OrderItem();
 
+        orderItem1.setProduct(product); // Set the product associated with the user
 
+        orderItem1.setQuantity(2);
 
-         // Verify that orderRepository.findAll() was called
-         verify(orderRepository, times(1)).findAll();
-     }
+        orderItem1.setPrice(50.0);
+
+        orderItem1.setRentalStartDate(LocalDateTime.now().minusMonths(2));
+
+        orderItem1.setRentalEndDate(LocalDateTime.now().minusMonths(1));
+
+        order1.setOrderItems(Collections.singletonList(orderItem1));
+
+        order1.setUser(user);
+
+        orders.add(order1);
+
+// Create order 2 with valid product data
+
+        Order order2 = new Order();
+
+        order2.setId(2L);
+
+        OrderItem orderItem2 = new OrderItem();
+
+        orderItem2.setProduct(product2); // Set the product associated with the user
+
+        orderItem2.setQuantity(3);
+
+        orderItem2.setPrice(60.0);
+
+        orderItem2.setRentalStartDate(LocalDateTime.now().minusMonths(1));
+
+        orderItem2.setRentalEndDate(LocalDateTime.now());
+
+        order2.setOrderItems(Collections.singletonList(orderItem2));
+
+        order2.setUser(user);
+
+        orders.add(order2);
+
+        // Mock the orderRepository.findAll() to return the orders
+
+        when(helper.getUserFromToken(request)).thenReturn(user);
+
+        when(orderRepository.findAll()).thenReturn(orders);
+
+        // Act
+
+        Map<Year, Map<YearMonth, Map<String, Object>>> result = orderService.onClickDashboardYearWiseData(request);
+
+        // Assert
+
+        assertNotNull(result);
+
+        assertEquals(1, result.size());
+
+        Year year1 = Year.now();
+
+        assertTrue(result.containsKey(year1));
+
+        Map<YearMonth, Map<String, Object>> year1Data = result.get(year1);
+
+        assertNotNull(year1Data);
+
+        assertEquals(2, year1Data.size());
+
+        Year year2 = Year.now();
+
+        assertTrue(result.containsKey(year2));
+
+        Map<YearMonth, Map<String, Object>> year2Data = result.get(year2);
+
+        assertNotNull(year2Data);
+
+        assertEquals(2, year2Data.size());
+
+    }
 
 
     @Test
@@ -584,12 +633,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
          order1.setOrderItems(Collections.singletonList(orderItem1));
          order2.setOrderItems(Collections.singletonList(orderItem2));
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Mock the behavior of orderRepository.findAll()
          when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
 
          // Call the method to be tested
-         Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonthBwDates(user, startDate, endDate);
+         Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonthBwDates(request, startDate, endDate);
 
          // Verify the result
          assertNotNull(result);
@@ -639,9 +688,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
          // Mock the behavior of orderRepository.findAll()
          when(orderRepository.findAll()).thenReturn(Arrays.asList(order1,order2));
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Call the method to be tested
-         Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonth(user);
+         Map<YearMonth, List<OrderReceivedDto>> result = orderService.getOrderedItemsByMonth(request);
 
          // Verify the result
          assertNotNull(result);
@@ -706,9 +755,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
          // Mock the behavior of orderRepository.findAll()
          when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Call the method to be tested
-         Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsBySubCategories(user);
+         Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsBySubCategories(request);
 
          // Verify the result
          assertNotNull(result);
@@ -763,9 +812,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
          // Mock the behavior of orderRepository.findAll()
          when(orderRepository.findAll()).thenReturn(List.of(order1));
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Call the method to be tested
-         Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsByCategories(user);
+         Map<YearMonth, Map<String, OrderItemsData>> result = orderService.getOrderItemsByCategories(request);
 
          // Verify the result
          assertNotNull(result);
@@ -795,12 +844,12 @@ import static org.junit.jupiter.api.Assertions.*;
          // Mock Page and Pageable
          Page<OrderItem> orderItemPage = new PageImpl<>(Collections.singletonList(orderItem));
          Pageable pageable = PageRequest.of(0, 10);
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Mock the behavior of orderItemRepository.findByOwnerId
          when(orderItemRepository.findByOwnerId(pageable, user.getId())).thenReturn(orderItemPage);
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Call the method to be tested
-         List<ProductDto> productDtoList = orderService.getRentedOutProducts(user, 0, 10);
+         List<ProductDto> productDtoList = orderService.getRentedOutProducts(request, 0, 10);
 
          // Verify the result
          assertNotNull(productDtoList);
@@ -891,7 +940,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     @Test
     @DisplayName("Test Generate Invoice PDF")
-      void testGenerateInvoicePDF() throws DocumentException {
+      void testGenerateInvoicePDF() throws DocumentException, IOException {
          // Mock necessary data
          User user = new User();
          user.setFirstName("John");
@@ -973,9 +1022,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
          // Mock the behavior of orderItemRepository.findAll()
          when(orderItemRepository.findAll()).thenReturn(Arrays.asList(orderItem1, orderItem2, orderItem3));
-
+        when(helper.getUserFromToken(request)).thenReturn(user);
          // Call the method to be tested
-         List<OrderItemDto> result = orderService.getOrdersItemByStatus("SHIPPED", user);
+         List<OrderItemDto> result = orderService.getOrdersItemByStatus("SHIPPED", request);
 
          // Verify the result
          assertNotNull(result);

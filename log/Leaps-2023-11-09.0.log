@@ -1,0 +1,24 @@
+2023-11-09 14:41:03.967  INFO 66060 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Starting LeapsApplication using Java 19.0.2 on nineleaps-ThinkPad-E14 with PID 66060 (/home/nineleaps/Desktop/Leaps-BE-SQ/target/classes started by nineleaps in /home/nineleaps/Desktop/Leaps-BE-SQ)
+2023-11-09 14:41:03.968  INFO 66060 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : The following 1 profile is active: "dev"
+2023-11-09 14:41:05.712  INFO 66060 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-09 14:41:05.712  INFO 66060 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.73]
+2023-11-09 14:41:05.762  INFO 66060 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-11-09 14:41:06.161  INFO 66060 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-09 14:41:06.289  INFO 66060 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-09 14:41:08.036  INFO 66060 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : web socket configure
+2023-11-09 14:41:08.626  WARN 66060 --- [restartedMain] s.a.a.transfer.s3.S3TransferManager      : The provided DefaultS3AsyncClient is not an instance of S3CrtAsyncClient, and thus multipart upload/download feature is not enabled and resumable file upload is not supported. To benefit from maximum throughput, consider using S3AsyncClient.crtBuilder().build() instead.
+2023-11-09 14:41:08.761  INFO 66060 --- [restartedMain] c.n.l.s.implementation.FCMInitializer    : Firebase application has been initialized
+2023-11-09 14:41:09.218  INFO 66060 --- [restartedMain] c.n.l.config.security.WebSocketConfig    : stomp  endpoint config method
+2023-11-09 14:41:10.103  INFO 66060 --- [restartedMain] com.nineleaps.leaps.LeapsApplication     : Started LeapsApplication in 6.44 seconds (JVM running for 7.33)
+2023-11-09 14:41:11.281  INFO 66060 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Amazon S3 is healthy
+2023-11-09 14:41:11.747  INFO 66060 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Bucket: leapsimagebucket
+2023-11-09 14:41:12.670  INFO 66060 --- [restartedMain] c.n.leaps.utils.AmazonS3HealthChecker    : Location: eu-north-1
+2023-11-09 14:41:12.689  INFO 66060 --- [restartedMain] c.n.leaps.utils.DatabaseHealthChecker    : Database Connection Established. Successfully
+2023-11-09 14:41:12.690  INFO 66060 --- [restartedMain] c.n.leaps.utils.DatabaseHealthChecker    : Database Product Name: MySQL
+2023-11-09 14:41:12.690  INFO 66060 --- [restartedMain] c.n.leaps.utils.DatabaseHealthChecker    : Database Product Version: 8.0.35-0ubuntu0.22.04.1
+2023-11-09 14:41:12.691  INFO 66060 --- [restartedMain] c.n.leaps.utils.DatabaseHealthChecker    : DataBase URL :jdbc:mysql://localhost:3306/leapsdb3?useSSL=false
+2023-11-09 14:41:12.693  INFO 66060 --- [restartedMain] c.n.leaps.utils.DatabaseHealthChecker    : Database UserName :root@localhost
+2023-11-09 14:41:12.694  INFO 66060 --- [restartedMain] c.n.leaps.utils.DatabaseHealthChecker    : Database is healthy
+2023-11-09 14:41:19.794  INFO 66060 --- [SpringApplicationShutdownHook] c.n.leaps.utils.DatabaseHealthChecker    : Database connection closed.
+2023-11-09 14:41:21.843  INFO 66060 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-09 14:41:21.849  INFO 66060 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

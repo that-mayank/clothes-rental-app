@@ -1,14 +1,14 @@
 package com.nineleaps.leaps.dto.product;
 
-import com.nineleaps.leaps.model.product.Product;
 import com.nineleaps.leaps.model.categories.Category;
 import com.nineleaps.leaps.model.categories.SubCategory;
+import com.nineleaps.leaps.model.product.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +24,10 @@ public class ProductDto {
     private String brand;
     private @NotNull String name;
     private @NotNull List<String> imageUrl;
+    @Positive
     private @NotNull double price;
     private @NotNull String description;
+    @Positive
     private @NotNull int totalQuantity;
     private int availableQuantities;
     private int disabledQuantities;

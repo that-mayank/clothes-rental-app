@@ -265,7 +265,7 @@ class CustomAuthorizationFilterTest {
 
 
     private String generateAccessToken(int expirationMinutes) throws IOException {
-        String secretFilePath = "/Desktop"+"/leaps"+"/secret"+"/secret.txt";
+        String secretFilePath = "/Desktop"+"/Leaps-BE-SQ"+"/secret"+"/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
         String secret = readSecretFromFile(absolutePath);
         Algorithm algorithm = Algorithm.HMAC256(secret); // Replace "secret" with your actual secret key

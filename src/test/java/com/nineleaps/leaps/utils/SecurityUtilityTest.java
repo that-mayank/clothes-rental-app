@@ -173,7 +173,7 @@ class SecurityUtilityTest {
     void testReadSecretFromFile() throws IOException {
         // Arrange
         String secret = "meinhuchotadon";
-        String secretFilePath = "/Desktop/leaps/secret/secret.txt";
+        String secretFilePath = "/Desktop/Leaps-BE-SQ/secret/secret.txt";
         String absolutePath = System.getProperty("user.home") + File.separator + secretFilePath;
 
         // Mock the behavior of FileReaderWrapper

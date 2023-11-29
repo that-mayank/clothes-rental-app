@@ -33,10 +33,6 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
 
         // Guard Statement: Check if the category already present in DB
         Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
-        if (optionalCategory.isEmpty()) {
-            log.error("Category does not exist with ID: {}", subCategoryDto.getCategoryId());
-            throw new CategoryNotExistException(CATEGORY_INVALID);
-        }
         Category category = optionalCategory.get();
 
         // `Guard Statement`: Check if subcategory already exists by name in the same category
@@ -103,17 +99,11 @@ public class SubCategoryServiceImpl implements SubCategoryServiceInterface {
 
         // Guard Statement: Check if category is valid or not
         Optional<Category> optionalCategory = categoryService.readCategory(subCategoryDto.getCategoryId());
-        if (optionalCategory.isEmpty()) {
-            log.error("Category does not exist with ID: {}", subCategoryDto.getCategoryId());
-            throw new CategoryNotExistException(CATEGORY_INVALID);
-        }
+
 
         // Guard Statement: Check if subcategory is valid or not
         Optional<SubCategory> optionalSubCategory = readSubCategory(subcategoryId);
-        if (optionalSubCategory.isEmpty()) {
-            log.error("Subcategory does not exist with ID: {}", subcategoryId);
-            throw new CategoryNotExistException("Category is invalid");
-        }
+       
         // Create a new SubCategory instance using the provided SubCategoryDto and Category.
         SubCategory updatedSubCategory = getSubCategoryFromDto(subCategoryDto, optionalCategory.get());
 

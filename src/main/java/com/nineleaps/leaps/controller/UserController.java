@@ -56,18 +56,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> signup(@RequestBody SignupDto signupDto) throws CustomException {
 
-        try {
-            // Calling userServiceInterface to do the signup process
+
             userServiceInterface.signUp(signupDto);
-
-            log.info("User signed up successfully: {}", signupDto.getEmail());
-
             // Status Code - 201-HttpStatus.CREATED
             return new ResponseEntity<>(new ApiResponse(true, "Signed up successfully"), HttpStatus.CREATED);
-        } catch (CustomException e) {
-            log.error("Error during user signup: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Signup failed"));
-        }
     }
 
 
@@ -79,15 +71,8 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('OWNER', 'BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> switchProfile(@RequestParam Role profile, HttpServletResponse response, HttpServletRequest request) throws AuthenticationFailException, UserNotExistException, IOException {
-        try {
             // Extract User from the token
             User user = helper.getUserFromToken(request);
-
-            if (!Helper.notNull(user)) {
-                log.error(AUTH_TOKEN_NOT_VALID);
-                throw new UserNotExistException(AUTH_TOKEN_NOT_VALID);
-            }
-
             user.setRole(profile);
 
             // Calling the service layer to save the profile of the user
@@ -100,10 +85,6 @@ public class UserController {
 
             // Status code - 200-HttpStatus.OK
             return new ResponseEntity<>(new ApiResponse(true, "Role switched to: " + user.getRole()), HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Error while switching profile", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error switching profile"));
-        }
     }
 
     // API - Helps user to update his profile information
@@ -113,7 +94,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> updateProfile(@RequestBody @Valid ProfileUpdateDto profileUpdateDto, HttpServletRequest request) throws AuthenticationFailException {
 
-        try {
+
             // Extract User from the token
             User oldUser = helper.getUserFromToken(request);
 
@@ -129,10 +110,7 @@ public class UserController {
 
             // Status Code: 200-HttpStatus.Ok
             return new ResponseEntity<>(new ApiResponse(true, "Profile updated successfully"), HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Error while updating profile", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error updating profile"));
-        }
+
     }
 
     // API - Gives details about the currently logged-in user
@@ -141,7 +119,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('OWNER','BORROWER')") // Adding Method Level Authorization Via RBAC-Role-Based Access Control
     public ResponseEntity<UserDto> getUser(HttpServletRequest request) {
-        try {
+
             // Extract User from the token
             User user = helper.getUserFromToken(request);
 
@@ -158,10 +136,7 @@ public class UserController {
 
             // Status Code: 200-HttpStatus.OK
             return new ResponseEntity<>(userDto, HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Error while getting user details", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+
     }
 
     // API - Allows the User to Update his profile picture
@@ -171,7 +146,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> profileImage(@RequestParam("profileImageUrl") String profileImageUrl, HttpServletRequest request) throws AuthenticationFailException {
 
-        try {
+
             // Extract User from the token
             User user = helper.getUserFromToken(request);
 
@@ -188,10 +163,7 @@ public class UserController {
 
             // Status Code: 201-HttpStatus.CREATED
             return new ResponseEntity<>(new ApiResponse(true, "Profile picture has been updated."), HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("Error while updating profile picture", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error updating profile picture"));
-        }
+
     }
 
 
@@ -201,7 +173,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse> updateTokenUsingRefreshToken(HttpServletRequest request,HttpServletResponse response) throws AuthenticationFailException, IOException {
 
-        try {
+
             // Fetch token from the header
             String authorizationHeader = request.getHeader(AUTHORIZATION);
             String token = authorizationHeader.substring(7);
@@ -219,10 +191,7 @@ public class UserController {
 
             // Status Code: 201-HttpStatus.CREATED
             return new ResponseEntity<>(new ApiResponse(true, "AccessToken Updated Via RefreshToken"), HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("Error while updating access token via RefreshToken", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error updating access token"));
-        }
+
     }
 
 
@@ -232,7 +201,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ApiResponse> logout(HttpServletRequest request){
 
-        try {
+
             // Fetch token from the header
             String authorizationHeader = request.getHeader(AUTHORIZATION);
             String token = authorizationHeader.substring(7);
@@ -248,10 +217,7 @@ public class UserController {
 
             // Status Code: 200-HttpStatus.OK
             return new ResponseEntity<>(new ApiResponse(true, "User Successfully Logged out"), HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Error during user logout", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, "Error logging out"));
-        }
+
     }
 
 
